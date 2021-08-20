@@ -1,0 +1,6 @@
+[submodule "reference-styles"]
+	path = reference-styles
+	url = git@github.com:pyrrhicPachyderm/reference-styles.git
+[submodule "bibliography"]
+	path = bibliography
+	url = git@github.com:pyrrhicPachyderm/bibliography.git
