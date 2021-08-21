@@ -47,6 +47,28 @@ If so, how?
 
 \section{Related Literature}
 
+In no particular order:
+\begin{itemize}
+	\item
+		\Textcite{allesina2009food} addressed the optimal grouping of species in order to reduce the number of parameters in a model.
+		However, they deal with food webs, rather than competitive interactions, and with binary links, rather than quantitative interactions.
+	\item
+		\Textcite{maynard2020predicting} provide a method of predicting the outcomes of community dynamics given the results of smaller set of experiments than would traditionally be required.
+		However, they do not parameterise a model in doing so, and can predict only the equilibrium points of assemblages.
+	\item
+		\Textcite{uriarte2004spatially} is one of a number of studies that have attempted to group species using groups selected \emph{a priori} based upon functional or phylogenetic factors.
+		In particular, the authors of this paper consider and compare both functional and phylogenetic groupings.
+		However, they still only consider four groupings, selected \emph{a priori}, out of more than a googol possible groupings.
+	\item
+		\Textcite{ovaskainen2017species} fitted models of community dynamics that were not parameterised directly by interaction coefficients, but by the responses of species to ``community-level drivers'': weighted averages of the abundances of various species in the community.
+		This is a similar technique to grouping (and in fact includes grouping as a subcase where weights are restricted to zero and one), but requires \emph{a priori} definition of the number of community-level drivers.
+		Further, its interpretation may be rather distinct from grouping, depending upon results.
+	\item
+		\Textcite{weiss2021disentangling} address the problem of too many parameters by making the assumption that many of the interaction coefficients are zero.
+		Precisely which coefficients are zero is selected on the basis of model fit, rather than \emph{a priori}.
+		However, this still assumes that many pairs of species do not interact: an assumption that need not be made by a model based on grouping.
+\end{itemize}
+
 \section{Novelty}
 
 \section{Method Outline}
