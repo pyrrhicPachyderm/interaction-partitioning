@@ -4,3 +4,6 @@
 [submodule "bibliography"]
 	path = bibliography
 	url = git@github.com:pyrrhicPachyderm/bibliography.git
+[submodule "TCL_DrosMCT"]
+	path = TCL_DrosMCT
+	url = git@github.com:jcdterry/TCL_DrosMCT.git
