@@ -2,3 +2,47 @@
 library(R6)
 
 throw <- function(...) {stop(...)}
+
+Data <- R6Class("Data",
+	public = list(
+		species_names = NULL,
+		response_vector = NULL,
+		focal_vector = NULL,
+		density_design_matrix = NULL,
+		
+		initialize = function(species_names, response_vector, focal_vector, density_design_matrix) {
+			#response_vector is one number for each experiment.
+			#focal_vector is one number or string for each experiment: numbers are indices to species_names, strings are entries in species_names.
+			#density_design_matrix is one row per experiment and one column per species.
+			
+			#Check argument sizes.
+			if(length(focal_vector) != length(response_vector)) {
+				throw("The lengths of response_vector and focal_vector must be equal.")
+			}
+			if(nrow(density_design_matrix) != length(response_vector)) {
+				throw("There must be one row in density_design_matrix per entry in response_vector.")
+			}
+			if(ncol(density_design_matrix) != length(species_names)) {
+				throw("There must be one column in density_design_matrix per entry in species_names.")
+			}
+			
+			#Convert focal_vector to integer if necessary.
+			if(class(focal_vector) == "character") {
+				focal_vector <- match(focal_vector, species_names)
+				if(any(is.na(focal_vector))) {
+					throw("At least one entry in focal_vector does not appear in species_names.")
+				}
+			}
+			#Check the values in focal_vector are in range.
+			if(any(!(focal_vector %in% 1:length(species_names)))) {
+				throw("At least one entry in focal_vector is not an index in species_names.")
+			}
+			
+			#Set the values.
+			self$species_names <- species_names
+			self$response_vector <- response_vector
+			self$focal_vector <- focal_vector
+			self$density_design_matrix <- density_design_matrix
+		}
+	)
+)
