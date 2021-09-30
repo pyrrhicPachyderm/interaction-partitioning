@@ -46,3 +46,49 @@ Data <- R6Class("Data",
 		}
 	)
 )
+
+Grouping <- R6Class("Grouping",
+	public = list(
+		num_species = NULL,
+		grouping = NULL,
+		
+		initialize = function(num_species, grouping = NULL) {
+			#grouping is a list of integers, of length num_species.
+			#It must be a valid rhyming scheme, 1-indexed.
+			#That is, the first integer must be 1, and subsequent integers must be no more than 1 higher than the highest integer seen yet.
+			
+			#Set num_species
+			self$num_species <- num_species
+			
+			#Set grouping
+			if(!is.null(grouping)) {
+				if(!private$validate_grouping(grouping)) {
+					throw("Provided grouping is invalid.")
+				}
+				
+				self$grouping <- grouping
+			} else {
+				self$grouping <- rep(1, num_species)
+			}
+		}
+	),
+	
+	private = list(
+		validate_grouping = function(grouping) {
+			#Returns a boolean of whether the grouping is valid.
+			
+			grouping <- as.integer(grouping)
+			
+			if(length(grouping) != self$num_species) return(FALSE)
+			if(any(grouping < 1)) return(FALSE)
+			
+			highest_group <- 0
+			for(group in grouping) {
+				if(group > highest_group + 1) return(FALSE)
+				if(group == highest_group + 1) highest_group <- group
+			}
+			
+			return(TRUE)
+		}
+	)
+)
