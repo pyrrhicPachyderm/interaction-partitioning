@@ -1,6 +1,6 @@
 #include "solver.hpp"
 
-Solver::ParameterVector Solver::getInitialParameterValues() {
+Solver::ParameterVector Solver::getInitialParameterValues() const {
 	//We need somewhat reasonable guesses for the growth rates and the competition coefficients.
 	//It is reasonable to guess that all the competition coefficients are zero.
 	double competitionCoefficient = 0.0;

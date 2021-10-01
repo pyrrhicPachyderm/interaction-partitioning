@@ -55,11 +55,11 @@ class Grouping {
 			reset();
 		};
 		
-		size_t getGroup(size_t species) {
+		size_t getGroup(size_t species) const {
 			return group[species];
 		}
 		
-		size_t getNumGroups() {
+		size_t getNumGroups() const {
 			//The number of groups is simply the highest group number seen before or including the final element.
 			//Plus one, as the groups are zero indexed.
 			return maxGroup[numSpecies - 1] + 1;

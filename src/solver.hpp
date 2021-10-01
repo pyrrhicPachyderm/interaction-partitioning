@@ -30,7 +30,7 @@ class Solver {
 		//a number of columns equal to the number of parameters, as given above.
 		typedef Eigen::MatrixXd Jacobian;
 	protected:
-		ParameterVector getInitialParameterValues();
+		ParameterVector getInitialParameterValues() const;
 };
 
 #endif
