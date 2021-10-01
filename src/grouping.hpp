@@ -55,6 +55,11 @@ class Grouping {
 			reset();
 		};
 		
+		size_t getNumGroups() {
+			//The number of groups is simply the highest group number seen before or including the final element.
+			return maxGroup[numSpecies - 1];
+		}
+		
 		//Advances to the next grouping, per lexigraphic order.
 		//Wraps back to the lexigraphically first grouping once it has been through them all.
 		//Returns false if and only if it wrapped, facilitating a do while loop.
