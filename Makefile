@@ -28,8 +28,10 @@ spellcheck: $(maindoc).tex
 	done
 .PHONY: spellcheck
 
+raw_data_file := TCL_DrosMCT/Data/d_both.csv
+
 #Submodules
-bibliography/references.bib reference-styles/authoryear.tex &:
+bibliography/references.bib reference-styles/authoryear.tex $(raw_data_file) &:
 	git submodule update --init
 
 ##########################################################################################################
