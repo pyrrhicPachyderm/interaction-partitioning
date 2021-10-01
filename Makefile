@@ -19,6 +19,7 @@ clean:
 		$(RM) **/*.o **/*.d **/*.out;\
 	)
 	@$(RM) $(maindoc).pdf
+	@$(RM) output/*
 .PHONY: clean
 
 spellcheck: $(maindoc).tex
