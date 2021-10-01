@@ -26,15 +26,15 @@ class Data {
 			assert((size_t)response.rows() == numObservations);
 		};
 		
-		std::vector<size_t> getFocal() {
+		const std::vector<size_t> &getFocal() {
 			return focal;
 		};
 		
-		Eigen::VectorXd getResponse() {
+		const Eigen::VectorXd &getResponse() {
 			return response;
 		};
 		
-		Eigen::MatrixXd getDesign() {
+		const Eigen::MatrixXd &getDesign() {
 			return design;
 		};
 };
