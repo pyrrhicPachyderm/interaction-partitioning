@@ -1,5 +1,18 @@
 #include "solver.hpp"
 
+Eigen::MatrixXd Solver::getColGroupedDesign() const {
+	//TODO: Memoise this.
+	Eigen::MatrixXd colGroupedDesign = Eigen::MatrixXd::Zero(data.numObservations, colGrouping.getNumGroups());
+	
+	for(size_t obs = 0; obs < data.numObservations; obs++) {
+		for(size_t sp = 0; sp < data.numSpecies; sp++) {
+			colGroupedDesign(obs, colGrouping.getGroup(sp)) += data.getDesign()(obs, sp);
+		}
+	}
+	
+	return colGroupedDesign;
+}
+
 Solver::ParameterVector Solver::getInitialParameterValues() const {
 	//We need somewhat reasonable guesses for the growth rates and the competition coefficients.
 	//It is reasonable to guess that all the competition coefficients are zero.
