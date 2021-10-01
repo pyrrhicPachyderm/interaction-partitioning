@@ -29,6 +29,8 @@ class Solver {
 		//It has a number of rows equal to the number of observations, and
 		//a number of columns equal to the number of parameters, as given above.
 		typedef Eigen::MatrixXd Jacobian;
+	protected:
+		ParameterVector getInitialParameterValues();
 };
 
 #endif
