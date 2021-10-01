@@ -8,3 +8,7 @@
 *.bcf
 *.blg
 *.run.xml
+
+*.o
+*.d
+*.out
