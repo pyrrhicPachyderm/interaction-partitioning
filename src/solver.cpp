@@ -1,5 +1,21 @@
 #include "solver.hpp"
 
+double Solver::getGrowthRate(Solver::ParameterVector parameters, size_t growthGroup) const {
+	return parameters(growthGroup);
+}
+
+Eigen::VectorXd Solver::getGrowthRates(Solver::ParameterVector parameters) const {
+	return parameters.block(0, 0, 1, growthGrouping.getNumGroups());
+}
+
+double Solver::getCompetitionCoefficient(Solver::ParameterVector parameters, size_t rowGroup, size_t colGroup) const {
+	return parameters(growthGrouping.getNumGroups() + colGrouping.getNumGroups() * rowGroup + colGroup);
+}
+
+Eigen::VectorXd Solver::getCompetitionCoefficientsRow(Solver::ParameterVector parameters, size_t rowGroup) const {
+	return parameters.block(0, growthGrouping.getNumGroups() + colGrouping.getNumGroups() * rowGroup, 1, colGrouping.getNumGroups());
+}
+
 Eigen::MatrixXd Solver::getColGroupedDesign() const {
 	//TODO: Memoise this.
 	Eigen::MatrixXd colGroupedDesign = Eigen::MatrixXd::Zero(data.numObservations, colGrouping.getNumGroups());
