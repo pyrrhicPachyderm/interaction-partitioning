@@ -61,7 +61,8 @@ class Grouping {
 		
 		size_t getNumGroups() {
 			//The number of groups is simply the highest group number seen before or including the final element.
-			return maxGroup[numSpecies - 1];
+			//Plus one, as the groups are zero indexed.
+			return maxGroup[numSpecies - 1] + 1;
 		}
 		
 		//Advances to the next grouping, per lexigraphic order.
