@@ -55,6 +55,10 @@ class Grouping {
 			reset();
 		};
 		
+		size_t getGroup(size_t species) {
+			return group[species];
+		}
+		
 		size_t getNumGroups() {
 			//The number of groups is simply the highest group number seen before or including the final element.
 			return maxGroup[numSpecies - 1];
