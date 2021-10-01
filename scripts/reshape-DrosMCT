@@ -1,0 +1,78 @@
+#!/usr/bin/env Rscript
+suppressPackageStartupMessages(library(optparse))
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tidyr))
+
+##################
+#Argument parsing.
+##################
+
+usage = "%prog [options] INPUT_FILE FOCAL_OUTPUT_FILE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE"
+description = "Takes the TCL_DrosMCT full data frame, and reshapes it into the three files desired by the C++ code.
+Namely, the 0-indexed numerical focal species vector, the response variable vector, and the species density design matrix.
+All are output as tab-separated matrices, without column headers, with vectors in the form column vectors."
+option_list <- list()
+parser <- OptionParser(usage = usage, description=description, option_list=option_list)
+arguments <- parse_args(parser, positional_arguments = 4)
+
+infile <- arguments$args[1]
+focal_outfile <- arguments$args[2]
+response_outfile <- arguments$args[3]
+design_outfile <- arguments$args[4]
+
+attach(arguments$options)
+
+############
+#Reading in.
+############
+
+data <- read.csv(infile)
+
+###################
+#Cleaning the data.
+###################
+
+#We only want the safe samples, not the parasitised ones.
+#The cold ones shouldn'y be in the data, but we want only the hot ones.
+data %<>% filter(Treatment == "Hot Safe")
+
+####################################
+#Extracting the relevant components.
+####################################
+
+species_names <- colnames(data) %>%
+	grep(".*_Nt", ., value=TRUE) %>%
+	sub("(.*)_Nt", "\\1", .)
+
+focal_output <- data[["FocalSpecies"]] %>%
+	match(species_names)
+focal_output <- focal_output - 1 #Make it 0-indexed.
+
+response_output <- data %>%
+	select(ends_with("_Nt")) %>%
+	mutate_all(replace_na, 0) %>%
+	apply(1, sum)
+
+design_output <- data %>%
+	select(ends_with("_0"))
+
+################################
+#Turn the outputs into matrices.
+################################
+
+focal_output %<>% matrix(ncol=1)
+response_output %<>% matrix(ncol=1)
+design_output %<>% as.matrix()
+
+###################
+#Print the outputs.
+###################
+
+print_table <- function(table, outfile) {
+	write.table(table, outfile, row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t")
+}
+
+print_table(focal_output, focal_outfile)
+print_table(response_output, response_outfile)
+print_table(design_output, design_outfile)
