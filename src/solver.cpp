@@ -90,6 +90,8 @@ Solver::Jacobian Solver::getJacobian(ParameterVector parameters) const {
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
 	
+	//Note that this is the Jacobian of the residuals, not of the predicted values.
+	//As such, it is negated, compared to the predicted values.
 	for(size_t obs = 0; obs < data.numObservations; obs++) {
 		size_t focal = data.getFocal()[obs];
 		size_t focalGrowthGroup = growthGrouping.getGroup(focal);
@@ -104,7 +106,7 @@ Solver::Jacobian Solver::getJacobian(ParameterVector parameters) const {
 		//This one will be equal to the prediction, divided by the growth rate itself.
 		double totalCompetition = getCompetitionCoefficientsRow(parameters, focalRowGroup).dot(colGroupedDesign.row(obs));
 		double derivative = focalDensity * (1.0 - totalCompetition);
-		jacobian(obs, getGrowthRateIndex(focalGrowthGroup)) = derivative;
+		jacobian(obs, getGrowthRateIndex(focalGrowthGroup)) = -derivative;
 		
 		//Second, the derivatives with respect to the competition coefficients.
 		//If it's not a competition coefficient *on* the focal species, this is zero.
@@ -112,7 +114,7 @@ Solver::Jacobian Solver::getJacobian(ParameterVector parameters) const {
 		//This will be the negative of the focal growth rate, times the focal density, times the column group density.
 		for(size_t colGroup = 0; colGroup < colGrouping.getNumGroups(); colGroup++) {
 			double derivative = - focalGrowthRate * focalDensity * colGroupedDesign(obs, colGroup);
-			jacobian(obs, getCompetitionCoefficientIndex(focalRowGroup, colGroup)) = derivative;
+			jacobian(obs, getCompetitionCoefficientIndex(focalRowGroup, colGroup)) = -derivative;
 		}
 	}
 	
