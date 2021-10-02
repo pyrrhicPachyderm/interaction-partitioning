@@ -34,7 +34,7 @@ data <- read.csv(infile)
 ###################
 
 #We only want the safe samples, not the parasitised ones.
-#The cold ones shouldn'y be in the data, but we want only the hot ones.
+#The cold ones shouldn't be in the data, but we want only the hot ones.
 data %<>% filter(Treatment == "Hot Safe")
 
 ####################################
