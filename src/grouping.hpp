@@ -23,6 +23,14 @@ class Grouping {
 			maxGroup = std::vector<size_t>(numSpecies, 0);
 		}
 		
+		//Resets to the lexigraphically last grouping.
+		void separate() {
+			for(size_t i = 0; i < numSpecies; i++) {
+				group[i] = i;
+				maxGroup[i] = i;
+			}
+		}
+		
 		//A recursive function to be used in advancing to the lexigraphically nex grouping.
 		//Increments the specified index by one, if it is valid to do, and resets all species after it to group 0.
 		//Recurses on the index to the left if this one cannot be validly incremented.
