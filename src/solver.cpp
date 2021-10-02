@@ -112,7 +112,7 @@ Eigen::VectorXd Solver::getResiduals(ParameterVector parameters) const {
 }
 
 Solver::Jacobian Solver::getJacobian(ParameterVector parameters) const {
-	Solver::Jacobian jacobian = Eigen::MatrixXd::Zero(data.numObservations, parameters.cols());
+	Solver::Jacobian jacobian = Eigen::MatrixXd::Zero(data.numObservations, parameters.size());
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
 	

@@ -23,7 +23,7 @@ class Data {
 			numSpecies(design.cols()), numObservations(design.rows()), focal(focal), response(response), design(design)
 		{
 			assert(focal.size() == numObservations);
-			assert((size_t)response.rows() == numObservations);
+			assert((size_t)response.size() == numObservations);
 		};
 		
 		const std::vector<size_t> &getFocal() const {
