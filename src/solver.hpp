@@ -43,6 +43,8 @@ class Solver {
 		
 		Eigen::VectorXd getPredictions(ParameterVector parameters) const;
 		Eigen::VectorXd getResiduals(ParameterVector parameters) const;
+		
+		Jacobian getJacobian(ParameterVector parameters) const;
 };
 
 #endif
