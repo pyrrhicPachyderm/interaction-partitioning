@@ -16,7 +16,7 @@ class Grouping {
 		//It consists of a cumulative maximum of the group vector.
 		//It is used in finding the next group.
 		std::vector<size_t> maxGroup;
-		
+	public:
 		//Resets to the lexigraphically first grouping.
 		void reset() {
 			group = std::vector<size_t>(numSpecies, 0);
@@ -30,7 +30,7 @@ class Grouping {
 				maxGroup[i] = i;
 			}
 		}
-		
+	protected:
 		//A recursive function to be used in advancing to the lexigraphically nex grouping.
 		//Increments the specified index by one, if it is valid to do, and resets all species after it to group 0.
 		//Recurses on the index to the left if this one cannot be validly incremented.
