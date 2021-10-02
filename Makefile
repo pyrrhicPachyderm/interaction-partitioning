@@ -29,7 +29,7 @@ spellcheck: $(maindoc).tex
 .PHONY: spellcheck
 
 raw_data_file := TCL_DrosMCT/Data/d_both.csv
-processed_data_files := output/focal_vector.data output/response_vector.data output/design_matrix.data
+processed_data_files := output/focal-vector.data output/response-vector.data output/design-matrix.data
 
 $(processed_data_files) &: scripts/reshape-DrosMCT $(raw_data_file)
 	./$< $(raw_data_file) $(processed_data_files)
