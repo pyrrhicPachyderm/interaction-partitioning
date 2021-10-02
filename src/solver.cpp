@@ -1,5 +1,7 @@
 #include "solver.hpp"
 
+#define RELATIVE_TOLERANCE 1e-6
+
 size_t Solver::getGrowthRateIndex(size_t growthGroup) const {
 	return growthGroup;
 }
@@ -57,6 +59,29 @@ Solver::ParameterVector Solver::getInitialParameterValues() const {
 	}
 	
 	return parameters;
+}
+
+Solver::ParameterVector Solver::getParameterTolerances() const {
+	//We need somewhat reasonable guesses for the magnitudes of the growth rates and the competition coefficients.
+	//We will then multiply these by the RELATIVE_TOLERANCE.
+	//For the growth rates, we will use the same guess as for the initial values.
+	double growthRateTolerance = data.getResponse().mean() / data.getDesign().mean() * RELATIVE_TOLERANCE;
+	//For the competition coefficients, we will assume that with all species present at average density, growth halts.
+	//This gives us 1, divided by the square of average density, divided by the number of species.
+	double competitionCoefficientTolerance = 1.0 / pow(data.getResponse().mean(), 2.0) / data.numSpecies * RELATIVE_TOLERANCE;
+	
+	size_t numGrowthRates = growthGrouping.getNumGroups();
+	size_t numCompetitionCoefficients = rowGrouping.getNumGroups() * colGrouping.getNumGroups();
+	
+	Solver::ParameterVector tolerances = Eigen::VectorXd(numGrowthRates + numCompetitionCoefficients);
+	for(size_t i = 0; i < numGrowthRates; i++) {
+		tolerances[i] = growthRateTolerance;
+	}
+	for(size_t i = numGrowthRates; i < numGrowthRates + numCompetitionCoefficients; i++) {
+		tolerances[i] = competitionCoefficientTolerance;
+	}
+	
+	return tolerances;
 }
 
 Eigen::VectorXd Solver::getPredictions(ParameterVector parameters) const {
