@@ -30,9 +30,15 @@ spellcheck: $(maindoc).tex
 
 raw_data_file := TCL_DrosMCT/Data/d_both.csv
 processed_data_files := output/focal-vector.data output/response-vector.data output/design-matrix.data
+test_data_files := output/test-focal-vector.data output/test-response-vector.data output/test-design-matrix.data
 
 $(processed_data_files) &: scripts/reshape-DrosMCT $(raw_data_file)
 	./$< $(raw_data_file) $(processed_data_files)
+
+$(test_data_files) &: scripts/generate-test-data
+	./$< $(test_data_files)
+testdata: $(test_data_files)
+.PHONY: testdata
 
 #Submodules
 bibliography/references.bib reference-styles/authoryear.tex $(raw_data_file) &:

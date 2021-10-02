@@ -1,0 +1,94 @@
+#!/usr/bin/env Rscript
+suppressPackageStartupMessages(library(optparse))
+suppressPackageStartupMessages(library(magrittr))
+
+##################
+#Argument parsing.
+##################
+
+usage = "%prog FOCAL_OUTPUT_FILE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE"
+description = "Generates test data with known parameters, and outputs it in the three files desired by the C++ code.
+Namely, the 0-indexed numerical focal species vector, the response variable vector, and the species density design matrix.
+All are output as tab-separated matrices, without column headers, with vectors in the form column vectors."
+option_list <- list()
+parser <- OptionParser(usage = usage, description=description, option_list=option_list)
+arguments <- parse_args(parser, positional_arguments = 3)
+
+focal_outfile <- arguments$args[1]
+response_outfile <- arguments$args[2]
+design_outfile <- arguments$args[3]
+
+attach(arguments$options)
+
+################################
+#Setting known parameter values.
+################################
+
+growth_rates <- c(
+	5.1, 4.3, 7.6
+)
+
+num_species <- length(growth_rates)
+
+competition_coefficients <- matrix(c(
+	0.0043, 0.0021, 0.0051,
+	0.0086, 0.0091, 0.0013,
+	0.0048, 0.0031, 0.0040
+), nrow=num_species, ncol=num_species, byrow=T)
+
+num_obs <- 100
+
+###############################################
+#Generating the design matrix and focal vector.
+###############################################
+
+mean_density <- 6
+
+design_matrix <- matrix(rpois(num_species * num_obs, mean_density), nrow=num_obs, ncol=num_species)
+
+focal_vector <- sample(1:num_species, num_obs, replace=TRUE)
+
+##############################
+#Generate the response vector.
+##############################
+
+get_predicted_reponse <- function(obs) {
+	focal <- focal_vector[obs]
+	
+	focal_growth_rate <- growth_rates[focal]
+	focal_density <- design_matrix[obs,focal]
+	
+	focal_competition_coefficients <- as.vector(competition_coefficients[focal,])
+	competitor_densities <- as.vector(design_matrix[obs])
+	
+	predicted_response <- focal_growth_rate * focal_density *
+		(1 - sum(focal_competition_coefficients * competitor_densities))
+	return(predicted_response)
+}
+
+predicted_response_vector <- sapply(1:num_obs, get_predicted_reponse)
+
+error_variance <- mean(predicted_response_vector) / 10
+
+response_vector <- predicted_response_vector + rnorm(num_obs, 0, error_variance)
+
+##############################################
+#Turn the outputs into matrices, and finalise.
+##############################################
+
+focal_vector <- focal_vector - 1 #Make it 0-indexed.
+
+focal_vector %<>% matrix(ncol=1)
+response_vector %<>% matrix(ncol=1)
+
+###################
+#Print the outputs.
+###################
+
+print_table <- function(table, outfile) {
+	write.table(table, outfile, row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t")
+}
+
+print_table(focal_vector, focal_outfile)
+print_table(response_vector, response_outfile)
+print_table(design_matrix, design_outfile)
