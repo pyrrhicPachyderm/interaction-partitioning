@@ -1,3 +1,4 @@
+#include "nls.hpp"
 #include "solver.hpp"
 
 #define RELATIVE_TOLERANCE 1e-6
@@ -144,4 +145,10 @@ Solver::Jacobian Solver::getJacobian(ParameterVector parameters) const {
 	}
 	
 	return jacobian;
+}
+
+Solver::ParameterVector Solver::solve() {
+	ResidualsFunc residualsFunc = std::bind(&Solver::getResiduals, this, std::placeholders::_1);
+	JacobianFunc jacobianFunc = std::bind(&Solver::getJacobian, this, std::placeholders::_1);
+	return gaussNewtonNLS(residualsFunc, jacobianFunc, getInitialParameterValues(), getParameterTolerances());
 }
