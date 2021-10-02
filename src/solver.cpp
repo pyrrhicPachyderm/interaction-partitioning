@@ -50,3 +50,29 @@ Solver::ParameterVector Solver::getInitialParameterValues() const {
 	
 	return parameters;
 }
+
+Eigen::VectorXd Solver::getPredictions(ParameterVector parameters) const {
+	Eigen::VectorXd predictions = Eigen::VectorXd::Zero(data.numObservations);
+	
+	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
+	
+	for(size_t obs = 0; obs < data.numObservations; obs++) {
+		size_t focal = data.getFocal()[obs];
+		size_t focalGrowthGroup = growthGrouping.getGroup(focal);
+		size_t focalRowGroup = rowGrouping.getGroup(focal);
+		
+		double focalGrowthRate = getGrowthRate(parameters, focalGrowthGroup);
+		double focalDensity = data.getDesign()(obs, focal);
+		
+		double intrinsicGrowth = focalGrowthRate * focalDensity;
+		double totalCompetition = getCompetitionCoefficientsRow(parameters, focalRowGroup).dot(colGroupedDesign.row(obs));
+		double prediction = intrinsicGrowth * (1.0 - totalCompetition);
+		predictions[obs] = prediction;
+	}
+	
+	return predictions;
+}
+
+Eigen::VectorXd Solver::getResiduals(ParameterVector parameters) const {
+	return data.getResponse() - getPredictions(parameters);
+}

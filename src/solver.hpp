@@ -38,6 +38,9 @@ class Solver {
 		Eigen::MatrixXd getColGroupedDesign() const;
 		
 		ParameterVector getInitialParameterValues() const;
+		
+		Eigen::VectorXd getPredictions(ParameterVector parameters) const;
+		Eigen::VectorXd getResiduals(ParameterVector parameters) const;
 };
 
 #endif
