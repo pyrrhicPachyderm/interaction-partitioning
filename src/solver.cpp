@@ -1,19 +1,27 @@
 #include "solver.hpp"
 
+size_t Solver::getGrowthRateIndex(size_t growthGroup) const {
+	return growthGroup;
+}
+
 double Solver::getGrowthRate(Solver::ParameterVector parameters, size_t growthGroup) const {
-	return parameters(growthGroup);
+	return parameters(getGrowthRateIndex(growthGroup));
 }
 
 Eigen::VectorXd Solver::getGrowthRates(Solver::ParameterVector parameters) const {
-	return parameters.block(0, 0, 1, growthGrouping.getNumGroups());
+	return parameters.block(0, getGrowthRateIndex(0), 1, growthGrouping.getNumGroups());
+}
+
+size_t Solver::getCompetitionCoefficientIndex(size_t rowGroup, size_t colGroup) const {
+	return growthGrouping.getNumGroups() + colGrouping.getNumGroups() * rowGroup + colGroup;
 }
 
 double Solver::getCompetitionCoefficient(Solver::ParameterVector parameters, size_t rowGroup, size_t colGroup) const {
-	return parameters(growthGrouping.getNumGroups() + colGrouping.getNumGroups() * rowGroup + colGroup);
+	return parameters(getCompetitionCoefficientIndex(rowGroup, colGroup));
 }
 
 Eigen::VectorXd Solver::getCompetitionCoefficientsRow(Solver::ParameterVector parameters, size_t rowGroup) const {
-	return parameters.block(0, growthGrouping.getNumGroups() + colGrouping.getNumGroups() * rowGroup, 1, colGrouping.getNumGroups());
+	return parameters.block(0, getCompetitionCoefficientIndex(rowGroup, 0), 1, colGrouping.getNumGroups());
 }
 
 Eigen::MatrixXd Solver::getColGroupedDesign() const {
