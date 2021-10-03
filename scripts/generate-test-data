@@ -59,7 +59,7 @@ get_predicted_reponse <- function(obs) {
 	focal_density <- design_matrix[obs,focal]
 	
 	focal_competition_coefficients <- as.vector(competition_coefficients[focal,])
-	competitor_densities <- as.vector(design_matrix[obs])
+	competitor_densities <- as.vector(design_matrix[obs,])
 	
 	predicted_response <- focal_growth_rate * focal_density *
 		(1 - sum(focal_competition_coefficients * competitor_densities))
