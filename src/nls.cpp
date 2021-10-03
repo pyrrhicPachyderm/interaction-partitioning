@@ -20,6 +20,7 @@ Eigen::VectorXd gaussNewtonNLS(ResidualsFunc residualsFunc, JacobianFunc jacobia
 		Eigen::VectorXd shift = gaussNewtonShift(residualsFunc, jacobianFunc, parameters);
 		Eigen::VectorXd newParameters = parameters - shift;
 		//TODO: Check for divergence, as described on the Wikipedia page.
-		if(checkTolerances(parameters, newParameters, tolerances)) return parameters;
+		if(checkTolerances(parameters, newParameters, tolerances)) return newParameters;
+		parameters = newParameters;
 	}
 }
