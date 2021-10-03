@@ -33,6 +33,9 @@ class Solver {
 		Eigen::MatrixXd colGroupedDesign;
 		bool isDirtyColGroupedDesign = true;
 		
+		ParameterVector solution;
+		bool isDirtySolution = true;
+		
 		size_t getGrowthRateIndex(size_t growthGroup) const;
 		double getGrowthRate(ParameterVector parameters, size_t growthGroup) const;
 		Eigen::VectorXd getGrowthRates(ParameterVector parameters) const;
@@ -50,8 +53,10 @@ class Solver {
 		Eigen::VectorXd getResiduals(ParameterVector parameters);
 		
 		Jacobian getJacobian(ParameterVector parameters);
+		
+		void calculateSolution();
 	public:
-		ParameterVector solve();
+		ParameterVector getSolution();
 };
 
 #endif

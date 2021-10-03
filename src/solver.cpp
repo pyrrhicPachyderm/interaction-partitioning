@@ -151,8 +151,14 @@ Solver::Jacobian Solver::getJacobian(ParameterVector parameters) {
 	return jacobian;
 }
 
-Solver::ParameterVector Solver::solve() {
+void Solver::calculateSolution() {
 	ResidualsFunc residualsFunc = std::bind(&Solver::getResiduals, this, std::placeholders::_1);
 	JacobianFunc jacobianFunc = std::bind(&Solver::getJacobian, this, std::placeholders::_1);
-	return gaussNewtonNLS(residualsFunc, jacobianFunc, getInitialParameterValues(), getParameterTolerances());
+	solution = gaussNewtonNLS(residualsFunc, jacobianFunc, getInitialParameterValues(), getParameterTolerances());
+	isDirtySolution = false;
+}
+
+Solver::ParameterVector Solver::getSolution() {
+	if(isDirtySolution) calculateSolution();
+	return solution;
 }
