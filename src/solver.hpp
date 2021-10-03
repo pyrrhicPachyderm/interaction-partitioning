@@ -30,6 +30,9 @@ class Solver {
 		//a number of columns equal to the number of parameters, as given above.
 		typedef Eigen::MatrixXd Jacobian;
 	protected:
+		Eigen::MatrixXd colGroupedDesign;
+		bool isDirtyColGroupedDesign = true;
+		
 		size_t getGrowthRateIndex(size_t growthGroup) const;
 		double getGrowthRate(ParameterVector parameters, size_t growthGroup) const;
 		Eigen::VectorXd getGrowthRates(ParameterVector parameters) const;
@@ -37,15 +40,16 @@ class Solver {
 		double getCompetitionCoefficient(ParameterVector parameters, size_t rowGroup, size_t colGroup) const;
 		Eigen::VectorXd getCompetitionCoefficientsRow(ParameterVector parameters, size_t rowGroup) const;
 		
-		Eigen::MatrixXd getColGroupedDesign() const;
+		void calculateColGroupedDesign();
+		Eigen::MatrixXd getColGroupedDesign();
 		
 		ParameterVector getInitialParameterValues() const;
 		ParameterVector getParameterTolerances() const;
 		
-		Eigen::VectorXd getPredictions(ParameterVector parameters) const;
-		Eigen::VectorXd getResiduals(ParameterVector parameters) const;
+		Eigen::VectorXd getPredictions(ParameterVector parameters);
+		Eigen::VectorXd getResiduals(ParameterVector parameters);
 		
-		Jacobian getJacobian(ParameterVector parameters) const;
+		Jacobian getJacobian(ParameterVector parameters);
 	public:
 		ParameterVector solve();
 };

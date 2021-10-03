@@ -27,9 +27,8 @@ Eigen::VectorXd Solver::getCompetitionCoefficientsRow(Solver::ParameterVector pa
 	return parameters.segment(getCompetitionCoefficientIndex(rowGroup, 0), colGrouping.getNumGroups());
 }
 
-Eigen::MatrixXd Solver::getColGroupedDesign() const {
-	//TODO: Memoise this.
-	Eigen::MatrixXd colGroupedDesign = Eigen::MatrixXd::Zero(data.numObservations, colGrouping.getNumGroups());
+void Solver::calculateColGroupedDesign() {
+	colGroupedDesign = Eigen::MatrixXd::Zero(data.numObservations, colGrouping.getNumGroups());
 	
 	for(size_t obs = 0; obs < data.numObservations; obs++) {
 		for(size_t sp = 0; sp < data.numSpecies; sp++) {
@@ -37,6 +36,11 @@ Eigen::MatrixXd Solver::getColGroupedDesign() const {
 		}
 	}
 	
+	isDirtyColGroupedDesign = false;
+}
+
+Eigen::MatrixXd Solver::getColGroupedDesign() {
+	if(isDirtyColGroupedDesign) calculateColGroupedDesign();
 	return colGroupedDesign;
 }
 
@@ -85,7 +89,7 @@ Solver::ParameterVector Solver::getParameterTolerances() const {
 	return tolerances;
 }
 
-Eigen::VectorXd Solver::getPredictions(ParameterVector parameters) const {
+Eigen::VectorXd Solver::getPredictions(ParameterVector parameters) {
 	Eigen::VectorXd predictions = Eigen::VectorXd::Zero(data.numObservations);
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
@@ -107,11 +111,11 @@ Eigen::VectorXd Solver::getPredictions(ParameterVector parameters) const {
 	return predictions;
 }
 
-Eigen::VectorXd Solver::getResiduals(ParameterVector parameters) const {
+Eigen::VectorXd Solver::getResiduals(ParameterVector parameters) {
 	return data.getResponse() - getPredictions(parameters);
 }
 
-Solver::Jacobian Solver::getJacobian(ParameterVector parameters) const {
+Solver::Jacobian Solver::getJacobian(ParameterVector parameters) {
 	Solver::Jacobian jacobian = Eigen::MatrixXd::Zero(data.numObservations, parameters.size());
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
