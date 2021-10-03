@@ -162,3 +162,29 @@ Solver::ParameterVector Solver::getSolution() {
 	if(isDirtySolution) calculateSolution();
 	return solution;
 }
+
+double Solver::getAIC() {
+	ParameterVector parameters = getSolution();
+	Eigen::VectorXd residuals = getResiduals(parameters);
+	double sumOfSquares = residuals.dot(residuals);
+	
+	//First, we must estimate the variance of the residuals.
+	//They should already be centred around zero, so we shouldn't need to subtract the mean.
+	//TODO: Double-check that this is the correct formula and degrees of freedom.
+	double variance = sumOfSquares / (residuals.size() - parameters.size());
+	
+	//The likelihood is the product of the likelihoods for each residual.
+	//So the log likelihood is the sum of log likelihoods.
+	//The likelihood for a given data point (noting that these are reisudals, so the mean is zero) is:
+	//(2 * pi * variance) ^ (-1/2) * exp(-1/2 * residual^2 / variance)
+	//So the log likelihood is:
+	//-1/2 * log(2 * pi * variance) - 1/2 * residual^2 / variance
+	//And the total log likehood is just the sum of these.
+	//Note that, for AIC, we will be using twice the negative log likelihood.
+	//This cancels the factor of -1/2.
+	double twiceNegativeLogLikelihood = residuals.size() * log(2 * M_PI * variance) + sumOfSquares / variance;
+	
+	double aic = 2 * parameters.size() + twiceNegativeLogLikelihood;
+	
+	return aic;
+}
