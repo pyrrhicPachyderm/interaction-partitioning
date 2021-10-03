@@ -38,6 +38,22 @@ class Solver {
 		ParameterVector solution;
 		bool isDirtySolution = true;
 		
+		//Functions to say that particular elements have changed and mark appropriate things as dirty.
+		void dirtyData() {
+			isDirtySolution = true;
+			isDirtyColGroupedDesign = true;
+		}
+		void dirtyGrowthGrouping() {
+			isDirtySolution = true;
+		}
+		void dirtyRowGrouping() {
+			isDirtySolution = true;
+		}
+		void dirtyColGrouping() {
+			isDirtySolution = true;
+			isDirtyColGroupedDesign = true;
+		}
+		
 		size_t getGrowthRateIndex(size_t growthGroup) const;
 		double getGrowthRate(ParameterVector parameters, size_t growthGroup) const;
 		Eigen::VectorXd getGrowthRates(ParameterVector parameters) const;
