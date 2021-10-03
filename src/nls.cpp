@@ -2,7 +2,7 @@
 #include "nls.hpp"
 
 static bool checkTolerances(Eigen::VectorXd oldParameters, Eigen::VectorXd newParameters, Eigen::VectorXd tolerances) {
-	for(size_t i = 0; i < (size_t)tolerances.cols(); i++) {
+	for(size_t i = 0; i < (size_t)tolerances.size(); i++) {
 		if(abs(newParameters[i] - oldParameters[i]) > tolerances[i]) return false;
 	}
 	return true;
