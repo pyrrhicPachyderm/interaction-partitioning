@@ -28,25 +28,25 @@ template<typename T> class OutputColumn {
 			return column.size();
 		}
 		
-		void printHeader(std::ostream stream) const;
+		void printHeader(std::ostream &stream) const;
 		
-		void printElement(std::ostream stream, size_t index) const;
+		void printElement(std::ostream &stream, size_t index) const;
 };
 
 //The following functions use a template parameter pack.
 //It's impractical to explicitly instantiate this, so alas it must live in the header file.
 
-template<class T, class... OutputColumnTs> void outputTableHeader(std::ostream stream, OutputColumn<T> column, OutputColumnTs... columns) {
+template<class T, class... OutputColumnTs> void outputTableHeader(std::ostream &stream, OutputColumn<T> column, OutputColumnTs... columns) {
 	column.printHeader(stream);
-	if(sizeof...(columns) > 0) {
+	if constexpr(sizeof...(columns) > 0) {
 		stream << OUTPUT_TABLE_SEPARATOR;
 		outputTableHeader(stream, columns...);
 	}
 }
 
-template<class T, class... OutputColumnTs> void outputTableRow(std::ostream stream, size_t row, OutputColumn<T> column, OutputColumnTs... columns) {
+template<class T, class... OutputColumnTs> void outputTableRow(std::ostream &stream, size_t row, OutputColumn<T> column, OutputColumnTs... columns) {
 	column.printElement(stream, row);
-	if(sizeof...(columns) > 0) {
+	if constexpr(sizeof...(columns) > 0) {
 		stream << OUTPUT_TABLE_SEPARATOR;
 		outputTableRow(stream, row, columns...);
 	}

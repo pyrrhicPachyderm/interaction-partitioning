@@ -68,6 +68,17 @@ class Solver {
 			dirtyColGrouping();
 			return (colGrouping.*updateFunc)();
 		}
+		
+		//Functions to retrieve groupings.
+		Grouping getGrowthGrouping() const {
+			return growthGrouping;
+		}
+		Grouping getRowGrouping() const {
+			return rowGrouping;
+		}
+		Grouping getColGrouping() const {
+			return colGrouping;
+		}
 	protected:
 		size_t getGrowthRateIndex(size_t growthGroup) const;
 		double getGrowthRate(ParameterVector parameters, size_t growthGroup) const;

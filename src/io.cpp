@@ -17,6 +17,10 @@ template<typename StreamT> StreamT openFile(const char *filename) {
 	return file;
 }
 
+//Explicitly instantiate the template function openFile.
+template std::ifstream openFile(const char *filename);
+template std::ofstream openFile(const char *filename);
+
 //////////////////
 //Input functions.
 //////////////////
@@ -73,11 +77,11 @@ Eigen::MatrixXd readDoubleMatrix(const char *filename) {
 //Output functions.
 ///////////////////
 
-template<typename T> void OutputColumn<T>::printHeader(std::ostream stream) const {
+template<typename T> void OutputColumn<T>::printHeader(std::ostream &stream) const {
 	stream << name;
 }
 
-template<> void OutputColumn<Grouping>::printHeader(std::ostream stream) const {
+template<> void OutputColumn<Grouping>::printHeader(std::ostream &stream) const {
 	//We need to know the number of species in a grouping to print the appropriate number of headers.
 	//We will assume all groupings in the vector have the same number of species.
 	//So we will just check the first.
@@ -94,11 +98,11 @@ template<> void OutputColumn<Grouping>::printHeader(std::ostream stream) const {
 	}
 }
 
-template<typename T> void OutputColumn<T>::printElement(std::ostream stream, size_t index) const {
+template<typename T> void OutputColumn<T>::printElement(std::ostream &stream, size_t index) const {
 	stream << column[index];
 }
 
-template<> void OutputColumn<Grouping>::printElement(std::ostream stream, size_t index) const {
+template<> void OutputColumn<Grouping>::printElement(std::ostream &stream, size_t index) const {
 	size_t numSpecies = column[index].numSpecies;
 	for(size_t i = 0; i < numSpecies; i++) {
 		stream << column[index].getGroup(i);
