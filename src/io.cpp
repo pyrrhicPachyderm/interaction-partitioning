@@ -7,8 +7,8 @@
 
 const char *OUTPUT_TABLE_SEPARATOR = "\t";
 
-template<typename StreamT> StreamT openFile(const char *filename) {
-	StreamT file;
+template<typename StreamT> static StreamT &openFile(const char *filename) {
+	StreamT &file = *(new StreamT);
 	file.open(filename);
 	if(!file) {
 		fprintf(stderr, "Could not open file %s\n", filename);
@@ -17,9 +17,15 @@ template<typename StreamT> StreamT openFile(const char *filename) {
 	return file;
 }
 
-//Explicitly instantiate the template function openFile.
-template std::ifstream openFile(const char *filename);
-template std::ofstream openFile(const char *filename);
+std::istream &openInput(const char *filename) {
+	if(strcmp(filename, "-") == 0) return std::cin;
+	return openFile<std::ifstream>(filename);
+}
+
+std::ostream &openOutput(const char *filename) {
+	if(strcmp(filename, "-") == 0) return std::cout;
+	return openFile<std::ofstream>(filename);
+}
 
 //////////////////
 //Input functions.
@@ -28,7 +34,7 @@ template std::ofstream openFile(const char *filename);
 //Set numCols to 0 for a dynamically sized matrix.
 //In this case, the number of columns is returned through numCols.
 template<typename T> static std::vector<T> readMatrix(const char *filename, size_t *numCols) {
-	std::ifstream file = openFile<std::ifstream>(filename);
+	std::istream &file = openInput(filename);
 	
 	std::vector<T> result;
 	
@@ -45,8 +51,6 @@ template<typename T> static std::vector<T> readMatrix(const char *filename, size
 			result.insert(result.end(), line.begin(), line.end());
 		}
 	}
-	
-	file.close();
 	
 	return result;
 }

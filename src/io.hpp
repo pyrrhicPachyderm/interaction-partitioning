@@ -2,12 +2,13 @@
 #define IO_HPP
 
 #include <vector>
-#include <fstream>
+#include <iostream>
 #include <Eigen/Core>
 
 extern const char *OUTPUT_TABLE_SEPARATOR;
 
-template<typename StreamT> StreamT openFile(const char *filename);
+std::istream &openInput(const char *filename);
+std::ostream &openOutput(const char *filename);
 
 extern std::vector<size_t> readIndexVector(const char *filename);
 extern Eigen::VectorXd readDoubleVector(const char *filename);
@@ -57,7 +58,7 @@ template<class T, class... OutputColumnTs> void outputTable(const char *filename
 	//TODO: Improve this.
 	size_t numRows = column.getLength();
 	
-	std::ofstream stream = openFile<std::ofstream>(filename);
+	std::ostream &stream = openOutput(filename);
 	
 	outputTableHeader(stream, column, columns...);
 	stream << std::endl;
@@ -66,8 +67,6 @@ template<class T, class... OutputColumnTs> void outputTable(const char *filename
 		outputTableRow(stream, row, column, columns...);
 		stream << std::endl;
 	}
-	
-	stream.close();
 }
 
 #endif
