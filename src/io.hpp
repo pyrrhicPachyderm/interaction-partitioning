@@ -61,12 +61,14 @@ template<class T, class... OutputColumnTs> void outputTable(const char *filename
 	std::ostream &stream = openOutput(filename);
 	
 	outputTableHeader(stream, column, columns...);
-	stream << std::endl;
+	stream << "\n";
 	
 	for(size_t row = 0; row < numRows; row++) {
 		outputTableRow(stream, row, column, columns...);
-		stream << std::endl;
+		stream << "\n";
 	}
+	
+	stream.flush();
 }
 
 #endif
