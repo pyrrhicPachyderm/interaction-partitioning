@@ -53,7 +53,22 @@ class Solver {
 			isDirtySolution = true;
 			isDirtyColGroupedDesign = true;
 		}
-		
+	public:
+		//Functions to update groupings.
+		//Can use reset(), separate(), or advance().
+		template<typename T> T updateGrowthGrouping(T (Grouping::*updateFunc)()) {
+			dirtyGrowthGrouping();
+			return (growthGrouping.*updateFunc)();
+		}
+		template<typename T> T updateRowGrouping(T (Grouping::*updateFunc)()) {
+			dirtyRowGrouping();
+			return (rowGrouping.*updateFunc)();
+		}
+		template<typename T> T updateColGrouping(T (Grouping::*updateFunc)()) {
+			dirtyColGrouping();
+			return (colGrouping.*updateFunc)();
+		}
+	protected:
 		size_t getGrowthRateIndex(size_t growthGroup) const;
 		double getGrowthRate(ParameterVector parameters, size_t growthGroup) const;
 		Eigen::VectorXd getGrowthRates(ParameterVector parameters) const;
