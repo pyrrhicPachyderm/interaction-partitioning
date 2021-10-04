@@ -15,8 +15,7 @@ template<typename StreamT> static StreamT openFile(const char *filename) {
 }
 
 //Set numCols to 0 for a dynamically sized matrix.
-//In which, the number of columns is returned through numCols.
-//Returns the number of columns through the numCols variable.
+//In this case, the number of columns is returned through numCols.
 template<typename T> static std::vector<T> readMatrix(const char *filename, size_t *numCols) {
 	std::ifstream file = openFile<std::ifstream>(filename);
 	
