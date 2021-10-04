@@ -11,6 +11,8 @@ class Solver {
 		Grouping rowGrouping;
 		Grouping colGrouping;
 	public:
+		Solver(Data data):
+			data(data), growthGrouping(Grouping(data.numSpecies)), rowGrouping(Grouping(data.numSpecies)), colGrouping(Grouping(data.numSpecies)) {};
 		Solver(Data data, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping):
 			data(data), growthGrouping(growthGrouping), rowGrouping(rowGrouping), colGrouping(colGrouping)
 		{
