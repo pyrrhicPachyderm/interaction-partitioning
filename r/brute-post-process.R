@@ -14,6 +14,10 @@ validate_data <- function(data, species_names) {
 	}
 }
 
+get_num_species <- function(data) {
+	length(grep("row_group", names(data)))
+}
+
 get_grouping <- function(data, index, grouping_prefix) {
 	as.vector(as.matrix(data[index, grep(grouping_prefix, names(data))]))
 }
