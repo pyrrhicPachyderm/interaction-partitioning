@@ -37,7 +37,7 @@ template<typename T> class OutputColumn {
 //The following functions use a template parameter pack.
 //It's impractical to explicitly instantiate this, so alas it must live in the header file.
 
-template<class T, class... OutputColumnTs> void outputTableHeader(std::ostream &stream, OutputColumn<T> column, OutputColumnTs... columns) {
+template<class T, class... OutputColumnTs> void outputTableHeader(std::ostream &stream, const OutputColumn<T>& column, const OutputColumnTs&... columns) {
 	column.printHeader(stream);
 	if constexpr(sizeof...(columns) > 0) {
 		stream << OUTPUT_TABLE_SEPARATOR;
@@ -45,7 +45,7 @@ template<class T, class... OutputColumnTs> void outputTableHeader(std::ostream &
 	}
 }
 
-template<class T, class... OutputColumnTs> void outputTableRow(std::ostream &stream, size_t row, OutputColumn<T> column, OutputColumnTs... columns) {
+template<class T, class... OutputColumnTs> void outputTableRow(std::ostream &stream, size_t row, const OutputColumn<T>& column, const OutputColumnTs&... columns) {
 	column.printElement(stream, row);
 	if constexpr(sizeof...(columns) > 0) {
 		stream << OUTPUT_TABLE_SEPARATOR;
@@ -53,7 +53,7 @@ template<class T, class... OutputColumnTs> void outputTableRow(std::ostream &str
 	}
 }
 
-template<class T, class... OutputColumnTs> void outputTable(const char *filename, OutputColumn<T> column, OutputColumnTs... columns) {
+template<class T, class... OutputColumnTs> void outputTable(const char *filename, const OutputColumn<T>& column, const OutputColumnTs&... columns) {
 	//We can't really iterate over the columns to check they're all the same length, so we're just going to assume.
 	//TODO: Improve this.
 	size_t numRows = column.getLength();
