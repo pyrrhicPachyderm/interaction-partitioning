@@ -7,11 +7,11 @@ size_t Solver::getGrowthRateIndex(size_t growthGroup) const {
 	return growthGroup;
 }
 
-double Solver::getGrowthRate(Solver::ParameterVector parameters, size_t growthGroup) const {
+double Solver::getGrowthRate(const Solver::ParameterVector &parameters, size_t growthGroup) const {
 	return parameters(getGrowthRateIndex(growthGroup));
 }
 
-Eigen::VectorXd Solver::getGrowthRates(Solver::ParameterVector parameters) const {
+Eigen::VectorXd Solver::getGrowthRates(const Solver::ParameterVector &parameters) const {
 	return parameters.segment(getGrowthRateIndex(0), growthGrouping.getNumGroups());
 }
 
@@ -19,11 +19,11 @@ size_t Solver::getCompetitionCoefficientIndex(size_t rowGroup, size_t colGroup) 
 	return growthGrouping.getNumGroups() + colGrouping.getNumGroups() * rowGroup + colGroup;
 }
 
-double Solver::getCompetitionCoefficient(Solver::ParameterVector parameters, size_t rowGroup, size_t colGroup) const {
+double Solver::getCompetitionCoefficient(const Solver::ParameterVector &parameters, size_t rowGroup, size_t colGroup) const {
 	return parameters(getCompetitionCoefficientIndex(rowGroup, colGroup));
 }
 
-Eigen::VectorXd Solver::getCompetitionCoefficientsRow(Solver::ParameterVector parameters, size_t rowGroup) const {
+Eigen::VectorXd Solver::getCompetitionCoefficientsRow(const Solver::ParameterVector &parameters, size_t rowGroup) const {
 	return parameters.segment(getCompetitionCoefficientIndex(rowGroup, 0), colGrouping.getNumGroups());
 }
 
@@ -89,7 +89,7 @@ Solver::ParameterVector Solver::getParameterTolerances() const {
 	return tolerances;
 }
 
-Eigen::VectorXd Solver::getPredictions(ParameterVector parameters) {
+Eigen::VectorXd Solver::getPredictions(const ParameterVector &parameters) {
 	Eigen::VectorXd predictions = Eigen::VectorXd::Zero(data.numObservations);
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
@@ -111,11 +111,11 @@ Eigen::VectorXd Solver::getPredictions(ParameterVector parameters) {
 	return predictions;
 }
 
-Eigen::VectorXd Solver::getResiduals(ParameterVector parameters) {
+Eigen::VectorXd Solver::getResiduals(const ParameterVector &parameters) {
 	return data.getResponse() - getPredictions(parameters);
 }
 
-Solver::Jacobian Solver::getJacobian(ParameterVector parameters) {
+Solver::Jacobian Solver::getJacobian(const ParameterVector &parameters) {
 	Solver::Jacobian jacobian = Eigen::MatrixXd::Zero(data.numObservations, parameters.size());
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();

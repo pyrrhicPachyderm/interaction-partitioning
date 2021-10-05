@@ -81,11 +81,11 @@ class Solver {
 		}
 	protected:
 		size_t getGrowthRateIndex(size_t growthGroup) const;
-		double getGrowthRate(ParameterVector parameters, size_t growthGroup) const;
-		Eigen::VectorXd getGrowthRates(ParameterVector parameters) const;
+		double getGrowthRate(const ParameterVector &parameters, size_t growthGroup) const;
+		Eigen::VectorXd getGrowthRates(const ParameterVector &parameters) const;
 		size_t getCompetitionCoefficientIndex(size_t rowGroup, size_t colGroup) const;
-		double getCompetitionCoefficient(ParameterVector parameters, size_t rowGroup, size_t colGroup) const;
-		Eigen::VectorXd getCompetitionCoefficientsRow(ParameterVector parameters, size_t rowGroup) const;
+		double getCompetitionCoefficient(const ParameterVector &parameters, size_t rowGroup, size_t colGroup) const;
+		Eigen::VectorXd getCompetitionCoefficientsRow(const ParameterVector &parameters, size_t rowGroup) const;
 		
 		void calculateColGroupedDesign();
 		Eigen::MatrixXd getColGroupedDesign();
@@ -93,10 +93,10 @@ class Solver {
 		ParameterVector getInitialParameterValues() const;
 		ParameterVector getParameterTolerances() const;
 		
-		Eigen::VectorXd getPredictions(ParameterVector parameters);
-		Eigen::VectorXd getResiduals(ParameterVector parameters);
+		Eigen::VectorXd getPredictions(const ParameterVector &parameters);
+		Eigen::VectorXd getResiduals(const ParameterVector &parameters);
 		
-		Jacobian getJacobian(ParameterVector parameters);
+		Jacobian getJacobian(const ParameterVector &parameters);
 		
 		void calculateSolution();
 	public:
