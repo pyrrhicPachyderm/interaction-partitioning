@@ -21,8 +21,9 @@ BruteData <- R6::R6Class("BruteData",
 			private$validate_data(data_table, self$num_species)
 			
 			#Extract the groupings and other data.
-			self$row_groupings <- data_table[,grep("row_group", names(data_table))]
-			self$col_groupings <- data_table[,grep("col_group", names(data_table))]
+			#Add one to the groupings to make them 1-indexed, as R prefers.
+			self$row_groupings <- data_table[,grep("row_group", names(data_table))] + 1
+			self$col_groupings <- data_table[,grep("col_group", names(data_table))] + 1
 			names(self$row_groupings) <- species_names
 			names(self$col_groupings) <- species_names
 			self$statistics <- data_table[,grep("row_group|col_group", names(data_table), invert=TRUE)]
