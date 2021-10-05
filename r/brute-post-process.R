@@ -67,6 +67,24 @@ BruteData <- R6::R6Class("BruteData",
 			row_matches <- private$match_grouping(row_grouping, self$row_groupings)
 			col_matches <- private$match_grouping(col_grouping, self$col_groupings)
 			return(self$statistics[intersect(row_matches, col_matches),])
+		},
+		
+		get_coclassification_matrix = function(grouping_table, index) {
+			#Returns a binary matrix of whether two species are grouped together in a given row a grouping table.
+			grouping <- as.vector(as.matrix(grouping_table[index,]))
+			mat <- as.matrix(sapply(grouping, function(group) {
+				return(grouping == group)
+			}))
+			return(mat)
+		},
+		
+		get_weighted_coclassification_matrix = function(grouping_table) {
+			#Returns a coclassification matrix, as above, weighted by AIC weights.
+			weights <- information_criterion_weights(self$statistics$aic)
+			weighted_matrices <- lapply(1:nrow(grouping_table), function(i) {
+				return(private$get_coclassification_matrix(grouping_table, i) * weights[i])
+			})
+			return(Reduce("+", weighted_matrices))
 		}
 	),
 	
@@ -78,6 +96,13 @@ BruteData <- R6::R6Class("BruteData",
 		fully_separated_statistics = function() {
 			grouping <- 1:self$num_species
 			return(private$get_statistics_row(grouping, grouping))
+		},
+		
+		weighted_row_coclassification_matrix = function() {
+			return(private$get_weighted_coclassification_matrix(self$row_groupings))
+		},
+		weighted_col_coclassification_matrix = function() {
+			return(private$get_weighted_coclassification_matrix(self$col_groupings))
 		}
 	)
 )
