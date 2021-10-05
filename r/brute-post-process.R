@@ -76,6 +76,14 @@ BruteData <- R6::R6Class("BruteData",
 			return(self$statistics[intersect(row_matches, col_matches),])
 		},
 		
+		match_groupings = function(grouping_table_1, grouping_table_2) {
+			#Returns the indices at which the rows of the two grouping tables are equivalent.
+			rowwise_match <- sapply(1:nrow(grouping_table_1), function(i) {
+				return(all(as.vector(as.matrix(grouping_table_1[i,])) == as.vector(as.matrix(grouping_table_2[i,]))))
+			})
+			return(rowwise_match)
+		},
+		
 		annotate_matrix = function(mat) {
 			#Annotates a num_species by num_species matrix with the species names.
 			rownames(mat) <- self$species_names
@@ -103,6 +111,10 @@ BruteData <- R6::R6Class("BruteData",
 	),
 	
 	active = list(
+		equivalently_grouped_statistics = function() {
+			#Where the row grouping is the same as the column grouping.
+			return(self$statistics[private$match_groupings(self$row_groupings,self$col_groupings),])
+		},
 		fully_grouped_statistics = function() {
 			grouping <- rep(1, self$num_species)
 			return(private$get_statistics_row(grouping, grouping))
