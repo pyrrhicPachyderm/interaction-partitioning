@@ -57,6 +57,8 @@ brutetest: src/brute.out $(test_data_files)
 	./$< $(test_data_files) -
 .PHONY: brutetest
 
+article.tex: r/brute-post-process.R
+
 #Submodules
 bibliography/references.bib reference-styles/authoryear.tex $(raw_data_file) &:
 	git submodule update --init

@@ -27,6 +27,7 @@
 		"D. simulans",
 		"D. sulfurigaster"
 	)
+	source("r/brute-post-process.R")
 @
 
 \begin{document}
