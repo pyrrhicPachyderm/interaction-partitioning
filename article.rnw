@@ -19,6 +19,14 @@
 
 <<include=FALSE>>=
 	brute_data <- read.table("output/brute.data", header=TRUE)
+	species_names <- c(
+		"D. birchii",
+		"D. pallidifrons",
+		"D. pandora",
+		"D. pseudoananassae",
+		"D. simulans",
+		"D. sulfurigaster"
+	)
 @
 
 \begin{document}
