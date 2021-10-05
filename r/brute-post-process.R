@@ -69,6 +69,13 @@ BruteData <- R6::R6Class("BruteData",
 			return(self$statistics[intersect(row_matches, col_matches),])
 		},
 		
+		annotate_matrix = function(mat) {
+			#Annotates a num_species by num_species matrix with the species names.
+			rownames(mat) <- self$species_names
+			colnames(mat) <- self$species_names
+			return(mat)
+		},
+		
 		get_coclassification_matrix = function(grouping_table, index) {
 			#Returns a binary matrix of whether two species are grouped together in a given row a grouping table.
 			grouping <- as.vector(as.matrix(grouping_table[index,]))
@@ -99,10 +106,10 @@ BruteData <- R6::R6Class("BruteData",
 		},
 		
 		weighted_row_coclassification_matrix = function() {
-			return(private$get_weighted_coclassification_matrix(self$row_groupings))
+			return(private$annotate_matrix(private$get_weighted_coclassification_matrix(self$row_groupings)))
 		},
 		weighted_col_coclassification_matrix = function() {
-			return(private$get_weighted_coclassification_matrix(self$col_groupings))
+			return(private$annotate_matrix(private$get_weighted_coclassification_matrix(self$col_groupings)))
 		}
 	)
 )
