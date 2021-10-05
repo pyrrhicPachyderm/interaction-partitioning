@@ -61,6 +61,9 @@ brutetest: src/brute.out $(test_data_files)
 bibliography/references.bib reference-styles/authoryear.tex $(raw_data_file) &:
 	git submodule update --init
 
+#Secondary with no targets prevents deletion of intermediate files.
+.SECONDARY:
+
 ##########################################################################################################
 #Stuff for making C/C++ files. Making extensive use of Peter Miller's "Recursive Make Considered Harmful".
 ##########################################################################################################
