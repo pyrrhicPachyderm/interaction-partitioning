@@ -17,3 +17,5 @@ output/*
 !output/.gitignore
 
 *-dedented.rnw
+#Some .tex files are generated from rnw files.
+article.tex

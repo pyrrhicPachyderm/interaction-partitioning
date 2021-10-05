@@ -1,0 +1,25 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{import}
+
+%Referencing
+\import{reference-styles/}{authoryear.tex}
+\addbibresource{bibliography/references.bib}
+\usepackage{placeins} %Provides \FloatBarrier
+
+\usepackage{hyperref}
+
+%Title Page
+\title{Regularising Lotka--Volterra Interaction Matrices by Species Grouping}
+\author{
+	Christopher R. P. Brown
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\FloatBarrier
+\printbibliography
+\end{document}
