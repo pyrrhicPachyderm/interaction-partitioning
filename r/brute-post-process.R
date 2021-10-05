@@ -13,3 +13,10 @@ validate_data <- function(data, species_names) {
 		stop("Data frame has the wrong number of species.")
 	}
 }
+
+get_grouping <- function(data, index, grouping_prefix) {
+	as.vector(as.matrix(data[index, grep(grouping_prefix, names(data))]))
+}
+
+get_row_grouping <- function(data, index) {get_grouping(data, index, "row_group")}
+get_col_grouping <- function(data, index) {get_grouping(data, index, "col_group")}
