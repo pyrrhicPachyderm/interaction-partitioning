@@ -103,6 +103,7 @@ class Solver {
 		ParameterVector getSolution();
 		double getDeviance();
 		double getAIC();
+		double getR2();
 };
 
 #endif

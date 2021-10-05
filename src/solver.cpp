@@ -197,3 +197,17 @@ double Solver::getAIC() {
 	
 	return aic;
 }
+
+double Solver::getR2() {
+	//Returns R^2, the coefficient of determination.
+	
+	Eigen::VectorXd response = data.getResponse();
+	Eigen::VectorXd normalisedResponse = response - Eigen::VectorXd::Constant(response.size(), response.mean());
+	double totalSS = normalisedResponse.dot(normalisedResponse);
+	
+	ParameterVector parameters = getSolution();
+	Eigen::VectorXd residuals = getResiduals(parameters);
+	double residualSS = residuals.dot(residuals);
+	
+	return 1.0 - (residualSS / totalSS);
+}
