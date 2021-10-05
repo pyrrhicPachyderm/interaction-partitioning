@@ -35,6 +35,9 @@ BruteData <- R6::R6Class("BruteData",
 			names(self$row_groupings) <- species_names
 			names(self$col_groupings) <- species_names
 			self$statistics <- data_table[,grep("row_group|col_group", names(data_table), invert=TRUE)]
+			
+			#Add additional columns of statistics.
+			if(!is.null(self$statistics$aic)) private$add_aic_weights()
 		}
 	),
 	
@@ -47,6 +50,10 @@ BruteData <- R6::R6Class("BruteData",
 			) {
 				stop("Data table has the wrong number of species.")
 			}
+		},
+		
+		add_aic_weights = function() {
+			self$statistics$aic_weight <- information_criterion_weights(self$statistics$aic)
 		},
 		
 		match_grouping = function(desired_grouping, grouping_table) {
@@ -87,7 +94,7 @@ BruteData <- R6::R6Class("BruteData",
 		
 		get_weighted_coclassification_matrix = function(grouping_table) {
 			#Returns a coclassification matrix, as above, weighted by AIC weights.
-			weights <- information_criterion_weights(self$statistics$aic)
+			weights <- self$statistics$aic_weight
 			weighted_matrices <- lapply(1:nrow(grouping_table), function(i) {
 				return(private$get_coclassification_matrix(grouping_table, i) * weights[i])
 			})
