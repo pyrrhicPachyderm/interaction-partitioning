@@ -18,17 +18,18 @@
 \date{}
 
 <<include=FALSE>>=
-	brute_data <- read.table("output/brute.data", header=TRUE)
-	species_names <- c(
-		"D. birchii",
-		"D. pallidifrons",
-		"D. pandora",
-		"D. pseudoananassae",
-		"D. simulans",
-		"D. sulfurigaster"
-	)
 	source("r/brute-post-process.R")
-	validate_data(brute_data, species_names)
+	brute_data <- BruteData$new(
+		"output/brute.data",
+		c(
+			"D. birchii",
+			"D. pallidifrons",
+			"D. pandora",
+			"D. pseudoananassae",
+			"D. simulans",
+			"D. sulfurigaster"
+		)
+	)
 @
 
 \begin{document}
