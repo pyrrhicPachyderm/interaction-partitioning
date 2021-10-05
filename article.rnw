@@ -17,6 +17,10 @@
 }
 \date{}
 
+<<include=FALSE>>=
+	brute_data <- read.table("output/brute.data", header=TRUE)
+@
+
 \begin{document}
 \maketitle
 

@@ -46,6 +46,8 @@ $(processed_data_files) &: scripts/reshape-DrosMCT $(raw_data_file)
 $(output_file): src/brute.out $(processed_data_files)
 	./$< $(processed_data_files) $@
 
+article.tex: $(output_file)
+
 $(test_data_files) &: scripts/generate-test-data
 	./$< $(test_data_files)
 testdata: $(test_data_files)
