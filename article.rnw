@@ -28,6 +28,7 @@
 		"D. sulfurigaster"
 	)
 	source("r/brute-post-process.R")
+	validate_data(brute_data, species_names)
 @
 
 \begin{document}
