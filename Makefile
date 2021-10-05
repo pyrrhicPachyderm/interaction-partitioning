@@ -2,13 +2,19 @@ SHELL := /bin/bash
 LATEXMK_FLAGS = --pdf --cd
 RM := rm -f
 
-maindoc := proposal
+doc_raws := proposal.tex
 supporting_tex_files := bibliography/references.bib reference-styles/authoryear.tex
 
-all: $(maindoc).pdf
+doc_pdfs := $(patsubst %.tex,%.pdf,$(patsubst %.rnw,%.pdf,$(doc_raws)))
+
+all: $(doc_pdfs)
 .PHONY: all
 
-$(maindoc).pdf: $(maindoc).tex $(supporting_tex_files)
+%-dedented.rnw: dedent-noweb %.rnw
+	./$< <$(word 2,$^) >$@
+%.tex: %-dedented.rnw
+	R -e 'library(knitr);knit("$<","$@")'
+%.pdf: %.tex $(supporting_tex_files)
 	latexmk $(LATEXMK_FLAGS) --jobname="$(basename $@)" $<
 
 clean:
@@ -18,11 +24,11 @@ clean:
 		$(RM) **/*.out **/*.bbl **/*.bcf **/*.blg **/*.run.xml;\
 		$(RM) **/*.o **/*.d **/*.out;\
 	)
-	@$(RM) $(maindoc).pdf
+	@$(RM) $(doc_pdfs)
 	@$(RM) output/*
 .PHONY: clean
 
-spellcheck: $(maindoc).tex
+spellcheck: $(doc_raws)
 	@for file in $^; do \
 		aspell check --per-conf=./aspell.conf "$$file" ;\
 	done
