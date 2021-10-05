@@ -101,6 +101,7 @@ class Solver {
 		void calculateSolution();
 	public:
 		ParameterVector getSolution();
+		double getDeviance();
 		double getAIC();
 };
 

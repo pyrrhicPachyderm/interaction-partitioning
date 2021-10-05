@@ -163,7 +163,9 @@ Solver::ParameterVector Solver::getSolution() {
 	return solution;
 }
 
-double Solver::getAIC() {
+double Solver::getDeviance() {
+	//Returns the deviance.
+	//That is, the negative of twice the log likelihood.
 	ParameterVector parameters = getSolution();
 	Eigen::VectorXd residuals = getResiduals(parameters);
 	double sumOfSquares = residuals.dot(residuals);
@@ -180,11 +182,18 @@ double Solver::getAIC() {
 	//So the log likelihood is:
 	//-1/2 * log(2 * pi * variance) - 1/2 * residual^2 / variance
 	//And the total log likehood is just the sum of these.
-	//Note that, for AIC, we will be using twice the negative log likelihood.
+	//Note that the deviance is twice the negative log likelihood.
 	//This cancels the factor of -1/2.
-	double twiceNegativeLogLikelihood = residuals.size() * log(2 * M_PI * variance) + sumOfSquares / variance;
+	double deviance = residuals.size() * log(2 * M_PI * variance) + sumOfSquares / variance;
 	
-	double aic = 2 * parameters.size() + twiceNegativeLogLikelihood;
+	return deviance;
+}
+
+double Solver::getAIC() {
+	ParameterVector parameters = getSolution();
+	double deviance = getDeviance();
+	
+	double aic = 2 * parameters.size() + deviance;
 	
 	return aic;
 }
