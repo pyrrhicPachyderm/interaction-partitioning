@@ -4,6 +4,14 @@
 #Additionally, it requires a vector of species names.
 #These must be provided in the order that the C++ program indexed the species.
 
+information_criterion_weights <- function(information_criterion) {
+	#Calculates Akaike weights from AIC values (or Schwarz weights from BIC values, etc.).
+	information_criterion <- information_criterion - min(information_criterion)
+	weights <- exp(-0.5 * information_criterion)
+	weights <- weights / sum(weights)
+	return(weights)
+}
+
 BruteData <- R6::R6Class("BruteData",
 	public = list(
 		num_species = NULL,
