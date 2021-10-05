@@ -39,6 +39,37 @@ BruteData <- R6::R6Class("BruteData",
 			) {
 				stop("Data table has the wrong number of species.")
 			}
+		},
+		
+		match_grouping = function(desired_grouping, grouping_table) {
+			#Returns the indices at which a row of grouping_table is equal to the vector desired_grouping.
+			
+			elementwise_match <- lapply(1:ncol(grouping_table), function(i) {
+				return(grouping_table[[i]] == desired_grouping[i])
+			})
+			
+			rowwise_match <- Reduce("&", elementwise_match)
+			
+			return(which(rowwise_match))
+		},
+		
+		get_statistics_row = function(row_grouping, col_grouping) {
+			#row_grouping and col_grouping should be vectors representing the groupings.
+			#Extracts one row of statistics, matching those groupings.
+			row_matches <- private$match_grouping(row_grouping, self$row_groupings)
+			col_matches <- private$match_grouping(col_grouping, self$col_groupings)
+			return(self$statistics[intersect(row_matches, col_matches),])
+		}
+	),
+	
+	active = list(
+		fully_grouped_statistics = function() {
+			grouping <- rep(1, self$num_species)
+			return(private$get_statistics_row(grouping, grouping))
+		},
+		fully_separated_statistics = function() {
+			grouping <- 1:self$num_species
+			return(private$get_statistics_row(grouping, grouping))
 		}
 	)
 )
