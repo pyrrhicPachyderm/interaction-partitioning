@@ -19,7 +19,7 @@ class Data {
 		//The design density matrix, with numSpecies columns and numObservations rows.
 		Eigen::MatrixXd design;
 	public:
-		Data(std::vector<size_t> focal, const Eigen::VectorXd &response, const Eigen::MatrixXd &design):
+		Data(const std::vector<size_t> &focal, const Eigen::VectorXd &response, const Eigen::MatrixXd &design):
 			numSpecies(design.cols()), numObservations(design.rows()), focal(focal), response(response), design(design)
 		{
 			assert(focal.size() == numObservations);
