@@ -53,6 +53,7 @@ BruteData <- R6::R6Class("BruteData",
 			
 			#Add additional columns of statistics.
 			if(!is.null(self$statistics$aic)) private$add_aic_weights()
+			if(ncol(self$residuals) > 0) private$add_shapiro_p()
 		}
 	),
 	
@@ -69,6 +70,12 @@ BruteData <- R6::R6Class("BruteData",
 		
 		add_aic_weights = function() {
 			self$statistics$aic_weight <- information_criterion_weights(self$statistics$aic)
+		},
+		
+		add_shapiro_p = function() {
+			self$statistics$shapiro_p <- sapply(1:nrow(self$residuals), function(i) {
+				return(shapiro.test(as.vector(as.matrix(self$residuals[i,])))$p.value)
+			})
 		},
 		
 		match_grouping = function(desired_grouping, grouping_table) {
