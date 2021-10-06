@@ -19,16 +19,25 @@ static void printUsage(int argc, const char **argv) {
 		
 		"\t-?\n"
 		"\t\tShow this help message and exit.\n"
+		
+		"\t-p\n"
+		"\t\tResponse variables are per capita growth/fecundity.\n"
+		"\t\tOtherwise, the response is assumed to be a measure of the total size of the next generation.\n"
 		,
 		argv[0]
 	);
 }
 
 int main(int argc, char **argv) {
+	bool isPerCapita = false;
+	
 	//Parse the options. getopt should shuffle all the mandatory arguments to the end by itself.
 	int opt;
-	while((opt = getopt(argc, argv, "")) != -1) { //No initial colon means leaving on automatic error reporting.
+	while((opt = getopt(argc, argv, "p")) != -1) { //No initial colon means leaving on automatic error reporting.
 		switch(opt) {
+			case 'p':
+				isPerCapita = true;
+				break;
 			case '?': //This covers an explicit ? as well as other errors.
 				//TODO: Some additional error parsing. Perhaps see https://stackoverflow.com/a/44371579
 				printUsage(argc, (const char**)argv);
@@ -54,7 +63,7 @@ int main(int argc, char **argv) {
 		focal,
 		response,
 		design,
-		false
+		isPerCapita
 	);
 	
 	Solver solver = Solver(data);
