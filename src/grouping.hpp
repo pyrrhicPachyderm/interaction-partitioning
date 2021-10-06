@@ -63,6 +63,10 @@ class Grouping {
 			reset();
 		};
 		
+		const std::vector<size_t> &getGroups() const {
+			return group;
+		}
+		
 		size_t getGroup(size_t species) const {
 			return group[species];
 		}
