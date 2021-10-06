@@ -169,6 +169,11 @@ Solver::ParameterVector Solver::getSolution() {
 	return solution;
 }
 
+Eigen::VectorXd Solver::getSolutionPredictions() {
+	//TODO: Memoise.
+	return getPredictions(getSolution());
+}
+
 Eigen::VectorXd Solver::getSolutionResiduals() {
 	//TODO: Memoise.
 	return getResiduals(getSolution());
