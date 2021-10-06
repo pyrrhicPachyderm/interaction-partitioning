@@ -73,7 +73,7 @@ Solver::ParameterVector Solver::getParameterTolerances() const {
 	double growthRateTolerance = data.getResponse().mean() / data.getDesign().mean() * RELATIVE_TOLERANCE;
 	//For the competition coefficients, we will assume that with all species present at average density, growth halts.
 	//This gives us 1, divided by the square of average density, divided by the number of species.
-	double competitionCoefficientTolerance = 1.0 / pow(data.getResponse().mean(), 2.0) / data.numSpecies * RELATIVE_TOLERANCE;
+	double competitionCoefficientTolerance = 1.0 / pow(data.getDesign().mean(), 2.0) / data.numSpecies * RELATIVE_TOLERANCE;
 	
 	size_t numGrowthRates = growthGrouping.getNumGroups();
 	size_t numCompetitionCoefficients = rowGrouping.getNumGroups() * colGrouping.getNumGroups();
