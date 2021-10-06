@@ -38,17 +38,25 @@ template<typename T> class OutputColumn {
 //It's impractical to explicitly instantiate this, so alas it must live in the header file.
 
 template<class T, class... OutputColumnTs> void outputTableHeader(std::ostream &stream, const OutputColumn<T>& column, const OutputColumnTs&... columns) {
-	column.printHeader(stream);
-	if constexpr(sizeof...(columns) > 0) {
-		stream << OUTPUT_TABLE_SEPARATOR;
+	if(column.getLength() > 0) {
+		column.printHeader(stream);
+		if constexpr(sizeof...(columns) > 0) {
+			stream << OUTPUT_TABLE_SEPARATOR;
+			outputTableHeader(stream, columns...);
+		}
+	} else if constexpr(sizeof...(columns) > 0) {
 		outputTableHeader(stream, columns...);
 	}
 }
 
 template<class T, class... OutputColumnTs> void outputTableRow(std::ostream &stream, size_t row, const OutputColumn<T>& column, const OutputColumnTs&... columns) {
-	column.printElement(stream, row);
-	if constexpr(sizeof...(columns) > 0) {
-		stream << OUTPUT_TABLE_SEPARATOR;
+	if(column.getLength() > 0) {
+		column.printElement(stream, row);
+		if constexpr(sizeof...(columns) > 0) {
+			stream << OUTPUT_TABLE_SEPARATOR;
+			outputTableRow(stream, row, columns...);
+		}
+	} else if constexpr(sizeof...(columns) > 0) {
 		outputTableRow(stream, row, columns...);
 	}
 }
