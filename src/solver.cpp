@@ -163,11 +163,16 @@ Solver::ParameterVector Solver::getSolution() {
 	return solution;
 }
 
+Eigen::VectorXd Solver::getSolutionResiduals() {
+	//TODO: Memoise.
+	return getResiduals(getSolution());
+}
+
 double Solver::getDeviance() {
 	//Returns the deviance.
 	//That is, the negative of twice the log likelihood.
 	ParameterVector parameters = getSolution();
-	Eigen::VectorXd residuals = getResiduals(parameters);
+	Eigen::VectorXd residuals = getSolutionResiduals();
 	double sumOfSquares = residuals.dot(residuals);
 	
 	//First, we must estimate the variance of the residuals.
@@ -205,8 +210,7 @@ double Solver::getR2() {
 	Eigen::VectorXd normalisedResponse = response - Eigen::VectorXd::Constant(response.size(), response.mean());
 	double totalSS = normalisedResponse.dot(normalisedResponse);
 	
-	ParameterVector parameters = getSolution();
-	Eigen::VectorXd residuals = getResiduals(parameters);
+	Eigen::VectorXd residuals = getSolutionResiduals();
 	double residualSS = residuals.dot(residuals);
 	
 	return 1.0 - (residualSS / totalSS);

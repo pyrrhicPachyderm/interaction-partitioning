@@ -101,6 +101,7 @@ class Solver {
 		void calculateSolution();
 	public:
 		ParameterVector getSolution();
+		Eigen::VectorXd getSolutionResiduals();
 		double getDeviance();
 		double getAIC();
 		double getR2();
