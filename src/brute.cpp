@@ -63,6 +63,7 @@ int main(int argc, char **argv) {
 	OutputColumn<Grouping> outputColGroupings("col_group");
 	OutputColumn<double> outputAICs("aic");
 	OutputColumn<double> outputR2s("R2");
+	OutputColumn<Eigen::VectorXd> outputResiduals("residual");
 	
 	do {
 		do {
@@ -70,10 +71,11 @@ int main(int argc, char **argv) {
 			outputColGroupings.insert(solver.getColGrouping());
 			outputAICs.insert(solver.getAIC());
 			outputR2s.insert(solver.getR2());
+			outputResiduals.insert(solver.getSolutionResiduals());
 		} while(solver.updateRowGrouping(&Grouping::advance));
 	} while(solver.updateColGrouping(&Grouping::advance));
 	
-	outputTable(outputFile, outputRowGroupings, outputColGroupings, outputAICs, outputR2s);
+	outputTable(outputFile, outputRowGroupings, outputColGroupings, outputAICs, outputR2s, outputResiduals);
 	
 	return 0;
 }
