@@ -31,7 +31,8 @@ BruteData <- R6::R6Class("BruteData",
 		species_names = NULL,
 		row_groupings = NULL, #A data frame of row groupings, named by the species names.
 		col_groupings = NULL, #As above, for col groupings.
-		statistics = NULL, #A data frame of all output values besides groupings.
+		residuals = NULL, #A data frame of residuals.
+		statistics = NULL, #A data frame of all output values besides the above.
 		
 		initialize = function(data_file_name, species_names) {
 			data_table <- read.table(data_file_name, header=TRUE)
@@ -47,7 +48,8 @@ BruteData <- R6::R6Class("BruteData",
 			self$col_groupings <- data_table[,grep("col_group", names(data_table))] + 1
 			names(self$row_groupings) <- species_names
 			names(self$col_groupings) <- species_names
-			self$statistics <- data_table[,grep("row_group|col_group", names(data_table), invert=TRUE)]
+			self$residuals <- data_table[,grep("residual", names(data_table))]
+			self$statistics <- data_table[,grep("row_group|col_group|residual", names(data_table), invert=TRUE)]
 			
 			#Add additional columns of statistics.
 			if(!is.null(self$statistics$aic)) private$add_aic_weights()
