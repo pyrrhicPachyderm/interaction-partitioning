@@ -85,6 +85,13 @@ template<typename T> void OutputColumn<T>::printHeader(std::ostream &stream) con
 	stream << name;
 }
 
+static void printMultiHeader(std::ostream &stream, const std::string name, size_t numCols) {
+	for(size_t i = 0; i < numCols; i++) {
+		stream << name << "_" << i;
+		if(i != numCols-1) stream << OUTPUT_TABLE_SEPARATOR;
+	}
+}
+
 template<> void OutputColumn<Grouping>::printHeader(std::ostream &stream) const {
 	//We need to know the number of species in a grouping to print the appropriate number of headers.
 	//We will assume all groupings in the vector have the same number of species.
@@ -96,10 +103,7 @@ template<> void OutputColumn<Grouping>::printHeader(std::ostream &stream) const 
 	}
 	
 	size_t numSpecies = column[0].numSpecies;
-	for(size_t i = 0; i < numSpecies; i++) {
-		stream << name << "_" << i;
-		if(i != numSpecies-1) stream << OUTPUT_TABLE_SEPARATOR;
-	}
+	printMultiHeader(stream, name, numSpecies);
 }
 
 template<typename T> void OutputColumn<T>::printElement(std::ostream &stream, size_t index) const {
