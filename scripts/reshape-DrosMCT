@@ -49,10 +49,7 @@ focal_output <- data[["FocalSpecies"]] %>%
 	match(species_names)
 focal_output <- focal_output - 1 #Make it 0-indexed.
 
-response_output <- data %>%
-	select(ends_with("_Nt")) %>%
-	mutate_all(replace_na, 0) %>%
-	apply(1, sum)
+response_output <- data[["ObsCount_Pairs"]] * 2 #Doubled to convert pairs to individuals.
 
 design_output <- data %>%
 	select(ends_with("_0"))
