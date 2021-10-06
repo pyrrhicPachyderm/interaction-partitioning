@@ -35,6 +35,16 @@
 \begin{document}
 \maketitle
 
+\section{Methods}
+
+\subsection{Model fitting}
+
+The model was fitted by least squares regression, with a normal likelihood.\footnote{
+	I recognise that this is erroneous, and a likelihood directly suited to count data would be more appropriate.
+	The choice to fit the Lotka--Volterra model specifically, rather than a generic regression model, prohibited the use of a link function.
+	This prevented me from using the typical methods of generalised nonlinear regression, and I have not yet managed to develop the methods necessary to fit the model using a Poisson or negative binomial likelihood.
+}
+
 \FloatBarrier
 \printbibliography
 \end{document}
