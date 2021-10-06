@@ -49,8 +49,10 @@ Solver::ParameterVector Solver::getInitialParameterValues() const {
 	//It is reasonable to guess that all the competition coefficients are zero.
 	double competitionCoefficient = 0.0;
 	//As for the growth rates, we might assume that all the species are in one group, and that all competition coefficients are zero.
-	//This gives us, approximately, the average observed response divided by the average species density in the design.
-	double growthRate = data.getResponse().mean() / data.getDesign().mean();
+	//This gives us the average observed response.
+	//If this is total, rather than per capita, we must divide by the average species density in the design.
+	double growthRate = data.getResponse().mean();
+	if(!data.isPerCapita) growthRate /= data.getDesign().mean();
 	
 	size_t numGrowthRates = growthGrouping.getNumGroups();
 	size_t numCompetitionCoefficients = rowGrouping.getNumGroups() * colGrouping.getNumGroups();
@@ -70,7 +72,8 @@ Solver::ParameterVector Solver::getParameterTolerances() const {
 	//We need somewhat reasonable guesses for the magnitudes of the growth rates and the competition coefficients.
 	//We will then multiply these by the RELATIVE_TOLERANCE.
 	//For the growth rates, we will use the same guess as for the initial values.
-	double growthRateTolerance = data.getResponse().mean() / data.getDesign().mean() * RELATIVE_TOLERANCE;
+	double growthRateTolerance = data.getResponse().mean() * RELATIVE_TOLERANCE;
+	if(!data.isPerCapita) growthRateTolerance /= data.getDesign().mean();
 	//For the competition coefficients, we will assume that with all species present at average density, growth halts.
 	//This gives us 1, divided by the square of average density, divided by the number of species.
 	double competitionCoefficientTolerance = 1.0 / pow(data.getDesign().mean(), 2.0) / data.numSpecies * RELATIVE_TOLERANCE;
@@ -102,7 +105,8 @@ Eigen::VectorXd Solver::getPredictions(const ParameterVector &parameters) {
 		double focalGrowthRate = getGrowthRate(parameters, focalGrowthGroup);
 		double focalDensity = data.getDesign()(obs, focal);
 		
-		double intrinsicGrowth = focalGrowthRate * focalDensity;
+		double intrinsicGrowth = focalGrowthRate;
+		if(!data.isPerCapita) intrinsicGrowth *= focalDensity;
 		double totalCompetition = getCompetitionCoefficientsRow(parameters, focalRowGroup).dot(colGroupedDesign.row(obs));
 		double prediction = intrinsicGrowth * (1.0 - totalCompetition);
 		predictions[obs] = prediction;
@@ -135,15 +139,17 @@ Solver::Jacobian Solver::getJacobian(const ParameterVector &parameters) {
 		//So there will be only one per observation.
 		//This one will be equal to the prediction, divided by the growth rate itself.
 		double totalCompetition = getCompetitionCoefficientsRow(parameters, focalRowGroup).dot(colGroupedDesign.row(obs));
-		double derivative = focalDensity * (1.0 - totalCompetition);
+		double derivative = 1.0 - totalCompetition;
+		if(!data.isPerCapita) derivative *= focalDensity;
 		jacobian(obs, getGrowthRateIndex(focalGrowthGroup)) = -derivative;
 		
 		//Second, the derivatives with respect to the competition coefficients.
 		//If it's not a competition coefficient *on* the focal species, this is zero.
 		//So there will be a number per row equal to the number of column groups.
-		//This will be the negative of the focal growth rate, times the focal density, times the column group density.
+		//This will be the negative of the focal growth rate, times the focal density (if not per capita), times the column group density.
 		for(size_t colGroup = 0; colGroup < colGrouping.getNumGroups(); colGroup++) {
-			double derivative = - focalGrowthRate * focalDensity * colGroupedDesign(obs, colGroup);
+			double derivative = - focalGrowthRate * colGroupedDesign(obs, colGroup);
+			if(!data.isPerCapita) derivative *= focalDensity;
 			jacobian(obs, getCompetitionCoefficientIndex(focalRowGroup, colGroup)) = -derivative;
 		}
 	}

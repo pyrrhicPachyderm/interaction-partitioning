@@ -53,7 +53,8 @@ int main(int argc, char **argv) {
 	Data data = Data(
 		focal,
 		response,
-		design
+		design,
+		false
 	);
 	
 	Solver solver = Solver(data);
