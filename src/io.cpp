@@ -100,6 +100,11 @@ template<> void OutputColumn<Grouping>::printHeader(std::ostream &stream) const 
 	printMultiHeader(stream, name, numSpecies);
 }
 
+template<> void OutputColumn<Eigen::VectorXd>::printHeader(std::ostream &stream) const {
+	size_t numCols = column[0].size();
+	printMultiHeader(stream, name, numCols);
+}
+
 template<typename T> void OutputColumn<T>::printElement(std::ostream &stream, size_t index) const {
 	stream << column[index];
 }
@@ -112,7 +117,16 @@ template<> void OutputColumn<Grouping>::printElement(std::ostream &stream, size_
 	}
 }
 
+template<> void OutputColumn<Eigen::VectorXd>::printElement(std::ostream &stream, size_t index) const {
+	size_t numCols = column[index].size();
+	for(size_t i = 0; i < numCols; i++) {
+		stream << column[index][i];
+		if(i != numCols-1) stream << OUTPUT_TABLE_SEPARATOR;
+	}
+}
+
 //Explicitly instantiate the templates.
 //Templated functions existing only in the .cpp file require explicit instantiation.
 template class OutputColumn<double>;
 template class OutputColumn<Grouping>;
+template class OutputColumn<Eigen::VectorXd>;
