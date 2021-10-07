@@ -4,6 +4,8 @@
 #Additionally, it requires a vector of species names.
 #These must be provided in the order that the C++ program indexed the species.
 
+library(magrittr)
+
 information_criterion_weights <- function(information_criterion) {
 	#Calculates Akaike weights from AIC values (or Schwarz weights from BIC values, etc.).
 	information_criterion <- information_criterion - min(information_criterion)
@@ -156,3 +158,70 @@ BruteData <- R6::R6Class("BruteData",
 		}
 	)
 )
+
+strip_booktabs_rules <- function(tab) {
+	#Strips out all the rules and such added by booktabs.
+	#This produces a table without rules.
+	#This actually removes dependency on booktabs.
+	#But it's easier to remove booktab's rules than *all* the standard rules.
+	tab %>%
+		sub("\\\\toprule", "", .) %>%
+		sub("\\\\midrule", "", .) %>%
+		sub("\\\\addlinespace", "", .) %>%
+		sub("\\\\bottomrule", "", .)
+}
+
+weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
+	#colourmap is the name of a pgfplots colourmap.
+	
+	format_num <- function(num) {
+		sprintf(paste0("%.",digits,"f"), num) %>%
+			sub("0.", ".", .) #Strip the leading 0.
+	}
+	
+	#LaTeX doesn't like us using \pgfplotscolormapaccess mid-table.
+	#So we will use it beforehand, define colours, then acces them.
+	#This requires us to generate a unique colour name for each cell.
+	#We will make it verbose to reduce the risk of a clash.
+	get_colour_name <- function(row, col) {
+		paste("weighted coclassification table colour", row, col)
+	}
+	
+	#Now, the colour definitions.
+	colour_definitions <- sapply(1:ncol(mat), function(col) {
+		sapply(1:nrow(mat), function(row) {
+			paste0(
+				"\\pgfplotscolormapaccess[0:1]{",mat[row,col],"}{",colourmap,"}\n",
+				"\\definecolor{",get_colour_name(row,col),"}{rgb}{\\pgfmathresult}"
+			)
+		})
+	})
+	colour_definitions <- paste(as.vector(colour_definitions), collapse="\n")
+	
+	#To include the \cellcolor commands, the entries of the table must be strings.
+	#So we convert to a string matrix, inserting cell colourings.
+	string_mat <- sapply(1:ncol(mat), function(col) {
+		sapply(1:nrow(mat), function(row) {
+			if(row == col) return("") #We want to leave the diagonals blank.
+			value <- format_num(mat[row,col])
+			paste0("\\cellcolor{",get_colour_name(row,col),"}",value)
+		})
+	})
+	
+	colnames(string_mat) <- paste0("\\rotatebox{90}{\\emph{",colnames(mat),"}}")
+	#We don't set row names for mat, because we want the species labels on the right instead of the left.
+	#We cbind instead.
+	string_mat <- cbind(string_mat, matrix(
+		paste0("\\emph{",rownames(mat),"}"),
+	ncol=1))
+	
+	tab <- knitr::kable(string_mat, escape=FALSE, booktabs=TRUE,
+		align=c(rep("c",ncol(mat)),"l")
+	) %>%
+		strip_booktabs_rules()
+	
+	#TODO: Increase cell height.
+	
+	cat(colour_definitions)
+	cat(tab)
+}

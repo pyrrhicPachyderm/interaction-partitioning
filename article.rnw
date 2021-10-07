@@ -3,6 +3,9 @@
 \usepackage{siunitx}
 \usepackage{import}
 
+\usepackage{pgfplots}
+\usepackage{colortbl}
+
 %Referencing
 \import{reference-styles/}{authoryear.tex}
 \addbibresource{bibliography/references.bib}
