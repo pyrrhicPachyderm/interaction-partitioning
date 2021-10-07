@@ -23,6 +23,10 @@
 \date{}
 
 <<include=FALSE>>=
+	knitr::opts_chunk$set(results = 'asis') #Text is grey without this.
+@
+
+<<include=FALSE>>=
 	source("r/brute-post-process.R")
 	brute_data <- BruteData$new(
 		"output/brute.data",
