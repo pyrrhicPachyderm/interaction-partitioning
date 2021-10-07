@@ -3,6 +3,10 @@
 \usepackage{siunitx}
 \usepackage{import}
 
+%Images
+\usepackage{tikz}
+\usepackage[edges]{forest}
+
 %Referencing
 \import{reference-styles/}{authoryear.tex}
 \addbibresource{bibliography/references.bib}
@@ -10,6 +14,21 @@
 \usepackage{placeins} %Provides \FloatBarrier
 
 \usepackage{hyperref}
+\forestset{
+	phylogeny/.style={
+		forked edges,
+		delay={where content={}{shape=coordinate}{}}, %Make empty nodes leave no gaps.
+		before typesetting nodes={
+			where n children=0{tier=terminus}{},
+		},
+		for tree={
+			grow=east,
+			align=left,
+			anchor=west,
+			s sep=0, %Reduce the separation between the leaf nodes.
+		}
+	}
+}
 
 %Title Page
 \title{Regularising Lotka--Volterra Interaction Matrices by Species Grouping}
