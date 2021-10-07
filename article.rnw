@@ -37,6 +37,31 @@
 
 \section{Methods}
 
+\subsection{Data}
+
+The data I used in this study were drawn from the work of \textcite{terry2021natural}.
+The data consist of fecundity measurements for six species of \emph{Drosophila}, grown in single-species or two-species communities with varying densities of each species.
+In this, they form essentially the standard experimental design for parameterising a Lotka--Volterra model, as described by \textcite{hart2018quantify}.
+
+I shall not repeat the entire experimental methodology here---refer to \textcite{terry2021natural} for that---but provide a summary of the pertinent points.
+
+\subsubsection{Summary of the experimental methodology}
+
+The experiment used six species of \emph{Drosophila} from an Australian rainforest community: \emph{D. birchii}, \emph{D. pallidifrons}, \emph{D. pandora}, \emph{D. pseudoananassae}, \emph{D. simulans}, and \emph{D. sulfurigaster}.
+The experiment took place in vials with a limited amount of medium for egg-laying and larval development; competition was for space on this medium.
+A number of adult pairs of one or two species were added to each vial and allowed to mate and lay eggs.
+The number of adult pairs of each species emerging from these eggs---i.e.\ the size of the next generation---was the response variable.
+
+Experiments occurred for every single-species and two-species combination of the six species, at a variety of densities.
+The single-species densities were 3, 9, or 12 pairs per vial, each replicated six times per species.
+The two-species densities were, giving the densities of each of the two species, (3,3), (3,6), (3,9), (3,12), (6,3), (9,3), or (12,3) pairs per vial, each replicated three times per pair of species.
+
+The experiment also included a number of other vials that were excluded for various reasons.
+The original authors' study was on parasitism, so the experiments also included a parasitised treatment.
+That is irrelevant to this study, so was excluded.
+Vials with a single founding pair were excluded from this study and the original authors' due to an Allee effect that the Lotka--Volterra cannot accomodate.
+Lastly, an additional set of vials were raised in colder temperatures, but were excluded from this study and the original authors' as the resulting emergence was too low to analyse.
+
 \subsection{Model fitting}
 
 The model was fitted by least squares regression, with a normal likelihood.\footnote{
