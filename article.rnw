@@ -6,6 +6,7 @@
 %Referencing
 \import{reference-styles/}{authoryear.tex}
 \addbibresource{bibliography/references.bib}
+\addbibresource{references.bib}
 \usepackage{placeins} %Provides \FloatBarrier
 
 \usepackage{hyperref}

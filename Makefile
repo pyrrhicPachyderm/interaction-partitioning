@@ -3,7 +3,7 @@ LATEXMK_FLAGS = --pdf --cd
 RM := rm -f
 
 doc_raws := proposal.tex article.rnw
-supporting_tex_files := bibliography/references.bib reference-styles/authoryear.tex
+supporting_tex_files := references.bib bibliography/references.bib reference-styles/authoryear.tex
 
 doc_pdfs := $(patsubst %.tex,%.pdf,$(patsubst %.rnw,%.pdf,$(doc_raws)))
 
