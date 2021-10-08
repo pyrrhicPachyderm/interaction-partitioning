@@ -127,13 +127,14 @@ The model was fitted by least squares regression, with a normal likelihood.\foot
 \pgfplotsset{%
 	colormap={coclassification}{color=(white) color=(red)}
 }
+\colorlet{coclassification diagonal}{black!20}
 \begin{figure}
 	\centering
 	\begin{subfigure}{\textwidth}
 		<<echo=FALSE>>=
 			weighted_coclassification_kable(
 				brute_data$weighted_col_coclassification_matrix,
-				colourmap="coclassification"
+				colourmap="coclassification", diagonal_colour="coclassification diagonal"
 			)
 		@
 		\caption{Weighted coclassification of competitive effects (columns of the interaction matrix).}
@@ -146,7 +147,7 @@ The model was fitted by least squares regression, with a normal likelihood.\foot
 		<<echo=FALSE>>=
 			weighted_coclassification_kable(
 				brute_data$weighted_row_coclassification_matrix,
-				colourmap="coclassification"
+				colourmap="coclassification", diagonal_colour="coclassification diagonal"
 			)
 		@
 		\caption{Weighted coclassification of competitive responses (rows of the interaction matrix).}
