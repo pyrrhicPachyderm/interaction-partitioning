@@ -175,10 +175,23 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 	#colourmap is the name of a pgfplots colourmap.
 	
 	array_stretch <- 1.5
+	colour_bar_height <- "6cm"
 	
-	#Need \bgroup \egroup to contain the redefinition of \arraystretch.
-	begin_string <- paste0("\\bgroup\n\\renewcommand{\\arraystretch}{",array_stretch,"}")
-	end_string <- "\\egroup"
+	colourbar_code <- paste(
+		"\\begin{tikzpicture}[baseline=(current bounding box.south)]",
+			"\\begin{axis}[",
+				paste0("colormap name=",colourmap,","),
+				"colorbar left,",
+				"point meta min=0,",
+				"point meta max=1,",
+				"colorbar style={",
+					paste0("height=",colour_bar_height,","),
+				"},",
+				"%Disable the axes themselves; we only want the colourbar.",
+				"hide axis, scale only axis, width=0pt, height=0pt,",
+			"]\\end{axis}",
+		"\\end{tikzpicture}",
+	sep="\n")
 	
 	format_num <- function(num) {
 		sprintf(paste0("%.",digits,"f"), num) %>%
@@ -221,13 +234,27 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 		paste0("\\emph{",rownames(mat),"}"),
 	ncol=1))
 	
-	tab <- knitr::kable(string_mat, escape=FALSE, booktabs=TRUE,
+	matrix_tab <- knitr::kable(string_mat, escape=FALSE, booktabs=TRUE,
 		align=c(rep("c",ncol(mat)),"l")
 	) %>%
-		strip_booktabs_rules()
+		strip_booktabs_rules() %>%
+		sub("\\begin{tabular}", "\\begin{tabular}[b]", ., fixed=TRUE) #Baseline at the bottom, for colourbar alignment.
 	
-	cat(begin_string)
+	#Need \bgroup \egroup to contain the redefinition of \arraystretch.
+	matrix_tab <- paste(
+		paste0("\\bgroup\n\\renewcommand{\\arraystretch}{",array_stretch,"}"),
+		matrix_tab,
+		"\\egroup",
+	sep="\n")
+	
+	outer_tab <- paste(
+		"\\begin{tabular}{rl}",
+		colourbar_code,
+		"&",
+		matrix_tab,
+		"\\end{tabular}",
+	sep="\n")
+	
 	cat(colour_definitions)
-	cat(tab)
-	cat(end_string)
+	cat(outer_tab)
 }
