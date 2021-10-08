@@ -178,7 +178,7 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 	colour_bar_height <- "6cm"
 	
 	colourbar_code <- paste(
-		"\\begin{tikzpicture}[baseline=(current bounding box.south)]",
+		"\\begin{tikzpicture}[baseline]",
 			"\\begin{axis}[",
 				paste0("colormap name=",colourmap,","),
 				"colorbar left,",
@@ -186,6 +186,8 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 				"point meta max=1,",
 				"colorbar style={",
 					paste0("height=",colour_bar_height,","),
+					"at={(parent axis.south east)},",
+					"anchor=south west,",
 				"},",
 				"%Disable the axes themselves; we only want the colourbar.",
 				"hide axis, scale only axis, width=0pt, height=0pt,",
