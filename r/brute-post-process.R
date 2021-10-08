@@ -171,7 +171,7 @@ strip_booktabs_rules <- function(tab) {
 		sub("\\\\bottomrule", "", .)
 }
 
-weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
+weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colour="lightgray", digits=3) {
 	#colourmap is the name of a pgfplots colourmap.
 	
 	array_stretch <- 1.5
@@ -240,7 +240,9 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 	#So we convert to a string matrix, inserting cell colourings.
 	string_mat <- sapply(1:ncol(mat), function(col) {
 		sapply(1:nrow(mat), function(row) {
-			if(row == col) return("") #We want to leave the diagonals blank.
+			if(row == col) { #No numbers on the diagonals.
+				return(paste0("\\cellcolor{",diagonal_colour,"}"))
+			}
 			value <- format_num(mat[row,col])
 			paste0("\\cellcolor{",get_colour_name(row,col),"}",value)
 		})
