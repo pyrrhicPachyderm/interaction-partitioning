@@ -16,7 +16,6 @@
 \usepackage{cleveref}
 
 \import{latex/}{forest-phylogeny}
-\import{latex/}{pgfplotstable-color-cells}
 
 %Title Page
 \title{Regularising Lotka--Volterra Interaction Matrices by Species Grouping}
