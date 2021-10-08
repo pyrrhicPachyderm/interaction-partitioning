@@ -89,7 +89,7 @@ From this can be constructed the necessary relationships, which are depicted in 
 		[
 			[
 				[
-					[\emph{D. melanogaster}]
+					[\emph{D. simulans}]
 					[\emph{D. birchii}]
 				]
 				[
