@@ -175,6 +175,7 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 	#colourmap is the name of a pgfplots colourmap.
 	
 	array_stretch <- 1.5
+	header_angle <- 30
 	
 	#\dimexpr can't work with floating point multipliers, so we need rationals.
 	as_rational_string <- function(x) {
@@ -245,7 +246,8 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 		})
 	})
 	
-	colnames(string_mat) <- paste0("\\rotatebox{90}{\\emph{",colnames(mat),"}}")
+	#\rotatebox makes things wider, so we enclose in a fixed width \makebox.
+	colnames(string_mat) <- paste0("\\makebox[1em][l]{\\rotatebox{",header_angle,"}{\\emph{",colnames(mat),"}}}")
 	#We don't set row names for mat, because we want the species labels on the right instead of the left.
 	#We cbind instead.
 	string_mat <- cbind(string_mat, matrix(
