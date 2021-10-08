@@ -3,6 +3,7 @@
 \usepackage{siunitx}
 \usepackage{import}
 
+\usepackage{subcaption}
 \usepackage{pgfplots}
 \usepackage{colortbl}
 
@@ -120,6 +121,45 @@ The model was fitted by least squares regression, with a normal likelihood.\foot
 	The choice to fit the Lotka--Volterra model specifically, rather than a generic regression model, prohibited the use of a link function.
 	This prevented me from using the typical methods of generalised nonlinear regression, and I have not yet managed to develop the methods necessary to fit the model using a Poisson or negative binomial likelihood.
 }
+
+\section{Results}
+
+\pgfplotsset{%
+	colormap={coclassification}{color=(white) color=(red)}
+}
+\begin{figure}
+	\centering
+	\begin{subfigure}{\textwidth}
+		<<echo=FALSE>>=
+			weighted_coclassification_kable(
+				brute_data$weighted_col_coclassification_matrix,
+				colourmap="coclassification"
+			)
+		@
+		\caption{Weighted coclassification of competitive effects (columns of the interaction matrix).}
+		\label{fig:coclassification-cols}
+	\end{subfigure}
+	
+	\bigskip
+	
+	\begin{subfigure}{\textwidth}
+		<<echo=FALSE>>=
+			weighted_coclassification_kable(
+				brute_data$weighted_row_coclassification_matrix,
+				colourmap="coclassification"
+			)
+		@
+		\caption{Weighted coclassification of competitive responses (rows of the interaction matrix).}
+		\label{fig:coclassification-rows}
+	\end{subfigure}
+	
+	\caption{%
+		Coclassification matrices of the Lotka--Volterra competitive effects and responses of the six studied \emph{Drosophila} species, weighted by AIC weights.
+		The cell for a pair of species represents the probability that the best grouping, as determined by the AIC weights of the grouped models, places those two species in the same group.
+		\Cref{fig:coclassification-cols} represents the grouping of species' competetive effects upon other species (columns of the interaction matrix), while \cref{fig:coclassification-rows} represents the grouping of species' responses to competition (rows of the interaction matrix).
+	}
+	\label{fig:coclassification}
+\end{figure}
 
 \FloatBarrier
 \printbibliography
