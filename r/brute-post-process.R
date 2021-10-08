@@ -174,6 +174,12 @@ strip_booktabs_rules <- function(tab) {
 weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 	#colourmap is the name of a pgfplots colourmap.
 	
+	array_stretch <- 1.5
+	
+	#Need \bgroup \egroup to contain the redefinition of \arraystretch.
+	begin_string <- paste0("\\bgroup\n\\renewcommand{\\arraystretch}{",array_stretch,"}")
+	end_string <- "\\egroup"
+	
 	format_num <- function(num) {
 		sprintf(paste0("%.",digits,"f"), num) %>%
 			sub("0.", ".", .) #Strip the leading 0.
@@ -220,8 +226,8 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 	) %>%
 		strip_booktabs_rules()
 	
-	#TODO: Increase cell height.
-	
+	cat(begin_string)
 	cat(colour_definitions)
 	cat(tab)
+	cat(end_string)
 }
