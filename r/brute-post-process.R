@@ -175,7 +175,22 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 	#colourmap is the name of a pgfplots colourmap.
 	
 	array_stretch <- 1.5
-	colour_bar_height <- "6cm"
+	
+	#\dimexpr can't work with floating point multipliers, so we need rationals.
+	as_rational_string <- function(x) {
+		as.character(gmp::as.bigq(x))
+	}
+	
+	#\baselineskip seemingly doesn't work inside a tikzpicture, so we save it elsewhere.
+	length_definition <- paste(
+		"\\ifdefined\\coclassificationtextheight\\else\\newlength{\\coclassificationtextheight}\\fi",
+		"\\setlength{\\coclassificationtextheight}{\\baselineskip}",
+	sep="\n")
+	
+	#The height of the whole table.
+	table_height <- paste0("{\\dimexpr\\coclassificationtextheight * ",as_rational_string(array_stretch)," * ",nrow(mat),"}")
+	#The difference between the baseline of the bottom row and the bottom of the table.
+	baseline_drop <- paste0("{\\dimexpr -\\coclassificationtextheight * ",as_rational_string(array_stretch-1)," / 2}")
 	
 	colourbar_code <- paste(
 		"\\begin{tikzpicture}[baseline]",
@@ -185,9 +200,10 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 				"point meta min=0,",
 				"point meta max=1,",
 				"colorbar style={",
-					paste0("height=",colour_bar_height,","),
+					paste0("height=",table_height,","),
 					"at={(parent axis.south east)},",
 					"anchor=south west,",
+					paste0("yshift=",baseline_drop,","),
 				"},",
 				"%Disable the axes themselves; we only want the colourbar.",
 				"hide axis, scale only axis, width=0pt, height=0pt,",
@@ -257,6 +273,7 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", digits=3) {
 		"\\end{tabular}",
 	sep="\n")
 	
+	cat(length_definition)
 	cat(colour_definitions)
 	cat(outer_tab)
 }
