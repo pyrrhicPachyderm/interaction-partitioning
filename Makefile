@@ -23,7 +23,9 @@ clean:
 		$(RM) **/*.aux **/*.log **/*.fls **/*.fdb_latexmk;\
 		$(RM) **/*.out **/*.bbl **/*.bcf **/*.blg **/*.run.xml;\
 		$(RM) **/*.o **/*.d **/*.out;\
+		$(RM) **/*-dedented.rnw;\
 	)
+	@$(RM) $(patsubst %.rnw,%.tex,$(filter %.rnw,$(doc_raws)))
 	@$(RM) $(doc_pdfs)
 	@$(RM) output/*
 .PHONY: clean
