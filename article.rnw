@@ -116,11 +116,13 @@ From this can be constructed the necessary relationships, which are depicted in 
 
 \subsection{Model fitting}
 
-The model was fitted by least squares regression, with a normal likelihood.\footnote{
-	I recognise that this is erroneous, and a likelihood directly suited to count data would be more appropriate.
-	The choice to fit the Lotka--Volterra model specifically, rather than a generic regression model, prohibited the use of a link function.
-	This prevented me from using the typical methods of generalised nonlinear regression, and I have not yet managed to develop the methods necessary to fit the model using a Poisson or negative binomial likelihood.
-}
+The models were fitted to the data using regression techniques.
+Fitting it using precisely a Lotka--Volterra model prevented the use of a link function, rendering most generalised regression techniques infeasible.
+As such, I assumed a normal error distribution, and fitted a least squares regression.
+To prevent heteroskedasticity, I used the \emph{per capita} fecundity as the response variable, as in the following model:
+\[
+	\frac{N_{i,t+1}}{N_{i,t}} = r_i \left(1 - \sum_j N_j \alpha_{ij}\right)
+.\]
 
 \section{Results}
 
