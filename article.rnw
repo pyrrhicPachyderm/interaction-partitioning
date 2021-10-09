@@ -124,6 +124,11 @@ To prevent heteroskedasticity, I used the \emph{per capita} fecundity as the res
 	\frac{N_{i,t+1}}{N_{i,t}} = r_i \left(1 - \sum_j N_j \alpha_{ij}\right)
 .\]
 
+The Lotka--Volterra model is not linear in the parameters.
+With the rows of the interaction matrix ungrouped, the regression could be reparameterised to be linear in the parameters, by treating $r_i \alpha_{ij}$ as a single regression parameter for each $i,j$.
+With the rows grouped, however, this becomes impossible, for each species sill has its own growth rate.
+As such, the models were fitted by the Gauss--Newton method for non-linear least squares.
+
 \section{Results}
 
 \pgfplotsset{%
