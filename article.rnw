@@ -121,7 +121,7 @@ Fitting it using precisely a Lotka--Volterra model prevented the use of a link f
 As such, I assumed a normal error distribution, and fitted a least squares regression.
 To prevent heteroskedasticity, I used the \emph{per capita} fecundity as the response variable, as in the following model:
 \[
-	\frac{N_{i,t+1}}{N_{i,t}} = r_i \left(1 - \sum_j N_j \alpha_{ij}\right)
+	\frac{N_{i,t+1}}{N_{i,t}} = r_i \left(1 - \sum_j N_{j,t} \alpha_{ij}\right)
 .\]
 
 The Lotka--Volterra model is not linear in the parameters.
