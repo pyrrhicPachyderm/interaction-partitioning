@@ -1,32 +1,6 @@
 #include "nls.hpp"
 #include "solver.hpp"
 
-#define RELATIVE_TOLERANCE 1e-6
-
-size_t Solver::getGrowthRateIndex(size_t growthGroup) const {
-	return growthGroup;
-}
-
-double Solver::getGrowthRate(const Solver::ParameterVector &parameters, size_t growthGroup) const {
-	return parameters(getGrowthRateIndex(growthGroup));
-}
-
-Eigen::VectorXd Solver::getGrowthRates(const Solver::ParameterVector &parameters) const {
-	return parameters.segment(getGrowthRateIndex(0), growthGrouping.getNumGroups());
-}
-
-size_t Solver::getCompetitionCoefficientIndex(size_t rowGroup, size_t colGroup) const {
-	return growthGrouping.getNumGroups() + colGrouping.getNumGroups() * rowGroup + colGroup;
-}
-
-double Solver::getCompetitionCoefficient(const Solver::ParameterVector &parameters, size_t rowGroup, size_t colGroup) const {
-	return parameters(getCompetitionCoefficientIndex(rowGroup, colGroup));
-}
-
-Eigen::VectorXd Solver::getCompetitionCoefficientsRow(const Solver::ParameterVector &parameters, size_t rowGroup) const {
-	return parameters.segment(getCompetitionCoefficientIndex(rowGroup, 0), colGrouping.getNumGroups());
-}
-
 void Solver::calculateColGroupedDesign() {
 	colGroupedDesign = Eigen::MatrixXd::Zero(data.numObservations, colGrouping.getNumGroups());
 	
@@ -44,55 +18,7 @@ Eigen::MatrixXd Solver::getColGroupedDesign() {
 	return colGroupedDesign;
 }
 
-Solver::ParameterVector Solver::getInitialParameterValues() const {
-	//We need somewhat reasonable guesses for the growth rates and the competition coefficients.
-	//It is reasonable to guess that all the competition coefficients are zero.
-	double competitionCoefficient = 0.0;
-	//As for the growth rates, we might assume that all the species are in one group, and that all competition coefficients are zero.
-	//This gives us the average observed response.
-	//If this is total, rather than per capita, we must divide by the average species density in the design.
-	double growthRate = data.getResponse().mean();
-	if(!data.isPerCapita) growthRate /= data.getDesign().mean();
-	
-	size_t numGrowthRates = growthGrouping.getNumGroups();
-	size_t numCompetitionCoefficients = rowGrouping.getNumGroups() * colGrouping.getNumGroups();
-	
-	Solver::ParameterVector parameters = Eigen::VectorXd(numGrowthRates + numCompetitionCoefficients);
-	for(size_t i = 0; i < numGrowthRates; i++) {
-		parameters[i] = growthRate;
-	}
-	for(size_t i = numGrowthRates; i < numGrowthRates + numCompetitionCoefficients; i++) {
-		parameters[i] = competitionCoefficient;
-	}
-	
-	return parameters;
-}
-
-Solver::ParameterVector Solver::getParameterTolerances() const {
-	//We need somewhat reasonable guesses for the magnitudes of the growth rates and the competition coefficients.
-	//We will then multiply these by the RELATIVE_TOLERANCE.
-	//For the growth rates, we will use the same guess as for the initial values.
-	double growthRateTolerance = data.getResponse().mean() * RELATIVE_TOLERANCE;
-	if(!data.isPerCapita) growthRateTolerance /= data.getDesign().mean();
-	//For the competition coefficients, we will assume that with all species present at average density, growth halts.
-	//This gives us 1, divided by the square of average density, divided by the number of species.
-	double competitionCoefficientTolerance = 1.0 / pow(data.getDesign().mean(), 2.0) / data.numSpecies * RELATIVE_TOLERANCE;
-	
-	size_t numGrowthRates = growthGrouping.getNumGroups();
-	size_t numCompetitionCoefficients = rowGrouping.getNumGroups() * colGrouping.getNumGroups();
-	
-	Solver::ParameterVector tolerances = Eigen::VectorXd(numGrowthRates + numCompetitionCoefficients);
-	for(size_t i = 0; i < numGrowthRates; i++) {
-		tolerances[i] = growthRateTolerance;
-	}
-	for(size_t i = numGrowthRates; i < numGrowthRates + numCompetitionCoefficients; i++) {
-		tolerances[i] = competitionCoefficientTolerance;
-	}
-	
-	return tolerances;
-}
-
-Eigen::VectorXd Solver::getPredictions(const ParameterVector &parameters) {
+Eigen::VectorXd Solver::getPredictions(const Parameters &parameters) {
 	Eigen::VectorXd predictions = Eigen::VectorXd::Zero(data.numObservations);
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
@@ -102,12 +28,12 @@ Eigen::VectorXd Solver::getPredictions(const ParameterVector &parameters) {
 		size_t focalGrowthGroup = growthGrouping.getGroup(focal);
 		size_t focalRowGroup = rowGrouping.getGroup(focal);
 		
-		double focalGrowthRate = getGrowthRate(parameters, focalGrowthGroup);
+		double focalGrowthRate = parameters.getGrowthRate(focalGrowthGroup);
 		double focalDensity = data.getDesign()(obs, focal);
 		
 		double intrinsicGrowth = focalGrowthRate;
 		if(!data.isPerCapita) intrinsicGrowth *= focalDensity;
-		double totalCompetition = getCompetitionCoefficientsRow(parameters, focalRowGroup).dot(colGroupedDesign.row(obs));
+		double totalCompetition = parameters.getCompetitionCoefficientsRow(focalRowGroup).dot(colGroupedDesign.row(obs));
 		double prediction = intrinsicGrowth * (1.0 - totalCompetition);
 		predictions[obs] = prediction;
 	}
@@ -115,12 +41,16 @@ Eigen::VectorXd Solver::getPredictions(const ParameterVector &parameters) {
 	return predictions;
 }
 
-Eigen::VectorXd Solver::getResiduals(const ParameterVector &parameters) {
+Eigen::VectorXd Solver::getResiduals(const Parameters &parameters) {
 	return data.getResponse() - getPredictions(parameters);
 }
 
-Solver::Jacobian Solver::getJacobian(const ParameterVector &parameters) {
-	Solver::Jacobian jacobian = Eigen::MatrixXd::Zero(data.numObservations, parameters.size());
+Eigen::VectorXd Solver::getResidualsFromVector(const Eigen::VectorXd &parameterVector) {
+	return getResiduals(Parameters(parameterVector, growthGrouping, rowGrouping, colGrouping));
+}
+
+Solver::Jacobian Solver::getJacobian(const Parameters &parameters) {
+	Solver::Jacobian jacobian = Eigen::MatrixXd::Zero(data.numObservations, parameters.getNumParameters());
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
 	
@@ -131,17 +61,17 @@ Solver::Jacobian Solver::getJacobian(const ParameterVector &parameters) {
 		size_t focalGrowthGroup = growthGrouping.getGroup(focal);
 		size_t focalRowGroup = rowGrouping.getGroup(focal);
 		
-		double focalGrowthRate = getGrowthRate(parameters, focalGrowthGroup);
+		double focalGrowthRate = parameters.getGrowthRate(focalGrowthGroup);
 		double focalDensity = data.getDesign()(obs, focal);
 		
 		//First, the derivatives with respect to the growth rates.
 		//If it's not the growth rate of the observation's focal species, this is zero.
 		//So there will be only one per observation.
 		//This one will be equal to the prediction, divided by the growth rate itself.
-		double totalCompetition = getCompetitionCoefficientsRow(parameters, focalRowGroup).dot(colGroupedDesign.row(obs));
+		double totalCompetition = parameters.getCompetitionCoefficientsRow(focalRowGroup).dot(colGroupedDesign.row(obs));
 		double derivative = 1.0 - totalCompetition;
 		if(!data.isPerCapita) derivative *= focalDensity;
-		jacobian(obs, getGrowthRateIndex(focalGrowthGroup)) = -derivative;
+		jacobian(obs, parameters.getAsVectorGrowthRateIndex(focalGrowthGroup)) = -derivative;
 		
 		//Second, the derivatives with respect to the competition coefficients.
 		//If it's not a competition coefficient *on* the focal species, this is zero.
@@ -150,21 +80,30 @@ Solver::Jacobian Solver::getJacobian(const ParameterVector &parameters) {
 		for(size_t colGroup = 0; colGroup < colGrouping.getNumGroups(); colGroup++) {
 			double derivative = - focalGrowthRate * colGroupedDesign(obs, colGroup);
 			if(!data.isPerCapita) derivative *= focalDensity;
-			jacobian(obs, getCompetitionCoefficientIndex(focalRowGroup, colGroup)) = -derivative;
+			jacobian(obs, parameters.getAsVectorCompetitionCoefficientIndex(focalRowGroup, colGroup)) = -derivative;
 		}
 	}
 	
 	return jacobian;
 }
 
+Solver::Jacobian Solver::getJacobianFromVector(const Eigen::VectorXd &parameterVector) {
+	return getJacobian(Parameters(parameterVector, growthGrouping, rowGrouping, colGrouping));
+}
+
 void Solver::calculateSolution() {
-	ResidualsFunc residualsFunc = std::bind(&Solver::getResiduals, this, std::placeholders::_1);
-	JacobianFunc jacobianFunc = std::bind(&Solver::getJacobian, this, std::placeholders::_1);
-	solution = gaussNewtonNLS(residualsFunc, jacobianFunc, getInitialParameterValues(), getParameterTolerances());
+	ResidualsFunc residualsFunc = std::bind(&Solver::getResidualsFromVector, this, std::placeholders::_1);
+	JacobianFunc jacobianFunc = std::bind(&Solver::getJacobianFromVector, this, std::placeholders::_1);
+	
+	Eigen::VectorXd initialParameterVector = Parameters(data, growthGrouping, rowGrouping, colGrouping).getAsVector();
+	Eigen::VectorXd parameterTolerances = Parameters::getTolerances(data, growthGrouping, rowGrouping, colGrouping);
+	
+	Eigen::VectorXd solutionVector = gaussNewtonNLS(residualsFunc, jacobianFunc, initialParameterVector, parameterTolerances);
+	solution = Parameters(solutionVector, growthGrouping, rowGrouping, colGrouping);
 	isDirtySolution = false;
 }
 
-Solver::ParameterVector Solver::getSolution() {
+Parameters Solver::getSolution() {
 	if(isDirtySolution) calculateSolution();
 	return solution;
 }
@@ -182,14 +121,14 @@ Eigen::VectorXd Solver::getSolutionResiduals() {
 double Solver::getDeviance() {
 	//Returns the deviance.
 	//That is, the negative of twice the log likelihood.
-	ParameterVector parameters = getSolution();
+	Parameters parameters = getSolution();
 	Eigen::VectorXd residuals = getSolutionResiduals();
 	double sumOfSquares = residuals.dot(residuals);
 	
 	//First, we must estimate the variance of the residuals.
 	//They should already be centred around zero, so we shouldn't need to subtract the mean.
 	//TODO: Double-check that this is the correct formula and degrees of freedom.
-	double variance = sumOfSquares / (residuals.size() - parameters.size());
+	double variance = sumOfSquares / (residuals.size() - parameters.getNumParameters());
 	
 	//The likelihood is the product of the likelihoods for each residual.
 	//So the log likelihood is the sum of log likelihoods.
@@ -206,10 +145,10 @@ double Solver::getDeviance() {
 }
 
 double Solver::getAIC() {
-	ParameterVector parameters = getSolution();
+	Parameters parameters = getSolution();
 	double deviance = getDeviance();
 	
-	double aic = 2 * parameters.size() + deviance;
+	double aic = 2 * parameters.getNumParameters() + deviance;
 	
 	return aic;
 }
