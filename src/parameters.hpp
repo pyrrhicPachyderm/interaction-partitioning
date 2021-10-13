@@ -15,12 +15,15 @@ class Parameters {
 		const Eigen::VectorXd &getGrowthRates() const;
 		double getCompetitionCoefficient(size_t rowIndex, size_t colIndex) const;
 		Eigen::VectorXd getCompetitionCoefficientsRow(size_t rowIndex) const;
+		size_t getNumParameters() const;
 	public:
 		Parameters(Data data, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping);
 		
 		//Some functions to allow converting back and forth as a pure vector, for systems (such as the NLS module) that need it that way.
 		Parameters(Eigen::VectorXd parameters, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping);
 		Eigen::VectorXd getAsVector() const;
+		size_t getAsVectorGrowthRateIndex(size_t index) const;
+		size_t getAsVectorCompetitionCoefficientIndex(size_t rowIndex, size_t colIndex) const;
 		
 		//Also for the NLS module and the like, that want tolerances for each value in the pure vector.
 		static Eigen::VectorXd getTolerances(Data data, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping);

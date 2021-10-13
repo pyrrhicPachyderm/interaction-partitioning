@@ -20,6 +20,10 @@ Eigen::VectorXd Parameters::getCompetitionCoefficientsRow(size_t rowIndex) const
 	return competitionCoefficients.row(rowIndex);
 }
 
+size_t getNumParameters() const {
+	return growthRates.size() + competitionCoefficients.size();
+}
+
 Parameters::Parameters(Data data, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping) {
 	//This is the standard constructor.
 	//It will try to make somewhat reasonable initial guesses for all the parameter values.
@@ -69,4 +73,12 @@ Eigen::VectorXd Parameters::getAsVector() const {
 		growthRates,
 		Eigen::Map<const Eigen::VectorXd>(competitionCoefficients.data(), competitionCoefficients.size())
 	).finished();
+}
+
+size_t getAsVectorGrowthRateIndex(size_t index) const {
+	return index;
+}
+
+size_t getAsVectorCompetitionCoefficientIndex(size_t rowIndex, size_t colIndex) const {
+	growthRates.size() + competitionCoefficients.cols() * rowGroup + colGroup;
 }
