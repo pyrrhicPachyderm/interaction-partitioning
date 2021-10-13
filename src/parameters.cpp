@@ -20,7 +20,7 @@ Eigen::VectorXd Parameters::getCompetitionCoefficientsRow(size_t rowIndex) const
 	return competitionCoefficients.row(rowIndex);
 }
 
-size_t getNumParameters() const {
+size_t Parameters::getNumParameters() const {
 	return growthRates.size() + competitionCoefficients.size();
 }
 
@@ -75,10 +75,10 @@ Eigen::VectorXd Parameters::getAsVector() const {
 	).finished();
 }
 
-size_t getAsVectorGrowthRateIndex(size_t index) const {
+size_t Parameters::getAsVectorGrowthRateIndex(size_t index) const {
 	return index;
 }
 
-size_t getAsVectorCompetitionCoefficientIndex(size_t rowIndex, size_t colIndex) const {
-	growthRates.size() + competitionCoefficients.cols() * rowGroup + colGroup;
+size_t Parameters::getAsVectorCompetitionCoefficientIndex(size_t rowIndex, size_t colIndex) const {
+	return growthRates.size() + competitionCoefficients.cols() * rowIndex + colIndex;
 }

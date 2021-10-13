@@ -17,6 +17,7 @@ class Parameters {
 		Eigen::VectorXd getCompetitionCoefficientsRow(size_t rowIndex) const;
 		size_t getNumParameters() const;
 	public:
+		Parameters() = default;
 		Parameters(Data data, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping);
 		
 		//Some functions to allow converting back and forth as a pure vector, for systems (such as the NLS module) that need it that way.
