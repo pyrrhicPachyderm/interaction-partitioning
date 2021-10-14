@@ -30,6 +30,10 @@ class GroupingLattice {
 			constructAllGroupings();
 			constructAdjacencyLists();
 		};
+		
+		const Grouping &getGrouping(size_t index) const {
+			return groupings[index];
+		}
 };
 
 //A move between two partitions, by merging two groups or splitting one.
