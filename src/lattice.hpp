@@ -11,10 +11,19 @@ class GroupingLattice {
 	protected:
 		std::vector<Grouping> groupings;
 		
+		//Adjacency lists for upward and downward moves.
+		std::vector<std::vector<size_t>> merges;
+		std::vector<std::vector<size_t>> splits;
+		
+		//Takes a grouping, and finds its index in groupings.
+		size_t findMatch(std::vector<size_t> grouping);
+		
 		void constructAllGroupings();
+		void constructAdjacencyLists();
 	public:
 		GroupingLattice(size_t numSpecies): numSpecies(numSpecies) {
 			constructAllGroupings();
+			constructAdjacencyLists();
 		};
 };
 
