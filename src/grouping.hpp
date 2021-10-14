@@ -44,6 +44,8 @@ class Grouping {
 		size_t getGroup(size_t species) const {return groups[species];}
 		
 		size_t getNumGroups() const;
+		
+		static std::vector<size_t> fixGrouping(std::vector<size_t> improperGrouping);
 };
 
 #endif

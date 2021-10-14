@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "grouping.hpp"
 
 void Grouping::reset() {
@@ -42,4 +43,35 @@ size_t Grouping::getNumGroups() const {
 	//The number of groups is simply the highest group number seen before or including the final element.
 	//Plus one, as the groups are zero indexed.
 	return maxGroups[numSpecies - 1] + 1;
+}
+
+std::vector<size_t> Grouping::fixGrouping(std::vector<size_t> improperGrouping) {
+	//We must make the improperGrouping a proper grouping.
+	//Species are in the same group if and only if they have the same number in improperGrouping.
+	//However, improperGrouping is not required to be a valid rhyming scheme.
+	
+	//We will use something akin to countingSort.
+	//That is, we will assume the largest number in improperGrouping is not too large.
+	//We will suffer issues with space complexity if that is not true.
+	
+	size_t maxImproperGroup = *std::max_element(improperGrouping.begin(), improperGrouping.end());
+	
+	//We will have a vector of mappings.
+	//Index into this using the number of improperGrouping, and it will give the proper group number.
+	//Must be +1 size due to zero indexing.
+	std::vector<size_t> mappedGroup(maxImproperGroup+1);
+	std::vector<size_t> isMapped(maxImproperGroup+1, false);
+	
+	std::vector<size_t> properGrouping(improperGrouping.size());
+	
+	size_t nextGroup = 0;
+	for(size_t i = 0; i < improperGrouping.size(); i++) {
+		if(!isMapped[improperGrouping[i]]) {
+			mappedGroup[improperGrouping[i]] = nextGroup++;
+			isMapped[improperGrouping[i]] = true;
+		}
+		properGrouping[i] = mappedGroup[improperGrouping[i]];
+	}
+	
+	return properGrouping;
 }
