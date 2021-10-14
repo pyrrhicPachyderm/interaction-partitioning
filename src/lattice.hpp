@@ -9,12 +9,13 @@ class GroupingLattice {
 	public:
 		const size_t numSpecies;
 	protected:
-		const std::vector<Grouping> groupings;
+		std::vector<Grouping> groupings;
 		
-		static std::vector<Grouping> constructAllGroupings(size_t numSpecies);
+		void constructAllGroupings();
 	public:
-		GroupingLattice(size_t numSpecies):
-			numSpecies(numSpecies), groupings(constructAllGroupings(numSpecies)) {};
+		GroupingLattice(size_t numSpecies): numSpecies(numSpecies) {
+			constructAllGroupings();
+		};
 };
 
 #endif
