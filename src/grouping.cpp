@@ -76,7 +76,7 @@ std::vector<size_t> Grouping::fixGrouping(std::vector<size_t> improperGrouping) 
 	return properGrouping;
 }
 
-bool Grouping::isMatch(std::vector<size_t> grouping) {
+bool Grouping::isMatch(std::vector<size_t> grouping) const {
 	for(size_t i = 0; i < numSpecies; i++) {
 		if(grouping[i] != groups[i]) return false;
 	}
