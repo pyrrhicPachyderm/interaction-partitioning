@@ -1,14 +1,14 @@
 #include "grouping.hpp"
 
 void Grouping::reset() {
-	group = std::vector<size_t>(numSpecies, 0);
-	maxGroup = std::vector<size_t>(numSpecies, 0);
+	groups = std::vector<size_t>(numSpecies, 0);
+	maxGroups = std::vector<size_t>(numSpecies, 0);
 }
 
 void Grouping::separate() {
 	for(size_t i = 0; i < numSpecies; i++) {
-		group[i] = i;
-		maxGroup[i] = i;
+		groups[i] = i;
+		maxGroups[i] = i;
 	}
 }
 
@@ -25,12 +25,12 @@ bool Grouping::advanceIndex(size_t index) {
 	
 	//If we have seen an equal or higher group number to the left, this can safely be incremented.
 	//We must reset all group numbers to the right of it to 0
-	if(group[index] <= maxGroup[index-1]) {
-		group[index]++;
-		maxGroup[index] = std::max(maxGroup[index], group[index]);
+	if(groups[index] <= maxGroups[index-1]) {
+		groups[index]++;
+		maxGroups[index] = std::max(maxGroups[index], groups[index]);
 		for(size_t i = index+1; i < numSpecies; i++) {
-			group[i] = 0;
-			maxGroup[i] = maxGroup[index];
+			groups[i] = 0;
+			maxGroups[i] = maxGroups[index];
 		}
 		return true;
 	}
@@ -41,5 +41,5 @@ bool Grouping::advanceIndex(size_t index) {
 size_t Grouping::getNumGroups() const {
 	//The number of groups is simply the highest group number seen before or including the final element.
 	//Plus one, as the groups are zero indexed.
-	return maxGroup[numSpecies - 1] + 1;
+	return maxGroups[numSpecies - 1] + 1;
 }

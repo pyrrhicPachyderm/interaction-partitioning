@@ -10,12 +10,12 @@ class Grouping {
 		//The vector group consists of one integer per species, indicating which group it belongs to.
 		//It must form a valid rhyming scheme, 0-indexed.
 		//That is, the first integer must be 0, and subsequent integers must be no more than 1 higher than the highest integer seen yet.
-		std::vector<size_t> group;
+		std::vector<size_t> groups;
 		
 		//The vector maxGroup consists of one integer per species.
 		//It consists of a cumulative maximum of the group vector.
 		//It is used in finding the next group.
-		std::vector<size_t> maxGroup;
+		std::vector<size_t> maxGroups;
 	public:
 		//Resets to the lexigraphically first grouping.
 		void reset();
@@ -40,8 +40,8 @@ class Grouping {
 			reset();
 		};
 		
-		const std::vector<size_t> &getGroups() const {return group;}
-		size_t getGroup(size_t species) const {return group[species];}
+		const std::vector<size_t> &getGroups() const {return groups;}
+		size_t getGroup(size_t species) const {return groups[species];}
 		
 		size_t getNumGroups() const;
 };
