@@ -31,7 +31,7 @@ class Grouping {
 			}
 		}
 	protected:
-		//A recursive function to be used in advancing to the lexigraphically nex grouping.
+		//A recursive function to be used in advancing to the lexigraphically next grouping.
 		//Increments the specified index by one, if it is valid to do, and resets all species after it to group 0.
 		//Recurses on the index to the left if this one cannot be validly incremented.
 		//Calls reset() if this is the lexigraphically final grouping.
