@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 		isPerCapita
 	);
 	
-	Solver solver = Solver(data);
+	MaximumLikelihoodSolver solver = MaximumLikelihoodSolver(data);
 	solver.updateGrowthGrouping(&Grouping::separate);
 	
 	OutputColumn<Grouping> outputRowGroupings("row_group");

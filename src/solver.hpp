@@ -8,14 +8,59 @@
 class Solver {
 	protected:
 		Data data;
+	public:
+		Solver(Data data): data(data) {};
+	protected:
+		Eigen::MatrixXd colGroupedDesign;
+		bool isDirtyColGroupedDesign = true;
+		
+		//We will have functions to say that particular elements have changed and mark appropriate things as dirty.
+		//There needs to be a set for the superclass, Solver, as well as ones for subclasses.
+		//The subclass ones will be define pure virtual here, and will need overriding.
+		//The superclass ones will dirty elements of the superclass, then call the subclass ones.
+		virtual void dirtyDataSubclass() = 0;
+		virtual void dirtyGrowthGroupingSubclass() = 0;
+		virtual void dirtyRowGroupingSubclass() = 0;
+		virtual void dirtyColGroupingSubclass() = 0;
+		
+		void dirtyData() {
+			isDirtyColGroupedDesign = true;
+			dirtyDataSubclass();
+		}
+		void dirtyGrowthGrouping() {
+			dirtyGrowthGroupingSubclass();
+		}
+		void dirtyRowGrouping() {
+			dirtyRowGroupingSubclass();
+		}
+		void dirtyColGrouping() {
+			isDirtyColGroupedDesign = true;
+			dirtyColGroupingSubclass();
+		}
+	public:
+		//Functions to retrieve groupings.
+		//Subclasses each store groupings in their own way, so these are pure virtual.
+		virtual const Grouping &getGrowthGrouping() const = 0;
+		virtual const Grouping &getRowGrouping() const = 0;
+		virtual const Grouping &getColGrouping() const = 0;
+	protected:
+		void calculateColGroupedDesign();
+		Eigen::MatrixXd getColGroupedDesign();
+		
+		Eigen::VectorXd getPredictions(const Parameters &parameters);
+		Eigen::VectorXd getResiduals(const Parameters &parameters);
+};
+
+class MaximumLikelihoodSolver : public Solver {
+	protected:
 		Grouping growthGrouping;
 		Grouping rowGrouping;
 		Grouping colGrouping;
 	public:
-		Solver(Data data):
-			data(data), growthGrouping(Grouping(data.numSpecies)), rowGrouping(Grouping(data.numSpecies)), colGrouping(Grouping(data.numSpecies)) {};
-		Solver(Data data, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping):
-			data(data), growthGrouping(growthGrouping), rowGrouping(rowGrouping), colGrouping(colGrouping)
+		MaximumLikelihoodSolver(Data data):
+			Solver(data), growthGrouping(Grouping(data.numSpecies)), rowGrouping(Grouping(data.numSpecies)), colGrouping(Grouping(data.numSpecies)) {};
+		MaximumLikelihoodSolver(Data data, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping):
+			Solver(data), growthGrouping(growthGrouping), rowGrouping(rowGrouping), colGrouping(colGrouping)
 		{
 			assert(growthGrouping.numSpecies == data.numSpecies);
 			assert(rowGrouping.numSpecies == data.numSpecies);
@@ -29,26 +74,21 @@ class Solver {
 		//TODO: Do this more nicely.
 		typedef Eigen::MatrixXd Jacobian;
 	protected:
-		Eigen::MatrixXd colGroupedDesign;
-		bool isDirtyColGroupedDesign = true;
-		
 		Parameters solution;
 		bool isDirtySolution = true;
 		
 		//Functions to say that particular elements have changed and mark appropriate things as dirty.
-		void dirtyData() {
-			isDirtySolution = true;
-			isDirtyColGroupedDesign = true;
-		}
-		void dirtyGrowthGrouping() {
+		void dirtyDataSubclass() {
 			isDirtySolution = true;
 		}
-		void dirtyRowGrouping() {
+		void dirtyGrowthGroupingSubclass() {
 			isDirtySolution = true;
 		}
-		void dirtyColGrouping() {
+		void dirtyRowGroupingSubclass() {
 			isDirtySolution = true;
-			isDirtyColGroupedDesign = true;
+		}
+		void dirtyColGroupingSubclass() {
+			isDirtySolution = true;
 		}
 	public:
 		//Functions to update groupings.
@@ -67,21 +107,16 @@ class Solver {
 		}
 		
 		//Functions to retrieve groupings.
-		Grouping getGrowthGrouping() const {
+		const Grouping &getGrowthGrouping() const {
 			return growthGrouping;
 		}
-		Grouping getRowGrouping() const {
+		const Grouping &getRowGrouping() const {
 			return rowGrouping;
 		}
-		Grouping getColGrouping() const {
+		const Grouping &getColGrouping() const {
 			return colGrouping;
 		}
 	protected:
-		void calculateColGroupedDesign();
-		Eigen::MatrixXd getColGroupedDesign();
-		
-		Eigen::VectorXd getPredictions(const Parameters &parameters);
-		Eigen::VectorXd getResiduals(const Parameters &parameters);
 		Eigen::VectorXd getResidualsFromVector(const Eigen::VectorXd &parameterVector);
 		
 		Jacobian getJacobian(const Parameters &parameters);

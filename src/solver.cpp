@@ -2,11 +2,11 @@
 #include "solver.hpp"
 
 void Solver::calculateColGroupedDesign() {
-	colGroupedDesign = Eigen::MatrixXd::Zero(data.numObservations, colGrouping.getNumGroups());
+	colGroupedDesign = Eigen::MatrixXd::Zero(data.numObservations, getColGrouping().getNumGroups());
 	
 	for(size_t obs = 0; obs < data.numObservations; obs++) {
 		for(size_t sp = 0; sp < data.numSpecies; sp++) {
-			colGroupedDesign(obs, colGrouping.getGroup(sp)) += data.getDesign()(obs, sp);
+			colGroupedDesign(obs, getColGrouping().getGroup(sp)) += data.getDesign()(obs, sp);
 		}
 	}
 	
@@ -25,8 +25,8 @@ Eigen::VectorXd Solver::getPredictions(const Parameters &parameters) {
 	
 	for(size_t obs = 0; obs < data.numObservations; obs++) {
 		size_t focal = data.getFocal()[obs];
-		size_t focalGrowthGroup = growthGrouping.getGroup(focal);
-		size_t focalRowGroup = rowGrouping.getGroup(focal);
+		size_t focalGrowthGroup = getGrowthGrouping().getGroup(focal);
+		size_t focalRowGroup = getRowGrouping().getGroup(focal);
 		
 		double focalGrowthRate = parameters.getGrowthRate(focalGrowthGroup);
 		double focalDensity = data.getDesign()(obs, focal);
@@ -45,12 +45,12 @@ Eigen::VectorXd Solver::getResiduals(const Parameters &parameters) {
 	return data.getResponse() - getPredictions(parameters);
 }
 
-Eigen::VectorXd Solver::getResidualsFromVector(const Eigen::VectorXd &parameterVector) {
+Eigen::VectorXd MaximumLikelihoodSolver::getResidualsFromVector(const Eigen::VectorXd &parameterVector) {
 	return getResiduals(Parameters(parameterVector, growthGrouping, rowGrouping, colGrouping));
 }
 
-Solver::Jacobian Solver::getJacobian(const Parameters &parameters) {
-	Solver::Jacobian jacobian = Eigen::MatrixXd::Zero(data.numObservations, parameters.getNumParameters());
+MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Parameters &parameters) {
+	MaximumLikelihoodSolver::Jacobian jacobian = Eigen::MatrixXd::Zero(data.numObservations, parameters.getNumParameters());
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
 	
@@ -87,13 +87,13 @@ Solver::Jacobian Solver::getJacobian(const Parameters &parameters) {
 	return jacobian;
 }
 
-Solver::Jacobian Solver::getJacobianFromVector(const Eigen::VectorXd &parameterVector) {
+MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobianFromVector(const Eigen::VectorXd &parameterVector) {
 	return getJacobian(Parameters(parameterVector, growthGrouping, rowGrouping, colGrouping));
 }
 
-void Solver::calculateSolution() {
-	ResidualsFunc residualsFunc = std::bind(&Solver::getResidualsFromVector, this, std::placeholders::_1);
-	JacobianFunc jacobianFunc = std::bind(&Solver::getJacobianFromVector, this, std::placeholders::_1);
+void MaximumLikelihoodSolver::calculateSolution() {
+	ResidualsFunc residualsFunc = std::bind(&MaximumLikelihoodSolver::getResidualsFromVector, this, std::placeholders::_1);
+	JacobianFunc jacobianFunc = std::bind(&MaximumLikelihoodSolver::getJacobianFromVector, this, std::placeholders::_1);
 	
 	Eigen::VectorXd initialParameterVector = Parameters(data, growthGrouping, rowGrouping, colGrouping).getAsVector();
 	Eigen::VectorXd parameterTolerances = Parameters::getTolerances(data, growthGrouping, rowGrouping, colGrouping);
@@ -103,22 +103,22 @@ void Solver::calculateSolution() {
 	isDirtySolution = false;
 }
 
-Parameters Solver::getSolution() {
+Parameters MaximumLikelihoodSolver::getSolution() {
 	if(isDirtySolution) calculateSolution();
 	return solution;
 }
 
-Eigen::VectorXd Solver::getSolutionPredictions() {
+Eigen::VectorXd MaximumLikelihoodSolver::getSolutionPredictions() {
 	//TODO: Memoise.
 	return getPredictions(getSolution());
 }
 
-Eigen::VectorXd Solver::getSolutionResiduals() {
+Eigen::VectorXd MaximumLikelihoodSolver::getSolutionResiduals() {
 	//TODO: Memoise.
 	return getResiduals(getSolution());
 }
 
-double Solver::getDeviance() {
+double MaximumLikelihoodSolver::getDeviance() {
 	//Returns the deviance.
 	//That is, the negative of twice the log likelihood.
 	Parameters parameters = getSolution();
@@ -144,7 +144,7 @@ double Solver::getDeviance() {
 	return deviance;
 }
 
-double Solver::getAIC() {
+double MaximumLikelihoodSolver::getAIC() {
 	Parameters parameters = getSolution();
 	double deviance = getDeviance();
 	
@@ -153,7 +153,7 @@ double Solver::getAIC() {
 	return aic;
 }
 
-double Solver::getR2() {
+double MaximumLikelihoodSolver::getR2() {
 	//Returns R^2, the coefficient of determination.
 	
 	Eigen::VectorXd response = data.getResponse();
