@@ -46,6 +46,9 @@ class Grouping {
 		size_t getNumGroups() const;
 		
 		static std::vector<size_t> fixGrouping(std::vector<size_t> improperGrouping);
+		
+		//Checks whether the provided grouping matches this one.
+		bool isMatch(std::vector<size_t> grouping);
 };
 
 #endif
