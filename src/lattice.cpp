@@ -35,6 +35,8 @@ void GroupingLattice::constructAdjacencyLists() {
 	//Set the adjacency lists to the right length.
 	merges = std::vector<std::vector<size_t>>(groupings.size());
 	splits = std::vector<std::vector<size_t>>(groupings.size());
+	mergeMoves = std::vector<std::vector<GroupingMove>>(groupings.size());
+	splitMoves = std::vector<std::vector<GroupingMove>>(groupings.size());
 	
 	for(size_t sourceIndex = 0; sourceIndex < groupings.size(); sourceIndex++) {
 		const Grouping &source = groupings[sourceIndex];
@@ -46,8 +48,12 @@ void GroupingLattice::constructAdjacencyLists() {
 				std::vector<size_t> mergedGrouping = mergeGroups(source.getGroups(), g1, g2);
 				size_t destIndex = findMatch(mergedGrouping);
 				
+				GroupingMove move(source.getGroups(), mergedGrouping, g1, g2);
+				
 				merges[sourceIndex].push_back(destIndex);
 				splits[destIndex].push_back(sourceIndex);
+				mergeMoves[sourceIndex].push_back(move);
+				splitMoves[destIndex].push_back(move);
 			}
 		}
 	}

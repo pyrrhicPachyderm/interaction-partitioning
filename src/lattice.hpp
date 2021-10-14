@@ -17,6 +17,8 @@ class GroupingLattice {
 		//Adjacency lists for upward and downward moves.
 		std::vector<std::vector<size_t>> merges;
 		std::vector<std::vector<size_t>> splits;
+		std::vector<std::vector<GroupingMove>> mergeMoves;
+		std::vector<std::vector<GroupingMove>> splitMoves;
 		
 		//Takes a grouping, and finds its index in groupings.
 		size_t findMatch(std::vector<size_t> grouping);
