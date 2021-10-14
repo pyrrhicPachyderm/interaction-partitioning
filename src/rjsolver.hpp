@@ -5,8 +5,13 @@
 #include "solver.hpp"
 
 class ReversibleJumpSolver : public Solver {
+	public:
+		typedef std::function<double(Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping)> HyperpriorFunc;
+		
+		static double aicHyperprior(Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping);
 	protected:
 		GroupingLattice groupingLattice;
+		HyperpriorFunc hyperpriorFunc;
 		
 		size_t growthGrouping;
 		size_t rowGrouping;
@@ -21,8 +26,10 @@ class ReversibleJumpSolver : public Solver {
 		size_t proposedColGrouping;
 		Parameters proposedParameters;
 	public:
+		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc):
+			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), growthGrouping(0), rowGrouping(0), colGrouping(0) {};
 		ReversibleJumpSolver(Data data):
-			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), growthGrouping(0), rowGrouping(0), colGrouping(0) {};
+			ReversibleJumpSolver(data, aicHyperprior) {};
 	protected:
 		//Functions to say that particular elements have changed and mark appropriate things as dirty.
 		void dirtyDataSubclass() {}
