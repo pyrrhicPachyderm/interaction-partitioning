@@ -18,71 +18,32 @@ class Grouping {
 		std::vector<size_t> maxGroup;
 	public:
 		//Resets to the lexigraphically first grouping.
-		void reset() {
-			group = std::vector<size_t>(numSpecies, 0);
-			maxGroup = std::vector<size_t>(numSpecies, 0);
-		}
+		void reset();
 		
 		//Resets to the lexigraphically last grouping.
-		void separate() {
-			for(size_t i = 0; i < numSpecies; i++) {
-				group[i] = i;
-				maxGroup[i] = i;
-			}
-		}
+		void separate();
+		
+		//Advances to the next grouping, per lexigraphic order.
+		//Wraps back to the lexigraphically first grouping once it has been through them all.
+		//Returns false if and only if it wrapped, facilitating a do while loop.
+		bool advance();
 	protected:
 		//A recursive function to be used in advancing to the lexigraphically next grouping.
 		//Increments the specified index by one, if it is valid to do, and resets all species after it to group 0.
 		//Recurses on the index to the left if this one cannot be validly incremented.
 		//Calls reset() if this is the lexigraphically final grouping.
 		//Returns false if and only if it reset, facilitating a do while loop.
-		bool advanceIndex(size_t index) {
-			//It is never valid to increment the first element, so reset.
-			if(index == 0) {
-				reset();
-				return false;
-			}
-			
-			//If we have seen an equal or higher group number to the left, this can safely be incremented.
-			//We must reset all group numbers to the right of it to 0
-			if(group[index] <= maxGroup[index-1]) {
-				group[index]++;
-				maxGroup[index] = std::max(maxGroup[index], group[index]);
-				for(size_t i = index+1; i < numSpecies; i++) {
-					group[i] = 0;
-					maxGroup[i] = maxGroup[index];
-				}
-				return true;
-			}
-			//Otherwise, it is not valid to increment it, so we recurse.
-			return advanceIndex(index-1);
-		}
+		bool advanceIndex(size_t index);
 	public:
 		//If called without a provided group, put every species in the same group.
 		Grouping(size_t numSpecies): numSpecies(numSpecies) {
 			reset();
 		};
 		
-		const std::vector<size_t> &getGroups() const {
-			return group;
-		}
+		const std::vector<size_t> &getGroups() const {return group;}
+		size_t getGroup(size_t species) const {return group[species];}
 		
-		size_t getGroup(size_t species) const {
-			return group[species];
-		}
-		
-		size_t getNumGroups() const {
-			//The number of groups is simply the highest group number seen before or including the final element.
-			//Plus one, as the groups are zero indexed.
-			return maxGroup[numSpecies - 1] + 1;
-		}
-		
-		//Advances to the next grouping, per lexigraphic order.
-		//Wraps back to the lexigraphically first grouping once it has been through them all.
-		//Returns false if and only if it wrapped, facilitating a do while loop.
-		bool advance() {
-			return advanceIndex(numSpecies - 1);
-		}
+		size_t getNumGroups() const;
 };
 
 #endif
