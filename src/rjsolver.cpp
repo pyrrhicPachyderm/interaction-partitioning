@@ -10,3 +10,8 @@ GroupingSet ReversibleJumpSolver::getGroupings(GroupingIndexSet groupingIndices)
 	//Perhaps look at https://stackoverflow.com/a/32175958
 	return GroupingSet({groupingLattice.getGrouping(groupingIndices[GROWTH]), groupingLattice.getGrouping(groupingIndices[ROW]), groupingLattice.getGrouping(groupingIndices[COL])});
 }
+
+ReversibleJumpSolver::GroupingIndexSet ReversibleJumpSolver::getGroupingIndices(GroupingSet groupings) const {
+	//TODO: Should also be done based on NUM_GROUPING_TYPES.
+	return GroupingIndexSet({groupingLattice.getIndex(groupings[GROWTH]), groupingLattice.getIndex(groupings[ROW]), groupingLattice.getIndex(groupings[COL])});
+}

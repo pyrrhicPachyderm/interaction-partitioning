@@ -37,6 +37,7 @@ class ReversibleJumpSolver : public Solver {
 		void dirtyGroupingSubclass(GroupingType groupingType) override {}
 		
 		GroupingSet getGroupings(GroupingIndexSet groupingIndices) const;
+		GroupingIndexSet getGroupingIndices(GroupingSet groupings) const;
 	public:
 		//Functions to retrieve groupings.
 		const Grouping &getGroupingSubclass(GroupingType groupingType) const override {
