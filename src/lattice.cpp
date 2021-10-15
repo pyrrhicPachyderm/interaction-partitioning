@@ -8,7 +8,7 @@ void GroupingLattice::constructAllGroupings() {
 	} while(grouping.advance());
 }
 
-size_t GroupingLattice::findMatch(const std::vector<size_t> &grouping) {
+size_t GroupingLattice::findMatch(const std::vector<size_t> &grouping) const {
 	//TODO:
 	//An exhaustive search is horribly inefficient: O(n * Bell_n)
 	//This can reduced to just O(n) with an appropriate tree structure,

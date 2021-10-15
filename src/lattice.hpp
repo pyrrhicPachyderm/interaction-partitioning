@@ -22,7 +22,7 @@ class GroupingLattice {
 		std::array<std::vector<std::vector<GroupingMove>>, NUM_MOVE_TYPES> moves;
 		
 		//Takes a grouping, and finds its index in groupings.
-		size_t findMatch(const std::vector<size_t> &grouping);
+		size_t findMatch(const std::vector<size_t> &grouping) const;
 		
 		void constructAllGroupings();
 		void constructAdjacencyLists();
