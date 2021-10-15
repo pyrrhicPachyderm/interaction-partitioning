@@ -1,4 +1,75 @@
+#include <numeric> //Gives std::accumulate.
 #include "rjsolver.hpp"
+
+#define MAX_TRANS_MODEL_JUMP_PROBABILITY 0.9
+
+std::vector<double> ReversibleJumpSolver::getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType) const {
+	return getTransModelJumpProbabilities(groupingType, moveType, currentGroupings, transModelJumpProbabilityMultiplier);
+}
+
+std::vector<double> ReversibleJumpSolver::getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType, GroupingIndexSet groupingIndices, double multiplier) const {
+	double sourceHyperprior = hyperpriorFunc(getGroupings(groupingIndices));
+	
+	const std::vector<size_t> &destIndices = groupingLattice.getMoveDests(moveType, groupingIndices[groupingType]);
+	std::vector<double> probabilities(destIndices.size());
+	
+	GroupingIndexSet newGroupingIndices = groupingIndices;
+	for(size_t i = 0; i < destIndices.size(); i++) {
+		newGroupingIndices[groupingType] = destIndices[i];
+		double destHyperprior = hyperpriorFunc(getGroupings(newGroupingIndices));
+		double probability = multiplier * std::min(1.0, destHyperprior/sourceHyperprior);
+		probabilities.push_back(probability);
+	}
+	
+	return probabilities;
+}
+
+double ReversibleJumpSolver::getUnscaledTotalTransModelJumpProbability(GroupingIndexSet groupingIndices) const {
+	double result = 0.0;
+	for(size_t groupingType = 0; groupingType < NUM_GROUPING_TYPES; groupingType++) {
+		if(!isChangingGroupings[groupingType]) continue;
+		for(size_t moveType = 0; moveType < NUM_MOVE_TYPES; moveType++) {
+			std::vector<double> probabilities = getTransModelJumpProbabilities((GroupingType)groupingType, (MoveType)moveType, groupingIndices, 1.0);
+			result += std::accumulate(probabilities.begin(), probabilities.end(), 0.0);
+		}
+	}
+	return result;
+}
+
+double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(size_t recursionLevel, GroupingIndexSet groupingIndices) const {
+	//We need to loop over each type of model that's changing; this is a NUM_GROUPING_TYPES-times nested loop.
+	//However, whether each loop exists is conditional on isChangingGroupings.
+	//So the neatest way to do this is recursion.
+	//recursionLevel is an index into a GroupingSet; the index to loop over in this recursion.
+	//groupingIndices is only determined for indices below recursionLevel.
+	
+	if(recursionLevel == NUM_GROUPING_TYPES) {
+		return getUnscaledTotalTransModelJumpProbability(groupingIndices);
+	}
+	
+	if(!isChangingGroupings[recursionLevel]) {
+		//We're not looping at this level; just set the actual grouping we're using at this level.
+		groupingIndices[recursionLevel] = currentGroupings[recursionLevel];
+		return getUnscaledMaxTransModelJumpProbability(recursionLevel+1, groupingIndices);
+	}
+	
+	double result = 0.0;
+	for(size_t i = 0; i < groupingLattice.getNumGroupings(); i++) {
+		groupingIndices[recursionLevel] = i;
+		result = std::max(result, getUnscaledMaxTransModelJumpProbability(recursionLevel+1, groupingIndices));
+	}
+	return result;
+}
+
+double ReversibleJumpSolver::getTransModelJumpProbabilityMultiplier() const {
+	//This is the value of c used in trans-model jump probabilities, as given defined in Green 1995 and the report.
+	
+	//The GroupingIndexSet to pass the recursive function doesn't matter.
+	//It's only determined for indices below recursionLevel, which is zero.
+	double unscaledMaxTransModelJumpProbability = getUnscaledMaxTransModelJumpProbability(0, GroupingIndexSet());
+	
+	return MAX_TRANS_MODEL_JUMP_PROBABILITY / unscaledMaxTransModelJumpProbability;
+}
 
 double ReversibleJumpSolver::aicHyperprior(GroupingSet groupings) {
 	size_t numParameters = groupings[GROWTH].getNumGroups() + groupings[ROW].getNumGroups() * groupings[COL].getNumGroups();

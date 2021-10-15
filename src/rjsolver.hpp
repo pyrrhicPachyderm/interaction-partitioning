@@ -26,9 +26,14 @@ class ReversibleJumpSolver : public Solver {
 		
 		GroupingIndexSet proposedGroupings;
 		Parameters proposedParameters;
+		
+		//Additional useful numbers.
+		double transModelJumpProbabilityMultiplier;
 	public:
 		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingBooleanSet isChangingGroupings):
-			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {};
+			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
+				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
+			};
 		ReversibleJumpSolver(Data data, GroupingBooleanSet isChangingGroupings):
 			ReversibleJumpSolver(data, aicHyperprior, isChangingGroupings) {};
 		
@@ -51,6 +56,16 @@ class ReversibleJumpSolver : public Solver {
 		const Parameters &getParameters() const {
 			return isProposing ? proposedParameters : currentParameters;
 		}
+	protected:
+		//The following has an arbitrary version, which is used by getTransModelJumpProbabilityMultiplier,
+		//and a canonical version, which uses the current parameters.
+		//The template parameters decide which grouping the jump changes, and how it changes it.
+		std::vector<double> getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType, GroupingIndexSet groupingIndices, double multiplier) const;
+		std::vector<double> getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType) const;
+		
+		double getTransModelJumpProbabilityMultiplier() const;
+		double getUnscaledMaxTransModelJumpProbability(size_t recursionLevel, GroupingIndexSet groupingIndices) const; //A helper function for the above.
+		double getUnscaledTotalTransModelJumpProbability(GroupingIndexSet groupingIndices) const; //Another helper function.
 };
 
 #endif
