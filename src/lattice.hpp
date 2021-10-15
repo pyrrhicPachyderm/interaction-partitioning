@@ -69,12 +69,12 @@ class GroupingMove {
 		//g1 and g2 are the two group numbers that are merged.
 		GroupingMove(std::vector<size_t> splitGrouping, std::vector<size_t> mergedGrouping, size_t g1, size_t g2);
 		
-		size_t getMergeMapping(size_t group) {
+		size_t getMergeMapping(size_t group) const {
 			assert(group != splitGroups.first && group != splitGroups.second);
 			return mergeMap[group];
 		}
 		
-		size_t getSplitMapping(size_t group) {
+		size_t getSplitMapping(size_t group) const {
 			assert(group != mergedGroup);
 			return splitMap[group];
 		}
