@@ -31,6 +31,10 @@ class ReversibleJumpSolver : public Solver {
 			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {};
 		ReversibleJumpSolver(Data data, GroupingBooleanSet isChangingGroupings):
 			ReversibleJumpSolver(data, aicHyperprior, isChangingGroupings) {};
+		
+		void setGroupings(GroupingSet groupings) {
+			currentGroupings = getGroupingIndices(groupings);
+		};
 	protected:
 		//Functions to say that particular elements have changed and mark appropriate things as dirty.
 		void dirtyDataSubclass() override {}
