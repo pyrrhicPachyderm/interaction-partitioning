@@ -30,12 +30,13 @@ class ReversibleJumpSolver : public Solver {
 		//Additional useful numbers.
 		double transModelJumpProbabilityMultiplier;
 	public:
-		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingBooleanSet isChangingGroupings):
+		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
+				currentGroupings = getGroupingIndices(groupings);
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
 			};
-		ReversibleJumpSolver(Data data, GroupingBooleanSet isChangingGroupings):
-			ReversibleJumpSolver(data, aicHyperprior, isChangingGroupings) {};
+		ReversibleJumpSolver(Data data, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
+			ReversibleJumpSolver(data, aicHyperprior, groupings, isChangingGroupings) {};
 		
 		void setGroupings(GroupingSet groupings) {
 			currentGroupings = getGroupingIndices(groupings);
