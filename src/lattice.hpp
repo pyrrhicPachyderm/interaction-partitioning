@@ -58,6 +58,9 @@ class GroupingMove {
 		size_t mergedGroup;
 		std::pair<size_t,size_t> splitGroups;
 		
+		size_t mergedGroupSize;
+		std::pair<size_t,size_t> splitGroupSizes;
+		
 		//The maps are group-to-group mappings for the groups that stay the same.
 		//Index into them using groups from the source grouping, and they return groups from the destination grouping.
 		std::vector<size_t> mergeMap;

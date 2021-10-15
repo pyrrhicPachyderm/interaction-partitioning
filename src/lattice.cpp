@@ -74,12 +74,26 @@ GroupingMove::GroupingMove(std::vector<size_t> splitGrouping, std::vector<size_t
 	mergeMap = std::vector<size_t>(numSplitGroups);
 	splitMap = std::vector<size_t>(numMergedGroups);
 	
+	mergedGroupSize = 0; //A counter we will add to in the loop.
+	splitGroupSizes = std::make_pair(0, 0); //More counters.
+	
 	for(size_t i = 0; i < splitGrouping.size(); i++) {
+		//Manage the mapping.
 		if(splitGrouping[i] == splitGroups.first || splitGrouping[i] == splitGroups.second) {
 			mergedGroup = mergedGrouping[i];
 		} else {
 			mergeMap[splitGrouping[i]] = mergedGrouping[i];
 			splitMap[mergedGrouping[i]] = splitGrouping[i];
+		}
+		
+		//Manage the group sizes.
+		if(splitGrouping[i] == splitGroups.first) {
+			mergedGroupSize++;
+			splitGroupSizes.first++;
+		}
+		if(splitGrouping[i] == splitGroups.second) {
+			mergedGroupSize++;
+			splitGroupSizes.second++;
 		}
 	}
 }
