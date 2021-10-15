@@ -42,11 +42,11 @@ class GroupingLattice {
 		
 		size_t getIndex(const Grouping &grouping) const;
 		
-		template<MoveType moveType> const std::vector<size_t> &getMoveDests(size_t sourceIndex) const {
+		const std::vector<size_t> &getMoveDests(MoveType moveType, size_t sourceIndex) const {
 			return moveDests[moveType][sourceIndex];
 		}
 		
-		template<MoveType moveType> const GroupingMove &getMove(size_t sourceIndex, size_t adjIndex) const {
+		const GroupingMove &getMove(MoveType moveType, size_t sourceIndex, size_t adjIndex) const {
 			return moves[moveType][sourceIndex][adjIndex];
 		}
 };
