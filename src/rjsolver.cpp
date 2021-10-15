@@ -1,6 +1,6 @@
 #include "rjsolver.hpp"
 
-double aicHyperprior(Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping) {
-	size_t numParameters = growthGrouping.getNumGroups() + rowGrouping.getNumGroups() * colGrouping.getNumGroups();
+double aicHyperprior(GroupingSet groupings) {
+	size_t numParameters = groupings[GROWTH].getNumGroups() + groupings[ROW].getNumGroups() * groupings[COL].getNumGroups();
 	return exp(-numParameters);
 }

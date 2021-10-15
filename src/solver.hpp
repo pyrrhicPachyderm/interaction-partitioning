@@ -19,30 +19,24 @@ class Solver {
 		//The subclass ones will be define pure virtual here, and will need overriding.
 		//The superclass ones will dirty elements of the superclass, then call the subclass ones.
 		virtual void dirtyDataSubclass() = 0;
-		virtual void dirtyGrowthGroupingSubclass() = 0;
-		virtual void dirtyRowGroupingSubclass() = 0;
-		virtual void dirtyColGroupingSubclass() = 0;
+		virtual void dirtyGroupingSubclass(GroupingType groupingType) = 0;
 		
 		void dirtyData() {
 			isDirtyColGroupedDesign = true;
 			dirtyDataSubclass();
 		}
-		void dirtyGrowthGrouping() {
-			dirtyGrowthGroupingSubclass();
+		template<GroupingType groupingType> void dirtyGrouping() {
+			if constexpr(groupingType == COL) isDirtyColGroupedDesign = true;
+			dirtyGroupingSubclass(groupingType);
 		}
-		void dirtyRowGrouping() {
-			dirtyRowGroupingSubclass();
-		}
-		void dirtyColGrouping() {
-			isDirtyColGroupedDesign = true;
-			dirtyColGroupingSubclass();
-		}
+		
+		//Again, this should be templated on the enum, but can't be.
+		//So we add a level of indirection to expose a templated interface, for consistency.
+		virtual const Grouping &getGroupingSubclass(GroupingType groupingType) const = 0;
 	public:
-		//Functions to retrieve groupings.
-		//Subclasses each store groupings in their own way, so these are pure virtual.
-		virtual const Grouping &getGrowthGrouping() const = 0;
-		virtual const Grouping &getRowGrouping() const = 0;
-		virtual const Grouping &getColGrouping() const = 0;
+		template<GroupingType groupingType> const Grouping &getGrouping() const {
+			return getGroupingSubclass(groupingType);
+		}
 	protected:
 		void calculateColGroupedDesign();
 		Eigen::MatrixXd getColGroupedDesign();

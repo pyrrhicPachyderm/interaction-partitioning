@@ -5,18 +5,16 @@
 
 class MaximumLikelihoodSolver : public Solver {
 	protected:
-		Grouping growthGrouping;
-		Grouping rowGrouping;
-		Grouping colGrouping;
+		GroupingSet groupings;
 	public:
 		MaximumLikelihoodSolver(Data data):
-			Solver(data), growthGrouping(Grouping(data.numSpecies)), rowGrouping(Grouping(data.numSpecies)), colGrouping(Grouping(data.numSpecies)) {};
+			Solver(data), groupings({Grouping(data.numSpecies), Grouping(data.numSpecies), Grouping(data.numSpecies)}) {};
 		MaximumLikelihoodSolver(Data data, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping):
-			Solver(data), growthGrouping(growthGrouping), rowGrouping(rowGrouping), colGrouping(colGrouping)
+			Solver(data), groupings({growthGrouping, rowGrouping, colGrouping})
 		{
-			assert(growthGrouping.numSpecies == data.numSpecies);
-			assert(rowGrouping.numSpecies == data.numSpecies);
-			assert(colGrouping.numSpecies == data.numSpecies);
+			for(size_t i = 0; i < NUM_GROUPING_TYPES; i++) {
+				assert(groupings[i].numSpecies == data.numSpecies);
+			}
 		}
 		
 		//The Jacobian will be represented simply as a matrix.
@@ -33,40 +31,20 @@ class MaximumLikelihoodSolver : public Solver {
 		void dirtyDataSubclass() {
 			isDirtySolution = true;
 		}
-		void dirtyGrowthGroupingSubclass() {
-			isDirtySolution = true;
-		}
-		void dirtyRowGroupingSubclass() {
-			isDirtySolution = true;
-		}
-		void dirtyColGroupingSubclass() {
+		void dirtyGroupingSubclass(GroupingType groupingType) {
 			isDirtySolution = true;
 		}
 	public:
 		//Functions to update groupings.
 		//Can use reset(), separate(), or advance().
-		template<typename T> T updateGrowthGrouping(T (Grouping::*updateFunc)()) {
-			dirtyGrowthGrouping();
-			return (growthGrouping.*updateFunc)();
-		}
-		template<typename T> T updateRowGrouping(T (Grouping::*updateFunc)()) {
-			dirtyRowGrouping();
-			return (rowGrouping.*updateFunc)();
-		}
-		template<typename T> T updateColGrouping(T (Grouping::*updateFunc)()) {
-			dirtyColGrouping();
-			return (colGrouping.*updateFunc)();
+		template<GroupingType groupingType, typename T> T updateGrouping(T (Grouping::*updateFunc)()) {
+			dirtyGrouping<groupingType>();
+			return (groupings[groupingType].*updateFunc)();
 		}
 		
 		//Functions to retrieve groupings.
-		const Grouping &getGrowthGrouping() const {
-			return growthGrouping;
-		}
-		const Grouping &getRowGrouping() const {
-			return rowGrouping;
-		}
-		const Grouping &getColGrouping() const {
-			return colGrouping;
+		const Grouping &getGroupingSubclass(GroupingType groupingType) const {
+			return groupings[groupingType];
 		}
 	protected:
 		Eigen::VectorXd getResidualsFromVector(const Eigen::VectorXd &parameterVector);

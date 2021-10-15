@@ -2,7 +2,7 @@
 #include "mlsolver.hpp"
 
 Eigen::VectorXd MaximumLikelihoodSolver::getResidualsFromVector(const Eigen::VectorXd &parameterVector) {
-	return getResiduals(Parameters(parameterVector, growthGrouping, rowGrouping, colGrouping));
+	return getResiduals(Parameters(parameterVector, groupings));
 }
 
 MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Parameters &parameters) {
@@ -14,8 +14,8 @@ MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Par
 	//As such, it is negated, compared to the predicted values.
 	for(size_t obs = 0; obs < data.numObservations; obs++) {
 		size_t focal = data.getFocal()[obs];
-		size_t focalGrowthGroup = growthGrouping.getGroup(focal);
-		size_t focalRowGroup = rowGrouping.getGroup(focal);
+		size_t focalGrowthGroup = groupings[GROWTH].getGroup(focal);
+		size_t focalRowGroup = groupings[ROW].getGroup(focal);
 		
 		double focalGrowthRate = parameters.getGrowthRate(focalGrowthGroup);
 		double focalDensity = data.getDesign()(obs, focal);
@@ -33,7 +33,7 @@ MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Par
 		//If it's not a competition coefficient *on* the focal species, this is zero.
 		//So there will be a number per row equal to the number of column groups.
 		//This will be the negative of the focal growth rate, times the focal density (if not per capita), times the column group density.
-		for(size_t colGroup = 0; colGroup < colGrouping.getNumGroups(); colGroup++) {
+		for(size_t colGroup = 0; colGroup < groupings[COL].getNumGroups(); colGroup++) {
 			double derivative = - focalGrowthRate * colGroupedDesign(obs, colGroup);
 			if(!data.isPerCapita) derivative *= focalDensity;
 			jacobian(obs, parameters.getAsVectorCompetitionCoefficientIndex(focalRowGroup, colGroup)) = -derivative;
@@ -44,18 +44,18 @@ MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Par
 }
 
 MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobianFromVector(const Eigen::VectorXd &parameterVector) {
-	return getJacobian(Parameters(parameterVector, growthGrouping, rowGrouping, colGrouping));
+	return getJacobian(Parameters(parameterVector, groupings));
 }
 
 void MaximumLikelihoodSolver::calculateSolution() {
 	ResidualsFunc residualsFunc = std::bind(&MaximumLikelihoodSolver::getResidualsFromVector, this, std::placeholders::_1);
 	JacobianFunc jacobianFunc = std::bind(&MaximumLikelihoodSolver::getJacobianFromVector, this, std::placeholders::_1);
 	
-	Eigen::VectorXd initialParameterVector = Parameters(data, growthGrouping, rowGrouping, colGrouping).getAsVector();
-	Eigen::VectorXd parameterTolerances = Parameters::getTolerances(data, growthGrouping, rowGrouping, colGrouping);
+	Eigen::VectorXd initialParameterVector = Parameters(data, groupings).getAsVector();
+	Eigen::VectorXd parameterTolerances = Parameters::getTolerances(data, groupings);
 	
 	Eigen::VectorXd solutionVector = gaussNewtonNLS(residualsFunc, jacobianFunc, initialParameterVector, parameterTolerances);
-	solution = Parameters(solutionVector, growthGrouping, rowGrouping, colGrouping);
+	solution = Parameters(solutionVector, groupings);
 	isDirtySolution = false;
 }
 

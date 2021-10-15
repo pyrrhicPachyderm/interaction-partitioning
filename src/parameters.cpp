@@ -24,7 +24,7 @@ size_t Parameters::getNumParameters() const {
 	return growthRates.size() + competitionCoefficients.size();
 }
 
-Parameters::Parameters(Data data, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping) {
+Parameters::Parameters(Data data, GroupingSet groupings) {
 	//This is the standard constructor.
 	//It will try to make somewhat reasonable initial guesses for all the parameter values.
 	
@@ -36,11 +36,11 @@ Parameters::Parameters(Data data, Grouping growthGrouping, Grouping rowGrouping,
 	double growthRate = data.getResponse().mean();
 	if(!data.isPerCapita) growthRate /= data.getDesign().mean();
 	
-	growthRates = Eigen::VectorXd::Constant(growthGrouping.getNumGroups(), growthRate);
-	competitionCoefficients = Eigen::MatrixXd::Constant(rowGrouping.getNumGroups(), colGrouping.getNumGroups(), competitionCoefficient);
+	growthRates = Eigen::VectorXd::Constant(groupings[GROWTH].getNumGroups(), growthRate);
+	competitionCoefficients = Eigen::MatrixXd::Constant(groupings[ROW].getNumGroups(), groupings[COL].getNumGroups(), competitionCoefficient);
 }
 
-Eigen::VectorXd Parameters::getTolerances(Data data, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping) {
+Eigen::VectorXd Parameters::getTolerances(Data data, GroupingSet groupings) {
 	//We need somewhat reasonable guesses for the magnitudes of the growth rates and the competition coefficients.
 	//We will then multiply these by the RELATIVE_TOLERANCE.
 	//For the growth rates, we will use the same guess as for the initial values.
@@ -50,8 +50,8 @@ Eigen::VectorXd Parameters::getTolerances(Data data, Grouping growthGrouping, Gr
 	//This gives us 1, divided by the square of average density, divided by the number of species.
 	double competitionCoefficientTolerance = 1.0 / pow(data.getDesign().mean(), 2.0) / data.numSpecies * RELATIVE_TOLERANCE;
 	
-	size_t numGrowthRates = growthGrouping.getNumGroups();
-	size_t numCompetitionCoefficients = rowGrouping.getNumGroups() * colGrouping.getNumGroups();
+	size_t numGrowthRates = groupings[GROWTH].getNumGroups();
+	size_t numCompetitionCoefficients = groupings[ROW].getNumGroups() * groupings[COL].getNumGroups();
 	
 	return (Eigen::VectorXd(numGrowthRates + numCompetitionCoefficients) <<
 		Eigen::VectorXd::Constant(numGrowthRates, growthRateTolerance),
@@ -59,10 +59,10 @@ Eigen::VectorXd Parameters::getTolerances(Data data, Grouping growthGrouping, Gr
 	).finished();
 }
 
-Parameters::Parameters(Eigen::VectorXd parameters, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping) {
-	size_t numGrowthRates = growthGrouping.getNumGroups();
-	size_t numRowGroups = rowGrouping.getNumGroups();
-	size_t numColGroups = colGrouping.getNumGroups();
+Parameters::Parameters(Eigen::VectorXd parameters, GroupingSet groupings) {
+	size_t numGrowthRates = groupings[GROWTH].getNumGroups();
+	size_t numRowGroups = groupings[ROW].getNumGroups();
+	size_t numColGroups = groupings[COL].getNumGroups();
 	
 	growthRates = parameters.segment(0, numGrowthRates);
 	competitionCoefficients = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(&parameters[numGrowthRates], numRowGroups, numColGroups);
