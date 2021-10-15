@@ -36,6 +36,8 @@ class GroupingLattice {
 			return groupings[index];
 		}
 		
+		size_t getIndex(const Grouping &grouping) const;
+		
 		template<MoveType moveType> const std::vector<size_t> &getMoveDests(size_t sourceIndex) const {
 			return moveDests[moveType][sourceIndex];
 		}

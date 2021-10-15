@@ -23,6 +23,10 @@ size_t GroupingLattice::findMatch(const std::vector<size_t> &grouping) const {
 	__builtin_unreachable();
 }
 
+size_t GroupingLattice::getIndex(const Grouping &grouping) const {
+	return findMatch(grouping.getGroups());
+}
+
 //Takes a grouping and the numbers of two groups to merge, and returns the grouping with them merged.
 static std::vector<size_t> mergeGroups(std::vector<size_t> grouping, size_t g1, size_t g2) {
 	for(size_t i = 0; i < grouping.size(); i++) {
