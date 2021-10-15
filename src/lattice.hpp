@@ -35,6 +35,14 @@ class GroupingLattice {
 		const Grouping &getGrouping(size_t index) const {
 			return groupings[index];
 		}
+		
+		template<MoveType moveType> const std::vector<size_t> &getMoveDests(size_t sourceIndex) const {
+			return moveDests[moveType][sourceIndex];
+		}
+		
+		template<MoveType moveType> const GroupingMove &getMove(size_t sourceIndex, size_t adjIndex) const {
+			return moves[moveType][sourceIndex][adjIndex];
+		}
 };
 
 //A move between two partitions, by merging two groups or splitting one.
