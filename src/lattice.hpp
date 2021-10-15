@@ -32,6 +32,10 @@ class GroupingLattice {
 			constructAdjacencyLists();
 		};
 		
+		size_t getNumGroupings() const {
+			return groupings.size();
+		}
+		
 		const Grouping &getGrouping(size_t index) const {
 			return groupings[index];
 		}
