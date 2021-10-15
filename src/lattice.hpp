@@ -2,7 +2,10 @@
 #define LATTICE_HPP
 
 #include <assert.h>
+#include <array>
 #include "grouping.hpp"
+
+enum MoveType {MERGE, SPLIT, NUM_MOVE_TYPES};
 
 class GroupingMove;
 
@@ -15,10 +18,8 @@ class GroupingLattice {
 		std::vector<Grouping> groupings;
 		
 		//Adjacency lists for upward and downward moves.
-		std::vector<std::vector<size_t>> merges;
-		std::vector<std::vector<size_t>> splits;
-		std::vector<std::vector<GroupingMove>> mergeMoves;
-		std::vector<std::vector<GroupingMove>> splitMoves;
+		std::array<std::vector<std::vector<size_t>>, NUM_MOVE_TYPES> moveDests;
+		std::array<std::vector<std::vector<GroupingMove>>, NUM_MOVE_TYPES> moves;
 		
 		//Takes a grouping, and finds its index in groupings.
 		size_t findMatch(std::vector<size_t> grouping);
