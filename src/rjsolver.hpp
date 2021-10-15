@@ -30,13 +30,13 @@ class ReversibleJumpSolver : public Solver {
 			ReversibleJumpSolver(data, aicHyperprior) {};
 	protected:
 		//Functions to say that particular elements have changed and mark appropriate things as dirty.
-		void dirtyDataSubclass() {}
-		void dirtyGroupingSubclass(GroupingType groupingType) {}
+		void dirtyDataSubclass() override {}
+		void dirtyGroupingSubclass(GroupingType groupingType) override {}
 		
 		GroupingSet getGroupings(GroupingIndexSet groupingIndices) const;
 	public:
 		//Functions to retrieve groupings.
-		const Grouping &getGroupingSubclass(GroupingType groupingType) const {
+		const Grouping &getGroupingSubclass(GroupingType groupingType) const override {
 			return groupingLattice.getGrouping(isProposing ? proposedGroupings[groupingType] : currentGroupings[groupingType]);
 		}
 		

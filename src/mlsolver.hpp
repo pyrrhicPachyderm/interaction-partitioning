@@ -28,10 +28,10 @@ class MaximumLikelihoodSolver : public Solver {
 		bool isDirtySolution = true;
 		
 		//Functions to say that particular elements have changed and mark appropriate things as dirty.
-		void dirtyDataSubclass() {
+		void dirtyDataSubclass() override {
 			isDirtySolution = true;
 		}
-		void dirtyGroupingSubclass(GroupingType groupingType) {
+		void dirtyGroupingSubclass(GroupingType groupingType) override {
 			isDirtySolution = true;
 		}
 	public:
@@ -43,7 +43,7 @@ class MaximumLikelihoodSolver : public Solver {
 		}
 		
 		//Functions to retrieve groupings.
-		const Grouping &getGroupingSubclass(GroupingType groupingType) const {
+		const Grouping &getGroupingSubclass(GroupingType groupingType) const override {
 			return groupings[groupingType];
 		}
 	protected:
