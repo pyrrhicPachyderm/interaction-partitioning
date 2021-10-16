@@ -23,7 +23,7 @@ std::vector<double> ReversibleJumpSolver::getTransModelJumpProbabilities(Groupin
 
 std::vector<double> ReversibleJumpSolver::getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType, GroupingIndexSet groupingIndices, double multiplier) const {
 	const std::vector<size_t> &destIndices = groupingLattice.getMoveDests(moveType, groupingIndices[groupingType]);
-	std::vector<double> probabilities(destIndices.size());
+	std::vector<double> probabilities;
 	
 	GroupingIndexSet newGroupingIndices = groupingIndices;
 	for(size_t i = 0; i < destIndices.size(); i++) {
