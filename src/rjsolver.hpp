@@ -17,7 +17,7 @@ class ReversibleJumpSolver : public Solver {
 		HyperpriorFunc hyperpriorFunc;
 		
 		GroupingIndexSet currentGroupings;
-		Parameters currentParameters;
+		AugmentedParameters<1> currentParameters;
 		
 		GroupingBooleanSet isChangingGroupings;
 		
@@ -25,7 +25,7 @@ class ReversibleJumpSolver : public Solver {
 		bool isProposing = false;
 		
 		GroupingIndexSet proposedGroupings;
-		Parameters proposedParameters;
+		AugmentedParameters<1> proposedParameters;
 		
 		//Additional useful numbers.
 		double transModelJumpProbabilityMultiplier;
@@ -36,7 +36,7 @@ class ReversibleJumpSolver : public Solver {
 		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
 				currentGroupings = getGroupingIndices(groupings);
-				currentParameters = Parameters(data, groupings);
+				currentParameters = AugmentedParameters<1>(data, groupings, {data.getResponseVariance()});
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
 			};
 		ReversibleJumpSolver(Data data, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
@@ -60,7 +60,7 @@ class ReversibleJumpSolver : public Solver {
 			return groupingLattice.getGrouping(isProposing ? proposedGroupings[groupingType] : currentGroupings[groupingType]);
 		}
 		
-		const Parameters &getParameters() const {
+		const AugmentedParameters<1> &getParameters() const {
 			return isProposing ? proposedParameters : currentParameters;
 		}
 	protected:
