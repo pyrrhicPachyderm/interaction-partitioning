@@ -94,6 +94,12 @@ class GroupingMove {
 			assert(group != mergedGroup);
 			return splitMap[group];
 		}
+		
+		size_t getMapping(MoveType moveType, size_t group) const {
+			if(moveType == MERGE) return getMergeMapping(group);
+			if(moveType == SPLIT) return getSplitMapping(group);
+			__builtin_unreachable();
+		}
 };
 
 #endif
