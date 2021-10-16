@@ -29,6 +29,9 @@ class ReversibleJumpSolver : public Solver {
 		
 		//Additional useful numbers.
 		double transModelJumpProbabilityMultiplier;
+		double growthRateJumpVariance;
+		double competitionCoefficientJumpVariance;
+		double varianceJumpVariance;
 	public:
 		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
