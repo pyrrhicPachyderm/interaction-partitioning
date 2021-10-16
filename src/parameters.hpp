@@ -43,4 +43,19 @@ class Parameters {
 		double moveModel(GroupingType groupingType, MoveType moveType, const GroupingMove &groupingMove, RandomVariableFunc getRandomVariable, RandomVariableDensityFunc getRandomVariableDensity);
 };
 
+//Augmented parameters, e.g. parameters plus a normal distribution variance parameter.
+//Note that this does not overwrite functions from Parameters, so getNumParameters(), getAsVector(), and the like all ignore the additional parameters.
+template<size_t nAug> class AugmentedParameters : public Parameters {
+	protected:
+		std::array<double, nAug> additionalParameters;
+	public:
+		using Parameters::Parameters;
+		AugmentedParameters(Data data, GroupingSet groupings, std::array<double, nAug> additionalParameters):
+			Parameters(data, groupings), additionalParameters(additionalParameters) {};
+		
+		const std::array<double, nAug> &getAdditionalParameters() const {
+			return additionalParameters;
+		}
+};
+
 #endif
