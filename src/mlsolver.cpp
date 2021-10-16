@@ -88,7 +88,7 @@ double MaximumLikelihoodSolver::getDeviance() {
 	
 	//The likelihood is the product of the likelihoods for each residual.
 	//So the log likelihood is the sum of log likelihoods.
-	//The likelihood for a given data point (noting that these are reisudals, so the mean is zero) is:
+	//The likelihood for a given data point (noting that these are residuals, so the mean is zero) is:
 	//(2 * pi * variance) ^ (-1/2) * exp(-1/2 * residual^2 / variance)
 	//So the log likelihood is:
 	//-1/2 * log(2 * pi * variance) - 1/2 * residual^2 / variance
