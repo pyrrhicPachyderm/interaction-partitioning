@@ -186,3 +186,14 @@ void ReversibleJumpSolver::acceptJump() {
 void ReversibleJumpSolver::rejectJump() {
 	setIsProposing(false);
 }
+
+double ReversibleJumpSolver::getPrior() const {
+	double hyperprior = hyperpriorFunc(getGroupings());
+	
+	//TODO: There should also be the prior of the actual parameters here.
+	//Currently, I'm trying some sort of improper flat prior, to best emulate maximum likelihood statistics.
+	//I don't know if this will work.
+	double parameterPrior = 1.0;
+	
+	return hyperprior * parameterPrior;
+}
