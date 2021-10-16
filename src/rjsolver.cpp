@@ -97,6 +97,11 @@ ReversibleJumpSolver::GroupingIndexSet ReversibleJumpSolver::getGroupingIndices(
 	return GroupingIndexSet({groupingLattice.getIndex(groupings[GROWTH]), groupingLattice.getIndex(groupings[ROW]), groupingLattice.getIndex(groupings[COL])});
 }
 
+static double getRandomProbability() {
+	//A random double in [0,1).
+	return std::uniform_real_distribution(0.0, 1.0)(randomNumberGenerator);
+}
+
 static double generateJump(double variance) {
 	return std::normal_distribution(0.0, sqrt(variance))(randomNumberGenerator);
 }
