@@ -3,22 +3,28 @@
 
 #define MAX_TRANS_MODEL_JUMP_PROBABILITY 0.9
 
+double ReversibleJumpSolver::getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices) const {
+	return getTransModelJumpProbability(sourceGroupingIndices, destGroupingIndices, transModelJumpProbabilityMultiplier);
+}
+
+double ReversibleJumpSolver::getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices, double multiplier) const {
+	double sourceHyperprior = hyperpriorFunc(getGroupings(sourceGroupingIndices));
+	double destHyperprior = hyperpriorFunc(getGroupings(destGroupingIndices));
+	return multiplier * std::min(1.0, destHyperprior/sourceHyperprior);
+}
+
 std::vector<double> ReversibleJumpSolver::getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType) const {
 	return getTransModelJumpProbabilities(groupingType, moveType, currentGroupings, transModelJumpProbabilityMultiplier);
 }
 
 std::vector<double> ReversibleJumpSolver::getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType, GroupingIndexSet groupingIndices, double multiplier) const {
-	double sourceHyperprior = hyperpriorFunc(getGroupings(groupingIndices));
-	
 	const std::vector<size_t> &destIndices = groupingLattice.getMoveDests(moveType, groupingIndices[groupingType]);
 	std::vector<double> probabilities(destIndices.size());
 	
 	GroupingIndexSet newGroupingIndices = groupingIndices;
 	for(size_t i = 0; i < destIndices.size(); i++) {
 		newGroupingIndices[groupingType] = destIndices[i];
-		double destHyperprior = hyperpriorFunc(getGroupings(newGroupingIndices));
-		double probability = multiplier * std::min(1.0, destHyperprior/sourceHyperprior);
-		probabilities.push_back(probability);
+		probabilities.push_back(getTransModelJumpProbability(groupingIndices, newGroupingIndices, multiplier));
 	}
 	
 	return probabilities;
