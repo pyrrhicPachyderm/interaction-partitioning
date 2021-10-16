@@ -195,6 +195,18 @@ double ReversibleJumpSolver::getErrorVariance() const {
 Eigen::VectorXd ReversibleJumpSolver::getResiduals() {
 	return Solver::getResiduals(isProposing ? (Parameters)proposedParameters : (Parameters)currentParameters);
 }
+
+double ReversibleJumpSolver::getLikelihood() {
+	Eigen::VectorXd residuals = getResiduals();
+	double errorVariance = getErrorVariance();
+	
+	double likelihood = 1.0;
+	for(size_t i = 0; i < (size_t)residuals.size(); i++) {
+		likelihood *= getNormalDensity(errorVariance, residuals[i]);
+	}
+	return likelihood;
+}
+
 double ReversibleJumpSolver::getPrior() const {
 	double hyperprior = hyperpriorFunc(getGroupings());
 	
