@@ -57,6 +57,10 @@ class ReversibleJumpSolver : public Solver {
 			return groupingLattice.getGrouping(isProposing ? proposedGroupings[groupingType] : currentGroupings[groupingType]);
 		}
 		
+		GroupingSet getGroupings() const {
+			return getGroupings(isProposing ? proposedGroupings : currentGroupings);
+		}
+		
 		const AugmentedParameters<1> &getParameters() const {
 			return isProposing ? proposedParameters : currentParameters;
 		}
