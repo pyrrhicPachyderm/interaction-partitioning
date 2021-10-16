@@ -42,10 +42,6 @@ class ReversibleJumpSolver : public Solver {
 			};
 		ReversibleJumpSolver(Data data, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			ReversibleJumpSolver(data, aicHyperprior, groupings, isChangingGroupings) {};
-		
-		void setGroupings(GroupingSet groupings) {
-			currentGroupings = getGroupingIndices(groupings);
-		};
 	protected:
 		//Functions to say that particular elements have changed and mark appropriate things as dirty.
 		void dirtyDataSubclass() override {}
