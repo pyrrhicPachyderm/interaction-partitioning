@@ -83,7 +83,7 @@ double ReversibleJumpSolver::getTransModelJumpProbabilityMultiplier() const {
 
 double ReversibleJumpSolver::aicHyperprior(GroupingSet groupings) {
 	size_t numParameters = groupings[GROWTH].getNumGroups() + groupings[ROW].getNumGroups() * groupings[COL].getNumGroups();
-	return exp(-numParameters);
+	return exp(-1.0 * (double)numParameters);
 }
 
 GroupingSet ReversibleJumpSolver::getGroupings(GroupingIndexSet groupingIndices) const {
