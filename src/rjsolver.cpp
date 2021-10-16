@@ -5,6 +5,8 @@
 #define RANDOM_SEED 42
 #define MAX_TRANS_MODEL_JUMP_PROBABILITY 0.9
 
+static std::default_random_engine randomNumberGenerator(RANDOM_SEED);
+
 double ReversibleJumpSolver::getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices) const {
 	return getTransModelJumpProbability(sourceGroupingIndices, destGroupingIndices, transModelJumpProbabilityMultiplier);
 }
@@ -96,8 +98,7 @@ ReversibleJumpSolver::GroupingIndexSet ReversibleJumpSolver::getGroupingIndices(
 }
 
 static double generateJump(double variance) {
-	static std::default_random_engine rng(RANDOM_SEED);
-	return std::normal_distribution(0.0, sqrt(variance))(rng);
+	return std::normal_distribution(0.0, sqrt(variance))(randomNumberGenerator);
 }
 
 static double getJumpDensity(double variance, double jumpSize) {
