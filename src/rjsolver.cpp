@@ -133,6 +133,19 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	return acceptanceRatio;
 }
 
+void ReversibleJumpSolver::proposeWithinModelJump() {
+	proposedGroupings = currentGroupings;
+	proposedParameters = currentParameters;
+	
+	RandomVariableFunc getGrowthRateJump = std::bind(generateJump, growthRateJumpVariance);
+	RandomVariableFunc getCompetitionCoefficientJump = std::bind(generateJump, competitionCoefficientJumpVariance);
+	std::array<RandomVariableFunc, 1> getAdditionalParameterJumps = {std::bind(generateJump, varianceJumpVariance)};
+	
+	proposedParameters.moveParameters(getGrowthRateJump, getCompetitionCoefficientJump, getAdditionalParameterJumps);
+	
+	setIsProposing(true);
+}
+
 void ReversibleJumpSolver::acceptJump() {
 	currentGroupings = proposedGroupings;
 	currentParameters = proposedParameters;
