@@ -25,8 +25,8 @@ class Solver {
 			isDirtyColGroupedDesign = true;
 			dirtyDataSubclass();
 		}
-		template<GroupingType groupingType> void dirtyGrouping() {
-			if constexpr(groupingType == COL) isDirtyColGroupedDesign = true;
+		void dirtyGrouping(GroupingType groupingType) {
+			if(groupingType == COL) isDirtyColGroupedDesign = true;
 			dirtyGroupingSubclass(groupingType);
 		}
 		

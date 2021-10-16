@@ -38,7 +38,7 @@ class MaximumLikelihoodSolver : public Solver {
 		//Functions to update groupings.
 		//Can use reset(), separate(), or advance().
 		template<GroupingType groupingType, typename T> T updateGrouping(T (Grouping::*updateFunc)()) {
-			dirtyGrouping<groupingType>();
+			dirtyGrouping(groupingType);
 			return (groupings[groupingType].*updateFunc)();
 		}
 		
