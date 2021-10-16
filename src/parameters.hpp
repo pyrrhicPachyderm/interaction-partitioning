@@ -41,6 +41,10 @@ class Parameters {
 		//Splits or merges parameters as appropriate, returning the relevant component of the acceptance ratio.
 		//That is, the Jacobian determinant, times the jumping density ratio of the additional random variables u^(k) and u^(k').
 		double moveModel(GroupingType groupingType, MoveType moveType, const GroupingMove &groupingMove, RandomVariableFunc getRandomVariable, RandomVariableDensityFunc getRandomVariableDensity);
+		
+		//TODO: If we were to use a non-symmetric jumping density, this would need to return a component of the acceptance ratio.
+		//But it would also need to a bit differently in other ways.
+		void moveParameters(RandomVariableFunc getGrowthRateJump, RandomVariableFunc getCompetitionCoefficientJump);
 };
 
 //Augmented parameters, e.g. parameters plus a normal distribution variance parameter.
@@ -56,6 +60,8 @@ template<size_t nAug> class AugmentedParameters : public Parameters {
 		const std::array<double, nAug> &getAdditionalParameters() const {
 			return additionalParameters;
 		}
+		
+		void moveParameters(RandomVariableFunc getGrowthRateJump, RandomVariableFunc getCompetitionCoefficientJump, std::array<RandomVariableFunc, nAug> getAdditionalParameterJumps);
 };
 
 #endif

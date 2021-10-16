@@ -82,3 +82,24 @@ size_t Parameters::getAsVectorGrowthRateIndex(size_t index) const {
 size_t Parameters::getAsVectorCompetitionCoefficientIndex(size_t rowIndex, size_t colIndex) const {
 	return growthRates.size() + competitionCoefficients.cols() * rowIndex + colIndex;
 }
+
+void Parameters::moveParameters(RandomVariableFunc getGrowthRateJump, RandomVariableFunc getCompetitionCoefficientJump) {
+	for(size_t i = 0; i < (size_t)growthRates.size(); i++) {
+		growthRates[i] += getGrowthRateJump();
+	}
+	for(size_t i = 0; i < (size_t)competitionCoefficients.rows(); i++) {
+		for(size_t j = 0; j < (size_t)competitionCoefficients.cols(); j++) {
+			competitionCoefficients(i, j) += getCompetitionCoefficientJump();
+		}
+	}
+}
+
+template<size_t nAug> void AugmentedParameters<nAug>::moveParameters(RandomVariableFunc getGrowthRateJump, RandomVariableFunc getCompetitionCoefficientJump, std::array<RandomVariableFunc, nAug> getAdditionalParameterJumps) {
+	Parameters::moveParameters(getGrowthRateJump, getCompetitionCoefficientJump); //Call the base class function.
+	for(size_t i = 0; i < nAug; i++) {
+		additionalParameters[i] += getAdditionalParameterJumps[i]();
+	}
+}
+
+//Explicitly instantiate.
+template class AugmentedParameters<1>;
