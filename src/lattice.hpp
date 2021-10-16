@@ -85,6 +85,7 @@ class GroupingMove {
 			return splitGroupSizes;
 		}
 		
+		//Three functions to map old indices to new indices in a move.
 		size_t getMergeMapping(size_t group) const {
 			assert(group != splitGroups.first && group != splitGroups.second);
 			return mergeMap[group];
