@@ -78,6 +78,9 @@ class ReversibleJumpSolver : public Solver {
 		
 		//proposeTransModelJump returns the component of the acceptance ratio as returned by Parameters::moveModel().
 		double proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t newGroupingIndex);
+		
+		void acceptJump();
+		void rejectJump();
 };
 
 #endif

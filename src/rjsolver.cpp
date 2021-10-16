@@ -132,3 +132,13 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	setIsProposing(true);
 	return acceptanceRatio;
 }
+
+void ReversibleJumpSolver::acceptJump() {
+	currentGroupings = proposedGroupings;
+	currentParameters = proposedParameters;
+	setIsProposing(false);
+}
+
+void ReversibleJumpSolver::rejectJump() {
+	setIsProposing(false);
+}
