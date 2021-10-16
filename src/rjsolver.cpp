@@ -102,12 +102,12 @@ static double getRandomProbability() {
 	return std::uniform_real_distribution(0.0, 1.0)(randomNumberGenerator);
 }
 
-static double generateJump(double variance) {
+static double getRandomNormal(double variance) {
 	return std::normal_distribution(0.0, sqrt(variance))(randomNumberGenerator);
 }
 
-static double getJumpDensity(double variance, double jumpSize) {
-	return 1.0 / sqrt(2 * M_PI * variance) * exp(-0.5 * jumpSize*jumpSize / variance);
+static double getNormalDensity(double variance, double residual) {
+	return 1.0 / sqrt(2 * M_PI * variance) * exp(-0.5 * residual*residual / variance);
 }
 
 //We need to use this, rather than direct setting, to ensure it also dirties the groupings.
@@ -129,8 +129,8 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	proposedGroupings[groupingType] = newGroupingIndex;
 	
 	double jumpVariance = groupingType == GROWTH ? growthRateJumpVariance : competitionCoefficientJumpVariance;
-	RandomVariableFunc getRandomVariable = std::bind(generateJump, jumpVariance);
-	RandomVariableDensityFunc getRandomVariableDensity = std::bind(getJumpDensity, jumpVariance, std::placeholders::_1);
+	RandomVariableFunc getRandomVariable = std::bind(getRandomNormal, jumpVariance);
+	RandomVariableDensityFunc getRandomVariableDensity = std::bind(getNormalDensity, jumpVariance, std::placeholders::_1);
 	
 	proposedParameters = currentParameters;
 	double acceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, getRandomVariable, getRandomVariableDensity);
@@ -145,9 +145,9 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	proposedGroupings = currentGroupings;
 	proposedParameters = currentParameters;
 	
-	RandomVariableFunc getGrowthRateJump = std::bind(generateJump, growthRateJumpVariance);
-	RandomVariableFunc getCompetitionCoefficientJump = std::bind(generateJump, competitionCoefficientJumpVariance);
-	std::array<RandomVariableFunc, 1> getAdditionalParameterJumps = {std::bind(generateJump, varianceJumpVariance)};
+	RandomVariableFunc getGrowthRateJump = std::bind(getRandomNormal, growthRateJumpVariance);
+	RandomVariableFunc getCompetitionCoefficientJump = std::bind(getRandomNormal, competitionCoefficientJumpVariance);
+	std::array<RandomVariableFunc, 1> getAdditionalParameterJumps = {std::bind(getRandomNormal, varianceJumpVariance)};
 	
 	proposedParameters.moveParameters(getGrowthRateJump, getCompetitionCoefficientJump, getAdditionalParameterJumps);
 	
