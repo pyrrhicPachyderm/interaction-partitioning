@@ -135,6 +135,8 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	proposedParameters = currentParameters;
 	double acceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, getRandomVariable, getRandomVariableDensity);
 	
+	acceptanceRatio *= getTransModelJumpProbability(currentGroupings, proposedGroupings) / getTransModelJumpProbability(proposedGroupings, currentGroupings);
+	
 	setIsProposing(true);
 	return acceptanceRatio;
 }

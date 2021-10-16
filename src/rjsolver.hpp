@@ -77,9 +77,8 @@ class ReversibleJumpSolver : public Solver {
 		double getUnscaledMaxTransModelJumpProbability(size_t recursionLevel, GroupingIndexSet groupingIndices) const; //A helper function for the above.
 		double getUnscaledTotalTransModelJumpProbability(GroupingIndexSet groupingIndices) const; //Another helper function.
 		
-		//proposeTransModelJump returns the component of the acceptance ratio as returned by Parameters::moveModel().
+		//The "propose" functions return the jumping density component of the acceptance ratio (including the Jacobian determinant).
 		double proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t newGroupingIndex);
-		
 		double proposeWithinModelJump();
 		
 		void acceptJump();
