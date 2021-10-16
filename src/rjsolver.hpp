@@ -85,6 +85,8 @@ class ReversibleJumpSolver : public Solver {
 		void acceptJump();
 		void rejectJump();
 		
+		double getErrorVariance() const;
+		
 		double getPrior() const;
 };
 
