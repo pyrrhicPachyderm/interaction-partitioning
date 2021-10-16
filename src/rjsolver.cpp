@@ -103,3 +103,23 @@ static double generateJump(double variance) {
 static double getJumpDensity(double variance, double jumpSize) {
 	return 1.0 / sqrt(2 * M_PI * variance) * exp(-0.5 * jumpSize*jumpSize / variance);
 }
+
+double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t adjIndex) {
+	//adjIndex is the index into the adjacency list of the relevant part of groupingLattice.
+	isProposing = true;
+	
+	size_t newGroupingIndex = groupingLattice.getMoveDest(moveType, currentGroupings[groupingType], adjIndex);
+	GroupingMove groupingMove = groupingLattice.getMove(moveType, currentGroupings[groupingType], adjIndex);
+	
+	proposedGroupings = currentGroupings;
+	proposedGroupings[groupingType] = newGroupingIndex;
+	
+	double jumpVariance = groupingType == GROWTH ? growthRateJumpVariance : competitionCoefficientJumpVariance;
+	RandomVariableFunc getRandomVariable = std::bind(generateJump, jumpVariance);
+	RandomVariableDensityFunc getRandomVariableDensity = std::bind(getJumpDensity, jumpVariance, std::placeholders::_1);
+	
+	proposedParameters = currentParameters;
+	double acceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, getRandomVariable, getRandomVariableDensity);
+	
+	return acceptanceRatio;
+}
