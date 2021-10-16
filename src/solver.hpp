@@ -29,14 +29,8 @@ class Solver {
 			if(groupingType == COL) isDirtyColGroupedDesign = true;
 			dirtyGroupingSubclass(groupingType);
 		}
-		
-		//Again, this should be templated on the enum, but can't be.
-		//So we add a level of indirection to expose a templated interface, for consistency.
-		virtual const Grouping &getGroupingSubclass(GroupingType groupingType) const = 0;
 	public:
-		template<GroupingType groupingType> const Grouping &getGrouping() const {
-			return getGroupingSubclass(groupingType);
-		}
+		virtual const Grouping &getGrouping(GroupingType groupingType) const = 0;
 	protected:
 		void calculateColGroupedDesign();
 		Eigen::MatrixXd getColGroupedDesign();

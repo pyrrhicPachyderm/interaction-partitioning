@@ -54,7 +54,7 @@ class ReversibleJumpSolver : public Solver {
 		GroupingIndexSet getGroupingIndices(GroupingSet groupings) const;
 	public:
 		//Functions to retrieve groupings.
-		const Grouping &getGroupingSubclass(GroupingType groupingType) const override {
+		const Grouping &getGrouping(GroupingType groupingType) const override {
 			return groupingLattice.getGrouping(isProposing ? proposedGroupings[groupingType] : currentGroupings[groupingType]);
 		}
 		

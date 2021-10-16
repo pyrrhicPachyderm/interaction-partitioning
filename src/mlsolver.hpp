@@ -37,13 +37,13 @@ class MaximumLikelihoodSolver : public Solver {
 	public:
 		//Functions to update groupings.
 		//Can use reset(), separate(), or advance().
-		template<GroupingType groupingType, typename T> T updateGrouping(T (Grouping::*updateFunc)()) {
+		template<typename T> T updateGrouping(GroupingType groupingType, T (Grouping::*updateFunc)()) {
 			dirtyGrouping(groupingType);
 			return (groupings[groupingType].*updateFunc)();
 		}
 		
 		//Functions to retrieve groupings.
-		const Grouping &getGroupingSubclass(GroupingType groupingType) const override {
+		const Grouping &getGrouping(GroupingType groupingType) const override {
 			return groupings[groupingType];
 		}
 	protected:
