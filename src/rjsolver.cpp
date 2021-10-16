@@ -217,3 +217,22 @@ double ReversibleJumpSolver::getPrior() const {
 	
 	return hyperprior * parameterPrior;
 }
+
+void ReversibleJumpSolver::makeJump(bool canTransModelJump) {
+	double sourcePrior = getPrior();
+	double sourceLikelihood = getLikelihood();
+	
+	double jumpingDensityRatio = canTransModelJump ? proposeJump() : proposeWithinModelJump();
+	
+	double destPrior = getPrior();
+	double destLikelihood = getLikelihood();
+	
+	double acceptanceRatio = (destPrior / sourcePrior) * (destLikelihood / sourceLikelihood) * jumpingDensityRatio;
+	
+	double selector = getRandomProbability();
+	if(selector < acceptanceRatio) {
+		acceptJump();
+	} else {
+		rejectJump();
+	}
+}

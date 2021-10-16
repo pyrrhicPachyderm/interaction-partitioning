@@ -90,6 +90,12 @@ class ReversibleJumpSolver : public Solver {
 		
 		double getLikelihood();
 		double getPrior() const;
+		
+		void makeJump(bool canTransModelJump);
+	public:
+		void makeJump() {
+			makeJump(true);
+		};
 };
 
 #endif
