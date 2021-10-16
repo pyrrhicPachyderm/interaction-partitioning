@@ -86,6 +86,7 @@ class ReversibleJumpSolver : public Solver {
 		void rejectJump();
 		
 		double getErrorVariance() const;
+		Eigen::VectorXd getResiduals();
 		
 		double getPrior() const;
 };

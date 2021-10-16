@@ -192,6 +192,9 @@ double ReversibleJumpSolver::getErrorVariance() const {
 	return getParameters().getAdditionalParameters()[0];
 }
 
+Eigen::VectorXd ReversibleJumpSolver::getResiduals() {
+	return Solver::getResiduals(isProposing ? (Parameters)proposedParameters : (Parameters)currentParameters);
+}
 double ReversibleJumpSolver::getPrior() const {
 	double hyperprior = hyperpriorFunc(getGroupings());
 	
