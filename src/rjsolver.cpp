@@ -1,6 +1,8 @@
 #include <numeric> //Gives std::accumulate.
+#include <random>
 #include "rjsolver.hpp"
 
+#define RANDOM_SEED 42
 #define MAX_TRANS_MODEL_JUMP_PROBABILITY 0.9
 
 double ReversibleJumpSolver::getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices) const {
@@ -91,4 +93,13 @@ GroupingSet ReversibleJumpSolver::getGroupings(GroupingIndexSet groupingIndices)
 ReversibleJumpSolver::GroupingIndexSet ReversibleJumpSolver::getGroupingIndices(GroupingSet groupings) const {
 	//TODO: Should also be done based on NUM_GROUPING_TYPES.
 	return GroupingIndexSet({groupingLattice.getIndex(groupings[GROWTH]), groupingLattice.getIndex(groupings[ROW]), groupingLattice.getIndex(groupings[COL])});
+}
+
+static double generateJump(double variance) {
+	static std::default_random_engine rng(RANDOM_SEED);
+	return std::normal_distribution(0.0, sqrt(variance))(rng);
+}
+
+static double getJumpDensity(double variance, double jumpSize) {
+	return 1.0 / sqrt(2 * M_PI * variance) * exp(-0.5 * jumpSize*jumpSize / variance);
 }
