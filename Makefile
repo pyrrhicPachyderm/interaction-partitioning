@@ -45,7 +45,7 @@ test_data_files := output/test-focal-vector.data output/test-response-vector.dat
 $(processed_data_files) &: scripts/reshape-DrosMCT $(raw_data_file)
 	./$< $(raw_data_file) $(processed_data_files)
 
-$(output_file): src/brute.out $(processed_data_files)
+output/%.data: src/%.out $(processed_data_files)
 	./$< $(processed_data_files) $@ -p
 
 article.tex: $(output_file)
