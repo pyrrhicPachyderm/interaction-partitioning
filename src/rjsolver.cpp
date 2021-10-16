@@ -104,10 +104,18 @@ static double getJumpDensity(double variance, double jumpSize) {
 	return 1.0 / sqrt(2 * M_PI * variance) * exp(-0.5 * jumpSize*jumpSize / variance);
 }
 
+//We need to use this, rather than direct setting, to ensure it also dirties the groupings.
+//Further, this requires that this function is called after any changes to current or proposed groupings are performed.
+void ReversibleJumpSolver::setIsProposing(bool b) {
+	if(isProposing == b) return;
+	isProposing = b;
+	for(size_t i = 0; i < NUM_GROUPING_TYPES; i++) {
+		if(currentGroupings[i] != proposedGroupings[i]) dirtyGrouping((GroupingType)i);
+	}
+}
+
 double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t adjIndex) {
 	//adjIndex is the index into the adjacency list of the relevant part of groupingLattice.
-	isProposing = true;
-	
 	size_t newGroupingIndex = groupingLattice.getMoveDest(moveType, currentGroupings[groupingType], adjIndex);
 	GroupingMove groupingMove = groupingLattice.getMove(moveType, currentGroupings[groupingType], adjIndex);
 	
@@ -121,5 +129,6 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	proposedParameters = currentParameters;
 	double acceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, getRandomVariable, getRandomVariableDensity);
 	
+	setIsProposing(true);
 	return acceptanceRatio;
 }
