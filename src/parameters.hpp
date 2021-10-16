@@ -2,10 +2,16 @@
 #define PARAMETERS_HPP
 
 #include "grouping.hpp"
+#include "lattice.hpp"
 #include "data.hpp"
 
 enum GroupingType {GROWTH, ROW, COL, NUM_GROUPING_TYPES};
 typedef std::array<Grouping, NUM_GROUPING_TYPES> GroupingSet;
+
+//Functions for dealing with the random variables involved in splitting and merging groups.
+typedef std::function<double()> RandomVariableFunc;
+typedef std::function<double(double)> RandomVariableDensityFunc;
+
 
 class Parameters {
 	protected:
@@ -31,6 +37,10 @@ class Parameters {
 		
 		//Also for the NLS module and the like, that want tolerances for each value in the pure vector.
 		static Eigen::VectorXd getTolerances(Data data, GroupingSet groupings);
+	public:
+		//Splits or merges parameters as appropriate, returning the relevant component of the acceptance ratio.
+		//That is, the Jacobian determinant, times the jumping density ratio of the additional random variables u^(k) and u^(k').
+		double moveModel(GroupingType groupingType, MoveType moveType, const GroupingMove &groupingMove, RandomVariableFunc getRandomVariable, RandomVariableDensityFunc getRandomVariableDensity);
 };
 
 #endif
