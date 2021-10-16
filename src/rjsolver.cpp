@@ -139,7 +139,7 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	return acceptanceRatio;
 }
 
-void ReversibleJumpSolver::proposeWithinModelJump() {
+double ReversibleJumpSolver::proposeWithinModelJump() {
 	proposedGroupings = currentGroupings;
 	proposedParameters = currentParameters;
 	
@@ -150,6 +150,8 @@ void ReversibleJumpSolver::proposeWithinModelJump() {
 	proposedParameters.moveParameters(getGrowthRateJump, getCompetitionCoefficientJump, getAdditionalParameterJumps);
 	
 	setIsProposing(true);
+	//TODO: If using a non-symmetric jumping density, the jumping density component of the acceptance ratio may not be 1.
+	return 1.0;
 }
 
 void ReversibleJumpSolver::acceptJump() {
