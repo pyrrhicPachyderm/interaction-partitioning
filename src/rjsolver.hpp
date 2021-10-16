@@ -60,7 +60,7 @@ class ReversibleJumpSolver : public Solver {
 	protected:
 		//The following has an arbitrary version, which is used by getTransModelJumpProbabilityMultiplier,
 		//and a canonical version, which uses the current parameters.
-		//The template parameters decide which grouping the jump changes, and how it changes it.
+		//The type parameters decide which grouping the jump changes, and how it changes it.
 		std::vector<double> getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType, GroupingIndexSet groupingIndices, double multiplier) const;
 		std::vector<double> getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType) const;
 		
