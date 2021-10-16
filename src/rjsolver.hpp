@@ -80,6 +80,7 @@ class ReversibleJumpSolver : public Solver {
 		//The "propose" functions return the jumping density component of the acceptance ratio (including the Jacobian determinant).
 		double proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t newGroupingIndex);
 		double proposeWithinModelJump();
+		double proposeJump();
 		
 		void acceptJump();
 		void rejectJump();

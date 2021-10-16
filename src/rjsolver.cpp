@@ -156,6 +156,27 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	return 1.0;
 }
 
+double ReversibleJumpSolver::proposeJump() {
+	double selector = getRandomProbability();
+	
+	//Iterate over each type of trans-model jump, and see if we do it.
+	//Instead of accumulating some sum of previous probabilities, we'll just decrement selector.
+	for(size_t groupingType = 0; groupingType < NUM_GROUPING_TYPES; groupingType++) {
+		if(!isChangingGroupings[groupingType]) continue;
+		for(size_t moveType = 0; moveType < NUM_MOVE_TYPES; moveType++) {
+			std::vector<double> probabilities = getTransModelJumpProbabilities((GroupingType)groupingType, (MoveType)moveType);
+			for(size_t adjIndex = 0; adjIndex < probabilities.size(); adjIndex++) {
+				selector -= probabilities[adjIndex];
+				if(selector < 0) {
+					return proposeTransModelJump((GroupingType)groupingType, (MoveType)moveType, adjIndex);
+				}
+			}
+		}
+	}
+	
+	return proposeWithinModelJump();
+}
+
 void ReversibleJumpSolver::acceptJump() {
 	currentGroupings = proposedGroupings;
 	currentParameters = proposedParameters;
