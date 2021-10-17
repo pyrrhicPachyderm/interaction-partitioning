@@ -98,11 +98,11 @@ class ReversibleJumpSolver : public Solver {
 		double getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, double sourceErrorVariance, double destErrorVariance);
 		double getPrior() const;
 		
-		void makeJump(bool canTransModelJump);
+		bool makeJump(bool canTransModelJump);
 		void burnIn(size_t numJumps, bool canTransModelJump);
 	public:
-		void makeJump() {
-			makeJump(true);
+		bool makeJump() {
+			return makeJump(true);
 		};
 		
 		void burnIn(size_t numJumps) {

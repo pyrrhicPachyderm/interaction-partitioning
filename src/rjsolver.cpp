@@ -257,7 +257,7 @@ double ReversibleJumpSolver::getPrior() const {
 	return hyperprior * parameterPrior;
 }
 
-void ReversibleJumpSolver::makeJump(bool canTransModelJump) {
+bool ReversibleJumpSolver::makeJump(bool canTransModelJump) {
 	double sourcePrior = getPrior();
 	Eigen::VectorXd sourceResiduals = getResiduals();
 	double sourceErrorVariance = getErrorVariance();
@@ -276,8 +276,10 @@ void ReversibleJumpSolver::makeJump(bool canTransModelJump) {
 	double selector = getRandomProbability();
 	if(selector < acceptanceRatio) {
 		acceptJump();
+		return true;
 	} else {
 		rejectJump();
+		return false;
 	}
 }
 
