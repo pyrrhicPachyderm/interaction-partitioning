@@ -29,7 +29,6 @@ class ReversibleJumpSolver : public Solver {
 		
 		//Additional useful numbers.
 		double transModelJumpProbabilityMultiplier;
-		//TODO: A dialIn() function, to set the approximatePosteriorVariances.
 		double growthRateApproximatePosteriorVariance = data.guessGrowthRate();
 		double competitionCoefficientApproximatePosteriorVariance = data.guessCompetitionCoefficientMagnitude();
 		double varianceApproximatePosteriorVariance = data.getResponseVariance();
@@ -107,6 +106,8 @@ class ReversibleJumpSolver : public Solver {
 		void burnIn(size_t numJumps) {
 			burnIn(numJumps, true);
 		};
+		
+		void dialIn(size_t numJumps, size_t numDials);
 };
 
 #endif
