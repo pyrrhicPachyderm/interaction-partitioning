@@ -97,6 +97,37 @@ ReversibleJumpSolver::GroupingIndexSet ReversibleJumpSolver::getGroupingIndices(
 	return GroupingIndexSet({groupingLattice.getIndex(groupings[GROWTH]), groupingLattice.getIndex(groupings[ROW]), groupingLattice.getIndex(groupings[COL])});
 }
 
+double ReversibleJumpSolver::getJumpVariance(double approximatePosteriorVariance, size_t jumpingDimensions) const {
+	//Using the recommendation from Gelman et al. 2015 "Bayesian Data Analysis".
+	//2.4^2 = 5.76
+	return 5.76 / jumpingDimensions * approximatePosteriorVariance;
+}
+
+double ReversibleJumpSolver::getGrowthRateJumpVariance() const {
+	return getJumpVariance(growthRateApproximatePosteriorVariance, currentParameters.getNumParameters() + 1); //+1 for error variance.
+}
+
+double ReversibleJumpSolver::getCompetitionCoefficientJumpVariance() const {
+	return getJumpVariance(competitionCoefficientApproximatePosteriorVariance, currentParameters.getNumParameters() + 1); //+1 for error variance.
+}
+
+double ReversibleJumpSolver::getVarianceJumpVariance() const {
+	return getJumpVariance(varianceApproximatePosteriorVariance, currentParameters.getNumParameters() + 1); //+1 for error variance.
+}
+
+double ReversibleJumpSolver::getTransModelJumpVariance(GroupingType groupingType) const {
+	if(groupingType == GROWTH) {
+		//We're just splitting/merging one parameter here.
+		return getJumpVariance(growthRateApproximatePosteriorVariance, 1);
+	} else if(groupingType == ROW) {
+		//If we're splitting or merging a row, we change a number of parameters equal to the number of columns.
+		return getJumpVariance(competitionCoefficientApproximatePosteriorVariance, getGrouping(COL).getNumGroups());
+	} else if(groupingType == COL) {
+		//As above, but vice versa.
+		return getJumpVariance(competitionCoefficientApproximatePosteriorVariance, getGrouping(ROW).getNumGroups());
+	} else __builtin_unreachable();
+}
+
 static double getRandomProbability() {
 	//A random double in [0,1).
 	return std::uniform_real_distribution(0.0, 1.0)(randomNumberGenerator);
@@ -128,7 +159,7 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	proposedGroupings = currentGroupings;
 	proposedGroupings[groupingType] = newGroupingIndex;
 	
-	double jumpVariance = groupingType == GROWTH ? growthRateJumpVariance : competitionCoefficientJumpVariance;
+	double jumpVariance = getTransModelJumpVariance(groupingType);
 	RandomVariableFunc getRandomVariable = std::bind(getRandomNormal, jumpVariance);
 	RandomVariableDensityFunc getRandomVariableDensity = std::bind(getNormalDensity, jumpVariance, std::placeholders::_1);
 	
@@ -145,9 +176,9 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	proposedGroupings = currentGroupings;
 	proposedParameters = currentParameters;
 	
-	RandomVariableFunc getGrowthRateJump = std::bind(getRandomNormal, growthRateJumpVariance);
-	RandomVariableFunc getCompetitionCoefficientJump = std::bind(getRandomNormal, competitionCoefficientJumpVariance);
-	std::array<RandomVariableFunc, 1> getAdditionalParameterJumps = {std::bind(getRandomNormal, varianceJumpVariance)};
+	RandomVariableFunc getGrowthRateJump = std::bind(getRandomNormal, getGrowthRateJumpVariance());
+	RandomVariableFunc getCompetitionCoefficientJump = std::bind(getRandomNormal, getCompetitionCoefficientJumpVariance());
+	std::array<RandomVariableFunc, 1> getAdditionalParameterJumps = {std::bind(getRandomNormal, getVarianceJumpVariance())};
 	
 	proposedParameters.moveParameters(getGrowthRateJump, getCompetitionCoefficientJump, getAdditionalParameterJumps);
 	

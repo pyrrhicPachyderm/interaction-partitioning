@@ -29,19 +29,16 @@ class ReversibleJumpSolver : public Solver {
 		
 		//Additional useful numbers.
 		double transModelJumpProbabilityMultiplier;
-		//TODO: Replace with approximatePosteriorVariance for each of the three.
-		//TODO: Function to get variance, based on approximatePosteriorVariance and numDimensions.
-		//TODO: Functions to get each of the three variances, plus trans-dimensional jump variance, the last given a GroupingType.
 		//TODO: A dialIn() function, to set the approximatePosteriorVariances.
-		double growthRateJumpVariance = 1e-3;
-		double competitionCoefficientJumpVariance = 1e-5;
-		double varianceJumpVariance = 1e-1;
+		double growthRateApproximatePosteriorVariance = 1e-2;
+		double competitionCoefficientApproximatePosteriorVariance = 1e-4;
+		double varianceApproximatePosteriorVariance = 1.0;
 	public:
 		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
 				currentGroupings = getGroupingIndices(groupings);
 				currentParameters = AugmentedParameters<1>(data, groupings, {data.getResponseVariance()});
-				//TODO: Set jump variances.
+				//TODO: Set approximate posterior variances.
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
 			};
 		ReversibleJumpSolver(Data data, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
@@ -80,6 +77,12 @@ class ReversibleJumpSolver : public Solver {
 		double getTransModelJumpProbabilityMultiplier() const;
 		double getUnscaledMaxTransModelJumpProbability(size_t recursionLevel, GroupingIndexSet groupingIndices) const; //A helper function for the above.
 		double getUnscaledTotalTransModelJumpProbability(GroupingIndexSet groupingIndices) const; //Another helper function.
+		
+		double getJumpVariance(double approximatePosteriorVariance, size_t jumpingDimensions) const;
+		double getGrowthRateJumpVariance() const;
+		double getCompetitionCoefficientJumpVariance() const;
+		double getVarianceJumpVariance() const;
+		double getTransModelJumpVariance(GroupingType groupingType) const;
 		
 		//The "propose" functions return the jumping density component of the acceptance ratio (including the Jacobian determinant).
 		double proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t newGroupingIndex);
