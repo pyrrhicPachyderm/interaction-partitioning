@@ -128,6 +128,12 @@ double ReversibleJumpSolver::getTransModelJumpVariance(GroupingType groupingType
 	} else __builtin_unreachable();
 }
 
+static double getVariance(std::vector<double> nums) {
+	Eigen::Map<Eigen::VectorXd> vec(&nums[0], nums.size());
+	Eigen::VectorXd residuals = vec - Eigen::VectorXd::Constant(vec.size(), vec.mean());
+	return residuals.dot(residuals) / residuals.size();
+}
+
 static double getRandomProbability() {
 	//A random double in [0,1).
 	return std::uniform_real_distribution(0.0, 1.0)(randomNumberGenerator);
