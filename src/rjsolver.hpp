@@ -30,15 +30,14 @@ class ReversibleJumpSolver : public Solver {
 		//Additional useful numbers.
 		double transModelJumpProbabilityMultiplier;
 		//TODO: A dialIn() function, to set the approximatePosteriorVariances.
-		double growthRateApproximatePosteriorVariance = 1e-2;
-		double competitionCoefficientApproximatePosteriorVariance = 1e-4;
-		double varianceApproximatePosteriorVariance = 1.0;
+		double growthRateApproximatePosteriorVariance = data.guessGrowthRate();
+		double competitionCoefficientApproximatePosteriorVariance = data.guessCompetitionCoefficientMagnitude();
+		double varianceApproximatePosteriorVariance = data.getResponseVariance();
 	public:
 		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
 				currentGroupings = getGroupingIndices(groupings);
 				currentParameters = AugmentedParameters<1>(data, groupings, {data.getResponseVariance()});
-				//TODO: Set approximate posterior variances.
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
 			};
 		ReversibleJumpSolver(Data data, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
