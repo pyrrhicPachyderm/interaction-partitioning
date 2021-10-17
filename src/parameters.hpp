@@ -24,6 +24,7 @@ class Parameters {
 		const Eigen::VectorXd &getGrowthRates() const;
 		double getCompetitionCoefficient(size_t rowIndex, size_t colIndex) const;
 		Eigen::VectorXd getCompetitionCoefficientsRow(size_t rowIndex) const;
+		const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> &getCompetitionCoefficients() const;
 		size_t getNumParameters() const;
 	public:
 		Parameters() = default;

@@ -20,6 +20,10 @@ Eigen::VectorXd Parameters::getCompetitionCoefficientsRow(size_t rowIndex) const
 	return competitionCoefficients.row(rowIndex);
 }
 
+const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> &Parameters::getCompetitionCoefficients() const {
+	return competitionCoefficients;
+}
+
 size_t Parameters::getNumParameters() const {
 	return growthRates.size() + competitionCoefficients.size();
 }
