@@ -34,6 +34,7 @@ class ReversibleJumpSolver : public Solver {
 		double growthRateApproximatePosteriorVariance = data.guessGrowthRate() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		double competitionCoefficientApproximatePosteriorVariance = data.guessCompetitionCoefficientMagnitude() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		double varianceApproximatePosteriorVariance = data.getResponseVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
+		double jumpVarianceMultiplier = 1.0;
 	public:
 		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
@@ -109,7 +110,13 @@ class ReversibleJumpSolver : public Solver {
 			burnIn(numJumps, true);
 		};
 		
+		//dialIn uses Gelman's suggestion of 2.4^2/d * posterior variance.
+		//However, this seems to produce results: always rejecting.
+		//dialIn2 uses Gelman's suggestion of aiming for a 0.23 acceptance rate (for high dimensions).
+		//You can call either alone, or dialIn then dialIn2.
+		//Calling dialIn2 then dialIn makes no sense.
 		void dialIn(size_t jumpsPerDial, size_t numDials);
+		void dialIn2(size_t jumpsPerDial, size_t numDials);
 };
 
 #endif

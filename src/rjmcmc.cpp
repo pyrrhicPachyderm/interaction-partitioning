@@ -17,6 +17,7 @@ int main(int argc, char **argv) {
 	ReversibleJumpSolver solver(input.getData(), {grouping, grouping, grouping}, {false, true, true});
 	
 	solver.dialIn(JUMPS_PER_DIAL, NUM_DIALS);
+	solver.dialIn2(JUMPS_PER_DIAL, NUM_DIALS);
 	solver.burnIn(BURN_IN);
 	
 	OutputColumn<Grouping> outputRowGroupings("row_group");
