@@ -9,6 +9,7 @@
 class ReversibleJumpSolver : public Solver {
 	public:
 		typedef std::function<double(GroupingSet groupings)> HyperpriorFunc;
+		enum JumpType {MERGE_JUMP, SPLIT_JUMP, WITHIN_JUMP, NUM_JUMP_TYPES};
 		
 		static double aicHyperprior(GroupingSet groupings);
 	protected:
@@ -28,6 +29,8 @@ class ReversibleJumpSolver : public Solver {
 		
 		GroupingIndexSet proposedGroupings;
 		AugmentedParameters<1> proposedParameters;
+		
+		JumpType proposedJumpType;
 		
 		//Additional useful numbers.
 		double transModelJumpProbabilityMultiplier;

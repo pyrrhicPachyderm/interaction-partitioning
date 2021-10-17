@@ -165,7 +165,11 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	
 	acceptanceRatio *= getTransModelJumpProbability(currentGroupings, proposedGroupings) / getTransModelJumpProbability(proposedGroupings, currentGroupings);
 	
+	if(moveType == MERGE) proposedJumpType = MERGE_JUMP;
+	else if(moveType == SPLIT) proposedJumpType = SPLIT_JUMP;
+	else __builtin_unreachable();
 	setIsProposing(true);
+	
 	return acceptanceRatio;
 }
 
@@ -179,7 +183,9 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	
 	proposedParameters.moveParameters(getGrowthRateJump, getCompetitionCoefficientJump, getAdditionalParameterJumps);
 	
+	proposedJumpType = WITHIN_JUMP;
 	setIsProposing(true);
+	
 	//TODO: If using a non-symmetric jumping density, the jumping density component of the acceptance ratio may not be 1.
 	return 1.0;
 }
