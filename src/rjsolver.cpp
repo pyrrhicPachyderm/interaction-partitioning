@@ -243,3 +243,9 @@ void ReversibleJumpSolver::makeJump(bool canTransModelJump) {
 		rejectJump();
 	}
 }
+
+void ReversibleJumpSolver::burnIn(size_t numJumps) {
+	for(size_t i = 0; i < numJumps; i++) {
+		makeJump();
+	}
+}

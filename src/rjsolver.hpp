@@ -100,6 +100,8 @@ class ReversibleJumpSolver : public Solver {
 		void makeJump() {
 			makeJump(true);
 		};
+		
+		void burnIn(size_t numJumps);
 };
 
 #endif
