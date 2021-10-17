@@ -99,12 +99,15 @@ class ReversibleJumpSolver : public Solver {
 		double getPrior() const;
 		
 		void makeJump(bool canTransModelJump);
+		void burnIn(size_t numJumps, bool canTransModelJump);
 	public:
 		void makeJump() {
 			makeJump(true);
 		};
 		
-		void burnIn(size_t numJumps);
+		void burnIn(size_t numJumps) {
+			burnIn(numJumps, true);
+		};
 };
 
 #endif

@@ -281,8 +281,8 @@ void ReversibleJumpSolver::makeJump(bool canTransModelJump) {
 	}
 }
 
-void ReversibleJumpSolver::burnIn(size_t numJumps) {
+void ReversibleJumpSolver::burnIn(size_t numJumps, bool canTransModelJump) {
 	for(size_t i = 0; i < numJumps; i++) {
-		makeJump();
+		makeJump(canTransModelJump);
 	}
 }
