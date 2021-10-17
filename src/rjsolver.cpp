@@ -251,6 +251,13 @@ double ReversibleJumpSolver::getPrior() const {
 	//I don't know if this will work.
 	double parameterPrior = 1.0;
 	
+	Eigen::MatrixXd competitionCoefficients = getParameters().getCompetitionCoefficients();
+	for(size_t i = 0; i < (size_t)competitionCoefficients.rows(); i++) {
+		for(size_t j = 0; j < (size_t)competitionCoefficients.cols(); j++) {
+			parameterPrior *= getNormalDensity(competitionCoefficientPriorVariance, competitionCoefficients(i,j));
+		}
+	}
+	
 	return hyperprior * parameterPrior;
 }
 
