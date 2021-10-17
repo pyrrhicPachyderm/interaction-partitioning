@@ -289,15 +289,13 @@ void ReversibleJumpSolver::burnIn(size_t numJumps, bool canTransModelJump) {
 	}
 }
 
-void ReversibleJumpSolver::dialIn(size_t numJumps, size_t numDials) {
+void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 	//Dials in the jumping variances.
 	std::vector<double> growthRates;
 	std::vector<double> competitionCoefficients;
 	std::vector<double> errorVariances;
 	
-	size_t dialEvery = numJumps / numDials; //How often to perform a dialing-in.
-	
-	for(size_t i = 1; i <= numJumps; i++) {
+	for(size_t i = 1; i <= jumpsPerDial * numDials; i++) {
 		makeJump(false);
 		
 		//We can't rely on there being a certain number of growth rates or competition coefficients.
@@ -307,10 +305,7 @@ void ReversibleJumpSolver::dialIn(size_t numJumps, size_t numDials) {
 		competitionCoefficients.push_back(getParameters().getCompetitionCoefficient(0,0));
 		errorVariances.push_back(getErrorVariance());
 		
-		//We want to perform a dialing-in after the last jump; otherwise we waste dialings in.
-		//So we compare to dialEvery based on remaining jumps, not jumps performed.
-		//For this, we 1-indexed the jumps, so that numJumps-i is the number of remaining jumps.
-		if((numJumps-i) % dialEvery == 0) {
+		if(i % jumpsPerDial == 0) {
 			growthRateApproximatePosteriorVariance = getVariance(growthRates);
 			competitionCoefficientApproximatePosteriorVariance = getVariance(competitionCoefficients);
 			varianceApproximatePosteriorVariance = getVariance(errorVariances);

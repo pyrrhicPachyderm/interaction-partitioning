@@ -109,7 +109,7 @@ class ReversibleJumpSolver : public Solver {
 			burnIn(numJumps, true);
 		};
 		
-		void dialIn(size_t numJumps, size_t numDials);
+		void dialIn(size_t jumpsPerDial, size_t numDials);
 };
 
 #endif

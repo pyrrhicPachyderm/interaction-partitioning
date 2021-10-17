@@ -3,8 +3,8 @@
 #include "input.hpp"
 #include "rjsolver.hpp"
 
-#define DIAL_IN 1e5
-#define NUM_DIALS 100
+#define JUMPS_PER_DIAL 1e3
+#define NUM_DIALS 1e2
 #define BURN_IN 1e5
 #define NUM_STEPS 1e5
 
@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
 	
 	ReversibleJumpSolver solver(input.getData(), {grouping, grouping, grouping}, {false, true, true});
 	
-	solver.dialIn(DIAL_IN, NUM_DIALS);
+	solver.dialIn(JUMPS_PER_DIAL, NUM_DIALS);
 	solver.burnIn(BURN_IN);
 	
 	OutputColumn<Grouping> outputRowGroupings("row_group");
