@@ -4,7 +4,7 @@
 
 #define RANDOM_SEED 42
 #define MAX_TRANS_MODEL_JUMP_PROBABILITY 0.9
-#define DESIRED_ACCEPTANCE_RATE 0.23
+#define DESIRED_ACCEPTANCE_RATE 0.23 //For within-model jumps.
 #define MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE 2.0 //Controls how quickly dialIn changes the jump variance multiplier.
 
 static std::default_random_engine randomNumberGenerator(RANDOM_SEED);
@@ -100,22 +100,22 @@ ReversibleJumpSolver::GroupingIndexSet ReversibleJumpSolver::getGroupingIndices(
 }
 
 double ReversibleJumpSolver::getGrowthRateJumpVariance() const {
-	return growthRateApproximatePosteriorVariance * jumpVarianceMultiplier;
+	return growthRateApproximatePosteriorVariance * withinModelJumpVarianceMultiplier;
 }
 
 double ReversibleJumpSolver::getCompetitionCoefficientJumpVariance() const {
-	return competitionCoefficientApproximatePosteriorVariance * jumpVarianceMultiplier;
+	return competitionCoefficientApproximatePosteriorVariance * withinModelJumpVarianceMultiplier;
 }
 
 double ReversibleJumpSolver::getVarianceJumpVariance() const {
-	return varianceApproximatePosteriorVariance * jumpVarianceMultiplier;
+	return varianceApproximatePosteriorVariance * withinModelJumpVarianceMultiplier;
 }
 
 double ReversibleJumpSolver::getTransModelJumpVariance(GroupingType groupingType) const {
 	if(groupingType == GROWTH) {
-		return getGrowthRateJumpVariance();
+		return growthRateApproximatePosteriorVariance * transModelJumpVarianceMultiplier;
 	} else if(groupingType == ROW || groupingType == COL) {
-		return getCompetitionCoefficientJumpVariance();
+		return competitionCoefficientApproximatePosteriorVariance * transModelJumpVarianceMultiplier;
 	} else __builtin_unreachable();
 }
 
@@ -286,13 +286,25 @@ void ReversibleJumpSolver::burnIn(size_t numJumps, bool canTransModelJump) {
 	}
 }
 
+//A pair of functions to raise or lower a jump variance multiplier.
+//They enact a maximum proportional change of MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE.
+//They enact no change with discrepantProportion = 0, up to full change with discrepantProportion = 1.
+//These edit the jump variance in-place.
+static void raiseJumpVarianceMultiplier(double &multiplier, double discrepantProportion) {
+	multiplier *= 1.0 + discrepantProportion * (MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE - 1.0);
+}
+static void lowerJumpVarianceMultiplier(double &multiplier, double discrepantProportion) {
+	multiplier /= 1.0 + discrepantProportion * (MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE - 1.0);
+}
+
+
 void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 	//Dials in the jumping variances.
 	//Combining two different dialling in methods here.
 	//The first to balance the sizes of jumps in different variables against one another.
 	//The second to balance overall sizes of jumps.
 	//The first tries to estimate the variance of each posterior.
-	//The second aims for a given acceptance ratio.
+	//The second aims for a given within-model acceptance ratio, and tries to equalise merge and split acceptance ratios.
 	
 	for(size_t i = 0; i < numDials; i++) {
 		//For the first method.
@@ -301,10 +313,13 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 		std::vector<double> errorVariances;
 		
 		//For the second method.
-		size_t numAccepts = 0;
+		Eigen::Array<double, NUM_JUMP_TYPES, 1> numProposals = Eigen::Array<double, NUM_JUMP_TYPES, 1>::Zero();
+		Eigen::Array<double, NUM_JUMP_TYPES, 1> numAccepts = Eigen::Array<double, NUM_JUMP_TYPES, 1>::Zero();
 		
 		for(size_t j = 0; j < jumpsPerDial; j++) {
-			numAccepts += (size_t)makeJump(false);
+			bool accepted = makeJump();
+			numProposals[proposedJumpType] += 1.0;
+			if(accepted) numAccepts[proposedJumpType] += 1.0;
 			
 			//We can't rely on there being a certain number of growth rates or competition coefficients.
 			//And it's altogether too much work to tally multiple sets of growth rates or competition coefficients, and take the variance of each set.
@@ -317,15 +332,24 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 		competitionCoefficientApproximatePosteriorVariance = getVariance(competitionCoefficients);
 		varianceApproximatePosteriorVariance = getVariance(errorVariances);
 		
-		//If the acceptance rate is too high, we want to raise the jumpVarianceMultiplier, and vice versa.
-		//We enact a maximum proportional change of MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE.
-		double acceptanceRate = (double)numAccepts / jumpsPerDial;
-		if(acceptanceRate > DESIRED_ACCEPTANCE_RATE) {
-			double discrepantProportion = (acceptanceRate - DESIRED_ACCEPTANCE_RATE) / (1.0 - DESIRED_ACCEPTANCE_RATE);
-			jumpVarianceMultiplier *= 1.0 + discrepantProportion * (MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE - 1.0);
-		} else if(acceptanceRate < DESIRED_ACCEPTANCE_RATE) {
-			double discrepantProportion = (DESIRED_ACCEPTANCE_RATE - acceptanceRate) / DESIRED_ACCEPTANCE_RATE;
-			jumpVarianceMultiplier /= 1.0 + discrepantProportion * (MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE - 1.0);
+		Eigen::Array<double, NUM_JUMP_TYPES, 1> acceptanceRates = numAccepts / numProposals;
+		
+		//If the acceptance rate is too high, we want to raise the withinModelJumpVarianceMultiplier, and vice versa.
+		if(acceptanceRates[WITHIN_JUMP] > DESIRED_ACCEPTANCE_RATE) {
+			double discrepantProportion = (acceptanceRates[WITHIN_JUMP] - DESIRED_ACCEPTANCE_RATE) / (1.0 - DESIRED_ACCEPTANCE_RATE);
+			raiseJumpVarianceMultiplier(withinModelJumpVarianceMultiplier, discrepantProportion);
+		} else {
+			double discrepantProportion = (DESIRED_ACCEPTANCE_RATE - acceptanceRates[WITHIN_JUMP]) / DESIRED_ACCEPTANCE_RATE;
+			lowerJumpVarianceMultiplier(withinModelJumpVarianceMultiplier, discrepantProportion);
+		}
+		
+		//If the merge acceptance rate is too low, the transModelJumpVarianceMultiplier is not large enough to allow disparate coefficients to merge.
+		if(acceptanceRates[MERGE_JUMP] < acceptanceRates[SPLIT_JUMP]) {
+			double discrepantProportion = acceptanceRates[SPLIT_JUMP] - acceptanceRates[MERGE_JUMP];
+			raiseJumpVarianceMultiplier(transModelJumpVarianceMultiplier, discrepantProportion);
+		} else {
+			double discrepantProportion = acceptanceRates[MERGE_JUMP] - acceptanceRates[SPLIT_JUMP];
+			lowerJumpVarianceMultiplier(transModelJumpVarianceMultiplier, discrepantProportion);
 		}
 	}
 }
