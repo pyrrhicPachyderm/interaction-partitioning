@@ -196,15 +196,17 @@ Eigen::VectorXd ReversibleJumpSolver::getResiduals() {
 	return Solver::getResiduals(isProposing ? (Parameters)proposedParameters : (Parameters)currentParameters);
 }
 
-double ReversibleJumpSolver::getLikelihood() {
-	Eigen::VectorXd residuals = getResiduals();
-	double errorVariance = getErrorVariance();
-	
-	double likelihood = 1.0;
-	for(size_t i = 0; i < (size_t)residuals.size(); i++) {
-		likelihood *= getNormalDensity(errorVariance, residuals[i]);
+double ReversibleJumpSolver::getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, double sourceErrorVariance, double destErrorVariance) {
+	//Having a getLikelihood() function and calling it for source and destination
+	//just results in it returning 0 twice, as it multiplies several hundred small numbers together, and gts too small.
+	//So we must calculate the likelihood ratio, getting the ratio as we go.
+	double likelihoodRatio = 1.0;
+	for(size_t i = 0; i < (size_t)sourceResiduals.size(); i++) {
+		double sourceLikelihood = getNormalDensity(sourceErrorVariance, sourceResiduals[i]);
+		double destLikelihood = getNormalDensity(destErrorVariance, destResiduals[i]);
+		likelihoodRatio *= destLikelihood / sourceLikelihood;
 	}
-	return likelihood;
+	return likelihoodRatio;
 }
 
 double ReversibleJumpSolver::getPrior() const {
@@ -220,14 +222,19 @@ double ReversibleJumpSolver::getPrior() const {
 
 void ReversibleJumpSolver::makeJump(bool canTransModelJump) {
 	double sourcePrior = getPrior();
-	double sourceLikelihood = getLikelihood();
+	Eigen::VectorXd sourceResiduals = getResiduals();
+	double sourceErrorVariance = getErrorVariance();
 	
 	double jumpingDensityRatio = canTransModelJump ? proposeJump() : proposeWithinModelJump();
 	
 	double destPrior = getPrior();
-	double destLikelihood = getLikelihood();
+	Eigen::VectorXd destResiduals = getResiduals();
+	double destErrorVariance = getErrorVariance();
 	
-	double acceptanceRatio = (destPrior / sourcePrior) * (destLikelihood / sourceLikelihood) * jumpingDensityRatio;
+	double priorRatio = destPrior / sourcePrior;
+	double likelihoodRatio = getLikelihoodRatio(sourceResiduals, destResiduals, sourceErrorVariance, destErrorVariance);
+	double acceptanceRatio = priorRatio * likelihoodRatio * jumpingDensityRatio;
+	
 	
 	double selector = getRandomProbability();
 	if(selector < acceptanceRatio) {
