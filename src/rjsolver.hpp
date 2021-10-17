@@ -4,6 +4,8 @@
 #include "lattice.hpp"
 #include "solver.hpp"
 
+#define INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER 0.01
+
 class ReversibleJumpSolver : public Solver {
 	public:
 		typedef std::function<double(GroupingSet groupings)> HyperpriorFunc;
@@ -29,9 +31,9 @@ class ReversibleJumpSolver : public Solver {
 		
 		//Additional useful numbers.
 		double transModelJumpProbabilityMultiplier;
-		double growthRateApproximatePosteriorVariance = data.guessGrowthRate();
-		double competitionCoefficientApproximatePosteriorVariance = data.guessCompetitionCoefficientMagnitude();
-		double varianceApproximatePosteriorVariance = data.getResponseVariance();
+		double growthRateApproximatePosteriorVariance = data.guessGrowthRate() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
+		double competitionCoefficientApproximatePosteriorVariance = data.guessCompetitionCoefficientMagnitude() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
+		double varianceApproximatePosteriorVariance = data.getResponseVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 	public:
 		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
