@@ -29,9 +29,13 @@ class ReversibleJumpSolver : public Solver {
 		
 		//Additional useful numbers.
 		double transModelJumpProbabilityMultiplier;
-		double growthRateJumpVariance;
-		double competitionCoefficientJumpVariance;
-		double varianceJumpVariance;
+		//TODO: Replace with approximatePosteriorVariance for each of the three.
+		//TODO: Function to get variance, based on approximatePosteriorVariance and numDimensions.
+		//TODO: Functions to get each of the three variances, plus trans-dimensional jump variance, the last given a GroupingType.
+		//TODO: A dialIn() function, to set the approximatePosteriorVariances.
+		double growthRateJumpVariance = 1e-3;
+		double competitionCoefficientJumpVariance = 1e-5;
+		double varianceJumpVariance = 1e-1;
 	public:
 		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
