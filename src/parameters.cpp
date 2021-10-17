@@ -27,14 +27,8 @@ size_t Parameters::getNumParameters() const {
 Parameters::Parameters(Data data, GroupingSet groupings) {
 	//This is the standard constructor.
 	//It will try to make somewhat reasonable initial guesses for all the parameter values.
-	
-	//It is reasonable to guess that all the competition coefficients are zero.
-	double competitionCoefficient = 0.0;
-	//As for the growth rates, we might assume that all the species are in one group, and that all competition coefficients are zero.
-	//This gives us the average observed response.
-	//If this is total, rather than per capita, we must divide by the average species density in the design.
-	double growthRate = data.getResponse().mean();
-	if(!data.isPerCapita) growthRate /= data.getDesign().mean();
+	double growthRate = data.guessGrowthRate();
+	double competitionCoefficient = data.guessCompetitionCoefficient();
 	
 	growthRates = Eigen::VectorXd::Constant(groupings[GROWTH].getNumGroups(), growthRate);
 	competitionCoefficients = Eigen::MatrixXd::Constant(groupings[ROW].getNumGroups(), groupings[COL].getNumGroups(), competitionCoefficient);
@@ -43,12 +37,8 @@ Parameters::Parameters(Data data, GroupingSet groupings) {
 Eigen::VectorXd Parameters::getTolerances(Data data, GroupingSet groupings) {
 	//We need somewhat reasonable guesses for the magnitudes of the growth rates and the competition coefficients.
 	//We will then multiply these by the RELATIVE_TOLERANCE.
-	//For the growth rates, we will use the same guess as for the initial values.
-	double growthRateTolerance = data.getResponse().mean() * RELATIVE_TOLERANCE;
-	if(!data.isPerCapita) growthRateTolerance /= data.getDesign().mean();
-	//For the competition coefficients, we will assume that with all species present at average density, growth halts.
-	//This gives us 1, divided by the square of average density, divided by the number of species.
-	double competitionCoefficientTolerance = 1.0 / pow(data.getDesign().mean(), 2.0) / data.numSpecies * RELATIVE_TOLERANCE;
+	double growthRateTolerance = data.guessGrowthRate() * RELATIVE_TOLERANCE;
+	double competitionCoefficientTolerance = data.guessCompetitionCoefficientMagnitude() * RELATIVE_TOLERANCE;
 	
 	size_t numGrowthRates = groupings[GROWTH].getNumGroups();
 	size_t numCompetitionCoefficients = groupings[ROW].getNumGroups() * groupings[COL].getNumGroups();
