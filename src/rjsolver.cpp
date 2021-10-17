@@ -5,7 +5,7 @@
 #define RANDOM_SEED 42
 #define MAX_TRANS_MODEL_JUMP_PROBABILITY 0.9
 #define DESIRED_ACCEPTANCE_RATE 0.23
-#define MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE 2.0 //Controls how quickly dialIn2 changes the jump variance multiplier.
+#define MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE 2.0 //Controls how quickly dialIn changes the jump variance multiplier.
 
 static std::default_random_engine randomNumberGenerator(RANDOM_SEED);
 
@@ -99,35 +99,23 @@ ReversibleJumpSolver::GroupingIndexSet ReversibleJumpSolver::getGroupingIndices(
 	return GroupingIndexSet({groupingLattice.getIndex(groupings[GROWTH]), groupingLattice.getIndex(groupings[ROW]), groupingLattice.getIndex(groupings[COL])});
 }
 
-double ReversibleJumpSolver::getJumpVariance(double approximatePosteriorVariance, size_t jumpingDimensions) const {
-	//Using the recommendation from Gelman et al. 2015 "Bayesian Data Analysis".
-	//2.4^2 = 5.76
-	//Also including the arbitrary jumpVarianceMultiplier, for use by dialIn2.
-	return 5.76 / jumpingDimensions * approximatePosteriorVariance * jumpVarianceMultiplier;
-}
-
 double ReversibleJumpSolver::getGrowthRateJumpVariance() const {
-	return getJumpVariance(growthRateApproximatePosteriorVariance, currentParameters.getNumParameters() + 1); //+1 for error variance.
+	return growthRateApproximatePosteriorVariance * jumpVarianceMultiplier;
 }
 
 double ReversibleJumpSolver::getCompetitionCoefficientJumpVariance() const {
-	return getJumpVariance(competitionCoefficientApproximatePosteriorVariance, currentParameters.getNumParameters() + 1); //+1 for error variance.
+	return competitionCoefficientApproximatePosteriorVariance * jumpVarianceMultiplier;
 }
 
 double ReversibleJumpSolver::getVarianceJumpVariance() const {
-	return getJumpVariance(varianceApproximatePosteriorVariance, currentParameters.getNumParameters() + 1); //+1 for error variance.
+	return varianceApproximatePosteriorVariance * jumpVarianceMultiplier;
 }
 
 double ReversibleJumpSolver::getTransModelJumpVariance(GroupingType groupingType) const {
 	if(groupingType == GROWTH) {
-		//We're just splitting/merging one parameter here.
-		return getJumpVariance(growthRateApproximatePosteriorVariance, 1);
-	} else if(groupingType == ROW) {
-		//If we're splitting or merging a row, we change a number of parameters equal to the number of columns.
-		return getJumpVariance(competitionCoefficientApproximatePosteriorVariance, getGrouping(COL).getNumGroups());
-	} else if(groupingType == COL) {
-		//As above, but vice versa.
-		return getJumpVariance(competitionCoefficientApproximatePosteriorVariance, getGrouping(ROW).getNumGroups());
+		return getGrowthRateJumpVariance();
+	} else if(groupingType == ROW || groupingType == COL) {
+		return getCompetitionCoefficientJumpVariance();
 	} else __builtin_unreachable();
 }
 
@@ -294,40 +282,38 @@ void ReversibleJumpSolver::burnIn(size_t numJumps, bool canTransModelJump) {
 
 void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 	//Dials in the jumping variances.
-	std::vector<double> growthRates;
-	std::vector<double> competitionCoefficients;
-	std::vector<double> errorVariances;
-	
-	for(size_t i = 1; i <= jumpsPerDial * numDials; i++) {
-		makeJump(false);
-		
-		//We can't rely on there being a certain number of growth rates or competition coefficients.
-		//And it's altogether too much work to tally multiple sets of growth rates or competition coefficients, and take the variance of each set.
-		//So we just take the first of each.
-		growthRates.push_back(getParameters().getGrowthRate(0));
-		competitionCoefficients.push_back(getParameters().getCompetitionCoefficient(0,0));
-		errorVariances.push_back(getErrorVariance());
-		
-		if(i % jumpsPerDial == 0) {
-			growthRateApproximatePosteriorVariance = getVariance(growthRates);
-			competitionCoefficientApproximatePosteriorVariance = getVariance(competitionCoefficients);
-			varianceApproximatePosteriorVariance = getVariance(errorVariances);
-		}
-	}
-}
-
-void ReversibleJumpSolver::dialIn2(size_t jumpsPerDial, size_t numDials) {
-	//Dials in the jumping variances, by a second method.
+	//Combining two different dialling in methods here.
+	//The first to balance the sizes of jumps in different variables against one another.
+	//The second to balance overall sizes of jumps.
+	//The first tries to estimate the variance of each posterior.
+	//The second aims for a given acceptance ratio.
 	
 	for(size_t i = 0; i < numDials; i++) {
+		//For the first method.
+		std::vector<double> growthRates;
+		std::vector<double> competitionCoefficients;
+		std::vector<double> errorVariances;
+		
+		//For the second method.
 		size_t numAccepts = 0;
+		
 		for(size_t j = 0; j < jumpsPerDial; j++) {
 			numAccepts += (size_t)makeJump(false);
+			
+			//We can't rely on there being a certain number of growth rates or competition coefficients.
+			//And it's altogether too much work to tally multiple sets of growth rates or competition coefficients, and take the variance of each set.
+			//So we just take the first of each.
+			growthRates.push_back(getParameters().getGrowthRate(0));
+			competitionCoefficients.push_back(getParameters().getCompetitionCoefficient(0,0));
+			errorVariances.push_back(getErrorVariance());
 		}
-		double acceptanceRate = (double)numAccepts / jumpsPerDial;
+		growthRateApproximatePosteriorVariance = getVariance(growthRates);
+		competitionCoefficientApproximatePosteriorVariance = getVariance(competitionCoefficients);
+		varianceApproximatePosteriorVariance = getVariance(errorVariances);
 		
 		//If the acceptance rate is too high, we want to raise the jumpVarianceMultiplier, and vice versa.
 		//We enact a maximum proportional change of MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE.
+		double acceptanceRate = (double)numAccepts / jumpsPerDial;
 		if(acceptanceRate > DESIRED_ACCEPTANCE_RATE) {
 			double discrepantProportion = (acceptanceRate - DESIRED_ACCEPTANCE_RATE) / (1.0 - DESIRED_ACCEPTANCE_RATE);
 			jumpVarianceMultiplier *= 1.0 + discrepantProportion * (MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE - 1.0);

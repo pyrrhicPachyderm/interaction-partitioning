@@ -79,7 +79,6 @@ class ReversibleJumpSolver : public Solver {
 		double getUnscaledMaxTransModelJumpProbability(size_t recursionLevel, GroupingIndexSet groupingIndices) const; //A helper function for the above.
 		double getUnscaledTotalTransModelJumpProbability(GroupingIndexSet groupingIndices) const; //Another helper function.
 		
-		double getJumpVariance(double approximatePosteriorVariance, size_t jumpingDimensions) const;
 		double getGrowthRateJumpVariance() const;
 		double getCompetitionCoefficientJumpVariance() const;
 		double getVarianceJumpVariance() const;
@@ -110,13 +109,7 @@ class ReversibleJumpSolver : public Solver {
 			burnIn(numJumps, true);
 		};
 		
-		//dialIn uses Gelman's suggestion of 2.4^2/d * posterior variance.
-		//However, this seems to produce results: always rejecting.
-		//dialIn2 uses Gelman's suggestion of aiming for a 0.23 acceptance rate (for high dimensions).
-		//You can call either alone, or dialIn then dialIn2.
-		//Calling dialIn2 then dialIn makes no sense.
 		void dialIn(size_t jumpsPerDial, size_t numDials);
-		void dialIn2(size_t jumpsPerDial, size_t numDials);
 };
 
 #endif
