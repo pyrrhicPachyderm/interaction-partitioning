@@ -42,6 +42,8 @@
 			"D. sulfurigaster"
 		)
 	)
+	
+	source("r/coclassification-table.R")
 @
 
 \begin{document}
