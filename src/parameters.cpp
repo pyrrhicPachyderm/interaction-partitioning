@@ -2,6 +2,10 @@
 
 #define RELATIVE_TOLERANCE 1e-6
 
+double Parameters::getNumSpecies() const {
+	return numSpecies;
+}
+
 double Parameters::getGrowthRate(size_t index) const {
 	return growthRates[index];
 }
