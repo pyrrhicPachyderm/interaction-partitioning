@@ -21,13 +21,15 @@ int main(int argc, char **argv) {
 	
 	OutputColumn<Grouping> outputRowGroupings("row_group");
 	OutputColumn<Grouping> outputColGroupings("col_group");
+	OutputColumn<Parameters> outputParameters("parameters");
 	for(size_t i = 0; i < NUM_STEPS; i++) {
 		solver.makeJump();
 		outputRowGroupings.insert(solver.getGrouping(ROW));
 		outputColGroupings.insert(solver.getGrouping(COL));
+		outputParameters.insert(solver.getParameters());
 	}
 	
-	outputTable(input.getOutputFile(), outputRowGroupings, outputColGroupings);
+	outputTable(input.getOutputFile(), outputRowGroupings, outputColGroupings, outputParameters);
 	
 	return 0;
 }
