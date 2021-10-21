@@ -93,7 +93,7 @@ static void printMultiHeader(std::ostream &stream, const std::string name, size_
 }
 
 //When using printMultiHeader, we will need to assume every entry in the column has the same length.
-//The calling function checks that there is at least one entry in the column, sow e can just grab the first.
+//The calling function checks that there is at least one entry in the column, so we can just grab the first.
 
 template<> void OutputColumn<Grouping>::printHeader(std::ostream &stream) const {
 	size_t numSpecies = column[0].numSpecies;
