@@ -15,6 +15,7 @@ typedef std::function<double(double)> RandomVariableDensityFunc;
 
 class Parameters {
 	protected:
+		size_t numSpecies = 0;
 		//The grouping sizes will be implicitly stored in the sizes of the growth rates vector and competition coefficients matrix.
 		//The matrix will be stored in row-major order.
 		Eigen::VectorXd growthRates;

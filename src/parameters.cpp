@@ -28,7 +28,9 @@ size_t Parameters::getNumParameters() const {
 	return growthRates.size() + competitionCoefficients.size();
 }
 
-Parameters::Parameters(Data data, GroupingSet groupings) {
+Parameters::Parameters(Data data, GroupingSet groupings):
+	numSpecies(groupings[GROWTH].numSpecies)
+{
 	//This is the standard constructor.
 	//It will try to make somewhat reasonable initial guesses for all the parameter values.
 	double growthRate = data.guessGrowthRate();
@@ -53,7 +55,9 @@ Eigen::VectorXd Parameters::getTolerances(Data data, GroupingSet groupings) {
 	).finished();
 }
 
-Parameters::Parameters(Eigen::VectorXd parameters, GroupingSet groupings) {
+Parameters::Parameters(Eigen::VectorXd parameters, GroupingSet groupings):
+	numSpecies(groupings[GROWTH].numSpecies)
+{
 	size_t numGrowthRates = groupings[GROWTH].getNumGroups();
 	size_t numRowGroups = groupings[ROW].getNumGroups();
 	size_t numColGroups = groupings[COL].getNumGroups();
