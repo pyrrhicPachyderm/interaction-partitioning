@@ -60,6 +60,10 @@ template<size_t nAug> class AugmentedParameters : public Parameters {
 		AugmentedParameters(Data data, GroupingSet groupings, std::array<double, nAug> additionalParameters):
 			Parameters(data, groupings), additionalParameters(additionalParameters) {};
 		
+		const double &getAdditionalParameter(size_t index) const {
+			return additionalParameters[index];
+		}
+		
 		const std::array<double, nAug> &getAdditionalParameters() const {
 			return additionalParameters;
 		}

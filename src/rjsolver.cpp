@@ -223,7 +223,7 @@ void ReversibleJumpSolver::rejectJump() {
 
 double ReversibleJumpSolver::getErrorVariance() const {
 	//This is the additional parameter, and is used in calculating the likelihood.
-	return getParameters().getAdditionalParameters()[0];
+	return getParameters().getAdditionalParameter(0);
 }
 
 Eigen::VectorXd ReversibleJumpSolver::getResiduals() {
