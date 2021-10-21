@@ -22,14 +22,16 @@ int main(int argc, char **argv) {
 	OutputColumn<Grouping> outputRowGroupings("row_group");
 	OutputColumn<Grouping> outputColGroupings("col_group");
 	OutputColumn<Parameters> outputParameters("parameters");
+	OutputColumn<double> outputErrorVariance("parameters_error_variance");
 	for(size_t i = 0; i < NUM_STEPS; i++) {
 		solver.makeJump();
 		outputRowGroupings.insert(solver.getGrouping(ROW));
 		outputColGroupings.insert(solver.getGrouping(COL));
 		outputParameters.insert(solver.getParameters());
+		outputErrorVariance.insert(solver.getParameters().getAdditionalParameter(0));
 	}
 	
-	outputTable(input.getOutputFile(), outputRowGroupings, outputColGroupings, outputParameters);
+	outputTable(input.getOutputFile(), outputRowGroupings, outputColGroupings, outputParameters, outputErrorVariance);
 	
 	return 0;
 }
