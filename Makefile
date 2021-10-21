@@ -59,7 +59,7 @@ brutetest: src/brute.out $(test_data_files)
 	./$< $(test_data_files) -
 .PHONY: brutetest
 
-article.tex: r/brute-post-process.R
+article.tex: r/brute-post-process.R r/coclassification-table.R
 
 #Submodules
 bibliography/references.bib reference-styles/authoryear.tex $(raw_data_file) &:
