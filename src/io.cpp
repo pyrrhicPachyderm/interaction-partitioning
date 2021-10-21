@@ -3,9 +3,13 @@
 #include <fstream>
 #include <iterator>
 #include "grouping.hpp"
+#include "parameters.hpp"
 #include "io.hpp"
 
 const char *OUTPUT_TABLE_SEPARATOR = "\t";
+const char *OUTPUT_GROWTH_RATE_STRING = "r";
+const char *OUTPUT_COMPETITION_COEFFICIENT_STRING = "alpha";
+const char *OUTPUT_NULL_VALUE_STRING = "NA";
 
 template<typename StreamT> static StreamT &openFile(const char *filename) {
 	StreamT &file = *(new StreamT);
@@ -105,6 +109,17 @@ template<> void OutputColumn<Eigen::VectorXd>::printHeader(std::ostream &stream)
 	printMultiHeader(stream, name, numCols);
 }
 
+template<> void OutputColumn<Parameters>::printHeader(std::ostream &stream) const {
+	size_t numSpecies = column[0].getNumSpecies();
+	printMultiHeader(stream, name + "_" + OUTPUT_GROWTH_RATE_STRING, numSpecies);
+	stream << OUTPUT_TABLE_SEPARATOR;
+	
+	for(size_t i = 0; i < numSpecies; i++) {
+		printMultiHeader(stream, name + "_" + OUTPUT_COMPETITION_COEFFICIENT_STRING + "_" + std::to_string(i), numSpecies);
+		if(i != numSpecies-1) stream << OUTPUT_TABLE_SEPARATOR;
+	}
+}
+
 template<typename T> void OutputColumn<T>::printElement(std::ostream &stream, size_t index) const {
 	stream << column[index];
 }
@@ -125,8 +140,35 @@ template<> void OutputColumn<Eigen::VectorXd>::printElement(std::ostream &stream
 	}
 }
 
+template<> void OutputColumn<Parameters>::printElement(std::ostream &stream, size_t index) const {
+	size_t numSpecies = column[index].getNumSpecies();
+	
+	Eigen::VectorXd growthRates = column[index].getGrowthRates();
+	for(size_t i = 0; i < numSpecies; i++) {
+		if(i < (size_t)growthRates.size()) {
+			stream << growthRates[i];
+		} else {
+			stream << OUTPUT_NULL_VALUE_STRING;
+		}
+		stream << OUTPUT_TABLE_SEPARATOR;
+	}
+	
+	Eigen::MatrixXd competitionCoefficients = column[index].getCompetitionCoefficients();
+	for(size_t i = 0; i < numSpecies; i++) {
+		for(size_t j = 0; j < numSpecies; j++) {
+			if(i < (size_t)competitionCoefficients.rows() && j < (size_t)competitionCoefficients.cols()) {
+				stream << competitionCoefficients(i, j);
+			} else {
+				stream << OUTPUT_NULL_VALUE_STRING;
+			}
+			if(i != numSpecies-1 || j != numSpecies-1) stream << OUTPUT_TABLE_SEPARATOR;
+		}
+	}
+}
+
 //Explicitly instantiate the templates.
 //Templated functions existing only in the .cpp file require explicit instantiation.
 template class OutputColumn<double>;
 template class OutputColumn<Grouping>;
 template class OutputColumn<Eigen::VectorXd>;
+template class OutputColumn<Parameters>;
