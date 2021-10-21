@@ -11,6 +11,7 @@ int main(int argc, char **argv) {
 	OutputColumn<Grouping> outputColGroupings("col_group");
 	OutputColumn<double> outputAICs("aic");
 	OutputColumn<double> outputR2s("R2");
+	OutputColumn<Parameters> outputParameters("parameters");
 	
 	do {
 		do {
@@ -18,10 +19,11 @@ int main(int argc, char **argv) {
 			outputColGroupings.insert(solver.getGrouping(COL));
 			outputAICs.insert(solver.getAIC());
 			outputR2s.insert(solver.getR2());
+			outputParameters.insert(solver.getSolution());
 		} while(solver.updateGrouping(ROW, &Grouping::advance));
 	} while(solver.updateGrouping(COL, &Grouping::advance));
 	
-	outputTable(input.getOutputFile(), outputRowGroupings, outputColGroupings, outputAICs, outputR2s);
+	outputTable(input.getOutputFile(), outputRowGroupings, outputColGroupings, outputParameters, outputAICs, outputR2s);
 	
 	return 0;
 }
