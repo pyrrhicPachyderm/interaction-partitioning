@@ -79,6 +79,12 @@ While attempts have been made to define functional groups more useful in a model
 As such, applying these to species interaction models leaves us with a circular argument: a functional group is a group of species that interact with others in a similar way, and we therefore assume that all the species in a functional group interact with others in a similar way.
 In all, we are left with the question of how best to group species in community models.
 
+I propose that groups might be selected without regard to any \emph{a priori} definition, based purely upon which gives the most parsimonius model.
+In this study, I investigate the usefulness and correctness of such a selection, using experimental \emph{Drosophila} fecundity data provided by \textcite{terry2021natural}.
+I fit the Lotka--Volterra model, with grouped species, to find the grouping that gives the most parsimonious model.
+I group species independently with regard to their effects upon other species and their responses to other species, to find whether the appropriate groupings might differ for these two cases.
+Finally, I compare the resultant groupings with species phylogeny, to provide further investigation of the suitability of \emph{a priori} phylogenetic grouping.
+
 \section{Methods}
 
 \subsection{Data}
