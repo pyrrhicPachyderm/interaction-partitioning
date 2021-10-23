@@ -27,6 +27,7 @@
 
 <<include=FALSE>>=
 	knitr::opts_chunk$set(results = 'asis') #Text is grey without this.
+	knit_hooks$set(inline = function(x) {x}) #Disable automatic formatting of in-line material.
 @
 
 <<include=FALSE>>=
