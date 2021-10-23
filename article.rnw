@@ -109,7 +109,7 @@ The two-species densities were, giving the densities of each of the two species,
 The experiment also included a number of other vials that were excluded for various reasons.
 The original authors' study was on parasitism, so the experiments also included a parasitised treatment.
 That is irrelevant to this study, so was excluded.
-Vials with a single founding pair were excluded from this study and the original authors' due to an Allee effect that the Lotka--Volterra cannot accommodate.
+Vials with a single founding pair were excluded from this study and the original authors' due to an Allee effect that the Lotka--Volterra model cannot accommodate.
 Lastly, an additional set of vials were raised in colder temperatures, but were excluded from this study and the original authors' as the resulting emergence was too low to analyse.
 
 \subsection{Model fitting}
