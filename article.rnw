@@ -113,7 +113,38 @@ That is irrelevant to this study, so was excluded.
 Vials with a single founding pair were excluded from this study and the original authors' due to an Allee effect that the Lotka--Volterra model cannot accommodate.
 Lastly, an additional set of vials were raised in colder temperatures, but were excluded from this study and the original authors' as the resulting emergence was too low to analyse.
 
-\subsection{Model fitting}
+\subsection{Model}
+
+I fitted the Lotka--Volterra competition model to the data.
+As the response variable was fecundity, I used a discrete-time version of the model, as follows:
+\[
+	N_{i,t+1} = N_{i,t} r_i \left(1 - \sum_j N_{j,t} \alpha_{ij}\right)
+,\]
+where $N_{i,t}$ is the population of species $i$ at time $t$, $r_i$ is the intrinsic growth rate of species $i$, and $\alpha_{ij}$ is the \emph{per capita} competitive effect of species $i$ upon species $j$.
+$N_{i,t+1}$ is the size of the population in the following time-step, i.e.\ the number of surviving offspring, the fecundity, of the previous generation, and therefore is equal to the experimentally measured response variable.
+The competition coefficients were not constrained to be positive, allowing for the possibility of mutualistic effects between some species.
+
+\subsubsection{Species grouping}
+
+The competition coefficients of the Lotka--Volterra model are typically arranged in an interaction matrix \parencite{novak2016characterizing}, where a row contains all the competitive effects upon a single species, and a column contains all the competitive effects produced by a single species.
+This interpretation was used in the grouping of species, as it was rows or columns of this matrix that were grouped.
+
+Grouping was performed by constraining appropriate competition coefficients to be equal, reducing the number of free parameters in the model.
+Each model fit was performed with one grouping of the interaction matrix's rows, and an independent grouping of the columns.
+A grouping, known as a partition in mathematics, divides the species into groups such that each species belongs to one and only one group, and such that every group contains at least one species.
+Given $n$ species, there may be any integer number of groups from $1$ to $n$.
+With $n$ groups, the grouping places each species into its own group, as though there were no grouping at all.
+With $1$ group, every species is placed in the same group, such that all are considered to be equal in their competitive effect or response, reminiscent of the neutral model.
+Intermediate numbers of groups give more freedom in the groupings, such that there are many possible groupings for any intermediate number of groups.
+The total number of groupings for $n$ species is given by the Bell numbers, denoted $B_n$ \parencite{bell1934exponential}.
+With six species, and the row and column groupings chosen independently, the total number of possible models is $B_6^2 = \num{\Sexpr{numbers::bell(6)^2}}$.
+
+Species in the same column grouping were constrained to have the same competitive effect upon all other species, while species in the same column grouping were contrained to have the same competitive response to all other species.
+Formally, if species $a$ and $b$ were in the same column grouping, $\alpha_{ia}=\alpha_{ib} \, \forall i$, and if $a$ and $b$ were in the same row grouping, $\alpha_{aj}=\alpha_{bj} \, \forall j$.
+As such, the total number of free competition coefficients in the model was equal to the number of row groups times the number of column groups.
+The species' instrinsic growth rates, $r_i$, were not affected by grouping; each species always had its own growth rate fitted independently of other species.
+
+\subsubsection{Model fitting}
 
 The models were fitted to the data using maximum likelihood regression techniques.
 Fitting it using precisely a Lotka--Volterra model prevented the use of a link function, rendering most generalised regression techniques infeasible.
