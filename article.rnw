@@ -50,6 +50,35 @@
 \begin{document}
 \maketitle
 
+\section{Introduction}
+
+Models have long been used in ecology community \parencite{lotka1925elements}.
+They allow us to make predictions about things we cannot directly observe, be it the response of a community to a novel pressures \parencite{novak2016characterizing}, or the stability of an entirely novel community \parencite{maynard2020predicting}.
+The ability to make these predictions is becoming increasingly important as global change accelerates, introducing alien species and applying climatic or other anthropogenic pressures to communities worldwide.
+
+However, making any use of a model requires experimentally or observationally determining the values of each parameter in the model.
+This poses a problem for species interacton models, due to the sheer number of parameters that must be determined.
+Even the simplest models, with no environmental dependence, require one parameter for the interaction of each pair of species \parencite{novak2016characterizing}.
+Hence the number of parameters scales quadratically with the number of species; over \num{100} parameters are required for a community of just \num{10} species.
+Determining these parameters experimentally requires at least one experiment per parameter, and preferably more \parencite{hart2018quantify}.
+This is expensive, and requires a lot of effort.
+As such, these models are typically restricted to a small number of focal species \parencite{ovaskainen2017species}.
+Real communities can contain hundreds of species \parencite{cornell1999unsaturation}, or even thousands for microbial communities assessed by genetic metabarcoding \parencite{warton2015variables}.
+We need a way to reduce the number of parameters the models require, to regularise them.
+
+%Several methods have been applied to regularise species interaction models, each with their own limitations.
+%For example, it is often assumed that most pairs of species don't interact, setting many of the parameters to zero \parencite{mutshinda2009drives,ovaskainen2017species}.
+%TODO: Find a citation for why this assumption doesn't hold.
+
+Regularisation is often performed by assuming that species fall into groups, such that all species in the same group interact with other species in the same fashion, thereby collapsing interaction parameters for all the species in that group into one parameter \parencite{ovaskainen2017species,weiss2021disentangling}.
+Such groups have been defined \emph{a priori}, by phylogeny at some taxonomic level, or by functional groupings \parencite{uriate2004spatially,ovaskainen2017species,weiss2021disentangling}.
+The argument for grouping based on phylogeny is based on the principle (originally hypothesised by Darwin himself) that closely related species will be similar in (what we now know as) ecological niche, and thereby will interact with other species in a similar fashion \parencite{godoy2014phylogenetic}.
+However, tests of this principle have found remarkably little support for it \parencite{godoy2014phylogenetic,cahill2008does,mayfield2010opposing}.
+On the other hand, functional groupings have also proven to be poor predictors of species interactions \parencite{bret2008plant}.
+While attempts have been made to define functional groups more useful in a modelling context \parencite{boulangeat2012improving}, these rely upon measurements of biotic interactions to define such groups.
+As such, applying these to species interaction models leaves us with a circular argument: a functional group is a group of species that interact with others in a similar way, and we therefore assume that all the species in a functional group interact with others in a similar way.
+In all, we are left with the question of how best to group species in community models.
+
 \section{Methods}
 
 \subsection{Data}
