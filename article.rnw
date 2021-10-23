@@ -114,7 +114,7 @@ Lastly, an additional set of vials were raised in colder temperatures, but were 
 
 \subsection{Model fitting}
 
-The models were fitted to the data using regression techniques.
+The models were fitted to the data using maximum likelihood regression techniques.
 Fitting it using precisely a Lotka--Volterra model prevented the use of a link function, rendering most generalised regression techniques infeasible.
 As such, I assumed a normal error distribution, and fitted a least squares regression.
 To prevent heteroskedasticity, I used the \emph{per capita} fecundity as the response variable, as in the following model:
