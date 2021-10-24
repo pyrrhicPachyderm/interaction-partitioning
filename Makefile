@@ -63,7 +63,7 @@ brutetest: src/brute.out $(test_data_files)
 article.tex: r/post-process.R r/brute-post-process.R r/coclassification-table.R
 
 #Submodules
-bibliography/references.bib reference-styles/authoryear.tex $(raw_data_file) &:
+bibliography/% reference-styles/% TCL_DrosMCT/% &:
 	git submodule update --init
 
 #Secondary with no targets prevents deletion of intermediate files.
