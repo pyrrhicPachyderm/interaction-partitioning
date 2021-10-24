@@ -21,6 +21,12 @@
 \usepackage[nomarkers,figuresonly]{endfloat}
 \addtodelayedfloat{figure}{\clearpage} %Each delayed figure on a new page.
 
+%Ensure title page is numbered, as journal style requires it.
+%Using https://tex.stackexchange.com/a/172005, adapted not to bother with two column stuff.
+\makeatletter
+\renewenvironment{titlepage}{\thispagestyle{plain}}{\newpage}
+\makeatother
+
 %Referencing
 \import{reference-styles/}{ecology.tex}
 \addbibresource{bibliography/references.bib}
