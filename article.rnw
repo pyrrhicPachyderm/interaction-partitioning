@@ -18,7 +18,7 @@
 %Preprint
 \usepackage{lineno} \linenumbers
 \usepackage{setspace} \doublespacing
-\usepackage[nomarkers,figuresonly]{endfloat}
+\usepackage[nomarkers,tablesfirst,notablist]{endfloat}
 \addtodelayedfloat{figure}{\clearpage} %Each delayed figure on a new page.
 
 %Ensure title page is numbered, as journal style requires it.
