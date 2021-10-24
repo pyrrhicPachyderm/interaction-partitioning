@@ -222,6 +222,7 @@ From this can be constructed the necessary relationships, which are depicted in 
 
 The $R^2$ values of the models ranged from \rsquarednum{\Sexpr{min(brute_data$statistics$R2)}} to \rsquarednum{\Sexpr{max(brute_data$statistics$R2)}}.
 The AIC values ranged from \aicnum{\Sexpr{min(brute_data$statistics$aic)}} to \aicnum{\Sexpr{max(brute_data$statistics$aic)}}.
+The ungrouped model gave an AIC value of \aicnum{\Sexpr{brute_data$fully_separated_statistics$aic}}.
 \Cref{fig:aic} shows the distribution of AIC values from the models, with some models of interest marked.
 
 \begin{figure}
@@ -243,6 +244,9 @@ The AIC values ranged from \aicnum{\Sexpr{min(brute_data$statistics$aic)}} to \a
 	}
 	\label{fig:aic}
 \end{figure}
+
+The total Akaike weight assigned to models more parsimonious than the ungrouped model was \probnum{\Sexpr{sum(brute_data$statistics$aic_weight[brute_data$statistics$aic < brute_data$fully_separated_statistics$aic])}}; this is the probability that some grouped model was more parsimonious than the ungrouped model.
+The total Akaike weight assigned to models in which the rows and columns used the same grouping was \probnum{\Sexpr{brute_data$equivalently_grouped_weight}}; more than expected by chance (\probnum{\Sexpr{brute_data$equivalently_grouped_expected_weight}}), but not significantly so (Monte Carlo permutation test, $p=\probnum{\Sexpr{brute_data$equivalently_grouped_weight_p #$}}$).
 
 \subsection{Coclassification of species}
 
