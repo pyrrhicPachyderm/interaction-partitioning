@@ -62,7 +62,7 @@ They allow us to make predictions about things we cannot directly observe, be it
 The ability to make these predictions is becoming increasingly important as global change accelerates, introducing alien species and applying climatic or other anthropogenic pressures to communities worldwide.
 
 However, making any use of a model requires experimentally or observationally determining the values of each parameter in the model.
-This poses a problem for species interacton models, due to the sheer number of parameters that must be determined.
+This poses a problem for species interaction models, due to the sheer number of parameters that must be determined.
 Even the simplest models, with no environmental dependence, require one parameter for the interaction of each pair of species \parencite{novak2016characterizing}.
 Hence the number of parameters scales quadratically with the number of species; over \num{100} parameters are required for a community of just \num{10} species.
 Determining these parameters experimentally requires at least one experiment per parameter, and preferably more \parencite{hart2018quantify}.
@@ -84,7 +84,7 @@ While attempts have been made to define functional groups more useful in a model
 As such, applying these to species interaction models leaves us with a circular argument: a functional group is a group of species that interact with others in a similar way, and we therefore assume that all the species in a functional group interact with others in a similar way.
 In all, we are left with the question of how best to group species in community models.
 
-I propose that groups might be selected without regard to any \emph{a priori} definition, based purely upon which gives the most parsimonius model.
+I propose that groups might be selected without regard to any \emph{a priori} definition, based purely upon which gives the most parsimonious model.
 In this study, I investigate the usefulness and correctness of such a selection, using experimental \emph{Drosophila} fecundity data provided by \textcite{terry2021natural}.
 I fit the Lotka--Volterra model, with grouped species, to find the grouping that gives the most parsimonious model.
 I group species independently with regard to their effects upon other species and their responses to other species, to find whether the appropriate groupings might differ for these two cases.
@@ -143,10 +143,10 @@ Intermediate numbers of groups give more freedom in the groupings, such that the
 The total number of groupings for $n$ species is given by the Bell numbers, denoted $B_n$ \parencite{bell1934exponential}.
 With six species, and the row and column groupings chosen independently, the total number of possible models is $B_6^2 = \num{\Sexpr{numbers::bell(6)^2}}$.
 
-Species in the same column grouping were constrained to have the same competitive effect upon all other species, while species in the same column grouping were contrained to have the same competitive response to all other species.
+Species in the same column grouping were constrained to have the same competitive effect upon all other species, while species in the same column grouping were constrained to have the same competitive response to all other species.
 Formally, if species $a$ and $b$ were in the same column grouping, $\alpha_{ia}=\alpha_{ib} \, \forall i$, and if $a$ and $b$ were in the same row grouping, $\alpha_{aj}=\alpha_{bj} \, \forall j$.
 As such, the total number of free competition coefficients in the model was equal to the number of row groups times the number of column groups.
-The species' instrinsic growth rates, $r_i$, were not affected by grouping; each species always had its own growth rate fitted independently of other species.
+The species' intrinsic growth rates, $r_i$, were not affected by grouping; each species always had its own growth rate fitted independently of other species.
 
 \subsubsection{Model fitting}
 
@@ -165,7 +165,7 @@ As such, the models were fitted by the Gauss--Newton method for non-linear least
 
 \subsubsection{Assessing parsimony}
 
-To assess the parsimony of each moel, all \num{\Sexpr{numbers::bell(6)^2}} possible models were fitted.
+To assess the parsimony of each model, all \num{\Sexpr{numbers::bell(6)^2}} possible models were fitted.
 As a measure of parsimony, I selected AIC over BIC on the basis that we want to find the best model for making ecological predictions, rather than seeking the ``true'' \parencite{aho2014model}.
 Further, AIC will be more conservative in promoting grouping, as BIC penalises number of parameters more for any reasonably sized data set.
 As such, I calculated the AIC for each model.
@@ -209,7 +209,7 @@ From this can be constructed the necessary relationships, which are depicted in 
 			]
 		]
 	\end{forest}
-	%TODO: Mark subgroups and subgenuses on the diagram.
+	%TODO: Mark subgroups and subgenera on the diagram.
 	
 	\caption{%
 		The phylogenetic relationships between the six \emph{Drosophila} species in the study.
@@ -265,10 +265,10 @@ Overall, more coclassification occurred in the row groupings than in the column 
 A high likelihood of coclassification in the row groupings was typically transitive: e.g.\ \emph{D. birchii}, \emph{D. pallidifrons} and \emph{D. sulfurigaster} each had a relatively high probability of being coclassified with one another.
 More intransitivity was observed in the column groupings: \emph{D. simulans} had a relatively high probability of being coclassified with \emph{D. sulfurigaster}, and \emph{D. sulfurigaster} had a substantial probability of being coclassified with \emph{D. pallidifrons}, but \emph{D. simulans} had a much lower probability of being coclassified with \emph{D. pallidifrons}.
 
-A high likelihood of coclassifcation was associated with phylogeny in one instance, but by no means consistently.
-The phylogeny divides the six spcies into three most closely related pairs (\cref{fig:phylogeny}).
+A high likelihood of coclassification was associated with phylogeny in one instance, but by no means consistently.
+The phylogeny divides the six species into three most closely related pairs (\cref{fig:phylogeny}).
 The pair of \emph{D. pallidifrons} and \emph{D. sulfurigaster}, which both belonged to a different subgenus than the other four species, were also the only pair of species to be coclassified with relatively high probability in both the row and column groupings.
-In constrast, each of the other pairs were coclassified with very low probabilities in both the row and column groupings.
+In contrast, each of the other pairs were coclassified with very low probabilities in both the row and column groupings.
 Furthermore, both row and column groupings gave high probabilities of coclassification to pairs of species split across the two subgenera in the study---the row groupings frequently coclassified \emph{D. sulfurigaster} and \emph{D. simulans}, while the column groupings frequently coclassified both \emph{D. pallidifrons} and \emph{D. sulfurigaster} of the Drosophila subgenus with \emph{D. birchii} of the Sophophora subgenus.
 
 \pgfplotsset{%
@@ -319,18 +319,18 @@ This stands in contrast to the popular wisdom in ecology that species should for
 It also contrasts with previous studies that have succeeded in finding clear groups, such as \textcite{allesina2009food}, who used AIC to find the best grouping of species, but in a binary food web rather than a qualitative competitive context.
 Perhaps species simply do not group to the same extent in a competitive context.
 The results suggest that this is unlikely, as grouping was still likely to increase parsimony.
-Further, there is no reason to suspect that speies would not have clear similarities or dissimilarities in their ecological niches, and therefore their competitive effects and responses.
+Further, there is no reason to suspect that species would not have clear similarities or dissimilarities in their ecological niches, and therefore their competitive effects and responses.
 Perhaps the lack of clarity in the groupings is instead a product of the study system chosen.
 
 I chose a study system of \emph{Drosophila} partially on the basis that it would allow clear analysis of the species phylogenetic relationships.
 Phylogeny proved a poor predictor of optimal grouping, as previous studies have suggested that it might \parencite{godoy2014phylogenetic,cahill2008does}.
 A study system with species spanning multiple functional groups, however, might have shown clearer groupings.
 While functional groups have previously shown to be poor predictors of competitive interactions \parencite{bret2008plant}, studies in other contexts have succeeded in isolating functional groups by selecting for model parsimony \parencite{allesina2009food}.
-In further support of functional groups over phylogeny, \textcite{uriarte2004spatially} found that grouping based light guilds (akin to functional groups; \cite{blondel2003guilds}) produced a parsimonious model more frequently than grouping taxonimically (with both groupings defined \emph{a priori}).
+In further support of functional groups over phylogeny, \textcite{uriarte2004spatially} found that grouping based light guilds (akin to functional groups; \cite{blondel2003guilds}) produced a parsimonious model more frequently than grouping taxonomically (with both groupings defined \emph{a priori}).
 Perhaps an attempt to produce functional groups based upon competitive interactions is warranted, applying the framework I present here to a set of species spanning multiple functional groups.
 
 Alternatively, it should be noted that the success of \textcite{allesina2009food} in isolating groups using AIC occurred in much larger study systems, with 25 or more species.
-Alas, the algorithmic complexity of the brute force method I employed in this study is abyssmal, preventing the application of the method to studies with more than seven or eight species.
+Alas, the algorithmic complexity of the brute force method I employed in this study is abysmal, preventing the application of the method to studies with more than seven or eight species.
 As such, a better method would be required to test for grouping of species interactions among a larger set of species.
 
 In light of the failure to produce clear groups, perhaps the most curious aspect of the results is the disagreement between the likely coclassifications of species in the groupings of rows and of columns.
@@ -338,7 +338,7 @@ This is perhaps not surprising in hindsight, for there is no necessity that spec
 Yet the assumption that species should group equivalently in these two regards is frequently made, often implicitly and without comment \parencite[e.g.][]{martorell2014testing,ives2003estimating,gross2015stability}.
 These results recommend more explicit questioning, and even testing, of that assumption when building future species interaction models.
 
-All in all, the method of \emph{a posteriori} parsimony-based selection of groups has not proven to be greatly effective, at least on such a closely reated set of species.
+All in all, the method of \emph{a posteriori} parsimony-based selection of groups has not proven to be greatly effective, at least on such a closely related set of species.
 However, the results suggest a number of pieces of advice which might be borne in mind whenever selecting groupings \emph{a priori} for use in species interaction models.
 Firstly, there may be no single best grouping, but perhaps multiple rather distinct groupings which each perform similarly.
 Secondly, phylogeny does not appear to provide appropriate groupings.
