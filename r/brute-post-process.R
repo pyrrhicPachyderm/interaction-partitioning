@@ -4,7 +4,7 @@
 library(magrittr)
 
 prob_perm_test <- function(selected_probs, all_probs, num_iter = 1000) {
-	#Tests whether the sum of selected_probs is less than the sum of a random sample of all_probs of the same length.
+	#Tests whether the sum of selected_probs is more or less (as appropriate) than the sum of a random sample of all_probs of the same length.
 	#Returns the p value.
 	#TODO: Check that this is a valid statistical test.
 	selected_sum <- sum(selected_probs)
@@ -12,8 +12,11 @@ prob_perm_test <- function(selected_probs, all_probs, num_iter = 1000) {
 		sum(sample(all_probs, length(selected_probs)))
 	)
 	resamples <- c(selected_sum, resamples)
-	p <- mean(resamples <= selected_sum)
-	return(p)
+	
+	#Try the test both ways around, return whichever is appropriate.
+	p_less <- mean(resamples <= selected_sum)
+	p_more <- mean(resamples >= selected_sum)
+	return(min(p_less, p_more))
 }
 
 BruteData <- R6::R6Class("BruteData",
