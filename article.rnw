@@ -7,6 +7,7 @@
 \usepackage{pgfplots}
 \usepackage{colortbl}
 
+\usepackage{authblk}
 \usepackage[nomarkers,figuresonly]{endfloat}
 \addtodelayedfloat{figure}{\clearpage} %Each delayed figure on a new page.
 
@@ -23,9 +24,8 @@
 
 %Title Page
 \title{Regularising Lotka--Volterra interaction matrices by species grouping: optimal groupings are unpredictable}
-\author{
-	Christopher R. P. Brown
-}
+\author{Christopher R. P. Brown}
+\affil{Centre for Integrative Ecology, School of Biological Sciences, University of Canterbury, Christchurch, New Zealand}
 \date{}
 
 <<include=FALSE>>=
