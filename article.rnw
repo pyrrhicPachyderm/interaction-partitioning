@@ -48,6 +48,10 @@
 	source("r/coclassification-table.R")
 @
 
+\newcommand\rsquarednum[1]{\num[round-mode=places,round-precision=3]{#1}}
+\newcommand\aicnum[1]{\num{#1}}
+\newcommand\probnum[1]{\num[round-mode=places,round-precision=3]{#1}}
+
 \begin{document}
 \maketitle
 
@@ -214,6 +218,26 @@ From this can be constructed the necessary relationships, which are depicted in 
 \end{figure}
 
 \section{Results}
+
+The $R^2$ values of the models ranged from \rsquarednum{\Sexpr{min(brute_data$statistics$R2)}} to \rsquarednum{\Sexpr{max(brute_data$statistics$R2)}}.
+The AIC values ranged from \aicnum{\Sexpr{min(brute_data$statistics$aic)}} to \aicnum{\Sexpr{max(brute_data$statistics$aic)}}.
+\Cref{fig:aic} shows the distribution of AIC values from the models, with some models of interest marked.
+%TODO: The AIC histogram.
+
+The ``best'' model, as indicated by AIC, was not the best with any surety; the Akaike weights indicated only a probability of only \probnum{\Sexpr{max(brute_data$statistics$aic_weight)}} that it was the best.
+As such, I assessed the appropriate groupings by taking the total probability that whichever was the best model grouped a given pair of together (coclassified the pair of species).
+These results are shown in \cref{fig:coclassification}.
+
+In all, no pair of species can confidently be said to be coclassified, in the row or column groupings; no probability of coclassification exceeded \SI{60}{\percent}.
+Some pairs of species were far more likely to be coclassified than others, however, suggesting some structure to the best groupings.
+
+The structure of the coclassifications was very different in the row groups than in the column groups.
+Most pairs of species which had a high probability of being coclassified in one grouping had a very low probability of being coclassified in the other grouping.
+Only one pair of species had a relatively high probability of being coclassified in both groupings: \emph{D. pallidifrons} and \emph{D. sulfurigaster}.
+Overall, more coclassification occurred in the row groupings than in the column groupings.
+
+A high likelihood of coclassification in the row groupings was typically transitive: e.g.\ \emph{D. birchii}, \emph{D. pallidifrons} and \emph{D. sulfurigaster} each had a relatively high probability of being coclassified with one another.
+More intransitivity was observed in the column groupings: \emph{D. simulans} had a relatively high probability of being coclassified with \emph{D. sulfurigaster}, and \emph{D. sulfurigaster} had a substantial probability of being coclassified with \emph{D. pallidifrons}, but \emph{D. simulans} had a much lower probability of being coclassified with \emph{D. pallidifrons}.
 
 \pgfplotsset{%
 	colormap={coclassification}{color=(white) color=(red)}
