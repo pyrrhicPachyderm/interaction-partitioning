@@ -7,6 +7,9 @@
 \usepackage{pgfplots}
 \usepackage{colortbl}
 
+\usepackage[nomarkers,figuresonly]{endfloat}
+\addtodelayedfloat{figure}{\clearpage} %Each delayed figure on a new page.
+
 %Referencing
 \import{reference-styles/}{ecology.tex}
 \addbibresource{bibliography/references.bib}

@@ -22,6 +22,7 @@ clean:
 		shopt -s globstar;\
 		$(RM) **/*.aux **/*.log **/*.fls **/*.fdb_latexmk;\
 		$(RM) **/*.out **/*.bbl **/*.bcf **/*.blg **/*.run.xml;\
+		$(RM) **/*.fff **/*.lof;\
 		$(RM) **/*.o **/*.d **/*.out;\
 		$(RM) **/*-dedented.rnw;\
 	)
