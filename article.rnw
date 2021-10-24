@@ -1,4 +1,4 @@
-\documentclass[a4paper,11pt,titlepage]{article}
+\documentclass[12pt,titlepage]{article}
 \usepackage{amsmath}
 \usepackage{siunitx}
 \usepackage{import}
@@ -10,6 +10,10 @@
 \usepackage{colortbl}
 
 \import{latex/}{forest-phylogeny}
+
+%Journal font & paper requirements
+\usepackage{newtxtext} %Times New Roman
+\usepackage[letterpaper,margin=1in]{geometry}
 
 %Preprint
 \usepackage[nomarkers,figuresonly]{endfloat}
