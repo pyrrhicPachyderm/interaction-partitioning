@@ -209,6 +209,7 @@ From this can be constructed the necessary relationships, which are depicted in 
 			]
 		]
 	\end{forest}
+	%TODO: Mark subgroups and subgenuses on the diagram.
 	
 	\caption{%
 		The phylogenetic relationships between the six \emph{Drosophila} species in the study.
@@ -238,6 +239,12 @@ Overall, more coclassification occurred in the row groupings than in the column 
 
 A high likelihood of coclassification in the row groupings was typically transitive: e.g.\ \emph{D. birchii}, \emph{D. pallidifrons} and \emph{D. sulfurigaster} each had a relatively high probability of being coclassified with one another.
 More intransitivity was observed in the column groupings: \emph{D. simulans} had a relatively high probability of being coclassified with \emph{D. sulfurigaster}, and \emph{D. sulfurigaster} had a substantial probability of being coclassified with \emph{D. pallidifrons}, but \emph{D. simulans} had a much lower probability of being coclassified with \emph{D. pallidifrons}.
+
+A high likelihood of coclassifcation was associated with phylogeny in one instance, but by no means consistently.
+The phylogeny divides the six spcies into three most closely related pairs (\cref{fig:phylogeny}).
+The pair of \emph{D. pallidifrons} and \emph{D. sulfurigaster}, which both belonged to a different subgenus than the other four species, were also the only pair of species to be coclassified with relatively high probability in both the row and column groupings.
+In constrast, each of the other pairs were coclassified with very low probabilities in both the row and column groupings.
+Furthermore, both row and column groupings gave high probabilities of coclassification to pairs of species split across the two subgenera in the study---the row groupings frequently coclassified \emph{D. sulfurigaster} and \emph{D. simulans}, while the column groupings frequently coclassified both \emph{D. pallidifrons} and \emph{D. sulfurigaster} of the Drosophila subgenus with \emph{D. birchii} of the Sophophora subgenus.
 
 \pgfplotsset{%
 	colormap={coclassification}{color=(white) color=(red)}
