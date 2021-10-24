@@ -378,6 +378,10 @@ Firstly, there may be no single best grouping, but perhaps multiple rather disti
 Secondly, phylogeny does not appear to provide appropriate groupings.
 Lastly, one should not implicitly assume that species are grouped in the same way with regard to their effects upon other species and their response to them; distinct groupings of the two might well be considered.
 
+\section*{Acknowledgements}
+
+I thank Daniel B. Stouffer for advice throughout the study, and particularly for making me aware of Akaike weights and suggesting the use of coclassification matrices.
+
 \FloatBarrier
 \printbibliography
 \end{document}
