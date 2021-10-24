@@ -8,7 +8,7 @@
 \usepackage{colortbl}
 
 %Referencing
-\import{reference-styles/}{authoryear.tex}
+\import{reference-styles/}{ecology.tex}
 \addbibresource{bibliography/references.bib}
 \addbibresource{references.bib}
 \usepackage{placeins} %Provides \FloatBarrier
