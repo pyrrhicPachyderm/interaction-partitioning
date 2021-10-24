@@ -218,6 +218,8 @@ From this can be constructed the necessary relationships, which are depicted in 
 	\label{fig:phylogeny}
 \end{figure}
 
+%TODO: Use Terry et al. table S1 for additional classification information. The two species that coclassify in both columns and rows are substantially larger.
+
 \section{Results}
 
 The $R^2$ values of the models ranged from \rsquarednum{\Sexpr{min(brute_data$statistics$R2)}} to \rsquarednum{\Sexpr{max(brute_data$statistics$R2)}}.
