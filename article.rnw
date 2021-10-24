@@ -55,6 +55,15 @@
 \begin{document}
 \maketitle
 
+\section*{Abstract}
+
+Dynamic models of ecological communities require many parameters, making them expensive to fit.
+To reduce the number of parameters, species are often divided into groups \emph{a priori}, using phylogeny or functional groups, and species within a group are assumed to behave identically.
+Herein, I assess the validity of such grouping by deriving the optimal groupings \emph{a posteriori}, from the parsimony of a Lotka--Volterra model fit to fecundity data from six competing species of \emph{Drosophila} in laboratory conditions.
+I find evidence that grouping can benefit the parsimony of species interaction models, but that there is no single optimal grouping.
+Further, those groupings that did prove beneficial could not be predicted from information available \emph{a priori}, calling the method of \emph{a priori} species grouping into question.
+Lastly, I find that species did not group equivalently in their competitive effect and in their response to competition, invalidating an assumption often made implicitly when defining species groupings.
+
 \section{Introduction}
 
 Models have long been used in ecology community \parencite{lotka1925elements}.
