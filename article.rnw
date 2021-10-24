@@ -69,6 +69,8 @@
 \newcommand\aicnum[1]{\num{#1}}
 \newcommand\probnum[1]{\num[round-mode=places,round-precision=3]{#1}}
 
+\newcommand\keywords[1]{\emph{Key words: #1}}
+
 \begin{document}
 \maketitle
 
@@ -80,6 +82,8 @@ Herein, I assess the validity of such grouping by deriving the optimal groupings
 I find evidence that grouping can benefit the parsimony of species interaction models, but that there is no single optimal grouping.
 Further, those groupings that did prove beneficial could not be predicted from information available \emph{a priori}, calling the method of \emph{a priori} species grouping into question.
 Lastly, I find that species did not group equivalently in their competitive effect and in their response to competition, invalidating an assumption often made implicitly when defining species groupings.
+
+\keywords{Lotka--Volterra; interaction matrix; competition; grouping; model fitting; parsimony; phylogeny}
 
 \section{Introduction}
 
