@@ -225,6 +225,8 @@ The AIC values ranged from \aicnum{\Sexpr{min(brute_data$statistics$aic)}} to \a
 \Cref{fig:aic} shows the distribution of AIC values from the models, with some models of interest marked.
 %TODO: The AIC histogram.
 
+\subsection{Coclassification of species}
+
 The ``best'' model, as indicated by AIC, was not the best with any surety; the Akaike weights indicated only a probability of only \probnum{\Sexpr{max(brute_data$statistics$aic_weight)}} that it was the best.
 As such, I assessed the appropriate groupings by taking the total probability that whichever was the best model grouped a given pair of together (coclassified the pair of species).
 These results are shown in \cref{fig:coclassification}.
