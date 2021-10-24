@@ -76,7 +76,7 @@ We need a way to reduce the number of parameters the models require, to regulari
 %TODO: Find a citation for why this assumption doesn't hold.
 
 Regularisation is often performed by assuming that species fall into groups, such that all species in the same group interact with other species in the same fashion, thereby collapsing interaction parameters for all the species in that group into one parameter \parencite{ovaskainen2017species,weiss2021disentangling}.
-Such groups have been defined \emph{a priori}, by phylogeny at some taxonomic level, or by functional groupings \parencite{uriate2004spatially,ovaskainen2017species,weiss2021disentangling}.
+Such groups have been defined \emph{a priori}, by phylogeny at some taxonomic level, or by functional groupings \parencite{uriarte2004spatially,ovaskainen2017species,weiss2021disentangling}.
 The argument for grouping based on phylogeny is based on the principle (originally hypothesised by Darwin himself) that closely related species will be similar in (what we now know as) ecological niche, and thereby will interact with other species in a similar fashion \parencite{godoy2014phylogenetic}.
 However, tests of this principle have found remarkably little support for it \parencite{godoy2014phylogenetic,cahill2008does,mayfield2010opposing}.
 On the other hand, functional groupings have also proven to be poor predictors of species interactions \parencite{bret2008plant}.
