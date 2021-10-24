@@ -16,6 +16,8 @@
 \usepackage[letterpaper,margin=1in]{geometry}
 
 %Preprint
+\usepackage{lineno} \linenumbers
+\usepackage{setspace} \doublespacing
 \usepackage[nomarkers,figuresonly]{endfloat}
 \addtodelayedfloat{figure}{\clearpage} %Each delayed figure on a new page.
 
