@@ -2,12 +2,16 @@
 \usepackage{amsmath}
 \usepackage{siunitx}
 \usepackage{import}
+\usepackage{authblk}
 
+%Images
 \usepackage{subcaption}
 \usepackage{pgfplots}
 \usepackage{colortbl}
 
-\usepackage{authblk}
+\import{latex/}{forest-phylogeny}
+
+%Preprint
 \usepackage[nomarkers,figuresonly]{endfloat}
 \addtodelayedfloat{figure}{\clearpage} %Each delayed figure on a new page.
 
@@ -19,8 +23,6 @@
 
 \usepackage{hyperref}
 \usepackage{cleveref}
-
-\import{latex/}{forest-phylogeny}
 
 %Title Page
 \title{Regularising Lotka--Volterra interaction matrices by species grouping: optimal groupings are unpredictable}
