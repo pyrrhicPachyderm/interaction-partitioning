@@ -257,7 +257,9 @@ The ungrouped model gave an AIC value of \aicnum{\Sexpr{brute_data$fully_separat
 \end{figure}
 
 The total Akaike weight assigned to models more parsimonious than the ungrouped model was \probnum{\Sexpr{sum(brute_data$statistics$aic_weight[brute_data$statistics$aic < brute_data$fully_separated_statistics$aic])}}; this is the probability that some grouped model was more parsimonious than the ungrouped model.
-The total Akaike weight assigned to models in which the rows and columns used the same grouping was \probnum{\Sexpr{brute_data$equivalently_grouped_weight}}; more than expected by chance (\probnum{\Sexpr{brute_data$equivalently_grouped_expected_weight}}), but not significantly so (Monte Carlo permutation test, $p=\probnum{\Sexpr{brute_data$equivalently_grouped_weight_p #$}}$).
+
+Considering only models in which the rows and columns used the same grouping, the AIC values ranged from \aicnum{\Sexpr{min(brute_data$equivalently_grouped_statistics$aic)}} to \aicnum{\Sexpr{max(brute_data$equivalently_grouped_statistics$aic)}}; neither the best nor worst overall models had equivalently grouped rows and columns.
+The total Akaike weight assigned to these models was \probnum{\Sexpr{brute_data$equivalently_grouped_weight}}; more than expected by chance (\probnum{\Sexpr{brute_data$equivalently_grouped_expected_weight}}), but not significantly so (Monte Carlo permutation test, $p=\probnum{\Sexpr{brute_data$equivalently_grouped_weight_p #$}}$).
 
 \subsection{Coclassification of species}
 
