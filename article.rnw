@@ -19,7 +19,7 @@
 \import{latex/}{forest-phylogeny}
 
 %Title Page
-\title{Regularising Lotka--Volterra Interaction Matrices by Species Grouping}
+\title{Regularising Lotka--Volterra Interaction Matrices by Species Grouping: Optimal Groupings Are Unpredictable}
 \author{
 	Christopher R. P. Brown
 }
