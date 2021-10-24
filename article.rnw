@@ -312,6 +312,7 @@ Furthermore, both row and column groupings gave high probabilities of coclassifi
 \begin{figure}
 	\centering
 	\begin{subfigure}{\textwidth}
+		\centering
 		<<echo=FALSE>>=
 			weighted_coclassification_kable(
 				brute_data$weighted_col_coclassification_matrix,
@@ -325,6 +326,7 @@ Furthermore, both row and column groupings gave high probabilities of coclassifi
 	\bigskip
 	
 	\begin{subfigure}{\textwidth}
+		\centering
 		<<echo=FALSE>>=
 			weighted_coclassification_kable(
 				brute_data$weighted_row_coclassification_matrix,
