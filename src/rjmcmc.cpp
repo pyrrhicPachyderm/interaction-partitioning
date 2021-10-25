@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
 	Grouping grouping(input.getData().numSpecies);
 	grouping.separate();
 	
-	ReversibleJumpSolver solver(input.getData(), {grouping, grouping, grouping}, {false, true, true});
+	ReversibleJumpSolver solver(input.getData(), ReversibleJumpSolver::aicHyperprior, {grouping, grouping, grouping}, {false, true, true});
 	
 	solver.dialIn(JUMPS_PER_DIAL, NUM_DIALS);
 	solver.burnIn(BURN_IN);

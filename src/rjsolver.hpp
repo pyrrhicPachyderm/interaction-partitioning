@@ -47,8 +47,6 @@ class ReversibleJumpSolver : public Solver {
 				currentParameters = AugmentedParameters<1>(data, groupings, {data.getResponseVariance()});
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
 			};
-		ReversibleJumpSolver(Data data, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
-			ReversibleJumpSolver(data, aicHyperprior, groupings, isChangingGroupings) {};
 	protected:
 		//Functions to say that particular elements have changed and mark appropriate things as dirty.
 		void dirtyDataSubclass() override {}
