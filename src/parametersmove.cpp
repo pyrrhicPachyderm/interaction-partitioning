@@ -10,16 +10,18 @@ static Eigen::VectorXd mergeParameterVectors(const std::pair<Eigen::VectorXd, Ei
 static std::pair<Eigen::VectorXd, Eigen::VectorXd> splitParameterVectors(const Eigen::VectorXd &mergedParameters, const GroupingMove &groupingMove, RandomVariableFunc getRandomVariable) {
 	size_t size1 = groupingMove.getSplitGroupSizes().first;
 	size_t size2 = groupingMove.getSplitGroupSizes().second;
-	double scaling1 = (double)size1 / (size1 + size2);
-	double scaling2 = (double)size2 / (size1 + size2);
+	double scaling1 = (double)size2 / (size1 + size2);
+	double scaling2 = (double)size1 / (size1 + size2);
+	//Note that scaling1 uses size2.
+	//This is such that parameter 1 moves more when group 1 is smaller (and group 2 is conversely larger), to preserve the weighted mean.
 	
 	Eigen::VectorXd randomVariable(mergedParameters.size());
 	for(size_t i = 0; i < (size_t)randomVariable.size(); i++) {
 		randomVariable[i] = getRandomVariable();
 	}
 	
-	Eigen::VectorXd splitParameters1 = mergedParameters - randomVariable * scaling1; //Lower the first parameter.
-	Eigen::VectorXd splitParameters2 = mergedParameters + randomVariable * scaling2; //Raise the second.
+	Eigen::VectorXd splitParameters1 = mergedParameters + randomVariable * scaling1; //Raise the first parameter.
+	Eigen::VectorXd splitParameters2 = mergedParameters - randomVariable * scaling2; //Lower the second.
 	
 	return std::make_pair(splitParameters1, splitParameters2);
 }
@@ -44,14 +46,7 @@ static double getRandomVariableJumpingDensity(MoveType moveType, const Eigen::Ve
 
 static double getJacobianBlockDeterminant(MoveType moveType, double mergedParameter, double randomVariable, const std::pair<double, double> &splitParameters, const GroupingMove &groupingMove) {
 	//See report for derivation.
-	if(moveType == MERGE) {
-		return 1.0;
-	} else if(moveType == SPLIT) {
-		size_t size1 = groupingMove.getSplitGroupSizes().first;
-		size_t size2 = groupingMove.getSplitGroupSizes().second;
-		return 2.0 + (double)size1 / size2 + (double)size2 / size1;
-	}
-	__builtin_unreachable();
+	return 1.0;
 }
 
 static double getJacobianDeterminant(MoveType moveType, const Eigen::VectorXd &mergedParameters, const std::pair<Eigen::VectorXd, Eigen::VectorXd> &splitParameters, const GroupingMove &groupingMove) {
