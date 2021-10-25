@@ -11,6 +11,7 @@ class ReversibleJumpSolver : public Solver {
 		typedef std::function<double(GroupingSet groupings)> HyperpriorFunc;
 		enum JumpType {MERGE_JUMP, SPLIT_JUMP, WITHIN_JUMP, NUM_JUMP_TYPES};
 		
+		static double flatHyperprior(GroupingSet groupings);
 		static double aicHyperprior(GroupingSet groupings);
 	protected:
 		typedef std::array<size_t, NUM_GROUPING_TYPES> GroupingIndexSet;

@@ -83,6 +83,10 @@ double ReversibleJumpSolver::getTransModelJumpProbabilityMultiplier() const {
 	return MAX_TRANS_MODEL_JUMP_PROBABILITY / unscaledMaxTransModelJumpProbability;
 }
 
+double ReversibleJumpSolver::flatHyperprior(GroupingSet groupings) {
+	return 1.0;
+}
+
 double ReversibleJumpSolver::aicHyperprior(GroupingSet groupings) {
 	size_t numParameters = groupings[GROWTH].getNumGroups() + groupings[ROW].getNumGroups() * groupings[COL].getNumGroups();
 	return exp(-1.0 * (double)numParameters);
