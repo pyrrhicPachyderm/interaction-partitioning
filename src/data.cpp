@@ -20,6 +20,6 @@ double Data::guessGrowthRate() const {
 
 double Data::guessCompetitionCoefficientMagnitude() const {
 	//We will assume that with all species present at average density, growth halts.
-	//This gives us 1, divided by the square of average density, divided by the number of species.
-	return  1.0 / design.mean() / design.mean() / numSpecies;
+	//This gives us 1, divided by the average density, divided by the number of species.
+	return  1.0 / design.mean() / numSpecies;
 }
