@@ -246,9 +246,10 @@ double ReversibleJumpSolver::getLikelihoodRatio(Eigen::VectorXd sourceResiduals,
 double ReversibleJumpSolver::getPrior() const {
 	double hyperprior = hyperpriorFunc(getGroupings());
 	
-	//TODO: There should also be the prior of the actual parameters here.
-	//Currently, I'm trying some sort of improper flat prior, to best emulate maximum likelihood statistics.
-	//I don't know if this will work.
+	//TODO: There should also be the prior of all the parameters here.
+	//Currently, the competition coefficients have a prior.
+	//But I'm trying some sort of improper flat prior for the growth rates; this is only really valid as long as their are no trans-model jumps changing the number of growth rates.
+	//Lastly, some prior on the variance might be suitable.
 	double parameterPrior = 1.0;
 	
 	Eigen::MatrixXd competitionCoefficients = getParameters().getCompetitionCoefficients();
