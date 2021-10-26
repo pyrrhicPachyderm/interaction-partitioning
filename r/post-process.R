@@ -38,6 +38,7 @@ Data <- R6::R6Class("Data",
 			names(self$row_groupings) <- species_names
 			names(self$col_groupings) <- species_names
 			self$parameters <- data_table[,grep("parameters", names(data_table))] + 1
+			names(self$parameters) <- gsub("parameters_", "", names(self$parameters)) #Strip "parameters_" from the column names.
 			self$statistics <- data_table[,grep("_[0-9]*$|parameters", names(data_table), invert=TRUE)]
 			
 			#Add additional columns of statistics.
