@@ -27,17 +27,9 @@ class Data {
 			assert((size_t)response.size() == numObservations);
 		};
 		
-		const std::vector<size_t> &getFocal() const {
-			return focal;
-		};
-		
-		const Eigen::VectorXd &getResponse() const {
-			return response;
-		};
-		
-		const Eigen::MatrixXd &getDesign() const {
-			return design;
-		};
+		const std::vector<size_t> &getFocal() const {return focal;};
+		const Eigen::VectorXd &getResponse() const {return response;};
+		const Eigen::MatrixXd &getDesign() const {return design;};
 		
 		double getResponseMean() const;
 		double getResponseVariance() const;
