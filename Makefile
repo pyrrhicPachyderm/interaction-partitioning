@@ -46,8 +46,15 @@ test_data_files := output/test-focal-vector.data output/test-response-vector.dat
 $(processed_data_files) &: scripts/reshape-DrosMCT $(raw_data_file)
 	./$< $(raw_data_file) $(processed_data_files)
 
-output/%.data: src/%.out $(processed_data_files)
-	./$< $(processed_data_files) $@ -p
+#output_template takes the output file name, the program file name, and the flags.
+define output_template =
+output/$(1).data: src/$(2).out $$(processed_data_files)
+	./$$< $$(processed_data_files) $$@ -p $(3)
+endef
+
+$(eval $(call output_template,brute,brute,))
+$(eval $(call output_template,rjmcmc-flat,rjmcmc,))
+$(eval $(call output_template,rjmcmc-aic,rjmcmc,-a))
 
 article.tex: $(output_file)
 
