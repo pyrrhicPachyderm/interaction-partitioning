@@ -59,7 +59,7 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 	
 	format_num <- function(num) {
 		sprintf(paste0("%.",digits,"f"), num) %>%
-			sub("0.", ".", .) #Strip the leading 0.
+			sub("0.", ".", ., fixed=TRUE) #Strip the leading 0.
 	}
 	
 	#LaTeX doesn't like us using \pgfplotscolormapaccess mid-table.
