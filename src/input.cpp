@@ -4,6 +4,8 @@
 
 #define NUM_MANDATORY_ARGS 4
 
+const static std::string DEFAULT_OPTS_STRING = "p";
+
 //Prints the usage spiel to stderr.
 static void printUsage(int argc, const char **argv) {
 	//Making of use of concatenated string literals in the following:
@@ -25,14 +27,19 @@ static void printUsage(int argc, const char **argv) {
 		,
 		argv[0]
 	);
+	//TODO: Take boolOpts and some sort of boolOptsHelpStrings as an argument, and include those as well.
 }
 
-Input::Input(int argc, char** argv) {
+Input::Input(int argc, char** argv, std::vector<char> boolOpts):
+	boolOpts(boolOpts)
+{
+	setOptsString();
+	
 	bool isPerCapita = false;
 	
 	//Parse the options. getopt should shuffle all the mandatory arguments to the end by itself.
 	int opt;
-	while((opt = getopt(argc, argv, "p")) != -1) { //No initial colon means leaving on automatic error reporting.
+	while((opt = getopt(argc, argv, optsString.c_str())) != -1) { //No initial colon means leaving on automatic error reporting.
 		switch(opt) {
 			case 'p':
 				isPerCapita = true;
@@ -41,8 +48,8 @@ Input::Input(int argc, char** argv) {
 				//TODO: Some additional error parsing. Perhaps see https://stackoverflow.com/a/44371579
 				printUsage(argc, (const char**)argv);
 				exit(1);
-			default: //This should never happen.
-				exit(1);
+			default:
+				parseOptInput(opt, optarg);
 		}
 	}
 	
@@ -64,4 +71,31 @@ Input::Input(int argc, char** argv) {
 		design,
 		isPerCapita
 	);
+}
+
+void Input::setOptsString() {
+	optsString = DEFAULT_OPTS_STRING;
+	
+	for(char opt : boolOpts) {
+		optsString.push_back(opt);
+	}
+}
+
+//Returns the index of the first occurrence of opt in opts.
+//Horrible algorithmically, but we don't expect more than a handful of opts and a handful of calls.
+//Returns -1 on an error.
+static int getOptIndex(std::vector<char> opts, char opt) {
+	for(size_t i = 0; i < opts.size(); i++) {
+		if(opts[i] == opt) return i;
+	}
+	return -1;
+}
+
+bool Input::getBoolOptResult(char opt) const {
+	return getOptIndex(boolOpts, opt);
+}
+
+void Input::parseOptInput(char opt, const char *optarg) {
+	int boolIndex = getOptIndex(boolOpts, opt);
+	if(boolIndex >= 0) boolOptResults[boolIndex] = true;
 }
