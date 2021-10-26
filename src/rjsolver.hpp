@@ -38,8 +38,7 @@ class ReversibleJumpSolver : public Solver {
 		double growthRateApproximatePosteriorVariance = data.guessGrowthRate() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		double competitionCoefficientApproximatePosteriorVariance = data.guessCompetitionCoefficientMagnitude() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		double varianceApproximatePosteriorVariance = data.getResponseVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
-		double withinModelJumpVarianceMultiplier = 1.0;
-		double transModelJumpVarianceMultiplier = 1.0;
+		double jumpVarianceMultiplier = 1.0;
 		double competitionCoefficientPriorVariance = data.guessCompetitionCoefficientMagnitude();
 	public:
 		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):

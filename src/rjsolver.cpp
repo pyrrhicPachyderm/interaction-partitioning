@@ -104,22 +104,22 @@ ReversibleJumpSolver::GroupingIndexSet ReversibleJumpSolver::getGroupingIndices(
 }
 
 double ReversibleJumpSolver::getGrowthRateJumpVariance() const {
-	return growthRateApproximatePosteriorVariance * withinModelJumpVarianceMultiplier;
+	return growthRateApproximatePosteriorVariance * jumpVarianceMultiplier;
 }
 
 double ReversibleJumpSolver::getCompetitionCoefficientJumpVariance() const {
-	return competitionCoefficientApproximatePosteriorVariance * withinModelJumpVarianceMultiplier;
+	return competitionCoefficientApproximatePosteriorVariance * jumpVarianceMultiplier;
 }
 
 double ReversibleJumpSolver::getVarianceJumpVariance() const {
-	return varianceApproximatePosteriorVariance * withinModelJumpVarianceMultiplier;
+	return varianceApproximatePosteriorVariance * jumpVarianceMultiplier;
 }
 
 double ReversibleJumpSolver::getTransModelJumpVariance(GroupingType groupingType) const {
 	if(groupingType == GROWTH) {
-		return growthRateApproximatePosteriorVariance * transModelJumpVarianceMultiplier;
+		return getGrowthRateJumpVariance();
 	} else if(groupingType == ROW || groupingType == COL) {
-		return competitionCoefficientApproximatePosteriorVariance * transModelJumpVarianceMultiplier;
+		return getCompetitionCoefficientJumpVariance();
 	} else __builtin_unreachable();
 }
 
@@ -349,19 +349,10 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 		//If the acceptance rate is too high, we want to raise the withinModelJumpVarianceMultiplier, and vice versa.
 		if(acceptanceRates[WITHIN_JUMP] > DESIRED_ACCEPTANCE_RATE) {
 			double discrepantProportion = (acceptanceRates[WITHIN_JUMP] - DESIRED_ACCEPTANCE_RATE) / (1.0 - DESIRED_ACCEPTANCE_RATE);
-			raiseJumpVarianceMultiplier(withinModelJumpVarianceMultiplier, discrepantProportion);
+			raiseJumpVarianceMultiplier(jumpVarianceMultiplier, discrepantProportion);
 		} else {
 			double discrepantProportion = (DESIRED_ACCEPTANCE_RATE - acceptanceRates[WITHIN_JUMP]) / DESIRED_ACCEPTANCE_RATE;
-			lowerJumpVarianceMultiplier(withinModelJumpVarianceMultiplier, discrepantProportion);
-		}
-		
-		//If the merge acceptance rate is too low, the transModelJumpVarianceMultiplier is not large enough to allow disparate coefficients to merge.
-		if(acceptanceRates[MERGE_JUMP] < acceptanceRates[SPLIT_JUMP]) {
-			double discrepantProportion = acceptanceRates[SPLIT_JUMP] - acceptanceRates[MERGE_JUMP];
-			raiseJumpVarianceMultiplier(transModelJumpVarianceMultiplier, discrepantProportion);
-		} else {
-			double discrepantProportion = acceptanceRates[MERGE_JUMP] - acceptanceRates[SPLIT_JUMP];
-			lowerJumpVarianceMultiplier(transModelJumpVarianceMultiplier, discrepantProportion);
+			lowerJumpVarianceMultiplier(jumpVarianceMultiplier, discrepantProportion);
 		}
 	}
 }
