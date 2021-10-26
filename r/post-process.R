@@ -116,7 +116,7 @@ Data <- R6::R6Class("Data",
 		
 		get_average_coclassification_matrix = function(grouping_table) {
 			#As above, but with weights of 1.
-			return(get_weighted_coclassification_matrix(grouping_table, rep(1, nrow(grouping_table))))
+			return(private$get_weighted_coclassification_matrix(grouping_table, rep(1, nrow(grouping_table))))
 		}
 	),
 	
