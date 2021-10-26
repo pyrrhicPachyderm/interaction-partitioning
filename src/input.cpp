@@ -92,7 +92,9 @@ static int getOptIndex(std::vector<char> opts, char opt) {
 }
 
 bool Input::getBoolOptResult(char opt) const {
-	return getOptIndex(boolOpts, opt);
+	int boolIndex = getOptIndex(boolOpts, opt);
+	assert(boolIndex >= 0);
+	return boolOptResults[boolIndex];
 }
 
 void Input::parseOptInput(char opt, const char *optarg) {

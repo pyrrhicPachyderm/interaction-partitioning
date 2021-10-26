@@ -9,12 +9,16 @@
 #define NUM_STEPS 1e5
 
 int main(int argc, char **argv) {
-	Input input(argc, argv);
+	Input input(argc, argv, {'a'});
 	
 	Grouping grouping(input.getData().getNumSpecies());
 	grouping.separate();
 	
-	ReversibleJumpSolver solver(input.getData(), ReversibleJumpSolver::aicHyperprior, {grouping, grouping, grouping}, {false, true, true});
+	ReversibleJumpSolver::HyperpriorFunc hyperpriorFunc = input.getBoolOptResult('a') ?
+		ReversibleJumpSolver::aicHyperprior :
+		ReversibleJumpSolver::flatHyperprior;
+	
+	ReversibleJumpSolver solver(input.getData(), hyperpriorFunc, {grouping, grouping, grouping}, {false, true, true});
 	
 	solver.dialIn(JUMPS_PER_DIAL, NUM_DIALS);
 	solver.burnIn(BURN_IN);
