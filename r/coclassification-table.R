@@ -58,6 +58,9 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 	sep="\n")
 	
 	format_num <- function(num) {
+		if(round(num,digits=digits) == 1) {
+			return(paste0("1.",paste0(rep("0",digits-1),collapse="")))
+		}
 		sprintf(paste0("%.",digits,"f"), num) %>%
 			sub("0.", ".", ., fixed=TRUE) #Strip the leading 0.
 	}
