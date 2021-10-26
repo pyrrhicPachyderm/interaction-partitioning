@@ -7,12 +7,12 @@
 
 extern const char *OUTPUT_TABLE_SEPARATOR;
 
-std::istream &openInput(const char *filename);
-std::ostream &openOutput(const char *filename);
+std::istream &openInput(std::string filename);
+std::ostream &openOutput(std::string filename);
 
-extern std::vector<size_t> readIndexVector(const char *filename);
-extern Eigen::VectorXd readDoubleVector(const char *filename);
-extern Eigen::MatrixXd readDoubleMatrix(const char *filename);
+extern std::vector<size_t> readIndexVector(std::string filename);
+extern Eigen::VectorXd readDoubleVector(std::string filename);
+extern Eigen::MatrixXd readDoubleMatrix(std::string filename);
 
 template<typename T> class OutputColumn {
 	protected:
@@ -61,7 +61,7 @@ template<class T, class... OutputColumnTs> void outputTableRow(std::ostream &str
 	}
 }
 
-template<class T, class... OutputColumnTs> void outputTable(const char *filename, const OutputColumn<T>& column, const OutputColumnTs&... columns) {
+template<class T, class... OutputColumnTs> void outputTable(std::string filename, const OutputColumn<T>& column, const OutputColumnTs&... columns) {
 	//We can't really iterate over the columns to check they're all the same length, so we're just going to assume.
 	//TODO: Improve this.
 	size_t numRows = column.getLength();

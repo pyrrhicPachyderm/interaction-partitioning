@@ -11,23 +11,23 @@ const char *OUTPUT_GROWTH_RATE_STRING = "r";
 const char *OUTPUT_COMPETITION_COEFFICIENT_STRING = "alpha";
 const char *OUTPUT_NULL_VALUE_STRING = "NA";
 
-template<typename StreamT> static StreamT &openFile(const char *filename) {
+template<typename StreamT> static StreamT &openFile(std::string filename) {
 	StreamT &file = *(new StreamT);
 	file.open(filename);
 	if(!file) {
-		fprintf(stderr, "Could not open file %s\n", filename);
+		fprintf(stderr, "Could not open file %s\n", filename.c_str());
 		exit(1);
 	}
 	return file;
 }
 
-std::istream &openInput(const char *filename) {
-	if(strcmp(filename, "-") == 0) return std::cin;
+std::istream &openInput(std::string filename) {
+	if(filename == "-") return std::cin;
 	return openFile<std::ifstream>(filename);
 }
 
-std::ostream &openOutput(const char *filename) {
-	if(strcmp(filename, "-") == 0) return std::cout;
+std::ostream &openOutput(std::string filename) {
+	if(filename == "-") return std::cout;
 	return openFile<std::ofstream>(filename);
 }
 
@@ -37,7 +37,7 @@ std::ostream &openOutput(const char *filename) {
 
 //Set numCols to 0 for a dynamically sized matrix.
 //In this case, the number of columns is returned through numCols.
-template<typename T> static std::vector<T> readMatrix(const char *filename, size_t *numCols) {
+template<typename T> static std::vector<T> readMatrix(std::string filename, size_t *numCols) {
 	std::istream &file = openInput(filename);
 	
 	std::vector<T> result;
@@ -48,7 +48,7 @@ template<typename T> static std::vector<T> readMatrix(const char *filename, size
 		std::vector<T> line = std::vector<T>{std::istream_iterator<T>(buffer), std::istream_iterator<T>()};
 		
 		if(*numCols != 0 && *numCols != line.size()) {
-			fprintf(stderr, "%s has the wrong number of columns, or an inconsistent number of columns\n", filename);
+			fprintf(stderr, "%s has the wrong number of columns, or an inconsistent number of columns\n", filename.c_str());
 			exit(1);
 		} else {
 			*numCols = line.size();
@@ -59,12 +59,12 @@ template<typename T> static std::vector<T> readMatrix(const char *filename, size
 	return result;
 }
 
-std::vector<size_t> readIndexVector(const char *filename) {
+std::vector<size_t> readIndexVector(std::string filename) {
 	size_t numCols = 1;
 	return readMatrix<size_t>(filename, &numCols);
 }
 
-Eigen::VectorXd readDoubleVector(const char *filename) {
+Eigen::VectorXd readDoubleVector(std::string filename) {
 	size_t numCols = 1;
 	std::vector<double> raw = readMatrix<double>(filename, &numCols);
 	
@@ -72,7 +72,7 @@ Eigen::VectorXd readDoubleVector(const char *filename) {
 	return result;
 }
 
-Eigen::MatrixXd readDoubleMatrix(const char *filename) {
+Eigen::MatrixXd readDoubleMatrix(std::string filename) {
 	size_t numCols = 0;
 	std::vector<double> raw = readMatrix<double>(filename, &numCols);
 	

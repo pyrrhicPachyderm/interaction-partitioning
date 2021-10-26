@@ -56,7 +56,7 @@ Input readInput(int argc, char** argv) {
 	std::vector<size_t> focal = readIndexVector(argv[optind]);
 	Eigen::VectorXd response = readDoubleVector(argv[optind+1]);
 	Eigen::MatrixXd design = readDoubleMatrix(argv[optind+2]);
-	const char *outputFilePtr = argv[optind+3];
+	std::string outputFile = argv[optind+3];
 	
 	Data data(
 		focal,
@@ -65,5 +65,5 @@ Input readInput(int argc, char** argv) {
 		isPerCapita
 	);
 	
-	return Input(data, outputFilePtr);
+	return Input(data, outputFile);
 }

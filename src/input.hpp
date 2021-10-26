@@ -7,18 +7,12 @@
 class Input {
 	protected:
 		Data data;
-		char *outputFile;
+		std::string outputFile;
 	public:
-		Input(Data data, const char *outputFilePtr): data(data) {
-			outputFile = strdup(outputFilePtr);
-		};
-		
-		~Input() {
-			free(outputFile);
-		}
+		Input(Data data, std::string outputFile): data(data), outputFile(outputFile) {};
 		
 		const Data &getData() {return data;};
-		const char *getOutputFile() {return outputFile;};
+		const std::string &getOutputFile() {return outputFile;};
 };
 
 extern Input readInput(int argc, char** argv);
