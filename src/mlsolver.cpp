@@ -6,13 +6,13 @@ Eigen::VectorXd MaximumLikelihoodSolver::getResidualsFromVector(const Eigen::Vec
 }
 
 MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Parameters &parameters) {
-	MaximumLikelihoodSolver::Jacobian jacobian = Eigen::MatrixXd::Zero(data.numObservations, parameters.getNumParameters());
+	MaximumLikelihoodSolver::Jacobian jacobian = Eigen::MatrixXd::Zero(data.getNumObservations(), parameters.getNumParameters());
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
 	
 	//Note that this is the Jacobian of the residuals, not of the predicted values.
 	//As such, it is negated, compared to the predicted values.
-	for(size_t obs = 0; obs < data.numObservations; obs++) {
+	for(size_t obs = 0; obs < data.getNumObservations(); obs++) {
 		size_t focal = data.getFocal()[obs];
 		size_t focalGrowthGroup = groupings[GROWTH].getGroup(focal);
 		size_t focalRowGroup = groupings[ROW].getGroup(focal);
@@ -26,7 +26,7 @@ MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Par
 		//This one will be equal to the prediction, divided by the growth rate itself.
 		double totalCompetition = parameters.getCompetitionCoefficientsRow(focalRowGroup).dot(colGroupedDesign.row(obs));
 		double derivative = 1.0 - totalCompetition;
-		if(!data.isPerCapita) derivative *= focalDensity;
+		if(!data.getIsPerCapita()) derivative *= focalDensity;
 		jacobian(obs, parameters.getAsVectorGrowthRateIndex(focalGrowthGroup)) = -derivative;
 		
 		//Second, the derivatives with respect to the competition coefficients.
@@ -35,7 +35,7 @@ MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Par
 		//This will be the negative of the focal growth rate, times the focal density (if not per capita), times the column group density.
 		for(size_t colGroup = 0; colGroup < groupings[COL].getNumGroups(); colGroup++) {
 			double derivative = - focalGrowthRate * colGroupedDesign(obs, colGroup);
-			if(!data.isPerCapita) derivative *= focalDensity;
+			if(!data.getIsPerCapita()) derivative *= focalDensity;
 			jacobian(obs, parameters.getAsVectorCompetitionCoefficientIndex(focalRowGroup, colGroup)) = -derivative;
 		}
 	}

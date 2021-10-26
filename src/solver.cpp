@@ -1,10 +1,10 @@
 #include "solver.hpp"
 
 void Solver::calculateColGroupedDesign() {
-	colGroupedDesign = Eigen::MatrixXd::Zero(data.numObservations, getGrouping(COL).getNumGroups());
+	colGroupedDesign = Eigen::MatrixXd::Zero(data.getNumObservations(), getGrouping(COL).getNumGroups());
 	
-	for(size_t obs = 0; obs < data.numObservations; obs++) {
-		for(size_t sp = 0; sp < data.numSpecies; sp++) {
+	for(size_t obs = 0; obs < data.getNumObservations(); obs++) {
+		for(size_t sp = 0; sp < data.getNumSpecies(); sp++) {
 			colGroupedDesign(obs, getGrouping(COL).getGroup(sp)) += data.getDesign()(obs, sp);
 		}
 	}
@@ -18,11 +18,11 @@ Eigen::MatrixXd Solver::getColGroupedDesign() {
 }
 
 Eigen::VectorXd Solver::getPredictions(const Parameters &parameters) {
-	Eigen::VectorXd predictions = Eigen::VectorXd::Zero(data.numObservations);
+	Eigen::VectorXd predictions = Eigen::VectorXd::Zero(data.getNumObservations());
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
 	
-	for(size_t obs = 0; obs < data.numObservations; obs++) {
+	for(size_t obs = 0; obs < data.getNumObservations(); obs++) {
 		size_t focal = data.getFocal()[obs];
 		size_t focalGrowthGroup = getGrouping(GROWTH).getGroup(focal);
 		size_t focalRowGroup = getGrouping(ROW).getGroup(focal);
@@ -31,7 +31,7 @@ Eigen::VectorXd Solver::getPredictions(const Parameters &parameters) {
 		double focalDensity = data.getDesign()(obs, focal);
 		
 		double intrinsicGrowth = focalGrowthRate;
-		if(!data.isPerCapita) intrinsicGrowth *= focalDensity;
+		if(!data.getIsPerCapita()) intrinsicGrowth *= focalDensity;
 		double totalCompetition = parameters.getCompetitionCoefficientsRow(focalRowGroup).dot(colGroupedDesign.row(obs));
 		double prediction = intrinsicGrowth * (1.0 - totalCompetition);
 		predictions[obs] = prediction;

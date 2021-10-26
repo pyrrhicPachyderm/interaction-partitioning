@@ -8,12 +8,12 @@ class MaximumLikelihoodSolver : public Solver {
 		GroupingSet groupings;
 	public:
 		MaximumLikelihoodSolver(Data data):
-			Solver(data), groupings({Grouping(data.numSpecies), Grouping(data.numSpecies), Grouping(data.numSpecies)}) {};
+			Solver(data), groupings({Grouping(data.getNumSpecies()), Grouping(data.getNumSpecies()), Grouping(data.getNumSpecies())}) {};
 		MaximumLikelihoodSolver(Data data, Grouping growthGrouping, Grouping rowGrouping, Grouping colGrouping):
 			Solver(data), groupings({growthGrouping, rowGrouping, colGrouping})
 		{
 			for(size_t i = 0; i < NUM_GROUPING_TYPES; i++) {
-				assert(groupings[i].numSpecies == data.numSpecies);
+				assert(groupings[i].numSpecies == data.getNumSpecies());
 			}
 		}
 		

@@ -43,7 +43,7 @@ class ReversibleJumpSolver : public Solver {
 		double competitionCoefficientPriorVariance = data.guessCompetitionCoefficientMagnitude();
 	public:
 		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
-			Solver(data), groupingLattice(GroupingLattice(data.numSpecies)), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
+			Solver(data), groupingLattice(GroupingLattice(data.getNumSpecies())), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
 				currentGroupings = getGroupingIndices(groupings);
 				currentParameters = AugmentedParameters<1>(data, groupings, {data.getResponseVariance()});
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();

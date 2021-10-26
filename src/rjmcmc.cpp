@@ -11,7 +11,7 @@
 int main(int argc, char **argv) {
 	Input input = readInput(argc, argv);
 	
-	Grouping grouping(input.getData().numSpecies);
+	Grouping grouping(input.getData().getNumSpecies());
 	grouping.separate();
 	
 	ReversibleJumpSolver solver(input.getData(), ReversibleJumpSolver::aicHyperprior, {grouping, grouping, grouping}, {false, true, true});
