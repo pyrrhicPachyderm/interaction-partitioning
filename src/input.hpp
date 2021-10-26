@@ -9,12 +9,10 @@ class Input {
 		Data data;
 		std::string outputFile;
 	public:
-		Input(Data data, std::string outputFile): data(data), outputFile(outputFile) {};
+		Input(int argc, char** argv);
 		
 		const Data &getData() {return data;};
 		const std::string &getOutputFile() {return outputFile;};
 };
-
-extern Input readInput(int argc, char** argv);
 
 #endif

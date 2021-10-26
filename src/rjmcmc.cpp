@@ -9,7 +9,7 @@
 #define NUM_STEPS 1e5
 
 int main(int argc, char **argv) {
-	Input input = readInput(argc, argv);
+	Input input(argc, argv);
 	
 	Grouping grouping(input.getData().getNumSpecies());
 	grouping.separate();

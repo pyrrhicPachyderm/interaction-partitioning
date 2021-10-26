@@ -27,7 +27,7 @@ static void printUsage(int argc, const char **argv) {
 	);
 }
 
-Input readInput(int argc, char** argv) {
+Input::Input(int argc, char** argv) {
 	bool isPerCapita = false;
 	
 	//Parse the options. getopt should shuffle all the mandatory arguments to the end by itself.
@@ -56,14 +56,12 @@ Input readInput(int argc, char** argv) {
 	std::vector<size_t> focal = readIndexVector(argv[optind]);
 	Eigen::VectorXd response = readDoubleVector(argv[optind+1]);
 	Eigen::MatrixXd design = readDoubleMatrix(argv[optind+2]);
-	std::string outputFile = argv[optind+3];
+	outputFile = argv[optind+3];
 	
-	Data data(
+	data = Data(
 		focal,
 		response,
 		design,
 		isPerCapita
 	);
-	
-	return Input(data, outputFile);
 }

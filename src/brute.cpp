@@ -2,7 +2,7 @@
 #include "mlsolver.hpp"
 
 int main(int argc, char **argv) {
-	Input input = readInput(argc, argv);
+	Input input(argc, argv);
 	
 	MaximumLikelihoodSolver solver = MaximumLikelihoodSolver(input.getData());
 	solver.updateGrouping(GROWTH, &Grouping::separate);
