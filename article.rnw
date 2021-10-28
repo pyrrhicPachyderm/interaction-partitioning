@@ -87,7 +87,7 @@ Lastly, I find that species did not group equivalently in their competitive effe
 
 \section{Introduction}
 
-Models have long been used in ecology community \parencite{lotka1925elements}.
+Models have long been used in community ecology \parencite{lotka1925elements}.
 They allow us to make predictions about things we cannot directly observe, be it the response of a community to novel pressures \parencite{novak2016characterizing}, or the stability of an entirely novel assemblage \parencite{maynard2020predicting}.
 The ability to make these predictions is becoming increasingly important as global change accelerates, introducing alien species and applying climatic or other anthropogenic pressures to communities worldwide.
 
