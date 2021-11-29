@@ -152,7 +152,7 @@ Lastly, an additional set of vials were raised in colder temperatures, but were 
 I fitted the Lotka--Volterra competition model to the data.
 As the response variable was fecundity, I used a discrete-time version of the model, as follows:
 \[
-	N_{i,t+1} = N_{i,t} r_i \left(1 - \sum_j N_{j,t} \alpha_{ij}\right)
+	N_{i,t+1} = N_{i,t} r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right)
 ,\]
 where $N_{i,t}$ is the population of species $i$ at time $t$, $r_i$ is the intrinsic growth rate of species $i$, and $\alpha_{ij}$ is the \emph{per capita} competitive effect of species $j$ upon species $i$.
 $N_{i,t+1}$ is the size of the population in the following time-step, i.e.\ the number of surviving offspring, the fecundity, of the previous generation, and therefore is equal to the experimentally measured response variable.
@@ -185,7 +185,7 @@ Fitting it using precisely a Lotka--Volterra model prevented the use of a link f
 As such, I assumed a normal error distribution, and fitted a least squares regression.
 To prevent heteroskedasticity, I used the \emph{per capita} fecundity as the response variable, as in the following model:
 \[
-	\frac{N_{i,t+1}}{N_{i,t}} = r_i \left(1 - \sum_j N_{j,t} \alpha_{ij}\right)
+	\frac{N_{i,t+1}}{N_{i,t}} = r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right)
 .\]
 
 The Lotka--Volterra model is not linear in the parameters.
