@@ -171,7 +171,7 @@ With $n$ groups, the grouping places each species into its own group, as though 
 With $1$ group, every species is placed in the same group, such that all are considered to be equal in their competitive effect or response, reminiscent of the neutral model.
 Intermediate numbers of groups give more freedom in the groupings, such that there are many possible groupings for any intermediate number of groups.
 The total number of groupings for $n$ species is given by the Bell numbers, denoted $B_n$ \parencite{bell1934exponential}.
-With six species, and the row and column groupings chosen independently, the total number of possible models is $B_6^2 = \num{\Sexpr{numbers::bell(6)^2}}$.
+With six species, and the row and column groupings chosen independently, the total number of possible models is ${\left(B_6\right)}^2 = \num{\Sexpr{numbers::bell(6)^2}}$.
 
 Species in the same column grouping were constrained to have the same competitive effect upon all other species, while species in the same row grouping were constrained to have the same competitive response to all other species.
 Formally, if species $a$ and $b$ were in the same column grouping, $\alpha_{ia}=\alpha_{ib} \, \forall i$, and if $a$ and $b$ were in the same row grouping, $\alpha_{aj}=\alpha_{bj} \, \forall j$.
