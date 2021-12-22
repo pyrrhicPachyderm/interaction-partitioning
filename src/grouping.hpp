@@ -1,6 +1,7 @@
 #ifndef GROUPING_HPP
 #define GROUPING_HPP
 
+#include <stddef.h>
 #include <vector>
 
 class Grouping {
