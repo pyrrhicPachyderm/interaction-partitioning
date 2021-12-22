@@ -38,7 +38,7 @@
 
 %Title Page
 \title{Regularising Lotka--Volterra interaction matrices by species grouping: optimal groupings are unpredictable}
-\author{Christopher R. P. Brown}
+\author{Christopher R.\ P.\ Brown}
 \affil{Centre for Integrative Ecology, School of Biological Sciences, University of Canterbury, Christchurch, New Zealand}
 \date{}
 
@@ -369,6 +369,8 @@ Furthermore, both row and column groupings gave high probabilities of coclassifi
 	}
 	\label{fig:coclassification}
 \end{figure}
+
+% DBS: I think a good figure would be to show the ungrouped estimated alpha matrix in one panel and the alpha matrix averaged across all partitions in a second panel, with lines drawn in the second to reflect the "optimal" partitioning of the co-classification matrices.
 
 \section{Discussion}
 
