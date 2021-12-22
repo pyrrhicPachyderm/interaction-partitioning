@@ -1,6 +1,7 @@
 #ifndef DATA_HPP
 #define DATA_HPP
 
+#include <stddef.h>
 #include <assert.h>
 #include <vector>
 #include <Eigen/Core>
