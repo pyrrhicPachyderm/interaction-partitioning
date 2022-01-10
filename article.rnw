@@ -374,10 +374,14 @@ Furthermore, both row and column groupings gave high probabilities of coclassifi
 
 \section{Discussion}
 
+% DBS: I would start this paragraph with a restatement of the overall premise.
 The results show that grouping the interaction coefficients of species was likely to give a more parsimonious model (probability \probnum{\Sexpr{sum(brute_data$statistics$aic_weight[brute_data$statistics$aic < brute_data$fully_separated_statistics$aic])}}) than leaving them ungrouped, but not confidently so.
 Which grouping might give the most parsimonious model also could not be determined with any confidence.
+% DBS: The two preceding sentences are very glass half empty. I'm also not sure that the results are really so equivocal. What makes you feel this way?
 The intransitivity of coclassification in some instances even suggests that there may not be a single ``best'' grouping, but rather two or more quite distinct and mutually exclusive groupings of similar validity.
+% DBS: In my mind, I would steal the preceding sentence and spin it potentially spin it into its own paragraph later since it speaks strongly to a mixed-membership approach which could be sold as a "future direction".
 
+% DBS: Avoid imprecise "this" or "that" as subjects. Always say "This result" or something similar. Also, avoid starting a new paragraph that so strongly forms a continuation of the previous one.
 This stands in contrast to the popular wisdom in ecology that species should form some sort of clear groups, be they the functional groups so often used \parencite{blondel2003guilds}, or taxonomic groups per a relationship between phylogeny and ecological niche \parencite{godoy2014phylogenetic}.
 It also contrasts with previous studies that have succeeded in finding clear groups, such as \textcite{allesina2009food}, who used AIC to find the best grouping of species, but in a binary food web rather than a qualitative competitive context.
 Perhaps species simply do not group to the same extent in a competitive context.
@@ -391,13 +395,16 @@ A study system with species spanning multiple functional groups, however, might 
 While functional groups have previously shown to be poor predictors of competitive interactions \parencite{bret2008plant}, studies in other contexts have succeeded in isolating functional groups by selecting for model parsimony \parencite{allesina2009food}.
 In further support of functional groups over phylogeny, \textcite{uriarte2004spatially} found that grouping based on light guilds (akin to functional groups; \cite{blondel2003guilds}) produced a parsimonious model more frequently than grouping taxonomically (with both groupings defined \emph{a priori}).
 Perhaps an attempt to produce functional groups based upon competitive interactions is warranted, applying the framework I present here to a set of species spanning multiple functional groups.
+% DBS: Prolix warning! ;)
 
 Alternatively, it should be noted that the success of \textcite{allesina2009food} in isolating groups using AIC occurred in much larger study systems, with 25 or more species.
+% DBS: Personally, I try to make links to previous studies more self contained. Since the Allesina paper and its use of AIC was brought up earlier, it strikes me as repetitive to lean on it alone again here.
 Alas, the brute force method I employed in this study has a very poor algorithmic complexity, preventing the application of the method to studies with more than seven or eight species.
 As such, a better method would be required in order to test for grouping of species interactions among a larger set of species.
 
+% DBS: The paragraph below is a very good example of text that could easily be simplified for clarity without losing important content.
 In light of the failure to produce clear groups, perhaps the most curious aspect of the results is the disagreement between the likely coclassifications of species in the groupings of rows and of columns.
-This is perhaps not surprising in hindsight, for there is no necessity that species respond to competition in the same manner that they cause it, especially in competition for certain resources such as space (the limiting resource presumed in these data) or light.
+This is perhaps not surprising in hindsight, for there is no necessity that species respond to competition in the same manner that they cause it, especially in competition for certain resources such as space (the limiting resource presumed in these data) or light. % DBS: Some definite refs missing here.
 Yet the assumption that species should group equivalently in these two regards is frequently made, often implicitly and without comment \parencite[e.g.][]{martorell2014testing,ives2003estimating,gross2015stability}.
 My results recommend more explicit questioning, and even testing, of that assumption when building future species interaction models.
 %TODO: Discuss the fact that species were coclassified more in the rows than in the columns.
