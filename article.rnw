@@ -51,17 +51,17 @@
 <<include=FALSE>>=
 	source("r/post-process.R")
 	source("r/brute-post-process.R")
-	brute_data <- BruteData$new(
-		"output/brute.data",
-		c(
-			"D. birchii",
-			"D. pallidifrons",
-			"D. pandora",
-			"D. pseudoananassae",
-			"D. simulans",
-			"D. sulfurigaster"
-		)
+	
+	species_names <- c(
+		"D. birchii",
+		"D. pallidifrons",
+		"D. pandora",
+		"D. pseudoananassae",
+		"D. simulans",
+		"D. sulfurigaster"
 	)
+	
+	brute_data <- BruteData$new("output/brute.data", species_names)
 	
 	source("r/coclassification-table.R")
 @
