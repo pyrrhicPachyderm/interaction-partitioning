@@ -38,9 +38,11 @@
 
 %Title Page
 \title{Regularising Lotka--Volterra interaction matrices by species grouping: optimal groupings are unpredictable}
-\author{Christopher R. P. Brown}
+\author{Christopher R.\ P.\ Brown}
 \affil{Centre for Integrative Ecology, School of Biological Sciences, University of Canterbury, Christchurch, New Zealand}
 \date{}
+
+% DBS: We should have a conversation regarding authorship. To me, it makes perfect sense thus far that you are the sole author. Depending on how revisions go and what anyone else or I do or do not contribute, it may be appropriate for this to change. In many such instances, I often think that the lead author (i.e., you) will have the best feeling for this relative to the criteria set out in the Vancouver guidelines for authorship.
 
 <<include=FALSE>>=
 	knitr::opts_chunk$set(results = 'asis') #Text is grey without this.
@@ -74,6 +76,8 @@
 \begin{document}
 \maketitle
 
+% DBS: I'll leave the abstract free of comments until the main text is closer to the final version.
+
 \section*{Abstract}
 
 Dynamic models of ecological communities require many parameters, making them expensive to fit.
@@ -89,36 +93,40 @@ Lastly, I find that species did not group equivalently in their competitive effe
 
 Models have long been used in community ecology \parencite{lotka1925elements}.
 They allow us to make predictions about things we cannot directly observe, be it the response of a community to novel pressures \parencite{novak2016characterizing}, or the stability of an entirely novel assemblage \parencite{maynard2020predicting}.
-The ability to make these predictions is becoming increasingly important as global change accelerates, introducing alien species and applying climatic or other anthropogenic pressures to communities worldwide.
+The ability to make these predictions is becoming increasingly important as global change accelerates, introducing alien species and applying climatic or other anthropogenic pressures to communities worldwide \parencite{XXX}.
 
-However, making any use of a model requires experimentally or observationally determining the values of each parameter in the model.
-This poses a problem for species interaction models, due to the sheer number of parameters that must be determined.
-Even the simplest models, with no environmental dependence, require one parameter for the interaction of each pair of species \parencite{novak2016characterizing}.
-Hence the number of parameters scales quadratically with the number of species; over \num{100} parameters are required for a community of just \num{10} species.
+Making practical use of a model requires experimentally or observationally determining the values of each of the model's parameters.
+This poses a particular problem for models that include species interactions due to the sheer number of parameters that must be determined.
+Even the simplest models with no environmental dependence require one parameter to characterize the interaction of each pair of species \parencite{novak2016characterizing, XXX}.
+Hence the number of parameters scales quadratically with the number of species; over \num{100} parameters are required for the interactions in a community of ``just'' \num{10} species.
 Determining these parameters experimentally requires at least one experiment per parameter, and preferably more \parencite{hart2018quantify}.
 This is expensive, and requires a lot of effort.
-As such, these models are typically restricted to a small number of focal species \parencite{ovaskainen2017species}.
-Real communities can contain hundreds of species \parencite{cornell1999unsaturation}, or even thousands for microbial communities assessed by genetic metabarcoding \parencite{warton2015variables}.
-We need a way to reduce the number of parameters the models require, to regularise them.
+As such, model-based predictions of real communities are typically restricted to a small number of focal species \parencite{ovaskainen2017species, XXX}.
+However, real communities can contain hundreds of species \parencite{cornell1999unsaturation}, or even thousands for microbial communities assessed by genetic metabarcoding \parencite{warton2015variables}.
+To bridge this gap between XXX and YYY, we need an ecologically-defensible way to reduce the number of parameters that predictive models require.
 
 %Several methods have been applied to regularise species interaction models, each with their own limitations.
 %For example, it is often assumed that most pairs of species don't interact, setting many of the parameters to zero \parencite{mutshinda2009drives,ovaskainen2017species}.
 %TODO: Find a citation for why this assumption doesn't hold.
 
-Regularisation is often performed by assuming that species fall into groups, such that all species in the same group interact with other species in the same fashion, thereby collapsing interaction parameters for all the species in that group into one parameter \parencite{ovaskainen2017species,weiss2021disentangling}.
-Such groups have been defined \emph{a priori}, by phylogeny at some taxonomic level, or by functional groupings \parencite{uriarte2004spatially,ovaskainen2017species,weiss2021disentangling}.
-The argument for grouping based on phylogeny is based on the principle (originally hypothesised by Darwin himself) that closely related species will be similar in (what we now know as) ecological niche, and thereby will interact with other species in a similar fashion \parencite{godoy2014phylogenetic}.
-However, tests of this principle have found remarkably little support for it \parencite{godoy2014phylogenetic,cahill2008does,mayfield2010opposing}.
+In the statistical literature, regularisation is the process of using external information to prevent overfitting or to solve an otherwise overspecified problem \parencite{XXX}. One simplifying approach is to assume that most pairs of species do not interact or interact weakly, and hence setting many of the parameters to zero \parencite{XXX}. XXX why this could be a problem XXX
+Alternatively, one can assume that species fall into groups, such that all species in the same group interact with species in other groups in an identical fashion, thereby collapsing pairwise interaction parameters for all the species in that group into sets of common parameters \parencite{ovaskainen2017species,weiss2021disentangling}.
+
+In ecological contexts, such groups have been defined \emph{a priori} by phylogeny at some taxonomic level or by functional groupings \parencite{uriarte2004spatially,ovaskainen2017species,weiss2021disentangling}.
+The argument for grouping based on phylogeny is based on the principle (originally hypothesised by Darwin himself \cite{XXX}) that closely related species will be similar in (what we now know as) ecological niche, and thereby will interact with other species in a similar fashion \parencite{godoy2014phylogenetic}.
+% DBS: the preceding sentence could be simplified a fair bit
+However, empirical tests of this principle have found remarkably little support for it \parencite{godoy2014phylogenetic,cahill2008does,mayfield2010opposing}.
 On the other hand, functional groupings have also proven to be poor predictors of species interactions \parencite{bret2008plant}.
 While attempts have been made to define functional groupings that are more useful in a modelling context \parencite{boulangeat2012improving}, these rely upon measurements of biotic interactions to define such groups.
-As such, applying these to species interaction models leaves us with a circular argument: a functional group is a group of species that interact with others in a similar way, and we therefore assume that all the species in a functional group interact with others in a similar way.
-In all, we are left with the question of how best to group species in community models.
+As such, integrating these into species interaction models leaves us with a circular argument: a functional group is a group of species that interact with others in a similar way, and we therefore assume that all the species in a functional group interact with others in a similar way.
+In all, we are left with the question of how best to group species in community models, and whether we can do so in a meaningful fashion with less data than required for a fully pairwise parameterisation.
 
-I propose that groups might be selected without regard to any \emph{a priori} definition, based purely upon which grouping gives the most parsimonious model.
-In this study, I investigate the usefulness and correctness of such a selection, using experimental \emph{Drosophila} fecundity data provided by \textcite{terry2021natural}.
-I fit the Lotka--Volterra model, with grouped species, to find the grouping that gives the most parsimonious model.
+I propose that species might be best partitioned into groups without regard to any \emph{a priori} definition but instead based purely upon which grouping gives the most parsimonious model.
+% DBS: We can say something here about how this data-informed approach has worked very well for other clustering problems, such as modularity in networks. I can point to some very good references along those lines.
+In this study, I investigate the usefulness and correctness of such an approach using experimental \emph{Drosophila} fecundity data provided by \textcite{terry2021natural}. I fit the Lotka--Volterra model, with grouped species, to find the grouping that gives the most parsimonious model.
 I group species independently with regard to their effects upon other species and their responses to other species, to find whether the appropriate groupings might differ for these two cases.
 Finally, I compare the resultant groupings with species phylogeny, to provide further investigation of the suitability of \emph{a priori} phylogenetic grouping.
+% DBS: I feel like the last sentences of this paragraph, from "In this study,..." onward should be rephrased to be more user friendly and without introducing new concepts (e.g., rows vs columns). If that info is important for the introduction, it ought to appear before the "This is what we do here" paragraph.
 
 \section{Methods}
 
@@ -126,7 +134,7 @@ Finally, I compare the resultant groupings with species phylogeny, to provide fu
 
 The data I used in this study were drawn from the work of \textcite{terry2021natural}.
 The data consist of fecundity measurements---number of surviving offspring---for six species of \emph{Drosophila}, grown in single-species or two-species communities with varying densities of each species.
-In this, they form essentially the standard experimental design for parameterising a species interaction model, as described by \textcite{hart2018quantify}.
+This experimental design corresponds to a response--surface experimental design commonly used to parameterise a species interaction model \textcite{hart2018quantify, XXX}.
 
 I shall not repeat the entire experimental methodology here---refer to \textcite{terry2021natural} for that---but provide a summary of the pertinent points.
 
@@ -134,80 +142,93 @@ I shall not repeat the entire experimental methodology here---refer to \textcite
 
 The experiment used six species of \emph{Drosophila} from an Australian rainforest community: \emph{D. birchii}, \emph{D. pallidifrons}, \emph{D. pandora}, \emph{D. pseudoananassae}, \emph{D. simulans}, and \emph{D. sulfurigaster}.
 The experiment took place in vials with a limited amount of medium for egg-laying and larval development; competition was for space on this medium.
-A number of adult pairs of one or two species were added to each vial and allowed to mate and lay eggs.
+A fixed number of adult pairs of one or two species were added to each vial and allowed to mate and lay eggs.
 The number of adult pairs of each species emerging from these eggs---i.e.\ the size of the next generation---was the response variable.
+% DBS: CRPB to fix this response variable when he fixes the model formula to reflect number of offspring.
 
 Experiments occurred for every single-species and two-species combination of the six species, at a variety of densities.
 The single-species densities were 3, 9, or 12 pairs per vial, each replicated six times per species.
 The two-species densities were, giving the densities of each of the two species, (3,3), (3,6), (3,9), (3,12), (6,3), (9,3), or (12,3) pairs per vial, each replicated three times per pair of species.
 
+% DBS: We should probably remove all of the following except the bit about a single founding pair since it's the only thing with direct bearing on how this model gets fit. For reference, it's not hard to add an Allee effect to a LV model if we wanted to add another set of parameters, though I understand why we probably don't!
 The experiment also included a number of other vials that were excluded from the analysis for various reasons.
 The original authors' study was on parasitism, so the experiments also included a parasitised treatment.
 That is irrelevant to this study, so was excluded.
 Vials with a single founding pair were excluded from this study and the original authors' due to an Allee effect that the Lotka--Volterra model cannot accommodate.
 Lastly, an additional set of vials were raised in colder temperatures, but were excluded from this study and the original authors' as the resulting emergence was too low to analyse.
 
+Further details of the experimental methodology can be found in \textcite{terry2021natural}.
+
 \subsection{Model}
 
-I fitted the Lotka--Volterra competition model to the data.
-As the response variable was fecundity, I used a discrete-time version of the model, as follows:
+As the response variable was fecundity, I used a discrete-time version of the Lotka--Volterra competition model given by:
 \[
 	N_{i,t+1} = N_{i,t} r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right)
 ,\]
-where $N_{i,t}$ is the population of species $i$ at time $t$, $r_i$ is the intrinsic growth rate of species $i$, and $\alpha_{ij}$ is the \emph{per capita} competitive effect of species $j$ upon species $i$.
+% DBS: CRPB to update the equation above after consideration of experimental response variable.
+where $N_{i,t}$ is the population of species $i$ at time $t$, $r_i$ is the intrinsic growth rate of species $i$, and $\alpha_{ij}$ is the \emph{per capita} competitive effect of species $j$ on species $i$.
 $N_{i,t+1}$ is the size of the population in the following time-step, i.e.\ the number of surviving offspring, the fecundity, of the previous generation, and therefore is equal to the experimentally measured response variable.
 The competition coefficients were not constrained to be positive, allowing for the possibility of mutualistic effects between some species.
 
+% DBS: We might want to be prepared for reviewers asking us to change from a linear LV model.
+
 \subsubsection{Species grouping}
 
-The competition coefficients of the Lotka--Volterra model are typically arranged in an interaction matrix \parencite{novak2016characterizing}, where a row contains all the competitive effects upon a single species, and a column contains all the competitive effects produced by a single species.
+The set of competition coefficients in the Lotka--Volterra model can be  arranged in an interaction matrix \parencite{novak2016characterizing}, where a row contains all the competitive effects on a single species and a column contains all the competitive effects of a single species.
 This interpretation was used in the grouping of species, as it was rows or columns of this matrix that were grouped.
+% DBS: Similar to my comment above, I'm not sure the rows vs column groupings is sufficiently introduced to this point. So I think we need more than a single sentence explaining this idea. Since it appears below, we can reiterate the meaning in terms of equivalence of competitive responses and equivalence of competitive effects.
 
 Grouping was performed by constraining appropriate competition coefficients to be equal, reducing the number of free parameters in the model.
-Each model fit was performed with one grouping of the interaction matrix's rows, and an independent grouping of the columns.
+Each model fit was performed with one grouping of the interaction matrix's rows and a second, independent grouping of the matrix's columns.
 A grouping, known as a partition in mathematics, divides the species into groups such that each species belongs to one and only one group, and such that every group contains at least one species.
 Given $n$ species, there may be any integer number of groups from $1$ to $n$.
-With $n$ groups, the grouping places each species into its own group, as though there were no grouping at all.
-With $1$ group, every species is placed in the same group, such that all are considered to be equal in their competitive effect or response, reminiscent of the neutral model.
-Intermediate numbers of groups give more freedom in the groupings, such that there are many possible groupings for any intermediate number of groups.
+With $n$ groups, the grouping places each species into its own group, such that all species interact in a unique fashion.
+With $1$ group, every species is placed in the same group, such that all are equal in their competitive effects or responses, reminiscent of the neutral model.
+Intermediate numbers of groups give more freedom in the groupings, such that there are many possible groupings for any intermediate number of groups. % DBS: Is this sentence essential?
 The total number of groupings for $n$ species is given by the Bell numbers, denoted $B_n$ \parencite{bell1934exponential}.
-With six species, and the row and column groupings chosen independently, the total number of possible models is ${\left(B_6\right)}^2 = \num{\Sexpr{numbers::bell(6)^2}}$.
+With six species and independently selected row and column groupings, the total number of possible models is ${\left(B_6\right)}^2 = \num{\Sexpr{numbers::bell(6)^2}}$.
 
 Species in the same column grouping were constrained to have the same competitive effect upon all other species, while species in the same row grouping were constrained to have the same competitive response to all other species.
-Formally, if species $a$ and $b$ were in the same column grouping, $\alpha_{ia}=\alpha_{ib} \, \forall i$, and if $a$ and $b$ were in the same row grouping, $\alpha_{aj}=\alpha_{bj} \, \forall j$.
+Formally, if species $a$ and $b$ were in the same column grouping, $\alpha_{ia}\equiv\alpha_{ib} \, \forall i$, and if $a$ and $b$ were in the same row grouping, $\alpha_{aj}\equiv\alpha_{bj} \, \forall j$.
 As such, the total number of free competition coefficients in the model was equal to the number of row groups multiplied by the number of column groups.
 The species' intrinsic growth rates, $r_i$, were not affected by grouping; each species always had its own growth rate fitted independently of other species.
 
+% DBS: I think my comments at the top of the previous section really boil down to simply reorganizing the pieces in the different paragraphs so that they more clearly build on each other linearly.
+
 \subsubsection{Model fitting}
 
-The models were fitted to the data using maximum likelihood regression techniques.
-Fitting it using precisely a Lotka--Volterra model prevented the use of a link function, rendering most generalised regression techniques infeasible.
-As such, I assumed a normal error distribution, and fitted a least squares regression.
-To prevent heteroskedasticity, I used the \emph{per capita} fecundity as the response variable, as in the following model:
+The Lotka--Volterra model is not linear in the parameters.
+With the rows of the interaction matrix ungrouped, the regression could be reparameterised to be linear in the parameters by treating $r_i \alpha_{ij}$ as a single regression parameter for each $i,j$ pair.
+With the rows grouped, however, this becomes impossible since each species still has an independent growth rate.
+As such, the models were fitted by the Gauss--Newton method for non-linear least squares.
+%The models were fitted to the data using maximum likelihood regression techniques.
+%Fitting it using precisely a Lotka--Volterra model prevented the use of a link function, rendering most generalised regression techniques infeasible.
+I assumed a normal error distribution of the response variable. and 
+to prevent heteroskedasticity and improve normality, I transformed total fecundity to \emph{per capita} fecundity, which corresponds to the following model:
 \[
 	\frac{N_{i,t+1}}{N_{i,t}} = r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right)
 .\]
+% DBS: CRPB to alter equation above consist with changes to previous equations.
 
-The Lotka--Volterra model is not linear in the parameters.
-With the rows of the interaction matrix ungrouped, the regression could be reparameterised to be linear in the parameters, by treating $r_i \alpha_{ij}$ as a single regression parameter for each $i,j$.
-With the rows grouped, however, this becomes impossible, for each species still has its own growth rate.
-As such, the models were fitted by the Gauss--Newton method for non-linear least squares.
 
 \subsubsection{Assessing parsimony}
 
-To assess the parsimony of each model, all \num{\Sexpr{numbers::bell(6)^2}} possible models were fitted.
+To assess the parsimony of the different species groupings, I exhaustively fit all \num{\Sexpr{numbers::bell(6)^2}} possible models.
 As a measure of parsimony, I selected AIC over BIC on the basis that we want to find the best model for making ecological predictions, rather than seeking the ``true'' model \parencite{aho2014model}.
 Further, AIC is more conservative in promoting grouping, as BIC penalises number of parameters more for any reasonably sized data set.
 As such, I calculated the AIC for each model.
+% DBS: Is it possible that the dataset is small enough that we should be using AICc instead?
 
-AIC values can be compared to determine which is the most parsimonious model, but cannot directly be interpreted to find the significance of the difference in parsimony.
-As such, I converted the set of AIC values to Akaike weights \parencite{wagenmakers2004aic}.
-These give the probability, for each model, that it is the best among the models assessed.
+AIC values can be compared to determine which model is the most parsimonious, but cannot directly be interpreted to find the significance of the difference in parsimony.
+As such, I also converted the set of AIC values to Akaike weights \parencite{wagenmakers2004aic}.
+These give the probability that each model is the best among the models assessed.
 All tests were based upon the relationship between the groupings used in a model and the Akaike weight of the model.
+% DBS: I find the last sentence above to be worded a bit cryptically.
 
 %TODO: Explain the coclassification matrices and the tests.
 
 \subsection{Phylogeny}
+% DBS: For now, I would cut out the bit about phylogeny since it's relatively weak without a properly calibrated tree. If you want to do a post hoc test, I would go with one that looks at body size and co-classification matrices. On the other hand, my gut tells me that the paper stands on its own merits without a post hoc test, and this is an easy thing to guide reviewers toward commenting on/requesting that you also know how to address. So it might be a useful strategic omission.
 
 I determined the phylogenetic relationships between the six study species by examination of the literature, in order to compare these to the groupings generated by the models.
 No attempt was made to determine absolute phylogenetic distances, for sufficient data was not available on all six species for this purpose.
@@ -281,20 +302,24 @@ The total Akaike weight assigned to models more parsimonious than the ungrouped 
 
 Considering only models in which the rows and columns were grouped using the same grouping, the AIC values ranged from \aicnum{\Sexpr{min(brute_data$equivalently_grouped_statistics$aic)}} to \aicnum{\Sexpr{max(brute_data$equivalently_grouped_statistics$aic)}}; neither the best nor worst overall models had equivalently grouped rows and columns.
 The total Akaike weight assigned to these models was \probnum{\Sexpr{brute_data$equivalently_grouped_weight}}; more than expected by chance (\probnum{\Sexpr{brute_data$equivalently_grouped_expected_weight}}), but not significantly so (Monte Carlo permutation test, $p=\probnum{\Sexpr{brute_data$equivalently_grouped_weight_p #$}}$).
+% DBS: I think the last sentence above needs a bit of elaboration here OR the usefulness of this "test" should be explained in the Methods in the section that discusses how we examined aspects of parsimony.
 
 \subsection{Coclassification of species}
 
 The ``best'' model, as indicated by AIC, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics$aic_weight)}} that it was the best.
 As such, I assessed the appropriate groupings by taking the total probability that whichever was the best model grouped a given pair of species together (i.e.\ coclassified the pair of species).
 These results are shown in \cref{fig:coclassification}.
+% DBS: Much of the paragraph above is probably more appropriate at Methods text whereas in the Results we should discuss the patterns that emerge from the co-classification matrices.
 
 In all, no pair of species can confidently be said to be coclassified, in the row or column groupings; no probability of coclassification exceeded \SI{60}{\percent}.
 Some pairs of species were far more likely to be coclassified than others, however, suggesting some structure to the best groupings.
+% DBS: As I have noted before, I'd like to know what the null expectation is for this before claiming confidence of being co-classified or not being co-classified. Firstly, I think that the random expectation is much lower than one might otherwise suspect. (For three species, it is already 2/5; for four species, it is 5/15.) Second, the conventional "ecological" null is actually that the probability is 0, in which case it doesn't take much co-classification probability to see the glass as half full and argue that grouping is a much more parsimonious approach than the contrary.
 
 The structure of the coclassifications was very different in the row groups than in the column groups.
 Most pairs of species which had a high probability of being coclassified in one grouping had a very low probability of being coclassified in the other grouping.
 Only one pair of species had a relatively high probability of being coclassified in both groupings: \emph{D. pallidifrons} and \emph{D. sulfurigaster}.
 Overall, more coclassification occurred in the row groupings than in the column groupings.
+% DBS: In the network modularity literature, there is a nice measure of mutual information between two partitions. I wonder if we could exploit that here to give a quantitative measure of similarity between the two. Or we could just convert the two matrices to distance matrices and run a Procrustes to measure their similarity?
 
 A high likelihood of coclassification in the row groupings was typically transitive: e.g.\ \emph{D. birchii}, \emph{D. pallidifrons} and \emph{D. sulfurigaster} each had a relatively high probability of being coclassified with one another.
 More intransitivity was observed in the column groupings: \emph{D. simulans} had a relatively high probability of being coclassified with \emph{D. sulfurigaster}, and \emph{D. sulfurigaster} had a substantial probability of being coclassified with \emph{D. pallidifrons}, but \emph{D. simulans} had a much lower probability of being coclassified with \emph{D. pallidifrons}.
@@ -345,12 +370,18 @@ Furthermore, both row and column groupings gave high probabilities of coclassifi
 	\label{fig:coclassification}
 \end{figure}
 
+% DBS: I think a good figure would be to show the ungrouped estimated alpha matrix in one panel and the alpha matrix averaged across all partitions in a second panel, with lines drawn in the second to reflect the "optimal" partitioning of the co-classification matrices.
+
 \section{Discussion}
 
+% DBS: I would start this paragraph with a restatement of the overall premise.
 The results show that grouping the interaction coefficients of species was likely to give a more parsimonious model (probability \probnum{\Sexpr{sum(brute_data$statistics$aic_weight[brute_data$statistics$aic < brute_data$fully_separated_statistics$aic])}}) than leaving them ungrouped, but not confidently so.
 Which grouping might give the most parsimonious model also could not be determined with any confidence.
+% DBS: The two preceding sentences are very glass half empty. I'm also not sure that the results are really so equivocal. What makes you feel this way?
 The intransitivity of coclassification in some instances even suggests that there may not be a single ``best'' grouping, but rather two or more quite distinct and mutually exclusive groupings of similar validity.
+% DBS: In my mind, I would steal the preceding sentence and spin it potentially spin it into its own paragraph later since it speaks strongly to a mixed-membership approach which could be sold as a "future direction".
 
+% DBS: Avoid imprecise "this" or "that" as subjects. Always say "This result" or something similar. Also, avoid starting a new paragraph that so strongly forms a continuation of the previous one.
 This stands in contrast to the popular wisdom in ecology that species should form some sort of clear groups, be they the functional groups so often used \parencite{blondel2003guilds}, or taxonomic groups per a relationship between phylogeny and ecological niche \parencite{godoy2014phylogenetic}.
 It also contrasts with previous studies that have succeeded in finding clear groups, such as \textcite{allesina2009food}, who used AIC to find the best grouping of species, but in a binary food web rather than a qualitative competitive context.
 Perhaps species simply do not group to the same extent in a competitive context.
@@ -364,13 +395,16 @@ A study system with species spanning multiple functional groups, however, might 
 While functional groups have previously shown to be poor predictors of competitive interactions \parencite{bret2008plant}, studies in other contexts have succeeded in isolating functional groups by selecting for model parsimony \parencite{allesina2009food}.
 In further support of functional groups over phylogeny, \textcite{uriarte2004spatially} found that grouping based on light guilds (akin to functional groups; \cite{blondel2003guilds}) produced a parsimonious model more frequently than grouping taxonomically (with both groupings defined \emph{a priori}).
 Perhaps an attempt to produce functional groups based upon competitive interactions is warranted, applying the framework I present here to a set of species spanning multiple functional groups.
+% DBS: Prolix warning! ;)
 
 Alternatively, it should be noted that the success of \textcite{allesina2009food} in isolating groups using AIC occurred in much larger study systems, with 25 or more species.
+% DBS: Personally, I try to make links to previous studies more self contained. Since the Allesina paper and its use of AIC was brought up earlier, it strikes me as repetitive to lean on it alone again here.
 Alas, the brute force method I employed in this study has a very poor algorithmic complexity, preventing the application of the method to studies with more than seven or eight species.
 As such, a better method would be required in order to test for grouping of species interactions among a larger set of species.
 
+% DBS: The paragraph below is a very good example of text that could easily be simplified for clarity without losing important content.
 In light of the failure to produce clear groups, perhaps the most curious aspect of the results is the disagreement between the likely coclassifications of species in the groupings of rows and of columns.
-This is perhaps not surprising in hindsight, for there is no necessity that species respond to competition in the same manner that they cause it, especially in competition for certain resources such as space (the limiting resource presumed in these data) or light.
+This is perhaps not surprising in hindsight, for there is no necessity that species respond to competition in the same manner that they cause it, especially in competition for certain resources such as space (the limiting resource presumed in these data) or light. % DBS: Some definite refs missing here.
 Yet the assumption that species should group equivalently in these two regards is frequently made, often implicitly and without comment \parencite[e.g.][]{martorell2014testing,ives2003estimating,gross2015stability}.
 My results recommend more explicit questioning, and even testing, of that assumption when building future species interaction models.
 %TODO: Discuss the fact that species were coclassified more in the rows than in the columns.
