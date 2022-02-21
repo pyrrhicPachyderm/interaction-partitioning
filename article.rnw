@@ -39,10 +39,9 @@
 %Title Page
 \title{Regularising Lotka--Volterra interaction matrices by species grouping: optimal groupings are unpredictable}
 \author{Christopher R.\ P.\ Brown}
+\author{Daniel B.\ Stouffer}
 \affil{Centre for Integrative Ecology, School of Biological Sciences, University of Canterbury, Christchurch, New Zealand}
 \date{}
-
-% DBS: We should have a conversation regarding authorship. To me, it makes perfect sense thus far that you are the sole author. Depending on how revisions go and what anyone else or I do or do not contribute, it may be appropriate for this to change. In many such instances, I often think that the lead author (i.e., you) will have the best feeling for this relative to the criteria set out in the Vancouver guidelines for authorship.
 
 <<include=FALSE>>=
 	knitr::opts_chunk$set(results = 'asis') #Text is grey without this.
@@ -414,10 +413,6 @@ However, the results suggest a number of pieces of advice which might be borne i
 Firstly, there may be no single best grouping, but perhaps multiple rather distinct groupings which each perform similarly.
 Secondly, phylogeny does not appear to provide appropriate groupings.
 Lastly, one should not implicitly assume that species are grouped in the same way with regard to their effects upon other species and their response to them; distinct groupings of the two might well be considered.
-
-\section*{Acknowledgements}
-
-I thank Daniel B. Stouffer for advice throughout the study, and particularly for making me aware of Akaike weights and suggesting the use of coclassification matrices.
 
 \FloatBarrier
 \printbibliography
