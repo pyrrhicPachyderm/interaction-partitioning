@@ -202,8 +202,7 @@ With the rows grouped, however, this becomes impossible since each species still
 As such, the models were fitted by the Gauss--Newton method for non-linear least squares.
 %The models were fitted to the data using maximum likelihood regression techniques.
 %Fitting it using precisely a Lotka--Volterra model prevented the use of a link function, rendering most generalised regression techniques infeasible.
-I assumed a normal error distribution of the response variable. and 
-to prevent heteroskedasticity and improve normality, I transformed total fecundity to \emph{per capita} fecundity, which corresponds to the following model:
+I assumed a normal error distribution of the response variable and to prevent heteroskedasticity and improve normality, I transformed total fecundity to \emph{per capita} fecundity, which corresponds to the following model:
 \[
 	\frac{N_{i,t+1}}{N_{i,t}} = r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right)
 .\]
