@@ -60,6 +60,7 @@
 		"D. simulans",
 		"D. sulfurigaster"
 	)
+	species_output_order <- c(4,3,1,2,6,5)
 	
 	brute_data <- BruteData$new("output/brute.data", species_names)
 	
@@ -339,7 +340,7 @@ Furthermore, both row and column groupings gave high probabilities of coclassifi
 		\centering
 		<<echo=FALSE>>=
 			weighted_coclassification_kable(
-				brute_data$weighted_col_coclassification_matrix,
+				brute_data$weighted_col_coclassification_matrix[species_output_order,species_output_order],
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
 			)
 		@
@@ -353,7 +354,7 @@ Furthermore, both row and column groupings gave high probabilities of coclassifi
 		\centering
 		<<echo=FALSE>>=
 			weighted_coclassification_kable(
-				brute_data$weighted_row_coclassification_matrix,
+				brute_data$weighted_row_coclassification_matrix[species_output_order,species_output_order],
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
 			)
 		@
