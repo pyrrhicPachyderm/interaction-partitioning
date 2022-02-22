@@ -23,6 +23,9 @@ BruteData <- R6::R6Class("BruteData",
 	inherit = Data,
 	
 	active = list(
+		unweighted_average_coclassification_matrix = function() {
+			return(private$annotate_matrix(private$get_average_coclassification_matrix(self$row_groupings)))
+		},
 		weighted_row_coclassification_matrix = function() {
 			return(private$annotate_matrix(private$get_weighted_coclassification_matrix(self$row_groupings, self$statistics$aic_weight)))
 		},
