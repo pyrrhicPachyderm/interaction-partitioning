@@ -51,6 +51,7 @@
 <<include=FALSE>>=
 	source("r/post-process.R")
 	source("r/brute-post-process.R")
+	source("r/coclassification-table.R")
 	
 	species_names <- c(
 		"D. birchii",
@@ -63,8 +64,6 @@
 	species_output_order <- c(4,3,1,2,6,5)
 	
 	brute_data <- BruteData$new("output/brute.data", species_names)
-	
-	source("r/coclassification-table.R")
 @
 
 \newcommand\rsquarednum[1]{\num[round-mode=places,round-precision=3]{#1}}
