@@ -328,7 +328,7 @@ A high likelihood of coclassification was associated with phylogeny in one insta
 The phylogeny divided the six species into three pairs of most closely related species (\cref{fig:phylogeny}).
 The pair of \emph{D. pallidifrons} and \emph{D. sulfurigaster}, which both belonged to a different subgenus than the other four species, were also the only pair of species to be coclassified with relatively high probability in both the row and column groupings.
 In contrast, both of the other most closely related pairs were coclassified with very low probabilities in both the row and column groupings.
-Furthermore, both row and column groupings gave high probabilities of coclassification to pairs of species split across the two subgenera in the study---the row groupings frequently coclassified \emph{D. sulfurigaster} of the Drosophila subgenus and \emph{D. simulans} of the Sophophora subgenus, while the column groupings frequently coclassified both \emph{D. pallidifrons} and \emph{D. sulfurigaster} of the Drosophila subgenus with \emph{D. birchii} of the Sophophora subgenus.
+Furthermore, both row and column groupings gave high probabilities of coclassification to pairs of species split across the two subgenera in the study---the column groupings frequently coclassified \emph{D. sulfurigaster} of the Drosophila subgenus and \emph{D. simulans} of the Sophophora subgenus, while the row groupings frequently coclassified both \emph{D. pallidifrons} and \emph{D. sulfurigaster} of the Drosophila subgenus with \emph{D. birchii} of the Sophophora subgenus.
 
 \pgfplotsset{%
 	colormap={coclassification}{color=(white) color=(red)}
