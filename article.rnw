@@ -144,8 +144,7 @@ I shall not repeat the entire experimental methodology here---refer to \textcite
 The experiment used six species of \emph{Drosophila} from an Australian rainforest community: \emph{D. birchii}, \emph{D. pallidifrons}, \emph{D. pandora}, \emph{D. pseudoananassae}, \emph{D. simulans}, and \emph{D. sulfurigaster}.
 The experiment took place in vials with a limited amount of medium for egg-laying and larval development; competition was for space on this medium.
 A fixed number of adult pairs of one or two species were added to each vial and allowed to mate and lay eggs.
-The number of adult pairs of each species emerging from these eggs---i.e.\ the size of the next generation---was the response variable.
-% DBS: CRPB to fix this response variable when he fixes the model formula to reflect number of offspring.
+The number of adult pairs of each species emerging from these eggs was counted---this was the size of the next generation.
 
 Experiments occurred for every single-species and two-species combination of the six species, at a variety of densities.
 The single-species densities were 3, 9, or 12 pairs per vial, each replicated six times per species.
@@ -162,13 +161,11 @@ Further details of the experimental methodology can be found in \textcite{terry2
 
 \subsection{Model}
 
-As the response variable was fecundity, I used a discrete-time version of the Lotka--Volterra competition model given by:
+The data provided the change population size from one generation to the next, so I used a discrete-time version of the Lotka--Volterra competition model given by:
 \[
-	N_{i,t+1} = N_{i,t} r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right)
+	N_{i,t+1} - N_{i,t} = N_{i,t} r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right)
 ,\]
-% DBS: CRPB to update the equation above after consideration of experimental response variable.
-where $N_{i,t}$ is the population of species $i$ at time $t$, $r_i$ is the intrinsic growth rate of species $i$, and $\alpha_{ij}$ is the \emph{per capita} competitive effect of species $j$ on species $i$.
-$N_{i,t+1}$ is the size of the population in the following time-step, i.e.\ the number of surviving offspring, the fecundity, of the previous generation, and therefore is equal to the experimentally measured response variable.
+where $N_{i,t}$ is the population of species $i$ at time $t$ (the size of the parent generation), $N_{i,t+1}$ is the population at time $t+1$ (the size of the offspring generation), $r_i$ is the intrinsic growth rate of species $i$, and $\alpha_{ij}$ is the \emph{per capita} competitive effect of species $j$ on species $i$.
 The competition coefficients were not constrained to be positive, allowing for the possibility of mutualistic effects between some species.
 
 % DBS: We might want to be prepared for reviewers asking us to change from a linear LV model.
@@ -204,12 +201,10 @@ With the rows grouped, however, this becomes impossible since each species still
 As such, the models were fitted by the Gauss--Newton method for non-linear least squares.
 %The models were fitted to the data using maximum likelihood regression techniques.
 %Fitting it using precisely a Lotka--Volterra model prevented the use of a link function, rendering most generalised regression techniques infeasible.
-I assumed a normal error distribution of the response variable and to prevent heteroskedasticity and improve normality, I transformed total fecundity to \emph{per capita} fecundity, which corresponds to the following model:
+I assumed a normal error distribution of the response variable and to prevent heteroskedasticity and improve normality, I transformed total population growth to \emph{per capita} population growth, which corresponds to the following model:
 \[
-	\frac{N_{i,t+1}}{N_{i,t}} = r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right)
+	\frac{N_{i,t+1} - N_{i,t}}{N_{i,t}} = r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right)
 .\]
-% DBS: CRPB to alter equation above consist with changes to previous equations.
-
 
 \subsubsection{Assessing parsimony}
 
@@ -311,7 +306,7 @@ As such, I assessed the appropriate groupings by taking the total probability th
 These results are shown in \cref{fig:coclassification}.
 % DBS: Much of the paragraph above is probably more appropriate at Methods text whereas in the Results we should discuss the patterns that emerge from the co-classification matrices.
 
-In all, no pair of species can confidently be said to be coclassified, in the row or column groupings; no probability of coclassification exceeded \SI{60}{\percent}.
+In all, no pair of species can confidently be said to be coclassified, in the row or column groupings; no probability of coclassification exceeded \SI{75}{\percent}.
 Some pairs of species were far more likely to be coclassified than others, however, suggesting some structure to the best groupings.
 % DBS: As I have noted before, I'd like to know what the null expectation is for this before claiming confidence of being co-classified or not being co-classified. Firstly, I think that the random expectation is much lower than one might otherwise suspect. (For three species, it is already 2/5; for four species, it is 5/15.) Second, the conventional "ecological" null is actually that the probability is 0, in which case it doesn't take much co-classification probability to see the glass as half full and argue that grouping is a much more parsimonious approach than the contrary.
 
@@ -321,14 +316,13 @@ Only one pair of species had a relatively high probability of being coclassified
 Overall, more coclassification occurred in the row groupings than in the column groupings.
 % DBS: In the network modularity literature, there is a nice measure of mutual information between two partitions. I wonder if we could exploit that here to give a quantitative measure of similarity between the two. Or we could just convert the two matrices to distance matrices and run a Procrustes to measure their similarity?
 
-A high likelihood of coclassification in the row groupings was typically transitive: e.g.\ \emph{D. birchii}, \emph{D. pallidifrons} and \emph{D. sulfurigaster} each had a relatively high probability of being coclassified with one another.
-More intransitivity was observed in the column groupings: \emph{D. simulans} had a relatively high probability of being coclassified with \emph{D. sulfurigaster}, and \emph{D. sulfurigaster} had a substantial probability of being coclassified with \emph{D. pallidifrons}, but \emph{D. simulans} had a much lower probability of being coclassified with \emph{D. pallidifrons}.
+A relatively high likelihood of coclassification in the row groupings was typically transitive: e.g.\ \emph{D. birchii}, \emph{D. pallidifrons} and \emph{D. sulfurigaster} each had a relatively high probability of being coclassified with one another.
+More intransitivity was observed in the column groupings: \emph{D. pallidifrons} had a relatively high probability of being coclassified with \emph{D. sulfurigaster}, and \emph{D. sulfurigaster} had a substantial probability of being coclassified with \emph{D. simulans}, but \emph{D. pallidifrons} had a much lower probability of being coclassified with \emph{D. simulans}.
 
 A high likelihood of coclassification was associated with phylogeny in one instance, but by no means consistently.
 The phylogeny divided the six species into three pairs of most closely related species (\cref{fig:phylogeny}).
 The pair of \emph{D. pallidifrons} and \emph{D. sulfurigaster}, which both belonged to a different subgenus than the other four species, were also the only pair of species to be coclassified with relatively high probability in both the row and column groupings.
 In contrast, both of the other most closely related pairs were coclassified with very low probabilities in both the row and column groupings.
-Furthermore, both row and column groupings gave high probabilities of coclassification to pairs of species split across the two subgenera in the study---the column groupings frequently coclassified \emph{D. sulfurigaster} of the Drosophila subgenus and \emph{D. simulans} of the Sophophora subgenus, while the row groupings frequently coclassified both \emph{D. pallidifrons} and \emph{D. sulfurigaster} of the Drosophila subgenus with \emph{D. birchii} of the Sophophora subgenus.
 
 \pgfplotsset{%
 	colormap={coclassification}{color=(white) color=(red)}
