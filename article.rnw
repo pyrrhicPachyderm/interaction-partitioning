@@ -64,6 +64,10 @@
 	species_output_order <- c(4,3,1,2,6,5)
 	
 	brute_data <- BruteData$new("output/brute.data", species_names)
+	
+	#Precalculate the coclassification matrices, as these are active bindings and the slowest part of compilation.
+	weighted_col_coclassification_matrix <- brute_data$weighted_col_coclassification_matrix
+	weighted_row_coclassification_matrix <- brute_data$weighted_row_coclassification_matrix
 @
 
 \newcommand\rsquarednum[1]{\num[round-mode=places,round-precision=3]{#1}}
@@ -333,7 +337,7 @@ In contrast, both of the other most closely related pairs were coclassified with
 		\centering
 		<<echo=FALSE>>=
 			weighted_coclassification_kable(
-				brute_data$weighted_col_coclassification_matrix[species_output_order,species_output_order],
+				weighted_col_coclassification_matrix[species_output_order,species_output_order],
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
 			)
 		@
@@ -347,7 +351,7 @@ In contrast, both of the other most closely related pairs were coclassified with
 		\centering
 		<<echo=FALSE>>=
 			weighted_coclassification_kable(
-				brute_data$weighted_row_coclassification_matrix[species_output_order,species_output_order],
+				weighted_row_coclassification_matrix[species_output_order,species_output_order],
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
 			)
 		@
