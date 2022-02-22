@@ -133,6 +133,13 @@ Data <- R6::R6Class("Data",
 		fully_separated_statistics = function() {
 			grouping <- 1:self$num_species
 			return(private$get_statistics_row(grouping, grouping))
+		},
+		
+		fully_grouped_coclassification_matrix = function() {
+			return(matrix(1, self$num_species, self$num_species))
+		},
+		fully_separated_coclassification_matrix = function() {
+			return(diag(self$num_species))
 		}
 	)
 )
