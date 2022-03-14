@@ -67,7 +67,7 @@ brutetest: src/brute.out $(test_data_files)
 	./$< $(test_data_files) -
 .PHONY: brutetest
 
-article.tex: data/species.csv r/post-process.R r/brute-post-process.R r/coclassification-table.R r/mantel-test.R
+article.tex: data/species.csv r/post-process.R r/brute-post-process.R r/coclassification-table.R r/mantel-test.R r/dist-matrix.R
 
 #Submodules
 bibliography/% reference-styles/% TCL_DrosMCT/% &:
