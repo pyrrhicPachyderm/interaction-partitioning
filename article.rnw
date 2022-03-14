@@ -52,6 +52,7 @@
 	source("r/post-process.R")
 	source("r/brute-post-process.R")
 	source("r/mantel-test.R")
+	source("r/dist-matrix.R")
 	source("r/coclassification-table.R")
 	
 	species_dat <- read.csv("data/species.csv")
@@ -62,6 +63,9 @@
 	#Precalculate the coclassification matrices, as these are active bindings and the slowest part of compilation.
 	weighted_col_coclassification_matrix <- brute_data$weighted_col_coclassification_matrix
 	weighted_row_coclassification_matrix <- brute_data$weighted_row_coclassification_matrix
+	
+	#Precalculate distances matrices as well.
+	body_weight_distance_matrix <- build_dist_matrix(species_dat$name, species_dat$body_weight, function(w1,w2){abs(w1-w2)})
 @
 
 \newcommand\rsquarednum[1]{\num[round-mode=places,round-precision=3]{#1}}
