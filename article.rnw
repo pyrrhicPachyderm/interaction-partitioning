@@ -339,7 +339,7 @@ Neither the row nor column coclassification matrix was significantly correlated 
 
 \section{Discussion}
 
-% DBS: I would start this paragraph with a restatement of the overall premise.
+We have shown that it is possible to fit a more parsimonious model of species interactions by grouping the interaction coefficients of species \emph{a posteriori}, and hence reducing the number of free parameters in the model.
 The results show that grouping the interaction coefficients of species was likely to give a more parsimonious model (probability \probnum{\Sexpr{sum(brute_data$statistics$aic_weight[brute_data$statistics$aic < brute_data$fully_separated_statistics$aic])}}) than leaving them ungrouped, but not confidently so.
 Which grouping might give the most parsimonious model also could not be determined with any confidence.
 % DBS: The two preceding sentences are very glass half empty. I'm also not sure that the results are really so equivocal. What makes you feel this way?
