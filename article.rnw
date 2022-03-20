@@ -165,25 +165,26 @@ The competition coefficients were not constrained to be positive, allowing for t
 
 \subsubsection{Species grouping}
 
-The set of competition coefficients in the Lotka--Volterra model can be arranged in an interaction matrix \parencite{novak2016characterizing}, where a row contains all the competitive effects on a single species and a column contains all the competitive effects of a single species.
-This interpretation was used in the grouping of species, as it was rows or columns of this matrix that were grouped.
-% DBS: Similar to my comment above, I'm not sure the rows vs column groupings is sufficiently introduced to this point. So I think we need more than a single sentence explaining this idea. Since it appears below, we can reiterate the meaning in terms of equivalence of competitive responses and equivalence of competitive effects.
+In order to reduce the number of free parameters in the model, we grouped species together, and constrained the appropriate competition coefficients to be equal for species within the same group.
 
-Grouping was performed by constraining appropriate competition coefficients to be equal, reducing the number of free parameters in the model.
-Each model fit was performed with one grouping of the interaction matrix's rows and a second, independent grouping of the matrix's columns.
 A grouping, known as a partition in mathematics, divides the species into groups such that each species belongs to one and only one group.
 Given $n$ species, there may be any integer number of groups from $1$ to $n$.
 With $n$ groups, the grouping places each species into its own group, such that all species interact in a unique fashion.
-With $1$ group, every species is placed in the same group, such that all are equal in their competitive effects or responses, reminiscent of the neutral model.
-The total number of groupings for $n$ species is given by the Bell numbers, denoted $B_n$ \parencite{bell1934exponential}.
-With six species and independently selected row and column groupings, the total number of possible models is ${\left(B_6\right)}^2 = \num{\Sexpr{numbers::bell(6)^2}}$.
+With $1$ group, every species is placed in the same group, such that all are equal in their interactions, reminiscent of the neutral model.
 
-Species in the same column grouping were constrained to have the same competitive effect upon all other species, while species in the same row grouping were constrained to have the same competitive response to all other species.
-Formally, if species $a$ and $b$ were in the same column grouping, $\alpha_{ia}\equiv\alpha_{ib} \, \forall i$, and if $a$ and $b$ were in the same row grouping, $\alpha_{aj}\equiv\alpha_{bj} \, \forall j$.
+We did not assume that species should be grouped the same in their competitive effects as in their competitive responses.
+As such, each model was defined by two groupings: a grouping of species constraining equivalence in their competitive effects, and a second, independent grouping of species constraining equivalence in their competitive responses.
+
+The set of competition coefficients in the Lotka--Volterra model can be arranged in an interaction matrix \parencite{novak2016characterizing}, where a row contains all the competitive effects on a single species and a column contains all the competitive effects of a single species.
+As such, if two species are in the same group regarding their competitive responses, then two rows of the interaction matrix are constrained to be equal.
+Similarly, if two species are in the same group regarding their competitive effects, then two columns of the interaction matrix are constrained to be equal.
+This allows us to refer simply to the ``row grouping'' and the ``column grouping''.
+Formally, if species $a$ and $b$ were in the same column group, $\alpha_{ia}\equiv\alpha_{ib} \, \forall i$, and if $a$ and $b$ were in the same row group, $\alpha_{aj}\equiv\alpha_{bj} \, \forall j$.
 As such, the total number of free competition coefficients in the model was equal to the number of row groups multiplied by the number of column groups.
 The species' intrinsic growth rates, $r_i$, were not affected by grouping; each species always had its own growth rate fitted independently of other species.
 
-% DBS: I think my comments at the top of the previous section really boil down to simply reorganizing the pieces in the different paragraphs so that they more clearly build on each other linearly.
+The total number of groupings for $n$ species is given by the Bell numbers, denoted $B_n$ \parencite{bell1934exponential}.
+With six species and independently selected row and column groupings, the total number of possible models is ${\left(B_6\right)}^2 = \num{\Sexpr{numbers::bell(6)^2}}$.
 
 \subsubsection{Model fitting}
 
