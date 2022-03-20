@@ -120,12 +120,15 @@ While attempts have been made to define functional groupings that are more usefu
 As such, integrating these into species interaction models leaves us with a circular argument: a functional group is a group of species that interact with others in a similar way, and we therefore assume that all the species in a functional group interact with others in a similar way.
 In all, we are left with the question of how best to group species in community models, and whether we can do so in a meaningful way using less data than required for a fully pairwise parameterisation.
 
+Additionally, studies that use grouping to simplify models of species interactions have always made one untested assumption: that the same grouping is equally valid for how species affect others as for how spcies respond to others \parencite{XXX}.
+There is good reason to question this assumption, as it is known that different traits can govern species' competitive effects than govern their responses to competition \parencite{goldberg1991competitive}.
+As such, the best groupings of species may be different for each of the effects and responses.
+
 I propose that species might be best partitioned into groups without regard to any \emph{a priori} definition but instead based purely upon which grouping gives the most parsimonious model.
 % DBS: We can say something here about how this data-informed approach has worked very well for other clustering problems, such as modularity in networks. I can point to some very good references along those lines.
 In this study, I investigate the usefulness and correctness of such an approach using experimental \emph{Drosophila} fecundity data provided by \textcite{terry2021natural}. I fit the Lotka--Volterra model, with grouped species, to find the grouping that gives the most parsimonious model.
 I group species independently with regard to their effects upon other species and their responses to other species, to find whether the appropriate groupings might differ for these two cases.
 Finally, I compare the resultant groupings with species phylogeny, to provide further investigation of the suitability of \emph{a priori} phylogenetic grouping.
-% DBS: I feel like the last sentences of this paragraph, from "In this study,..." onward should be rephrased to be more user friendly and without introducing new concepts (e.g., rows vs columns). If that info is important for the introduction, it ought to appear before the "This is what we do here" paragraph.
 
 \section{Methods}
 
