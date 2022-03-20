@@ -148,13 +148,7 @@ The number of adult pairs of each species emerging from these eggs was counted--
 Experiments occurred for every single-species and two-species combination of the six species, at a variety of densities.
 The single-species densities were 3, 9, or 12 pairs per vial, each replicated six times per species.
 The two-species densities were, giving the densities of each of the two species, (3,3), (3,6), (3,9), (3,12), (6,3), (9,3), or (12,3) pairs per vial, each replicated three times per pair of species.
-
-% DBS: We should probably remove all of the following except the bit about a single founding pair since it's the only thing with direct bearing on how this model gets fit. For reference, it's not hard to add an Allee effect to a LV model if we wanted to add another set of parameters, though I understand why we probably don't!
-The experiment also included a number of other vials that were excluded from the analysis for various reasons.
-The original authors' study was on parasitism, so the experiments also included a parasitised treatment.
-That is irrelevant to this study, so was excluded.
 Vials with a single founding pair were excluded from this study and the original authors' due to an Allee effect that the Lotka--Volterra model cannot accommodate.
-Lastly, an additional set of vials were raised in colder temperatures, but were excluded from this study and the original authors' as the resulting emergence was too low to analyse.
 
 Further details of the experimental methodology can be found in \textcite{terry2021natural}.
 
