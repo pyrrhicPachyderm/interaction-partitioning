@@ -267,6 +267,7 @@ The ungrouped model gave an AIC value of \aicnum{\Sexpr{brute_data$fully_separat
 	\label{fig:aic}
 \end{figure}
 
+The ``best'' model, as indicated by AIC, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics$aic_weight)}} that it was the best.
 The total Akaike weight assigned to models more parsimonious than the ungrouped model was \probnum{\Sexpr{sum(brute_data$statistics$aic_weight[brute_data$statistics$aic < brute_data$fully_separated_statistics$aic])}}; this is the probability that some grouped model was more parsimonious than the ungrouped model.
 
 Considering only models in which the rows and columns were grouped using the same grouping, the AIC values ranged from \aicnum{\Sexpr{min(brute_data$equivalently_grouped_statistics$aic)}} to \aicnum{\Sexpr{max(brute_data$equivalently_grouped_statistics$aic)}}; neither the best nor worst overall models had equivalently grouped rows and columns.
@@ -275,11 +276,7 @@ This indicates that the most parsimonious model is not especially likely to be o
 
 \subsection{Coclassification of species}
 
-The ``best'' model, as indicated by AIC, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics$aic_weight)}} that it was the best.
-As such, we assessed the appropriate groupings by taking the total probability that whichever was the best model grouped a given pair of species together (i.e.\ coclassified the pair of species).
-These results are shown in \cref{fig:coclassification}.
-% DBS: Much of the paragraph above is probably more appropriate at Methods text whereas in the Results we should discuss the patterns that emerge from the co-classification matrices.
-
+Coclassification matrices for the row and column groupings are shown in \cref{fig:coclassification}.
 In all, no pair of species can confidently be said to be coclassified, in the row or column groupings; no probability of coclassification exceeded \SI{75}{\percent}.
 Some pairs of species were far more likely to be coclassified than others, however, suggesting some structure to the best groupings.
 % DBS: As I have noted before, I'd like to know what the null expectation is for this before claiming confidence of being co-classified or not being co-classified. Firstly, I think that the random expectation is much lower than one might otherwise suspect. (For three species, it is already 2/5; for four species, it is 5/15.) Second, the conventional "ecological" null is actually that the probability is 0, in which case it doesn't take much co-classification probability to see the glass as half full and argue that grouping is a much more parsimonious approach than the contrary.
