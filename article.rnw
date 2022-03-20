@@ -175,7 +175,6 @@ A grouping, known as a partition in mathematics, divides the species into groups
 Given $n$ species, there may be any integer number of groups from $1$ to $n$.
 With $n$ groups, the grouping places each species into its own group, such that all species interact in a unique fashion.
 With $1$ group, every species is placed in the same group, such that all are equal in their competitive effects or responses, reminiscent of the neutral model.
-Intermediate numbers of groups give more freedom in the groupings, such that there are many possible groupings for any intermediate number of groups. % DBS: Is this sentence essential?
 The total number of groupings for $n$ species is given by the Bell numbers, denoted $B_n$ \parencite{bell1934exponential}.
 With six species and independently selected row and column groupings, the total number of possible models is ${\left(B_6\right)}^2 = \num{\Sexpr{numbers::bell(6)^2}}$.
 
