@@ -134,7 +134,7 @@ I group species independently with regard to their effects upon other species an
 
 The data I used in this study were drawn from the work of \textcite{terry2021natural}.
 The data consist of fecundity measurements---number of surviving offspring---for six species of \emph{Drosophila}, grown in single-species or two-species communities with varying densities of each species.
-This experimental design corresponds to a response--surface experimental design commonly used to parameterise a species interaction model \textcite{hart2018quantify, XXX}.
+This experimental design corresponds to a response--surface experimental design commonly used to parameterise a species interaction model \parencite{hart2018quantify, XXX}.
 
 I shall not repeat the entire experimental methodology here---refer to \textcite{terry2021natural} for that---but provide a summary of the pertinent points.
 
