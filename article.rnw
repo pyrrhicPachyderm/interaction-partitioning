@@ -165,7 +165,7 @@ The competition coefficients were not constrained to be positive, allowing for t
 
 \subsubsection{Species grouping}
 
-The set of competition coefficients in the Lotka--Volterra model can be  arranged in an interaction matrix \parencite{novak2016characterizing}, where a row contains all the competitive effects on a single species and a column contains all the competitive effects of a single species.
+The set of competition coefficients in the Lotka--Volterra model can be arranged in an interaction matrix \parencite{novak2016characterizing}, where a row contains all the competitive effects on a single species and a column contains all the competitive effects of a single species.
 This interpretation was used in the grouping of species, as it was rows or columns of this matrix that were grouped.
 % DBS: Similar to my comment above, I'm not sure the rows vs column groupings is sufficiently introduced to this point. So I think we need more than a single sentence explaining this idea. Since it appears below, we can reiterate the meaning in terms of equivalence of competitive responses and equivalence of competitive effects.
 
