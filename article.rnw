@@ -279,7 +279,6 @@ This indicates that the most parsimonious model is not especially likely to be o
 Coclassification matrices for the row and column groupings are shown in \cref{fig:coclassification}.
 In all, no pair of species can confidently be said to be coclassified, in the row or column groupings; no probability of coclassification exceeded \SI{75}{\percent}.
 Some pairs of species were far more likely to be coclassified than others, however, suggesting some structure to the best groupings.
-% DBS: As I have noted before, I'd like to know what the null expectation is for this before claiming confidence of being co-classified or not being co-classified. Firstly, I think that the random expectation is much lower than one might otherwise suspect. (For three species, it is already 2/5; for four species, it is 5/15.) Second, the conventional "ecological" null is actually that the probability is 0, in which case it doesn't take much co-classification probability to see the glass as half full and argue that grouping is a much more parsimonious approach than the contrary.
 
 The structure of the coclassifications was very different in the row groups than in the column groups.
 Most pairs of species which had a high probability of being coclassified in one grouping had a very low probability of being coclassified in the other grouping.
