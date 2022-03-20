@@ -130,6 +130,7 @@ We propose that species might be best partitioned into groups without regard to 
 In this study, we investigate the usefulness and correctness of such an approach using experimental \emph{Drosophila} fecundity data provided by \textcite{terry2021natural}.
 We fit the Lotka--Volterra model, with grouped species, to find the grouping that gives the most parsimonious model.
 We group species independently with regard to their effects upon other species and their responses to other species, to find whether the appropriate groupings might differ for these two cases.
+%TODO: Mention the comparison to traits (body size)?
 
 \section{Methods}
 
