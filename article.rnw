@@ -254,7 +254,7 @@ The total Akaike weight assigned to models more parsimonious than the ungrouped 
 
 Considering only models in which the rows and columns were grouped using the same grouping, the AIC values ranged from \aicnum{\Sexpr{min(brute_data$equivalently_grouped_statistics$aic)}} to \aicnum{\Sexpr{max(brute_data$equivalently_grouped_statistics$aic)}}; neither the best nor worst overall models had equivalently grouped rows and columns.
 The total Akaike weight assigned to these models was \probnum{\Sexpr{brute_data$equivalently_grouped_weight}}; more than expected by chance (\probnum{\Sexpr{brute_data$equivalently_grouped_expected_weight}}), but not significantly so (Monte Carlo permutation test, $p=\probnum{\Sexpr{brute_data$equivalently_grouped_weight_p #$}}$).
-% DBS: I think the last sentence above needs a bit of elaboration here OR the usefulness of this "test" should be explained in the Methods in the section that discusses how we examined aspects of parsimony.
+This indicates that the most parsimonious model is not especially likely to be one that groups the rows and columns equivalently.
 
 \subsection{Coclassification of species}
 
