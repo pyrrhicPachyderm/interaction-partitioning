@@ -108,11 +108,8 @@ As such, model-based predictions of real communities are typically restricted to
 However, real communities can contain hundreds of species \parencite{cornell1999unsaturation}, or even thousands for microbial communities assessed by genetic metabarcoding \parencite{warton2015variables}.
 To bridge this gap between the size of real communities and our ability to parameterise them, we need an ecologically-defensible way to reduce the number of parameters that predictive models require.
 
-%Several methods have been applied to regularise species interaction models, each with their own limitations.
-%For example, it is often assumed that most pairs of species don't interact, setting many of the parameters to zero \parencite{mutshinda2009drives,ovaskainen2017species}.
-%TODO: Find a citation for why this assumption doesn't hold.
-
-One simplifying approach is to assume that most pairs of species do not interact or interact weakly, and hence setting many of the parameters to zero \parencite{XXX}. %TODO: XXX why this could be a problem XXX.
+One simplifying approach is to assume that most pairs of species do not interact or interact weakly, and hence setting many of the parameters to zero \parencite{mutshinda2009drives}.
+%TODO: XXX why this could be a problem XXX.
 Alternatively, one can assume that species fall into groups, such that all species in the same group interact with species in other groups in an identical fashion, thereby collapsing pairwise interaction parameters for all the species in that group into sets of common parameters \parencite{ovaskainen2017species,weiss2021disentangling}.
 
 In ecological contexts, such groups have been defined \emph{a priori} by phylogeny at some taxonomic level or by functional groupings \parencite{uriarte2004spatially,ovaskainen2017species,weiss2021disentangling}.
