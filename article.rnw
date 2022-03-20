@@ -190,7 +190,7 @@ The species' intrinsic growth rates, $r_i$, were not affected by grouping; each 
 
 The Lotka--Volterra model is not linear in the parameters.
 With the rows of the interaction matrix ungrouped, the regression could be reparameterised to be linear in the parameters by treating $r_i \alpha_{ij}$ as a single regression parameter for each $i,j$ pair.
-With the rows grouped, however, this becomes impossible since each species still has an independent growth rate.
+With the rows grouped, however, this becomes impossible, since each species still has an independent growth rate.
 As such, the models were fitted by the Gauss--Newton method for non-linear least squares.
 %The models were fitted to the data using maximum likelihood regression techniques.
 %Fitting it using precisely a Lotka--Volterra model prevented the use of a link function, rendering most generalised regression techniques infeasible.
