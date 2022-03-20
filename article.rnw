@@ -219,9 +219,26 @@ To evaluate the significance of the latter, we performed a Monte Carlo permutati
 %TODO: Is this test superseded by the Mantel test of row vs column coclassification?
 %TODO: Should this test simply be a t-test on the raw AIC values? I think not, as we're interested in the best, rather than the mean.
 
-%TODO: Explain the coclassification matrices and the tests.
+\subsubsection{Coclassification matrices}
 
-%TODO: Use Terry et al. table S1 for additional classification information. The two species that coclassify in both columns and rows are substantially larger.
+To summarise the results, the Akaike weights were used to generate coclassification matrices, one for the row groupings and one for the column groupings.
+Each cell of a coclassification matrix represents the coclassification of two species, and contains the total Akaike weight of models that place those two species in the same group.
+As such, each cell represents the probability that the most parsimonious model is one that coclassifies those two species.
+
+There are a number of possible ``null'' expectations for these matrices.
+A neutral model approach would expect all species to be the same: every cell would be $1$.
+If each species were expected to be unique, every off-diagonal cell would be $0$.
+Alternatively, if every possible grouping were considered to be equally likely, every off-diagonal cell would be $\frac{B_{n-1}}{B_n}$: \probnum{\Sexpr{numbers::bell(5)/numbers::bell(6)}} for six species.
+Unfortunately, without a null distribution, it was impossible to test the empirical coclassification matrices against a null expectation.
+
+However, we could test the coclassification matrices against one another.
+By testing for correlation between the coclassification matrix for the the rows and that for the columns, we could test the assumption that it is appropriate to use the same grouping for both.
+We did this using a Mantel test, as appropriate for similarity matrices.
+
+We could also test the coclassification matrices for correlation with an expected dissimilarity matrix.
+We calculated one such dissimilarity matrix based on a species trait: body size (as mean wet mass of female adults, obtained from \cite{terry2021natural}).
+The trait difference matrix was calculated as absolute difference between trait values, while the coclassification matrices were converted to dissimilarity matrices by subtracting from $1$.
+We performed a Mantel test for correlation between the trait distance matrix and each of the two coclassification dissimilarity matrices.
 
 \section{Results}
 
