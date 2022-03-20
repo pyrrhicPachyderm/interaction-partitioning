@@ -71,6 +71,9 @@
 \newcommand\rsquarednum[1]{\num[round-mode=places,round-precision=3]{#1}}
 \newcommand\aicnum[1]{\num{#1}}
 \newcommand\probnum[1]{\num[round-mode=places,round-precision=3]{#1}}
+\newcommand\cornum[1]{\num[round-mode=places,round-precision=3]{#1}}
+
+\newcommand\mantelstat{\ensuremath{r_{\text{M}}}}
 
 \newcommand\keywords[1]{\emph{Key words: #1}}
 
@@ -284,10 +287,12 @@ The structure of the coclassifications was very different in the row groups than
 Most pairs of species which had a high probability of being coclassified in one grouping had a very low probability of being coclassified in the other grouping.
 Only one pair of species had a relatively high probability of being coclassified in both groupings: \emph{D. pallidifrons} and \emph{D. sulfurigaster}.
 Overall, more coclassification occurred in the row groupings than in the column groupings.
-% DBS: In the network modularity literature, there is a nice measure of mutual information between two partitions. I wonder if we could exploit that here to give a quantitative measure of similarity between the two. Or we could just convert the two matrices to distance matrices and run a Procrustes to measure their similarity?
+A Mantel test of the coclassification matrix for the rows against that for the columns shows that there is no significant correlation between the two ($\mantelstat=\cornum{\Sexpr{mantel_cor(weighted_col_coclassification_matrix, weighted_row_coclassification_matrix)}}$, $p=\probnum{\Sexpr{mantel_p(weighted_col_coclassification_matrix, weighted_row_coclassification_matrix)}}$).
 
 A relatively high likelihood of coclassification in the row groupings was typically transitive: e.g.\ \emph{D. birchii}, \emph{D. pallidifrons} and \emph{D. sulfurigaster} each had a relatively high probability of being coclassified with one another.
 More intransitivity was observed in the column groupings: \emph{D. pallidifrons} had a relatively high probability of being coclassified with \emph{D. sulfurigaster}, and \emph{D. sulfurigaster} had a substantial probability of being coclassified with \emph{D. simulans}, but \emph{D. pallidifrons} had a much lower probability of being coclassified with \emph{D. simulans}.
+
+Neither the row nor column coclassification matrix was significantly correlated with a dissimilarity matrix based on species body size (column: $\mantelstat=\cornum{\Sexpr{mantel_cor(col_distance_matrix, body_weight_distance_matrix)}}$, $p=\probnum{\Sexpr{mantel_p(col_distance_matrix, body_weight_distance_matrix)}}$; row: $\mantelstat=\cornum{\Sexpr{mantel_cor(row_distance_matrix, body_weight_distance_matrix)}}$, $p=\probnum{\Sexpr{mantel_p(row_distance_matrix, body_weight_distance_matrix)}}$).
 
 \pgfplotsset{%
 	colormap={coclassification}{color=(white) color=(red)}
