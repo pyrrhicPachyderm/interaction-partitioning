@@ -118,7 +118,7 @@ However, empirical tests of this principle have found remarkably little support 
 On the other hand, functional groupings have also proven to be poor predictors of species interactions \parencite{bret2008plant}.
 While attempts have been made to define functional groupings that are more useful in a modelling context \parencite{boulangeat2012improving}, these rely upon measurements of biotic interactions to define such groups.
 As such, integrating these into species interaction models leaves us with a circular argument: a functional group is a group of species that interact with others in a similar way, and we therefore assume that all the species in a functional group interact with others in a similar way.
-In all, we are left with the question of how best to group species in community models, and whether we can do so in a meaningful fashion with less data than required for a fully pairwise parameterisation.
+In all, we are left with the question of how best to group species in community models, and whether we can do so in a meaningful way using less data than required for a fully pairwise parameterisation.
 
 I propose that species might be best partitioned into groups without regard to any \emph{a priori} definition but instead based purely upon which grouping gives the most parsimonious model.
 % DBS: We can say something here about how this data-informed approach has worked very well for other clustering problems, such as modularity in networks. I can point to some very good references along those lines.
