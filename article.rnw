@@ -37,7 +37,7 @@
 \usepackage{cleveref}
 
 %Title Page
-\title{Regularising Lotka--Volterra interaction matrices by species grouping: optimal groupings are unpredictable}
+\title{Regularising Lotka--Volterra interaction matrices by species grouping: optimal groupings are unpredictable} %TODO: Remove the word "regularising" from the title.
 \author{Christopher R.\ P.\ Brown}
 \author{Daniel B.\ Stouffer}
 \affil{Centre for Integrative Ecology, School of Biological Sciences, University of Canterbury, Christchurch, New Zealand}
@@ -112,7 +112,6 @@ To bridge this gap between the size of real communities and our ability to param
 %For example, it is often assumed that most pairs of species don't interact, setting many of the parameters to zero \parencite{mutshinda2009drives,ovaskainen2017species}.
 %TODO: Find a citation for why this assumption doesn't hold.
 
-In the statistical literature, regularisation is the process of using external information to prevent overfitting or to solve an otherwise overspecified problem \parencite{XXX}.
 One simplifying approach is to assume that most pairs of species do not interact or interact weakly, and hence setting many of the parameters to zero \parencite{XXX}. %TODO: XXX why this could be a problem XXX.
 Alternatively, one can assume that species fall into groups, such that all species in the same group interact with species in other groups in an identical fashion, thereby collapsing pairwise interaction parameters for all the species in that group into sets of common parameters \parencite{ovaskainen2017species,weiss2021disentangling}.
 
