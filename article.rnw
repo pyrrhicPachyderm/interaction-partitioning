@@ -239,7 +239,7 @@ The ungrouped model gave an AIC value of \aicnum{\Sexpr{brute_data$fully_separat
 	\caption{%
 		A histogram of the AIC values of species interaction models with all possible groupings of interaction coefficients.
 		The green line shows the AIC value (\aicnum{\Sexpr{brute_data$fully_separated_statistics$aic}}) of the ungrouped model, in which all competition coefficients are fitted independently.
-		The red line shows the AIC value (\aicnum{\Sexpr{brute_data$fully_grouped_statistics$aic}}) of the full grouped model, where every pair of species shares a single interaction coefficient.
+		The red line shows the AIC value (\aicnum{\Sexpr{brute_data$fully_grouped_statistics$aic}}) of the fully grouped model, where every pair of species shares a single interaction coefficient.
 	}
 	\label{fig:aic}
 \end{figure}
