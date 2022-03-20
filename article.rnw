@@ -210,8 +210,6 @@ As such, I calculated the AIC for each model.
 AIC values can be compared to determine which model is the most parsimonious, but cannot directly be interpreted to find the significance of the difference in parsimony.
 As such, I also converted the set of AIC values to Akaike weights \parencite{wagenmakers2004aic}.
 These give the probability that each model is the best among the models assessed.
-All tests were based upon the relationship between the groupings used in a model and the Akaike weight of the model.
-% DBS: I find the last sentence above to be worded a bit cryptically.
 
 %TODO: Explain the coclassification matrices and the tests.
 
