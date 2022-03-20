@@ -83,10 +83,10 @@
 
 Dynamic models of ecological communities require many parameters, making them expensive to fit.
 To reduce the number of parameters, species are often divided into groups \emph{a priori}, using phylogeny or functional groups, and species within a group are assumed to behave identically.
-Herein, I assess the validity of such grouping by deriving the optimal groupings \emph{a posteriori}, from the parsimony of a Lotka--Volterra model fit to fecundity data from six competing species of \emph{Drosophila} in laboratory conditions.
-I find evidence that grouping can benefit the parsimony of species interaction models, but that there is no single optimal grouping.
+Herein, we assess the validity of such grouping by deriving the optimal groupings \emph{a posteriori}, from the parsimony of a Lotka--Volterra model fit to fecundity data from six competing species of \emph{Drosophila} in laboratory conditions.
+We find evidence that grouping can benefit the parsimony of species interaction models, but that there is no single optimal grouping.
 Further, those groupings that did prove beneficial could not be predicted from information available \emph{a priori}, calling the method of \emph{a priori} species grouping into question.
-Lastly, I find that species did not group equivalently in their competitive effect and in their response to competition, invalidating an assumption often made implicitly when defining species groupings.
+Lastly, we find that species did not group equivalently in their competitive effect and in their response to competition, invalidating an assumption often made implicitly when defining species groupings.
 
 \keywords{Lotka--Volterra; interaction matrix; competition; grouping; model fitting; parsimony; phylogeny}
 
@@ -122,21 +122,21 @@ Additionally, studies that use grouping to simplify models of species interactio
 There is good reason to question this assumption, as it is known that different traits can govern species' competitive effects than govern their responses to competition \parencite{goldberg1991competitive}.
 As such, the best groupings of species may be different for each of the effects and responses.
 
-I propose that species might be best partitioned into groups without regard to any \emph{a priori} definition but instead based purely upon which grouping gives the most parsimonious model.
+We propose that species might be best partitioned into groups without regard to any \emph{a priori} definition but instead based purely upon which grouping gives the most parsimonious model.
 % DBS: We can say something here about how this data-informed approach has worked very well for other clustering problems, such as modularity in networks. I can point to some very good references along those lines.
-In this study, I investigate the usefulness and correctness of such an approach using experimental \emph{Drosophila} fecundity data provided by \textcite{terry2021natural}.
-I fit the Lotka--Volterra model, with grouped species, to find the grouping that gives the most parsimonious model.
-I group species independently with regard to their effects upon other species and their responses to other species, to find whether the appropriate groupings might differ for these two cases.
+In this study, we investigate the usefulness and correctness of such an approach using experimental \emph{Drosophila} fecundity data provided by \textcite{terry2021natural}.
+We fit the Lotka--Volterra model, with grouped species, to find the grouping that gives the most parsimonious model.
+We group species independently with regard to their effects upon other species and their responses to other species, to find whether the appropriate groupings might differ for these two cases.
 
 \section{Methods}
 
 \subsection{Data}
 
-The data I used in this study were drawn from the work of \textcite{terry2021natural}.
+The data we used in this study were drawn from the work of \textcite{terry2021natural}.
 The data consist of fecundity measurements---number of surviving offspring---for six species of \emph{Drosophila}, grown in single-species or two-species communities with varying densities of each species.
 This experimental design corresponds to a response--surface experimental design commonly used to parameterise a species interaction model \parencite{hart2018quantify, XXX}.
 
-I shall not repeat the entire experimental methodology here---refer to \textcite{terry2021natural} for that---but provide a summary of the pertinent points.
+We shall not repeat the entire experimental methodology here---refer to \textcite{terry2021natural} for that---but provide a summary of the pertinent points.
 
 \subsubsection{Summary of the experimental methodology}
 
@@ -154,7 +154,7 @@ Further details of the experimental methodology can be found in \textcite{terry2
 
 \subsection{Model}
 
-The data provided the change population size from one generation to the next, so I used a discrete-time version of the Lotka--Volterra competition model given by:
+The data provided the change population size from one generation to the next, so we used a discrete-time version of the Lotka--Volterra competition model given by:
 \[
 	N_{i,t+1} - N_{i,t} = N_{i,t} r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right)
 ,\]
@@ -194,21 +194,21 @@ With the rows grouped, however, this becomes impossible, since each species stil
 As such, the models were fitted by the Gauss--Newton method for non-linear least squares.
 %The models were fitted to the data using maximum likelihood regression techniques.
 %Fitting it using precisely a Lotka--Volterra model prevented the use of a link function, rendering most generalised regression techniques infeasible.
-I assumed a normal error distribution of the response variable and to prevent heteroskedasticity and improve normality, I transformed total population growth to \emph{per capita} population growth, which corresponds to the following model:
+We assumed a normal error distribution of the response variable and to prevent heteroskedasticity and improve normality, we transformed total population growth to \emph{per capita} population growth, which corresponds to the following model:
 \[
 	\frac{N_{i,t+1} - N_{i,t}}{N_{i,t}} = r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right)
 .\]
 
 \subsubsection{Assessing parsimony}
 
-To assess the parsimony of the different species groupings, I exhaustively fit all \num{\Sexpr{numbers::bell(6)^2}} possible models.
-As a measure of parsimony, I selected AIC over BIC on the basis that we want to find the best model for making ecological predictions, rather than seeking the ``true'' model \parencite{aho2014model}.
+To assess the parsimony of the different species groupings, we exhaustively fit all \num{\Sexpr{numbers::bell(6)^2}} possible models.
+As a measure of parsimony, we selected AIC over BIC on the basis that we want to find the best model for making ecological predictions, rather than seeking the ``true'' model \parencite{aho2014model}.
 Further, AIC is more conservative in promoting grouping, as BIC penalises number of parameters more for any reasonably sized data set.
-As such, I calculated the AIC for each model.
+As such, we calculated the AIC for each model.
 % DBS: Is it possible that the dataset is small enough that we should be using AICc instead?
 
 AIC values can be compared to determine which model is the most parsimonious, but cannot directly be interpreted to find the significance of the difference in parsimony.
-As such, I also converted the set of AIC values to Akaike weights \parencite{wagenmakers2004aic}.
+As such, we also converted the set of AIC values to Akaike weights \parencite{wagenmakers2004aic}.
 These give the probability that each model is the best among the models assessed.
 
 %TODO: Explain the coclassification matrices and the tests.
@@ -251,7 +251,7 @@ The total Akaike weight assigned to these models was \probnum{\Sexpr{brute_data$
 \subsection{Coclassification of species}
 
 The ``best'' model, as indicated by AIC, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics$aic_weight)}} that it was the best.
-As such, I assessed the appropriate groupings by taking the total probability that whichever was the best model grouped a given pair of species together (i.e.\ coclassified the pair of species).
+As such, we assessed the appropriate groupings by taking the total probability that whichever was the best model grouped a given pair of species together (i.e.\ coclassified the pair of species).
 These results are shown in \cref{fig:coclassification}.
 % DBS: Much of the paragraph above is probably more appropriate at Methods text whereas in the Results we should discuss the patterns that emerge from the co-classification matrices.
 
@@ -333,12 +333,12 @@ Perhaps the lack of clarity in the groupings is instead a product of the study s
 %A study system with species spanning multiple functional groups, however, might have shown clearer groupings.
 %While functional groups have previously shown to be poor predictors of competitive interactions \parencite{bret2008plant}, studies in other contexts have succeeded in isolating functional groups by selecting for model parsimony \parencite{allesina2009food}.
 %In further support of functional groups over phylogeny, \textcite{uriarte2004spatially} found that grouping based on light guilds (akin to functional groups; \cite{blondel2003guilds}) produced a parsimonious model more frequently than grouping taxonomically (with both groupings defined \emph{a priori}).
-%Perhaps an attempt to produce functional groups based upon competitive interactions is warranted, applying the framework I present here to a set of species spanning multiple functional groups.
+%Perhaps an attempt to produce functional groups based upon competitive interactions is warranted, applying the framework we present here to a set of species spanning multiple functional groups.
 % DBS: Prolix warning! ;)
 
 Alternatively, it should be noted that the success of \textcite{allesina2009food} in isolating groups using AIC occurred in much larger study systems, with 25 or more species.
 % DBS: Personally, I try to make links to previous studies more self contained. Since the Allesina paper and its use of AIC was brought up earlier, it strikes me as repetitive to lean on it alone again here.
-Alas, the brute force method I employed in this study has a very poor algorithmic complexity, preventing the application of the method to studies with more than seven or eight species.
+Alas, the brute force method we employed in this study has a very poor algorithmic complexity, preventing the application of the method to studies with more than seven or eight species.
 As such, a better method would be required in order to test for grouping of species interactions among a larger set of species.
 
 % DBS: The paragraph below is a very good example of text that could easily be simplified for clarity without losing important content.
