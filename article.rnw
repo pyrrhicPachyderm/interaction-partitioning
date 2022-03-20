@@ -171,7 +171,7 @@ This interpretation was used in the grouping of species, as it was rows or colum
 
 Grouping was performed by constraining appropriate competition coefficients to be equal, reducing the number of free parameters in the model.
 Each model fit was performed with one grouping of the interaction matrix's rows and a second, independent grouping of the matrix's columns.
-A grouping, known as a partition in mathematics, divides the species into groups such that each species belongs to one and only one group, and such that every group contains at least one species.
+A grouping, known as a partition in mathematics, divides the species into groups such that each species belongs to one and only one group.
 Given $n$ species, there may be any integer number of groups from $1$ to $n$.
 With $n$ groups, the grouping places each species into its own group, such that all species interact in a unique fashion.
 With $1$ group, every species is placed in the same group, such that all are equal in their competitive effects or responses, reminiscent of the neutral model.
