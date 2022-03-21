@@ -59,6 +59,7 @@ class MaximumLikelihoodSolver : public Solver {
 		Eigen::VectorXd getSolutionResiduals();
 		double getDeviance();
 		double getAIC();
+		double getAICc();
 		double getR2();
 };
 

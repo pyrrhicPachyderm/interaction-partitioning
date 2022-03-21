@@ -109,6 +109,17 @@ double MaximumLikelihoodSolver::getAIC() {
 	return aic;
 }
 
+double MaximumLikelihoodSolver::getAICc() {
+	Parameters parameters = getSolution();
+	double n = data.getNumObservations();
+	double p = parameters.getNumParameters();
+	
+	double aic = getAIC();
+	double aicc = aic + (double)(2 * p * p + 2 * p) / (n - p - 1);
+	
+	return aicc;
+}
+
 double MaximumLikelihoodSolver::getR2() {
 	//Returns R^2, the coefficient of determination.
 	
