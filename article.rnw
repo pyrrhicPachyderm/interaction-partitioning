@@ -56,7 +56,10 @@
 	species_dat <- read.csv("data/species.csv")
 	species_output_order <- c(4,3,1,2,6,5)
 	
-	brute_data <- BruteData$new("output/brute.data", species_dat$name)
+	ic <- "aic" #The information criterion to use, e.g. "aic" or "aicc"
+	ic_weight <- sprintf("%s_weight", ic)
+	
+	brute_data <- BruteData$new("output/brute.data", species_dat$name, ic_weight)
 	
 	#Precalculate the coclassification matrices, as these are active bindings and the slowest part of compilation.
 	weighted_col_coclassification_matrix <- brute_data$weighted_col_coclassification_matrix
@@ -247,34 +250,34 @@ We performed a Mantel test for correlation between the trait distance matrix and
 \section{Results}
 
 The $R^2$ values of the models ranged from \rsquarednum{\Sexpr{min(brute_data$statistics$R2)}} to \rsquarednum{\Sexpr{max(brute_data$statistics$R2)}}.
-The AIC values ranged from \aicnum{\Sexpr{min(brute_data$statistics$aic)}} to \aicnum{\Sexpr{max(brute_data$statistics$aic)}}.
-The ungrouped model gave an AIC value of \aicnum{\Sexpr{brute_data$fully_separated_statistics$aic}}.
+The AIC values ranged from \aicnum{\Sexpr{min(brute_data$statistics[[ic]])}} to \aicnum{\Sexpr{max(brute_data$statistics[[ic]])}}.
+The ungrouped model gave an AIC value of \aicnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}.
 \Cref{fig:aic} shows the distribution of AIC values from the models, with some models of interest marked.
 
 \begin{figure}
 	<<echo=FALSE>>=
-		hist(brute_data$statistics$aic,
+		hist(brute_data$statistics[[ic]],
 			main="",
 			xlab="AIC",
 			xaxs='i',
 			yaxs='i'
 		)
-		abline(v = brute_data$fully_separated_statistics$aic, lwd=2, lty="dashed", col="green")
-		abline(v = brute_data$fully_grouped_statistics$aic, lwd=2, lty="dashed", col="red")
+		abline(v = brute_data$fully_separated_statistics[[ic]], lwd=2, lty="dashed", col="green")
+		abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=2, lty="dashed", col="red")
 	@
 	
 	\caption{%
 		A histogram of the AIC values of species interaction models with all possible groupings of interaction coefficients.
-		The green line shows the AIC value (\aicnum{\Sexpr{brute_data$fully_separated_statistics$aic}}) of the ungrouped model, in which all competition coefficients are fitted independently.
-		The red line shows the AIC value (\aicnum{\Sexpr{brute_data$fully_grouped_statistics$aic}}) of the fully grouped model, where every pair of species shares a single interaction coefficient.
+		The green line shows the AIC value (\aicnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}) of the ungrouped model, in which all competition coefficients are fitted independently.
+		The red line shows the AIC value (\aicnum{\Sexpr{brute_data$fully_grouped_statistics[[ic]]}}) of the fully grouped model, where every pair of species shares a single interaction coefficient.
 	}
 	\label{fig:aic}
 \end{figure}
 
-The ``best'' model, as indicated by AIC, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics$aic_weight)}} that it was the best.
-The total Akaike weight assigned to models more parsimonious than the ungrouped model was \probnum{\Sexpr{sum(brute_data$statistics$aic_weight[brute_data$statistics$aic < brute_data$fully_separated_statistics$aic])}}; this is the probability that some grouped model was more parsimonious than the ungrouped model.
+The ``best'' model, as indicated by AIC, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics[[ic_weight]])}} that it was the best.
+The total Akaike weight assigned to models more parsimonious than the ungrouped model was \probnum{\Sexpr{sum(brute_data$statistics[[ic_weight]][brute_data$statistics[[ic]] < brute_data$fully_separated_statistics[[ic]]])}}; this is the probability that some grouped model was more parsimonious than the ungrouped model.
 
-Considering only models in which the rows and columns were grouped using the same grouping, the AIC values ranged from \aicnum{\Sexpr{min(brute_data$equivalently_grouped_statistics$aic)}} to \aicnum{\Sexpr{max(brute_data$equivalently_grouped_statistics$aic)}}; neither the best nor worst overall models had equivalently grouped rows and columns.
+Considering only models in which the rows and columns were grouped using the same grouping, the AIC values ranged from \aicnum{\Sexpr{min(brute_data$equivalently_grouped_statistics[[ic]])}} to \aicnum{\Sexpr{max(brute_data$equivalently_grouped_statistics[[ic]])}}; neither the best nor worst overall models had equivalently grouped rows and columns.
 The total Akaike weight assigned to these models was \probnum{\Sexpr{brute_data$equivalently_grouped_weight}}; more than expected by chance (\probnum{\Sexpr{brute_data$equivalently_grouped_expected_weight}}), but not significantly so (Monte Carlo permutation test, $p=\probnum{\Sexpr{brute_data$equivalently_grouped_weight_p #$}}$).
 This indicates that the most parsimonious model is not especially likely to be one that groups the rows and columns equivalently.
 
@@ -340,7 +343,7 @@ Neither the row nor column coclassification matrix was significantly correlated 
 \section{Discussion}
 
 We have shown that it is possible to fit a more parsimonious model of species interactions by grouping the interaction coefficients of species \emph{a posteriori}, and hence reducing the number of free parameters in the model.
-Indeed, the results show that grouping species was likely to give a more parsimonious model (probability \probnum{\Sexpr{sum(brute_data$statistics$aic_weight[brute_data$statistics$aic < brute_data$fully_separated_statistics$aic])}}) than leaving them ungrouped.
+Indeed, the results show that grouping species was likely to give a more parsimonious model (probability \probnum{\Sexpr{sum(brute_data$statistics[[ic_weight]][brute_data$statistics[[ic]] < brute_data$fully_separated_statistics[[ic]]])}}) than leaving them ungrouped.
 Which grouping would give the most parsimonious model, however, could not be determined with confidence.
 This result stands in contrast to the popular wisdom in ecology that species should form some sort of clear groups, be they the functional groups so often used \parencite{blondel2003guilds}, or taxonomic groups per a relationship between phylogeny and ecological niche \parencite{godoy2014phylogenetic}.
 It also contrasts with previous studies that have succeeded in finding clear groups, such as \textcite{allesina2009food}, who used AIC to find the best grouping of species, but in a binary food web rather than a quantitative competitive context.
