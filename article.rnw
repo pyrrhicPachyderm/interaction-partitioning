@@ -91,7 +91,7 @@ We find evidence that grouping can benefit the parsimony of species interaction 
 Further, those groupings that did prove beneficial could not be predicted from information available \emph{a priori}, calling the method of \emph{a priori} species grouping into question.
 Lastly, we find that species did not group equivalently in their competitive effect and in their response to competition, invalidating an assumption often made implicitly when defining species groupings.
 
-\keywords{Lotka--Volterra; interaction matrix; competition; grouping; model fitting; parsimony; phylogeny}
+\keywords{Lotka--Volterra; interaction matrix; competition; grouping; model fitting; parsimony}
 
 \section{Introduction}
 
