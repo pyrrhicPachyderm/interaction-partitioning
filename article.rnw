@@ -346,7 +346,7 @@ The intransitivity of coclassification in some instances even suggests that ther
 % DBS: In my mind, I would steal the preceding sentence and spin it potentially spin it into its own paragraph later since it speaks strongly to a mixed-membership approach which could be sold as a "future direction".
 
 % DBS: Avoid imprecise "this" or "that" as subjects. Always say "This result" or something similar. Also, avoid starting a new paragraph that so strongly forms a continuation of the previous one.
-This stands in contrast to the popular wisdom in ecology that species should form some sort of clear groups, be they the functional groups so often used \parencite{blondel2003guilds}, or taxonomic groups per a relationship between phylogeny and ecological niche \parencite{godoy2014phylogenetic}.
+This result stands in contrast to the popular wisdom in ecology that species should form some sort of clear groups, be they the functional groups so often used \parencite{blondel2003guilds}, or taxonomic groups per a relationship between phylogeny and ecological niche \parencite{godoy2014phylogenetic}.
 It also contrasts with previous studies that have succeeded in finding clear groups, such as \textcite{allesina2009food}, who used AIC to find the best grouping of species, but in a binary food web rather than a quantitative competitive context.
 Perhaps species simply do not group to the same extent in a competitive context.
 The results suggest that this is unlikely, as grouping was still likely to increase parsimony.
