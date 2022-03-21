@@ -72,7 +72,7 @@
 @
 
 \newcommand\rsquarednum[1]{\num[round-mode=places,round-precision=3]{#1}}
-\newcommand\aicnum[1]{\num{#1}}
+\newcommand\icnum[1]{\num{#1}} %For information criteria.
 \newcommand\probnum[1]{\num[round-mode=places,round-precision=3]{#1}}
 \newcommand\cornum[1]{\num[round-mode=places,round-precision=3]{#1}}
 
@@ -250,8 +250,8 @@ We performed a Mantel test for correlation between the trait distance matrix and
 \section{Results}
 
 The $R^2$ values of the models ranged from \rsquarednum{\Sexpr{min(brute_data$statistics$R2)}} to \rsquarednum{\Sexpr{max(brute_data$statistics$R2)}}.
-The AIC values ranged from \aicnum{\Sexpr{min(brute_data$statistics[[ic]])}} to \aicnum{\Sexpr{max(brute_data$statistics[[ic]])}}.
-The ungrouped model gave an AIC value of \aicnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}.
+The AIC values ranged from \icnum{\Sexpr{min(brute_data$statistics[[ic]])}} to \icnum{\Sexpr{max(brute_data$statistics[[ic]])}}.
+The ungrouped model gave an AIC value of \icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}.
 \Cref{fig:aic} shows the distribution of AIC values from the models, with some models of interest marked.
 
 \begin{figure}
@@ -268,8 +268,8 @@ The ungrouped model gave an AIC value of \aicnum{\Sexpr{brute_data$fully_separat
 	
 	\caption{%
 		A histogram of the AIC values of species interaction models with all possible groupings of interaction coefficients.
-		The green line shows the AIC value (\aicnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}) of the ungrouped model, in which all competition coefficients are fitted independently.
-		The red line shows the AIC value (\aicnum{\Sexpr{brute_data$fully_grouped_statistics[[ic]]}}) of the fully grouped model, where every pair of species shares a single interaction coefficient.
+		The green line shows the AIC value (\icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}) of the ungrouped model, in which all competition coefficients are fitted independently.
+		The red line shows the AIC value (\icnum{\Sexpr{brute_data$fully_grouped_statistics[[ic]]}}) of the fully grouped model, where every pair of species shares a single interaction coefficient.
 	}
 	\label{fig:aic}
 \end{figure}
@@ -277,7 +277,7 @@ The ungrouped model gave an AIC value of \aicnum{\Sexpr{brute_data$fully_separat
 The ``best'' model, as indicated by AIC, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics[[ic_weight]])}} that it was the best.
 The total Akaike weight assigned to models more parsimonious than the ungrouped model was \probnum{\Sexpr{sum(brute_data$statistics[[ic_weight]][brute_data$statistics[[ic]] < brute_data$fully_separated_statistics[[ic]]])}}; this is the probability that some grouped model was more parsimonious than the ungrouped model.
 
-Considering only models in which the rows and columns were grouped using the same grouping, the AIC values ranged from \aicnum{\Sexpr{min(brute_data$equivalently_grouped_statistics[[ic]])}} to \aicnum{\Sexpr{max(brute_data$equivalently_grouped_statistics[[ic]])}}; neither the best nor worst overall models had equivalently grouped rows and columns.
+Considering only models in which the rows and columns were grouped using the same grouping, the AIC values ranged from \icnum{\Sexpr{min(brute_data$equivalently_grouped_statistics[[ic]])}} to \icnum{\Sexpr{max(brute_data$equivalently_grouped_statistics[[ic]])}}; neither the best nor worst overall models had equivalently grouped rows and columns.
 The total Akaike weight assigned to these models was \probnum{\Sexpr{brute_data$equivalently_grouped_weight}}; more than expected by chance (\probnum{\Sexpr{brute_data$equivalently_grouped_expected_weight}}), but not significantly so (Monte Carlo permutation test, $p=\probnum{\Sexpr{brute_data$equivalently_grouped_weight_p #$}}$).
 This indicates that the most parsimonious model is not especially likely to be one that groups the rows and columns equivalently.
 
