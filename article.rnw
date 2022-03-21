@@ -342,8 +342,6 @@ Neither the row nor column coclassification matrix was significantly correlated 
 We have shown that it is possible to fit a more parsimonious model of species interactions by grouping the interaction coefficients of species \emph{a posteriori}, and hence reducing the number of free parameters in the model.
 Indeed, the results show that grouping species was likely to give a more parsimonious model (probability \probnum{\Sexpr{sum(brute_data$statistics$aic_weight[brute_data$statistics$aic < brute_data$fully_separated_statistics$aic])}}) than leaving them ungrouped.
 Which grouping would give the most parsimonious model, however, could not be determined with confidence.
-The intransitivity of coclassification in some instances even suggests that there may not be a single ``best'' grouping, but rather two or more quite distinct and mutually exclusive groupings of similar validity.
-% DBS: In my mind, I would steal the preceding sentence and spin it potentially spin it into its own paragraph later since it speaks strongly to a mixed-membership approach which could be sold as a "future direction".
 
 % DBS: Avoid imprecise "this" or "that" as subjects. Always say "This result" or something similar. Also, avoid starting a new paragraph that so strongly forms a continuation of the previous one.
 This result stands in contrast to the popular wisdom in ecology that species should form some sort of clear groups, be they the functional groups so often used \parencite{blondel2003guilds}, or taxonomic groups per a relationship between phylogeny and ecological niche \parencite{godoy2014phylogenetic}.
@@ -358,6 +356,10 @@ A study system with species spanning multiple functional groups, or a broader ta
 Alternatively, the small number of species in the study might not have been sufficient for clear groups to be defined.
 Alas, the brute force method we employed in this study has a very poor algorithmic complexity, preventing the application of the method to studies with more than seven or eight species.
 As such, a better method would be required in order to test for grouping of species interactions among a larger set of species.
+
+The intransitivity of coclassification in some instances even suggests that there may not be a single ``best'' grouping of the species, but rather two or more quite distinct and mutually exclusive groupings of similar validity.
+This could suggest a Bayesian approach, in which the outcome is not a definitive grouping, but a distribution of valid groupings.
+Alternatively, it may suggest a mixed membership approach in which a species can be a partial part of more than one group \parencite{airoldi2008mixed}, reminiscent of the community-level drivers of \textcite{ovaskainen2017species}.
 
 % DBS: The paragraph below is a very good example of text that could easily be simplified for clarity without losing important content.
 In light of the failure to produce clear groups, perhaps the most curious aspect of the results is the disagreement between the likely coclassifications of species in the groupings of rows and of columns.
