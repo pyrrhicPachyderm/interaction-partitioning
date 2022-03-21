@@ -59,7 +59,7 @@
 	num_species <- nrow(species_dat)
 	num_obs <- nrow(read.table("output/design-matrix.data"))
 	
-	ic <- "aic" #The information criterion to use, e.g. "aic" or "aicc"
+	ic <- "aicc" #The information criterion to use, e.g. "aic" or "aicc"
 	ic_weight <- sprintf("%s_weight", ic)
 	ic_name <- list(aic="AIC", aicc="AICc")[ic]
 	
@@ -217,8 +217,8 @@ We assumed a normal error distribution of the response variable and to prevent h
 To assess the parsimony of the different species groupings, we exhaustively fit all \num{\Sexpr{numbers::bell(6)^2}} possible models.
 As a measure of parsimony, we selected AIC over BIC on the basis that we want to find the best model for making ecological predictions, rather than seeking the ``true'' model \parencite{aho2014model}.
 Further, AIC is more conservative in promoting grouping, as BIC penalises number of parameters more for any reasonably sized data set.
+Some of the models had a relatively high number of parameters compared to the number of observations (\num{\Sexpr{num_obs}} observations; up to \num{\Sexpr{num_species + num_species^2}} parameters), so we used AICc to correct for this.
 As such, we calculated the {\ic} for each model.
-% DBS: Is it possible that the dataset is small enough that we should be using AICc instead?
 
 {\ic} values can be compared to determine which model is the most parsimonious, but cannot directly be interpreted to find the significance of the difference in parsimony.
 As such, we also converted the set of {\ic} values to Akaike weights \parencite{wagenmakers2004aic}.
