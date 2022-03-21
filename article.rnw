@@ -331,8 +331,8 @@ Neither the row nor column coclassification matrix was significantly correlated 
 	\end{subfigure}
 	
 	\caption{%
-		Coclassification matrices of the Lotka--Volterra competitive effects and responses of the six studied \emph{Drosophila} species, weighted by AIC weights.
-		The cell for a pair of species represents the probability that the best grouping, as determined by the AIC weights of the grouped models, places those two species in the same group.
+		Coclassification matrices of the Lotka--Volterra competitive effects and responses of the six studied \emph{Drosophila} species, weighted by Akaike weights.
+		The cell for a pair of species represents the probability that the best grouping, as determined by the Akaike weights of the grouped models, places those two species in the same group.
 		\Cref{fig:coclassification-cols} represents the grouping of species' competitive effects upon other species (columns of the interaction matrix), while \cref{fig:coclassification-rows} represents the grouping of species' responses to competition (rows of the interaction matrix).
 	}
 	\label{fig:coclassification}
