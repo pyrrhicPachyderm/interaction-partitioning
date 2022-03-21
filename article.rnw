@@ -252,7 +252,7 @@ We performed a Mantel test for correlation between the trait distance matrix and
 The $R^2$ values of the models ranged from \rsquarednum{\Sexpr{min(brute_data$statistics$R2)}} to \rsquarednum{\Sexpr{max(brute_data$statistics$R2)}}.
 The AIC values ranged from \icnum{\Sexpr{min(brute_data$statistics[[ic]])}} to \icnum{\Sexpr{max(brute_data$statistics[[ic]])}}.
 The ungrouped model gave an AIC value of \icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}.
-\Cref{fig:aic} shows the distribution of AIC values from the models, with some models of interest marked.
+\Cref{fig:ic} shows the distribution of AIC values from the models, with some models of interest marked.
 
 \begin{figure}
 	<<echo=FALSE>>=
@@ -271,7 +271,7 @@ The ungrouped model gave an AIC value of \icnum{\Sexpr{brute_data$fully_separate
 		The green line shows the AIC value (\icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}) of the ungrouped model, in which all competition coefficients are fitted independently.
 		The red line shows the AIC value (\icnum{\Sexpr{brute_data$fully_grouped_statistics[[ic]]}}) of the fully grouped model, where every pair of species shares a single interaction coefficient.
 	}
-	\label{fig:aic}
+	\label{fig:ic}
 \end{figure}
 
 The ``best'' model, as indicated by AIC, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics[[ic_weight]])}} that it was the best.
