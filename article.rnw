@@ -57,6 +57,7 @@
 	species_output_order <- c(4,3,1,2,6,5)
 	
 	num_species <- nrow(species_dat)
+	num_obs <- nrow(read.table("output/design-matrix.data"))
 	
 	ic <- "aic" #The information criterion to use, e.g. "aic" or "aicc"
 	ic_weight <- sprintf("%s_weight", ic)
