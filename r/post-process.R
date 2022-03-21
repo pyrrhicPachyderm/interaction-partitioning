@@ -43,6 +43,7 @@ Data <- R6::R6Class("Data",
 			
 			#Add additional columns of statistics.
 			if(!is.null(self$statistics$aic)) private$add_aic_weights()
+			if(!is.null(self$statistics$aicc)) private$add_aicc_weights()
 		}
 	),
 	
@@ -59,6 +60,10 @@ Data <- R6::R6Class("Data",
 		
 		add_aic_weights = function() {
 			self$statistics$aic_weight <- information_criterion_weights(self$statistics$aic)
+		},
+		
+		add_aicc_weights = function() {
+			self$statistics$aicc_weight <- information_criterion_weights(self$statistics$aicc)
 		},
 		
 		match_grouping = function(desired_grouping, grouping_table) {
