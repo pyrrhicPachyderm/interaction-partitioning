@@ -364,7 +364,7 @@ In light of the failure to produce clear groups, perhaps the most curious aspect
 This is perhaps not surprising in hindsight, for there is no necessity that species respond to competition in the same manner that they cause it, especially in competition for certain resources such as space (the limiting resource presumed in these data) or light. % DBS: Some definite refs missing here.
 Yet the assumption that species should group equivalently in these two regards is frequently made, often implicitly and without comment \parencite[e.g.][]{martorell2014testing,ives2003estimating,gross2015stability}.
 My results recommend more explicit questioning, and even testing, of that assumption when building future species interaction models.
-%TODO: Discuss the fact that species were coclassified more in the rows than in the columns.
+%TODO: Discuss the fact that species were coclassified more in the rows than in the columns?
 
 All in all, the method of \emph{a posteriori} parsimony-based selection of groups has not proven to be greatly effective, at least on such a closely related set of species.
 However, the results suggest some advice which might be borne in mind whenever selecting groupings \emph{a priori} for use in species interaction models.
