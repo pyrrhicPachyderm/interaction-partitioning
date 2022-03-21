@@ -353,17 +353,9 @@ The results suggest that this is unlikely, as grouping was still likely to incre
 Further, there is no reason to suspect that species would not have clear similarities or dissimilarities in their ecological niches, and therefore their competitive effects and responses.
 Perhaps the lack of clarity in the groupings is instead a product of the study system chosen.
 
-%TODO: Discuss the potential to study a system with functional groups without brining up phylogeny.
-%I chose a study system of \emph{Drosophila} partially on the basis that it would allow clear analysis of the species' phylogenetic relationships.
-%Phylogeny proved a poor predictor of optimal grouping, as previous studies have suggested that it might \parencite{godoy2014phylogenetic,cahill2008does}.
-%A study system with species spanning multiple functional groups, however, might have shown clearer groupings.
-%While functional groups have previously shown to be poor predictors of competitive interactions \parencite{bret2008plant}, studies in other contexts have succeeded in isolating functional groups by selecting for model parsimony \parencite{allesina2009food}.
-%In further support of functional groups over phylogeny, \textcite{uriarte2004spatially} found that grouping based on light guilds (akin to functional groups; \cite{blondel2003guilds}) produced a parsimonious model more frequently than grouping taxonomically (with both groupings defined \emph{a priori}).
-%Perhaps an attempt to produce functional groups based upon competitive interactions is warranted, applying the framework we present here to a set of species spanning multiple functional groups.
-% DBS: Prolix warning! ;)
-
-Alternatively, it should be noted that the success of \textcite{allesina2009food} in isolating groups using AIC occurred in much larger study systems, with 25 or more species.
-% DBS: Personally, I try to make links to previous studies more self contained. Since the Allesina paper and its use of AIC was brought up earlier, it strikes me as repetitive to lean on it alone again here.
+All the species in this study were members of the same genus, \emph{Drosophila}, and as such were all rather similar.
+A study system with species spanning multiple functional groups, or a broader taxonomy, might have shown clearer groupings.
+Alternatively, the small number of species in the study might not have been sufficient for clear groups to be defined.
 Alas, the brute force method we employed in this study has a very poor algorithmic complexity, preventing the application of the method to studies with more than seven or eight species.
 As such, a better method would be required in order to test for grouping of species interactions among a larger set of species.
 
