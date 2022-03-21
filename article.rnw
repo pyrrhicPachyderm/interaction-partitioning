@@ -58,6 +58,7 @@
 	
 	ic <- "aic" #The information criterion to use, e.g. "aic" or "aicc"
 	ic_weight <- sprintf("%s_weight", ic)
+	ic_name <- list(aic="AIC", aicc="AICc")[ic]
 	
 	brute_data <- BruteData$new("output/brute.data", species_dat$name, ic_weight)
 	
@@ -70,6 +71,8 @@
 	row_distance_matrix <- 1 - weighted_row_coclassification_matrix
 	body_weight_distance_matrix <- build_dist_matrix(species_dat$name, species_dat$body_weight, function(w1,w2){abs(w1-w2)})
 @
+
+\newcommand\ic{\Sexpr{ic_name}}
 
 \newcommand\rsquarednum[1]{\num[round-mode=places,round-precision=3]{#1}}
 \newcommand\icnum[1]{\num{#1}} %For information criteria.
@@ -211,15 +214,15 @@ We assumed a normal error distribution of the response variable and to prevent h
 To assess the parsimony of the different species groupings, we exhaustively fit all \num{\Sexpr{numbers::bell(6)^2}} possible models.
 As a measure of parsimony, we selected AIC over BIC on the basis that we want to find the best model for making ecological predictions, rather than seeking the ``true'' model \parencite{aho2014model}.
 Further, AIC is more conservative in promoting grouping, as BIC penalises number of parameters more for any reasonably sized data set.
-As such, we calculated the AIC for each model.
+As such, we calculated the {\ic} for each model.
 % DBS: Is it possible that the dataset is small enough that we should be using AICc instead?
 
-AIC values can be compared to determine which model is the most parsimonious, but cannot directly be interpreted to find the significance of the difference in parsimony.
-As such, we also converted the set of AIC values to Akaike weights \parencite{wagenmakers2004aic}.
+{\ic} values can be compared to determine which model is the most parsimonious, but cannot directly be interpreted to find the significance of the difference in parsimony.
+As such, we also converted the set of {\ic} values to Akaike weights \parencite{wagenmakers2004aic}.
 These give the probability that each model is the best among the models assessed.
 
 From the Akaike weights, we calculated two important statistics.
-Firstly, the total Akaike weight of models with a lower AIC than the entirely ungrouped model; this is the probability that some model is more parsimonious than the ungrouped model.
+Firstly, the total Akaike weight of models with a lower {\ic} than the entirely ungrouped model; this is the probability that some model is more parsimonious than the ungrouped model.
 Secondly, the total Akaike weight of models that used the same grouping for the rows as for the columns; this is the probability that the most parsimonious model grouped species equivalently in their competitive effects as in their competitive responses.
 To evaluate the significance of the latter, we performed a Monte Carlo permutation test, comparing the total Akaike weight of those models that grouped rows and columns equivalently to the total Akaike weight of a random equally-sized subset of the models.
 %This is a test of whether the most parsimonious model is more likely to group the species equivalently in the rows as in the columns than it would be by chance.
@@ -250,15 +253,15 @@ We performed a Mantel test for correlation between the trait distance matrix and
 \section{Results}
 
 The $R^2$ values of the models ranged from \rsquarednum{\Sexpr{min(brute_data$statistics$R2)}} to \rsquarednum{\Sexpr{max(brute_data$statistics$R2)}}.
-The AIC values ranged from \icnum{\Sexpr{min(brute_data$statistics[[ic]])}} to \icnum{\Sexpr{max(brute_data$statistics[[ic]])}}.
-The ungrouped model gave an AIC value of \icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}.
-\Cref{fig:ic} shows the distribution of AIC values from the models, with some models of interest marked.
+The {\ic} values ranged from \icnum{\Sexpr{min(brute_data$statistics[[ic]])}} to \icnum{\Sexpr{max(brute_data$statistics[[ic]])}}.
+The ungrouped model gave an {\ic} value of \icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}.
+\Cref{fig:ic} shows the distribution of {\ic} values from the models, with some models of interest marked.
 
 \begin{figure}
 	<<echo=FALSE>>=
 		hist(brute_data$statistics[[ic]],
 			main="",
-			xlab="AIC",
+			xlab=ic_name,
 			xaxs='i',
 			yaxs='i'
 		)
@@ -267,17 +270,17 @@ The ungrouped model gave an AIC value of \icnum{\Sexpr{brute_data$fully_separate
 	@
 	
 	\caption{%
-		A histogram of the AIC values of species interaction models with all possible groupings of interaction coefficients.
-		The green line shows the AIC value (\icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}) of the ungrouped model, in which all competition coefficients are fitted independently.
-		The red line shows the AIC value (\icnum{\Sexpr{brute_data$fully_grouped_statistics[[ic]]}}) of the fully grouped model, where every pair of species shares a single interaction coefficient.
+		A histogram of the {\ic} values of species interaction models with all possible groupings of interaction coefficients.
+		The green line shows the {\ic} value (\icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}) of the ungrouped model, in which all competition coefficients are fitted independently.
+		The red line shows the {\ic} value (\icnum{\Sexpr{brute_data$fully_grouped_statistics[[ic]]}}) of the fully grouped model, where every pair of species shares a single interaction coefficient.
 	}
 	\label{fig:ic}
 \end{figure}
 
-The ``best'' model, as indicated by AIC, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics[[ic_weight]])}} that it was the best.
+The ``best'' model, as indicated by {\ic}, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics[[ic_weight]])}} that it was the best.
 The total Akaike weight assigned to models more parsimonious than the ungrouped model was \probnum{\Sexpr{sum(brute_data$statistics[[ic_weight]][brute_data$statistics[[ic]] < brute_data$fully_separated_statistics[[ic]]])}}; this is the probability that some grouped model was more parsimonious than the ungrouped model.
 
-Considering only models in which the rows and columns were grouped using the same grouping, the AIC values ranged from \icnum{\Sexpr{min(brute_data$equivalently_grouped_statistics[[ic]])}} to \icnum{\Sexpr{max(brute_data$equivalently_grouped_statistics[[ic]])}}; neither the best nor worst overall models had equivalently grouped rows and columns.
+Considering only models in which the rows and columns were grouped using the same grouping, the {\ic} values ranged from \icnum{\Sexpr{min(brute_data$equivalently_grouped_statistics[[ic]])}} to \icnum{\Sexpr{max(brute_data$equivalently_grouped_statistics[[ic]])}}; neither the best nor worst overall models had equivalently grouped rows and columns.
 The total Akaike weight assigned to these models was \probnum{\Sexpr{brute_data$equivalently_grouped_weight}}; more than expected by chance (\probnum{\Sexpr{brute_data$equivalently_grouped_expected_weight}}), but not significantly so (Monte Carlo permutation test, $p=\probnum{\Sexpr{brute_data$equivalently_grouped_weight_p #$}}$).
 This indicates that the most parsimonious model is not especially likely to be one that groups the rows and columns equivalently.
 
