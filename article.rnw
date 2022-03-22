@@ -229,8 +229,6 @@ Firstly, the total Akaike weight of models with a lower {\ic} than the entirely 
 Secondly, the total Akaike weight of models that used the same grouping for the rows as for the columns; this is the probability that the most parsimonious model grouped species equivalently in their competitive effects as in their competitive responses.
 To evaluate the significance of the latter, we performed a Monte Carlo permutation test, comparing the total Akaike weight of those models that grouped rows and columns equivalently to the total Akaike weight of a random equally-sized subset of the models.
 %This is a test of whether the most parsimonious model is more likely to group the species equivalently in the rows as in the columns than it would be by chance.
-%TODO: Is this test superseded by the Mantel test of row vs column coclassification?
-%TODO: Should this test simply be a t-test on the raw information criterion values? I think not, as we're interested in the best, rather than the mean.
 
 \subsubsection{Coclassification matrices}
 
