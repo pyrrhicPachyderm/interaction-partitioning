@@ -9,9 +9,14 @@
 #Using R's subsetting, species can be reordered according to an ordering using species_names[ordering].
 #First, a helper function, to check if a grouping is in consecutive blocks.
 is_consecutive_blocks <- function(grouping) {
-	for(group in unique(grouping)) {
-		indices <- (1:length(grouping))[grouping == group]
-		if(!all((grouping == group)[min(indices):max(indices)])) return(FALSE)
+	current_group <- grouping[1]
+	completed_groups <- c()
+	for(g in grouping[-1]) {
+		if(g != current_group) {
+			if(g %in% completed_groups) return(FALSE)
+			completed_groups <- c(completed_groups, current_group)
+			current_group <- g
+		}
 	}
 	return(TRUE)
 }
