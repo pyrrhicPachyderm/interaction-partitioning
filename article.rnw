@@ -121,14 +121,14 @@ However, real communities can contain hundreds of species \parencite{cornell1999
 To bridge this gap between the size of real communities and our ability to parameterise models for them, we need an ecologically-defensible way to reduce the number of parameters that predictive models require.
 
 One simplifying approach is to assume that most pairs of species do not interact or interact weakly, and hence setting many of the parameters to zero \parencite{mutshinda2009drives}.
-However, weak interactions have been shown to be very important to the stability of ecological communities \parencite{wootton2016many}, and setting these to zero may lose important information.
+However, weak interactions have been shown to be very important to the stability of ecological communities \parencite{XXX, wootton2016many}, and setting these to zero may lose important information.
 Another approach assumes that species fall into groups, such that all species in the same group interact with species in other groups in an identical fashion, thereby collapsing pairwise interaction parameters for all the species in that group into sets of common parameters \parencite{ovaskainen2017species,weiss2021disentangling}.
 
 In ecological contexts, such groups have been defined \emph{a priori} by phylogeny at some taxonomic level or by functional similarity \parencite{uriarte2004spatially,ovaskainen2017species,weiss2021disentangling}.
 % please add a reference to http://dx.doi.org/10.1086/713082 to the above
-The argument for grouping based on phylogeny relies on the principle that closely related species will fill similar ecological niches, and hence will interact with other species in a similar fashion \parencite{godoy2014phylogenetic}.
+The argument for grouping based on phylogeny relies on the principle that closely related species will fill similar ecological niches, and hence will interact with other species in a similar fashion \parencite{XXX,godoy2014phylogenetic}.
 However, empirical tests of this principle have found remarkably little support for it \parencite{godoy2014phylogenetic,cahill2008does,mayfield2010opposing}.
-On the other hand, functional groupings have also proven to be poor predictors of species interactions \parencite{bret2008plant}.
+On the other hand, functional groupings have also proven to be poor predictors of species interactions \parencite{XXX, bret2008plant}.
 While attempts have been made to define functional groupings that are more useful in a modelling context \parencite{boulangeat2012improving}, these rely upon measurements of biotic interactions to define such groups.
 As such, integrating these into species interaction models leaves us with a circular argument: a functional group is a group of species that interact with others in a similar way, and we therefore assume that all the species in a functional group interact with others in a similar way.
 In all, we are left with the question of how best to group species in community models, and whether we can do so in a meaningful way using less data than required for a fully pairwise parameterisation.
@@ -141,7 +141,7 @@ As such, the best groupings of species may be different for each of the effects 
 We propose that species might be best partitioned into groups without regard to any \emph{a priori} definition but instead based purely upon which grouping gives the most parsimonious model.
 % DBS: We can say something here about how this data-informed approach has worked very well for other clustering problems, such as modularity in networks. I can point to some very good references along those lines.
 In this study, we investigate the usefulness and correctness of such an approach using experimental data from competition between different \emph{Drosophila} species provided by \textcite{terry2021natural}.
-We fit the Lotka--Volterra model to find the groupings that give the most parsimonious model.
+We fit a Lotka--Volterra model to these data to find the groupings that give the most parsimonious model.
 While doing so, we group species independently with regard to their effects upon other species and their responses to other species, to find whether the data-informed groupings differ between these two cases.
 %TODO: Mention the comparison to traits (body size)?
 % DBS: If we leave in the traits, then we should mention them at least briefly.
@@ -370,7 +370,7 @@ Neither the row nor column coclassification matrix was significantly correlated 
 We have shown that it is possible to fit a more parsimonious model of species interactions by grouping the interaction coefficients of species \emph{a posteriori}, and hence reducing the number of free parameters in the model.
 Indeed, the results show that grouping species was likely to give a more parsimonious model (probability \probnum{\Sexpr{sum(brute_data$statistics[[ic_weight]][brute_data$statistics[[ic]] < brute_data$fully_separated_statistics[[ic]]])}}) than leaving them ungrouped.
 Which grouping would give the most parsimonious model, however, could not be determined with confidence.
-This result stands in contrast to the popular wisdom in ecology that species should form some sort of clear groups, be they the functional groups so often used \parencite{blondel2003guilds}, or taxonomic groups per a relationship between phylogeny and ecological niche \parencite{godoy2014phylogenetic}.
+This result stands in contrast to the popular wisdom in ecology that species should form some sort of clear groups, be they the functional groups so often used \parencite{XXX, blondel2003guilds}, or taxonomic groups per a relationship between phylogeny and ecological niche \parencite{XXX, godoy2014phylogenetic}.
 It also contrasts with previous studies that have succeeded in finding clear groups, such as \textcite{allesina2009food}, who used AIC to find the best grouping of species, but in a binary food web rather than a quantitative competitive context.
 % DBS: We're probably doing a disservice to the "groups in ecological communities" literature by only citing the Allesina paper above.
 
