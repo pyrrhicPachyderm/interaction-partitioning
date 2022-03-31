@@ -20,3 +20,14 @@ is_consecutive_blocks <- function(grouping) {
 	}
 	return(TRUE)
 }
+#Second, another helper function to get a list of all orderings.
+#In C++, to make use of std::next_permutation().
+Rcpp::cppFunction("List get_all_orderings(int n) {
+	List all_orderings = List::create();
+	std::vector<int> ordering(n);
+	for(int i = 0; i < n; i++) ordering[i] = i+1;
+	do {
+		all_orderings.push_back(NumericVector::import(ordering.begin(), ordering.end()));
+	} while(std::next_permutation(ordering.begin(), ordering.end()));
+	return all_orderings;
+}")
