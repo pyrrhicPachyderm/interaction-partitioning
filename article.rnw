@@ -286,7 +286,7 @@ The ungrouped model gave an {\ic} value of \icnum{\Sexpr{brute_data$fully_separa
 	@
 	
 	\caption{%
-		A histogram of the {\ic} values of species interaction models with all possible groupings of interaction coefficients.
+		Histogram of the {\ic} values of Lotka--Volterra model fit with all possible groupings of interaction coefficients.
 		The green line shows the {\ic} value (\icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}) of the ungrouped model, in which all competition coefficients are fitted independently.
 		The red line shows the {\ic} value (\icnum{\Sexpr{brute_data$fully_grouped_statistics[[ic]]}}) of the fully grouped model, where every pair of species shares a single interaction coefficient.
 	}
