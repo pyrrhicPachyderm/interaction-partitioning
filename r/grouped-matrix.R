@@ -20,7 +20,11 @@ is_consecutive_blocks <- function(grouping) {
 	}
 	return(TRUE)
 }
-#Second, another helper function to get a list of all orderings.
+#Second, a wrapper around is_consecutive_blocks that takes the base ordering and a grouping.
+forms_consecutive_blocks <- function(grouping, ordering) {
+	is_consecutive_blocks(grouping[ordering])
+}
+#Third, another helper function to get a list of all orderings.
 #In C++, to make use of std::next_permutation().
 Rcpp::cppFunction("List get_all_orderings(int n) {
 	List all_orderings = List::create();
