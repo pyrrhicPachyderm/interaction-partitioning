@@ -59,8 +59,8 @@
 	
 	input_data <- InputData$new("output/focal-vector.data", "output/response-vector.data", "output/design-matrix.data")
 	
-	num_species <- nrow(species_dat)
-	num_obs <- nrow(read.table("output/design-matrix.data"))
+	num_species <- input_data$num_species
+	num_obs <- input_data$num_obs
 	
 	ic <- "aicc" #The information criterion to use, e.g. "aic" or "aicc"
 	ic_weight <- sprintf("%s_weight", ic)
