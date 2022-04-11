@@ -47,6 +47,7 @@
 @
 
 <<include=FALSE>>=
+	source("r/input-data.R")
 	source("r/post-process.R")
 	source("r/brute-post-process.R")
 	source("r/mantel-test.R")
@@ -55,6 +56,8 @@
 	
 	species_dat <- read.csv("data/species.csv")
 	species_output_order <- c(4,3,1,2,6,5)
+	
+	input_data <- InputData$new("output/focal-vector.data", "output/response-vector.data", "output/design-matrix.data")
 	
 	num_species <- nrow(species_dat)
 	num_obs <- nrow(read.table("output/design-matrix.data"))
