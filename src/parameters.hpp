@@ -46,7 +46,7 @@ class Parameters {
 		double moveModel(GroupingType groupingType, MoveType moveType, const GroupingMove &groupingMove, RandomVariableFunc getRandomVariable, RandomVariableDensityFunc getRandomVariableDensity);
 		
 		//TODO: If we were to use a non-symmetric jumping density, this would need to return a component of the acceptance ratio.
-		//But it would also need to a bit differently in other ways.
+		//But it would also need to work a bit differently in other ways.
 		void moveParameters(RandomVariableFunc getGrowthRateJump, RandomVariableFunc getCompetitionCoefficientJump);
 };
 
