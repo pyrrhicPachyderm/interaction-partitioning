@@ -23,7 +23,7 @@ static void printUsage(int argc, const char **argv) {
 		
 		"\t-p\n"
 		"\t\tResponse variables are per capita growth/fecundity.\n"
-		"\t\tOtherwise, the response is assumed to be a measure of the total size of the next generation.\n"
+		"\t\tOtherwise, the response is assumed to be a measure of the total change in population size from one generation to the next.\n"
 		,
 		argv[0]
 	);
