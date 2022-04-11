@@ -47,6 +47,7 @@
 @
 
 <<include=FALSE>>=
+	source("r/parameters.R")
 	source("r/input-data.R")
 	source("r/post-process.R")
 	source("r/brute-post-process.R")

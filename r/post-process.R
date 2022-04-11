@@ -38,7 +38,7 @@ Data <- R6::R6Class("Data",
 			names(self$row_groupings) <- species_names
 			names(self$col_groupings) <- species_names
 			self$parameters <- data_table[,grep("parameters", names(data_table))]
-			names(self$parameters) <- gsub("parameters_", "", names(self$parameters)) #Strip "parameters_" from the column names.
+			private$objectify_parameters()
 			self$statistics <- data_table[,grep("_[0-9]*$|parameters", names(data_table), invert=TRUE)]
 			
 			#Add additional columns of statistics.
@@ -56,6 +56,27 @@ Data <- R6::R6Class("Data",
 			) {
 				stop("Data table has the wrong number of species.")
 			}
+		},
+		
+		objectify_parameters = function() {
+			#Turns self$parameters from a data frame of raw parameter values to a vector of R6 Parameters objects.
+			
+			growth_rates_df <- self$parameters[,grep("parameters_r_", names(self$parameters))]
+			alpha_values_df <- self$parameters[,grep("parameters_alpha_", names(self$parameters))]
+			
+			self$parameters <- sapply(1:nrow(self$parameters), function(i) {
+				growth_rates <- as.vector(as.matrix(growth_rates_df[i,]))
+				row_grouping <- as.vector(as.matrix(self$row_groupings[i,]))
+				col_grouping <- as.vector(as.matrix(self$col_groupings[i,]))
+				group_alpha_values <- matrix(
+					as.vector(as.matrix(alpha_values_df[i,])),
+					nrow = self$num_species,
+					byrow = TRUE
+				)
+				alpha_values <- group_alpha_values[row_grouping,col_grouping]
+				
+				return(Parameters$new(growth_rates, alpha_values))
+			})
 		},
 		
 		add_aic_weights = function() {
