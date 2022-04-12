@@ -12,7 +12,7 @@ InputData <- R6::R6Class("InputData",
 		num_obs = NULL,
 		
 		initialize = function(focal_vector_file_name, response_vector_file_name, design_matrix_file_name, is_per_capita=FALSE) {
-			self$focal_vector <- read.table(focal_vector_file_name)[[1]]
+			self$focal_vector <- read.table(focal_vector_file_name)[[1]] + 1 #Add one to make it 1-indexed, as R prefers.
 			self$response_vector <- read.table(response_vector_file_name)[[1]]
 			self$design_matrix <- as.matrix(read.table(design_matrix_file_name))
 			self$is_per_capita <- is_per_capita
