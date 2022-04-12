@@ -19,6 +19,22 @@ InputData <- R6::R6Class("InputData",
 			
 			self$num_species <- ncol(self$design_matrix)
 			self$num_obs <- nrow(self$design_matrix)
+		},
+		
+		get_fitted_values = function(parameters) {
+			focal_growth_rate <- parameters$growth_rates[self$focal_vector]
+			focal_density <- mapply(
+				function(obs,focal){self$design_matrix[obs,focal]},
+				1:num_obs, self$focal_vector
+			)
+			alpha_values_on_focal <- parameters$alpha_values[self$focal_vector,]
+			
+			intrinsic_growth <- focal_growth_rate
+			if(!self$is_per_capita) intrinsic_growth <- intrinsic_growth * focal_density
+			total_competition <- rowSums(alpha_values_on_focal * self$design_matrix)
+			fitted_values <- intrinsic_growth * (1 - total_competition)
+			
+			return(fitted_values)
 		}
 	)
 )
