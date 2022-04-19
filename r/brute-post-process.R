@@ -32,6 +32,10 @@ BruteData <- R6::R6Class("BruteData",
 	),
 	
 	active = list(
+		average_parameters = function() {
+			parameters_weighted_mean(self$parameters, self$statistics[[self$weight_column]])
+		},
+		
 		unweighted_average_coclassification_matrix = function() {
 			return(private$annotate_matrix(private$get_average_coclassification_matrix(self$row_groupings)))
 		},
