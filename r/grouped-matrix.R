@@ -1,7 +1,8 @@
 #A function for printing a grouped alpha matrix as a table using knitr.
 #Expects the species names, the row grouping, the column grouping, and the alpha matrix.
 #The groupings are given as a vector, [number of species] in length, with the number of the group each species belongs to.
-#The matrix is defined in terms of the groups, and hence is [number of row groups] by [number of column groups].
+#The matrix is the full expanded matrix, not defined in terms of the groups.
+#Hence the matrix is [number of species] by [number of species].
 
 #First, we need to determine an ordering of the species such that all species that are grouped together are adjacent in all groupings.
 #In the absence of an elegant method, I'll do this by an exhaustive search of orderings.
@@ -84,18 +85,18 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	}
 	
 	#A helper function to get the content of a particular group; simply the text to print in the table.
-	get_group_content <- function(row_group, col_group) {
+	get_group_content <- function(row_index, col_index) {
 		#TODO: Format with the correct number of decimal places.
-		sprintf("\\num{%f}", mat[row_group, col_group])
+		sprintf("\\num{%f}", mat[row_index, col_index])
 	}
 	
 	#A helper function to get the content of a particular group.
 	#Wrapped in \multicolumn and \multirow to make it the right size for that group.
-	get_expanded_group_content <- function(row_group, col_group) {
-		num_rows <- sum(row_grouping == row_group)
-		num_cols <- sum(col_grouping == col_group)
+	get_expanded_group_content <- function(row_index, col_index) {
+		num_rows <- sum(row_grouping == row_grouping[row_index])
+		num_cols <- sum(col_grouping == col_grouping[col_index])
 		#TODO: Add vertical rules and deal with the width properly.
-		sprintf("\\multicolumn{%d}{%s}{\\multirow{%d}*{%s}}", num_cols, alignment, num_rows, get_group_content(row_group, col_group))
+		sprintf("\\multicolumn{%d}{%s}{\\multirow{%d}*{%s}}", num_cols, alignment, num_rows, get_group_content(row_index, col_index))
 	}
 	
 	#A function to get the contents of any cell of the table.
@@ -110,9 +111,7 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 			#Otherwise, we leave it blank.
 			#If leaving it blank, we don't even put `&` in; \multicolumn handles this.
 			if(col_index == 1 || col_grouping[col_index] != col_grouping[col_index-1]) {
-				row_group <- row_grouping[row_index]
-				col_group <- col_grouping[col_index]
-				return(sprintf("%s&", get_expanded_group_content(row_group, col_group)))
+				return(sprintf("%s&", get_expanded_group_content(row_index, col_index)))
 			} else {
 				return("")
 			}
