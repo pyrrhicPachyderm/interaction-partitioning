@@ -44,6 +44,13 @@ Data <- R6::R6Class("Data",
 			#Add additional columns of statistics.
 			if(!is.null(self$statistics$aic)) private$add_aic_weights()
 			if(!is.null(self$statistics$aicc)) private$add_aicc_weights()
+		},
+		
+		get_row_grouping = function(index) {
+			as.vector(as.matrix(self$row_groupings[index,]))
+		},
+		get_col_grouping = function(index) {
+			as.vector(as.matrix(self$col_groupings[index,]))
 		}
 	),
 	
@@ -66,8 +73,8 @@ Data <- R6::R6Class("Data",
 			
 			self$parameters <- sapply(1:nrow(self$parameters), function(i) {
 				growth_rates <- as.vector(as.matrix(growth_rates_df[i,]))
-				row_grouping <- as.vector(as.matrix(self$row_groupings[i,]))
-				col_grouping <- as.vector(as.matrix(self$col_groupings[i,]))
+				row_grouping <- self$get_row_grouping(i)
+				col_grouping <- self$get_col_grouping(i)
 				group_alpha_values <- matrix(
 					as.vector(as.matrix(alpha_values_df[i,])),
 					nrow = self$num_species,
