@@ -35,3 +35,15 @@ Rcpp::cppFunction("List get_all_orderings(int n) {
 	} while(std::next_permutation(ordering.begin(), ordering.end()));
 	return all_orderings;
 }")
+#Now, the function to exhaustively search and find an appropriate ordering.
+#The function takes a list of groupings, and returns an ordering.
+#It is hence sufficiently general to be constrained by any number of groupings, not only two.
+get_ordering <- function(groupings) {
+	all_orderings <- get_all_orderings(length(groupings[[1]]))
+	for(ordering in all_orderings) {
+		if(all(sapply(groupings, forms_consecutive_blocks, ordering))) {
+			return(ordering)
+		}
+	}
+	stop("Cannot find an ordering of species that makes all groups consecutive")
+}
