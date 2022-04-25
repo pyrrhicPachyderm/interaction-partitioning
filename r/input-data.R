@@ -35,6 +35,10 @@ InputData <- R6::R6Class("InputData",
 			fitted_values <- intrinsic_growth * (1 - total_competition)
 			
 			return(fitted_values)
+		},
+		
+		get_residuals = function(parameters) {
+			self$get_fitted_values(parameters) - self$response_vector
 		}
 	)
 )
