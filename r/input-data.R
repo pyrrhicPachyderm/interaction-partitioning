@@ -39,6 +39,19 @@ InputData <- R6::R6Class("InputData",
 		
 		get_residuals = function(parameters) {
 			self$get_fitted_values(parameters) - self$response_vector
+		},
+		
+		get_partial_residuals = function(parameters, row_index, col_index) {
+			#The partial residuals for a particular alpha value: alpha_{row_index,col_index}.
+			residuals <- self$get_residuals(parameters)
+			partial_residuals_x <- self$get_partial_residuals_x(row_index, col_index)
+			partial_residuals <- residuals[self$focal_vector == row_index] + parameters$alpha_values[row_index, col_index] * partial_residuals_x
+			return(partial_residuals)
+		},
+		
+		get_partial_residuals_x = function(row_index, col_index) {
+			#The numbers to go on the x axis of a partial residuals plot.
+			self$design_matrix[self$focal_vector == row_index, col_index]
 		}
 	)
 )
