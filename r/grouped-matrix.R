@@ -49,6 +49,12 @@ get_ordering <- function(groupings) {
 	stop("Cannot find an ordering of species that makes all groups consecutive")
 }
 
+#Anther helper function, for use in zero padding numbers.
+#Returns the number of digits in the integer part of a number.
+get_integer_part_width <- function(x) {
+	max(1, 1 + log10(abs(x)))
+}
+
 #Finally, the function to actually print the grouped matrix.
 grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat) {
 	num_species <- length(species_names)
@@ -60,12 +66,20 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	col_grouping <- col_grouping[ordering]
 	
 	#Configuration options.
+	decimal_places <- 3
 	use_dashed_lines <- TRUE
 	dashed_line_spec <- "1pt/1pt" #Dash/gap.
 	header_angle <- 30
 	
 	#Define some helper functions/variables.
 	alignment <- "c"
+	
+	#Determine the width of the widest cell entry.
+	#Following the decimal point will always be decimal_places characters.
+	#So we only need to know how many digits precede the decimal places.
+	#And whether there're any negative signs.
+	integer_part_pad_width <- max(get_integer_part_width(mat))
+	do_negative_pad <- any(mat < 0)
 	
 	#The beginning and end of the table.
 	begin <- paste(c("\\begin{tabular}{", rep(alignment, num_species), "l}"), collapse="")
@@ -85,9 +99,23 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	}
 	
 	#A helper function to get the content of a particular group; simply the text to print in the table.
+	#The use of multirow we can't use dcolumn or siunitx to align on decimal points, so we have to do it
+	#by fixing the number of decimal places, and using phantoms to pad to a fixed width.
 	get_group_content <- function(row_index, col_index) {
-		#TODO: Format with the correct number of decimal places.
-		sprintf("\\num{%f}", mat[row_index, col_index])
+		number <- mat[row_index, col_index]
+		#If there is a minus sign, it should be unary, not binary.
+		#This is also necessary for alignment, as phantom minus signs will be treated as unary.
+		#So the minus sign must be wrapped in braces, which means printing it separately.
+		number_string <- sprintf(paste0("%.",decimal_places,"f"), abs(number)) #Format with the correct number of decimal places.
+		if(number < 0) {
+			number_string <- paste0("{-}", number_string) #Prepend a unary minus if necessary.
+		}
+		hphantom <- paste(rep("0", integer_part_pad_width - get_integer_part_width(number)), collapse="") #Pad with phantom zeroes.
+		if(do_negative_pad && number >= 0) {
+			hphantom <- paste0(hphantom, "-") #Pad with an phantom negative sign if necessary.
+		}
+		result <- sprintf(paste0("$\\hphantom{%s}%s$"), hphantom, number_string)
+		return(result)
 	}
 	
 	#A helper function to get the content of a particular group.
