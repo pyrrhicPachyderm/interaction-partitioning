@@ -55,8 +55,29 @@ get_integer_part_width <- function(x) {
 	max(1, 1 + log10(abs(x)))
 }
 
+#A helper function that converts numbers to letters, as numbers can't be used in TeX macro names.
+#Takes a non-negative number; some adding of 1 is necessary to convert to 1-indexing.
+#0: a, ..., 25: z, 26: aa, 27: ab, ..., 701: zz, 702: aaa, etc.
+number_to_letters <- function(n) {
+	num_letters <- 1
+	while(length(letters)^num_letters <= n) {
+		n <- n - length(letters)^num_letters
+		num_letters <- num_letters + 1
+	}
+	result <- ""
+	for(i in 1:num_letters) {
+		n_remainder <- n %% (length(letters)^i)
+		letter_index <- floor(n_remainder / (length(letters)^(i-1))) #Zero-indexed.
+		result <- paste0(letters[letter_index + 1], result) #Plus 1 to convert to 1-indexed.
+	}
+	return(result)
+}
+
 #Finally, the function to actually print the grouped matrix.
-grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat) {
+#We want what is essentially a static variable, to provide unique names to TeX macro.
+#In particular, the macro that will serve as a length to store the column width.
+#Per https://stackoverflow.com/a/59126599, we use a local environment.
+grouped_alpha_matrix <- local({call_num <- 0; function(species_names, row_grouping, col_grouping, mat) {
 	num_species <- length(species_names)
 	
 	#Reorder the species to place grouped species adjacent.
@@ -71,8 +92,15 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	dashed_line_spec <- "1pt/1pt" #Dash/gap.
 	header_angle <- 30
 	
+	#Get a unique alphabetic id for this call to the function, using the "static variable" call_num.
+	#Use it to define a length macro.
+	call_id <- number_to_letters(call_num)
+	length_macro <- sprintf("\\colwidth%s", call_id)
+	
 	#Define some helper functions/variables.
-	alignment <- "c"
+	alignment <- function(num_cols) {
+		sprintf(">{\\centering\\arraybackslash}p{\\dimexpr %d %s\\relax}", num_cols, length_macro)
+	}
 	
 	#Determine the width of the widest cell entry.
 	#Following the decimal point will always be decimal_places characters.
@@ -81,8 +109,13 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	integer_part_pad_width <- max(get_integer_part_width(mat))
 	do_negative_pad <- any(mat < 0)
 	
+	#Determine the width of the widest column as a TeX length.
+	widest_number <- paste0(c(rep("0", integer_part_pad_width), ".", rep("0", decimal_places)), collapse="")
+	if(do_negative_pad) widest_number <- paste0("{-}", widest_number)
+	length_definition <- sprintf("\\newlength{%s}\n\\settowidth{%s}{$%s$}\n", length_macro, length_macro, widest_number)
+	
 	#The beginning and end of the table.
-	begin <- paste(c("\\begin{tabular}{", rep(alignment, num_species), "l}"), collapse="")
+	begin <- paste(c("\\begin{tabular}{", rep(alignment(1), num_species), "l}"), collapse="")
 	end <- "\\end{tabular}"
 	
 	#The row with the species names as column headers.
@@ -123,8 +156,8 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	get_expanded_group_content <- function(row_index, col_index) {
 		num_rows <- sum(row_grouping == row_grouping[row_index])
 		num_cols <- sum(col_grouping == col_grouping[col_index])
-		#TODO: Add vertical rules and deal with the width properly.
-		sprintf("\\multicolumn{%d}{%s}{\\multirow{%d}*{%s}}", num_cols, alignment, num_rows, get_group_content(row_index, col_index))
+		#TODO: Add vertical rules.
+		sprintf("\\multicolumn{%d}{%s}{\\multirow{%d}*{%s}}", num_cols, alignment(num_cols), num_rows, get_group_content(row_index, col_index))
 	}
 	
 	#A function to get the contents of any cell of the table.
@@ -157,8 +190,9 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	
 	row_lines <- paste(sapply(1:num_species, get_row), collapse="")
 	
+	cat(length_definition)
 	cat(begin)
 	cat(label_line)
 	cat(row_lines)
 	cat(end)
-}
+}})
