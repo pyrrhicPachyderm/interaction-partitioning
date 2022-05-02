@@ -4,10 +4,12 @@
 \usepackage{import}
 \usepackage{authblk}
 
-%Images
+%Images & tables
 \usepackage{subcaption}
 \usepackage{pgfplots}
 \usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{arydshln}
 
 %Journal font & paper requirements
 \usepackage{newtxtext} %Times New Roman
@@ -54,6 +56,7 @@
 	source("r/mantel-test.R")
 	source("r/dist-matrix.R")
 	source("r/coclassification-table.R")
+	source("r/grouped-matrix.R")
 	
 	species_dat <- read.csv("data/species.csv")
 	species_output_order <- c(4,3,1,2,6,5)
