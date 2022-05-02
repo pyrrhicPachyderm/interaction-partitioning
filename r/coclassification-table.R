@@ -66,7 +66,7 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 	}
 	
 	#LaTeX doesn't like us using \pgfplotscolormapaccess mid-table.
-	#So we will use it beforehand, define colours, then acces them.
+	#So we will use it beforehand, define colours, then access them.
 	#This requires us to generate a unique colour name for each cell.
 	#We will make it verbose to reduce the risk of a clash.
 	get_colour_name <- function(row, col) {
