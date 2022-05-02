@@ -67,7 +67,8 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	
 	#Configuration options.
 	decimal_places <- 3
-	use_dashed_lines <- TRUE
+	use_dashed_lines_inner <- TRUE
+	use_dashed_lines_outer <- FALSE
 	dashed_line_spec <- "1pt/1pt" #Dash/gap.
 	header_angle <- 30
 	
@@ -76,6 +77,19 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 		sprintf(">{\\centering\\arraybackslash}p{\\dimexpr %d %s\\relax}", num_cols, length_macro)
 	}
 	length_macro <- "\\colwidth"
+	divider <- function(use_dashed_lines) {
+		ifelse(use_dashed_lines, sprintf(";{%s}",dashed_line_spec), "|")
+	}
+	cline <- function(use_dashed_lines) {
+		ifelse(use_dashed_lines,
+			function(col1, col2){sprintf("\\cdashline{%d-%d}[%s]", col1, col2, dashed_line_spec)},
+			function(col1, col2){sprintf("\\cline{%d-%d}", col1, col2)}
+		)
+	}
+	outer_divider <- divider(use_dashed_lines_outer)
+	inner_divider <- divider(use_dashed_lines_inner)
+	outer_cline <- cline(use_dashed_lines_outer)
+	inner_cline <- cline(use_dashed_lines_inner)
 	
 	#Determine the width of the widest cell entry.
 	#Following the decimal point will always be decimal_places characters.
@@ -128,11 +142,18 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	
 	#A helper function to get the content of a particular group.
 	#Wrapped in \multicolumn and \multirow to make it the right size for that group.
-	get_expanded_group_content <- function(row_index, col_index) {
+	#Also adds vertical rules.
+	#Adding the vertical dividers is interfered with by multirow, so we need some empty \multicolumns.
+	#is_empty_content produces such.
+	get_expanded_group_content <- function(row_index, col_index, is_first_group, is_last_group, is_empty_content) {
 		num_rows <- sum(row_grouping == row_grouping[row_index])
 		num_cols <- sum(col_grouping == col_grouping[col_index])
-		#TODO: Add vertical rules.
-		sprintf("\\multicolumn{%d}{%s}{\\multirow{%d}*{%s}}", num_cols, alignment(num_cols), num_rows, get_group_content(row_index, col_index))
+		pre_divider <- ifelse(is_first_group, outer_divider, inner_divider)
+		post_divider <- ifelse(is_last_group, outer_divider, "") #No post divider if next column has a pre divider.
+		content <- ifelse(is_empty_content, "",
+			sprintf("\\multirow{%d}*{%s}", num_rows, get_group_content(row_index, col_index))
+		)
+		sprintf("\\multicolumn{%d}{%s%s%s}{%s}", num_cols, pre_divider, alignment(num_cols), post_divider, content)
 	}
 	
 	#A function to get the contents of any cell of the table.
@@ -141,26 +162,34 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	#As such, each cell will include the `&` from the end of the cell.
 	#The species names are going on the end, so they simply shalln't have an `&`.
 	get_cell <- function(row_index, col_index) {
-		#First, check if this is the top row of the current group.
-		if(row_index == 1 || row_grouping[row_index] != row_grouping[row_index-1]) {
-			#If this is the first column of the current group, we define the content here.
-			#Otherwise, we leave it blank.
-			#If leaving it blank, we don't even put `&` in; \multicolumn handles this.
-			if(col_index == 1 || col_grouping[col_index] != col_grouping[col_index-1]) {
-				return(sprintf("%s&", get_expanded_group_content(row_index, col_index)))
-			} else {
-				return("")
-			}
+		#First, check if this is the first column of the current group.
+		if(col_index == 1 || col_grouping[col_index] != col_grouping[col_index-1]) {
+			#If this is the first column, we need a multicolumn.
+			#We also check if this is the first row of the current group.
+			#If so, the multicolumn has actual content.
+			is_first_group <- col_index == 1
+			is_last_group <- col_grouping[col_index] == col_grouping[num_species]
+			has_content <- row_index == 1 || row_grouping[row_index] != row_grouping[row_index-1]
+			return(sprintf("%s&", get_expanded_group_content(row_index, col_index, is_first_group, is_last_group, !has_content)))
 		} else {
-			#If this is a subsequent row, the content has already been added above, so this is empty.
-			#We just need `&` to tab past everything.
-			return("&")
+			#If this is not the first column, we leave it blank.
+			#We don't even put `&` in; \multicolumn handles this.
+			return("")
 		}
 	}
 	
 	get_row <- function(row_index) {
+		#First, check if this is the top row of the current group.
+		if(row_index == 1 || row_grouping[row_index] != row_grouping[row_index-1]) {
+			pre_cline <- ifelse(row_index == 1, outer_cline(1, num_species), inner_cline(1, num_species))
+		} else {
+			pre_cline <- ""
+		}
+		#A post cline is only necessary for the very last row.
+		post_cline <- ifelse(row_index == num_species, outer_cline(1, num_species), "")
+		
 		cells <- sapply(1:num_species, function(col_index){get_cell(row_index,col_index)})
-		paste(c(cells, get_species_row_label(row_index), "\\\\"), collapse="")
+		paste(c(pre_cline, cells, get_species_row_label(row_index), "\\\\", post_cline), collapse="")
 	}
 	
 	row_lines <- paste(sapply(1:num_species, get_row), collapse="")
