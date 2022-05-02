@@ -69,7 +69,7 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	decimal_places <- 3
 	use_dashed_lines_inner <- TRUE
 	use_dashed_lines_outer <- FALSE
-	dashed_line_spec <- "1pt/1pt" #Dash/gap.
+	dashed_line_spec <- "3pt/3pt" #Dash/gap.
 	header_angle <- 30
 	
 	#Define some helper functions/variables.
