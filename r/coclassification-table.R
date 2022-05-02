@@ -16,10 +16,9 @@ strip_booktabs_rules <- function(tab) {
 		sub("\\\\bottomrule", "", .)
 }
 
-weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colour="lightgray", digits=3) {
+weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colour="lightgray", digits=3, array_stretch=1.5, has_colourbar=TRUE, has_names=TRUE) {
 	#colourmap is the name of a pgfplots colourmap.
 	
-	array_stretch <- 1.5
 	header_angle <- 30
 	
 	#\dimexpr can't work with floating point multipliers, so we need rationals.
@@ -58,11 +57,15 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 	sep="\n")
 	
 	format_num <- function(num) {
-		if(round(num,digits=digits) == 1) {
-			return(paste0("1.",paste0(rep("0",digits-1),collapse="")))
+		if(digits == 0) {
+			return(sprintf("%.0f", num)) #Gives just 0 or 1, no decimal places.
+		} else {
+			if(round(num,digits=digits) == 1) {
+				return(paste0("1.",paste0(rep("0",digits-1),collapse="")))
+			}
+			sprintf(paste0("%.",digits,"f"), num) %>%
+				sub("0.", ".", ., fixed=TRUE) #Strip the leading 0.
 		}
-		sprintf(paste0("%.",digits,"f"), num) %>%
-			sub("0.", ".", ., fixed=TRUE) #Strip the leading 0.
 	}
 	
 	#LaTeX doesn't like us using \pgfplotscolormapaccess mid-table.
@@ -96,16 +99,21 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 		})
 	})
 	
-	#\rotatebox makes things wider, so we enclose in a fixed width \makebox.
-	colnames(string_mat) <- paste0("\\makebox[1em][l]{\\rotatebox{",header_angle,"}{\\emph{",colnames(mat),"}}}")
-	#We don't set row names for mat, because we want the species labels on the right instead of the left.
-	#We cbind instead.
-	string_mat <- cbind(string_mat, matrix(
-		paste0("\\emph{",rownames(mat),"}"),
-	ncol=1))
+	if(has_names) {
+		#\rotatebox makes things wider, so we enclose in a fixed width \makebox.
+		colnames(string_mat) <- paste0("\\makebox[1em][l]{\\rotatebox{",header_angle,"}{\\emph{",colnames(mat),"}}}")
+		#We don't set row names for mat, because we want the species labels on the right instead of the left.
+		#We cbind instead.
+		string_mat <- cbind(string_mat, matrix(
+			paste0("\\emph{",rownames(mat),"}"),
+		ncol=1))
+	}
 	
 	matrix_tab <- knitr::kable(string_mat, escape=FALSE, booktabs=TRUE,
-		align=c(rep("c",ncol(mat)),"l")
+		align=ifelse(has_names,
+			c(rep("c",ncol(mat)),"l"),
+			rep("c",ncol(mat))
+		)
 	) %>%
 		strip_booktabs_rules() %>%
 		sub("\\begin{tabular}", "\\begin{tabular}[b]", ., fixed=TRUE) #Baseline at the bottom, for colourbar alignment.
@@ -117,13 +125,17 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 		"\\egroup",
 	sep="\n")
 	
-	outer_tab <- paste(
-		"\\begin{tabular}{rl}",
-		colourbar_code,
-		"&",
-		matrix_tab,
-		"\\end{tabular}",
-	sep="\n")
+	if(has_colourbar) {
+		outer_tab <- paste(
+			"\\begin{tabular}{rl}",
+			colourbar_code,
+			"&",
+			matrix_tab,
+			"\\end{tabular}",
+		sep="\n")
+	} else {
+		outer_tab <- matrix_tab
+	}
 	
 	cat(length_definition)
 	cat(colour_definitions)
