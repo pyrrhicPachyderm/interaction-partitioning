@@ -132,9 +132,9 @@ Data <- R6::R6Class("Data",
 		get_coclassification_matrix = function(grouping_table, index) {
 			#Returns a binary matrix of whether two species are grouped together in a given row of a grouping table.
 			grouping <- as.vector(as.matrix(grouping_table[index,]))
-			mat <- as.matrix(sapply(grouping, function(group) {
+			mat <- sapply(grouping, function(group) {
 				return(grouping == group)
-			}))
+			})
 			return(mat)
 		},
 		
