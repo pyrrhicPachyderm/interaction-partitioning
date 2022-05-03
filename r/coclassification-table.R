@@ -21,6 +21,8 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 	
 	header_angle <- 30
 	
+	mat <- matrix(as.numeric(mat), nrow=nrow(mat)) #Ensure the matrix is numeric, not Boolean.
+	
 	#\dimexpr can't work with floating point multipliers, so we need rationals.
 	as_rational_string <- function(x) {
 		as.character(gmp::as.bigq(x))
