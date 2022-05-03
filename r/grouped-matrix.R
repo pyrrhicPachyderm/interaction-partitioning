@@ -56,15 +56,22 @@ get_integer_part_width <- function(x) {
 }
 
 #Finally, the function to actually print the grouped matrix.
-grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat) {
+grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat, is_ordered=TRUE) {
 	num_species <- length(species_names)
 	
-	#Reorder the species to place grouped species adjacent.
-	ordering <- get_ordering(list(row_grouping, col_grouping))
-	species_names <- species_names[ordering]
-	row_grouping <- row_grouping[ordering]
-	col_grouping <- col_grouping[ordering]
-	mat <- mat[ordering,ordering]
+	if(is_ordered) {
+		#Assert that the ordering is correct.
+		if(!forms_consecutive_blocks(row_grouping, 1:num_species) || !forms_consecutive_blocks(col_grouping, 1:num_species)) {
+			stop("Given ordering does not make all groups consecutive")
+		}
+	} else {
+		#Reorder the species to place grouped species adjacent.
+		ordering <- get_ordering(list(row_grouping, col_grouping))
+		species_names <- species_names[ordering]
+		row_grouping <- row_grouping[ordering]
+		col_grouping <- col_grouping[ordering]
+		mat <- mat[ordering,ordering]
+	}
 	
 	#Configuration options.
 	decimal_places <- 3
