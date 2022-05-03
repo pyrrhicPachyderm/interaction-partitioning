@@ -64,6 +64,7 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat)
 	species_names <- species_names[ordering]
 	row_grouping <- row_grouping[ordering]
 	col_grouping <- col_grouping[ordering]
+	mat <- mat[ordering,ordering]
 	
 	#Configuration options.
 	decimal_places <- 3
