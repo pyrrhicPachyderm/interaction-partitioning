@@ -56,7 +56,7 @@ get_integer_part_width <- function(x) {
 }
 
 #Finally, the function to actually print the grouped matrix.
-grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat, is_ordered=TRUE) {
+grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat, is_ordered=TRUE, array_stretch=1.5) {
 	num_species <- length(species_names)
 	
 	if(is_ordered) {
@@ -112,8 +112,12 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat,
 	length_definition <- sprintf("\\ifdefined%s\\relax\\else\\newlength{%s}\\fi\n\\settowidth{%s}{$%s$}\n", length_macro, length_macro, length_macro, widest_number)
 	
 	#The beginning and end of the table.
-	begin <- paste(c("\\begin{tabular}{", rep(alignment(1), num_species), "l}"), collapse="")
-	end <- "\\end{tabular}"
+	begin <- paste(c(
+		"\\begingroup",
+		"\\renewcommand*\\arraystretch{", array_stretch, "}",
+		"\\begin{tabular}{", rep(alignment(1), num_species), "l}"
+	), collapse="")
+	end <- "\\end{tabular}\\endgroup"
 	
 	#The row with the species names as column headers.
 	get_species_column_label <- function(index) {
