@@ -291,11 +291,83 @@ The ungrouped model gave an {\ic} value of \icnum{\Sexpr{brute_data$fully_separa
 \end{figure}
 
 The ``best'' model, as indicated by {\ic}, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics[[ic_weight]])}} that it was the best.
+\Cref{fig:best-model} shows the groupings and alpha values of this ``best'' model.
 The total Akaike weight assigned to models more parsimonious than the ungrouped model was \probnum{\Sexpr{sum(brute_data$statistics[[ic_weight]][brute_data$statistics[[ic]] < brute_data$fully_separated_statistics[[ic]]])}}; this is the probability that some grouped model was more parsimonious than the ungrouped model.
 
 Considering only models in which the rows and columns were grouped using the same grouping, the {\ic} values ranged from \icnum{\Sexpr{min(brute_data$equivalently_grouped_statistics[[ic]])}} to \icnum{\Sexpr{max(brute_data$equivalently_grouped_statistics[[ic]])}}; neither the best nor worst overall models had equivalently grouped rows and columns.
 The total Akaike weight assigned to these models was \probnum{\Sexpr{brute_data$equivalently_grouped_weight}}; more than expected by chance (\probnum{\Sexpr{brute_data$equivalently_grouped_expected_weight}}), but not significantly so (Monte Carlo permutation test, $p=\probnum{\Sexpr{brute_data$equivalently_grouped_weight_p #$}}$).
 This indicates that the most parsimonious model is not especially likely to be one that groups the rows and columns equivalently.
+
+\begin{figure}
+	\centering
+	
+	<<echo=FALSE>>=
+		best_model_index <- which.max(brute_data$statistics[[ic_weight]])
+		best_row_grouping <- brute_data$get_row_grouping(best_model_index)
+		best_col_grouping <- brute_data$get_col_grouping(best_model_index)
+		best_alpha_matrix <- brute_data$parameters[[best_model_index]]$alpha_values
+		
+		ordering <- get_ordering(list(best_row_grouping, best_col_grouping))
+		best_species_names <- brute_data$species_names[ordering]
+		best_row_grouping <- best_row_grouping[ordering]
+		best_col_grouping <- best_col_grouping[ordering]
+		best_alpha_matrix <- best_alpha_matrix[ordering,ordering]
+		
+		best_row_coclassification <- as_coclassification_matrix(best_row_grouping)
+		best_col_coclassification <- as_coclassification_matrix(best_col_grouping)
+	@
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		<<echo=FALSE>>=
+			grouped_alpha_matrix(
+				best_species_names,
+				best_row_grouping,
+				best_col_grouping,
+				best_alpha_matrix
+			)
+		@
+		\caption{The grouped alpha matrix.}
+		\label{fig:best-alpha-matrix}
+	\end{subfigure}
+	
+	\bigskip
+	
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		<<echo=FALSE>>=
+			minimal_coclassification_kable(
+				best_col_coclassification,
+				colourmap="coclassification", diagonal_colour="coclassification diagonal"
+			)
+		@
+		\caption{The coclassification matrix of rows.}
+		\label{fig:best-coclassification-cols}
+	\end{subfigure}
+	%
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		<<echo=FALSE>>=
+			minimal_coclassification_kable(
+				best_row_coclassification,
+				colourmap="coclassification", diagonal_colour="coclassification diagonal"
+			)
+		@
+		\caption{The coclassification matrix of columns.}
+		\label{fig:best-coclassification-rows}
+	\end{subfigure}
+	
+	\caption{%
+		The groupings and competition coefficients of a grouped Lotka--Volterra model fitted to the six studied \emph{Drosophila} species.
+		This represents the single model with the best {\ic} (\probnum{\Sexpr{brute_data$statistics[best_model_index,ic]}}). %TODO: Debug this.
+		\Cref{fig:best-alpha-matrix} shows the competition coefficients, where a competition coefficient in a block represents the same coefficient being used for multiple interactions, per the groupings.
+		\Cref{fig:best-coclassification-cols} and \cref{fig:best-coclassification-rows} show the coclassification matrices derived from the groupings of the columns and rows respectively.
+		These coclassification matrices are averaged for all models, weighted by Akaike weights, to produce \cref{fig:coclassification}.
+		Species have been reordered that species which are grouped together appear adjacent.
+		The ordering is the same in \cref{fig:best-coclassification-cols} and \cref{fig:best-coclassification-rows} as shown in \cref{fig:best-alpha-matrix}.
+	}
+	\label{fig:best-model}
+\end{figure}
 
 \subsection{Coclassification of species}
 
