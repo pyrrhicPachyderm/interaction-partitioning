@@ -93,6 +93,11 @@
 
 \newcommand\keywords[1]{\emph{Key words: #1}}
 
+\pgfplotsset{%
+	colormap={coclassification}{color=(white) color=(red)}
+}
+\colorlet{coclassification diagonal}{black!20}
+
 \begin{document}
 \maketitle
 
@@ -309,10 +314,6 @@ More intransitivity was observed in the column groupings: \emph{D. pallidifrons}
 
 Neither the row nor column coclassification matrix was significantly correlated with a dissimilarity matrix based on species body size (column: $\mantelstat=\cornum{\Sexpr{mantel_cor(col_distance_matrix, body_weight_distance_matrix)}}$, $p=\probnum{\Sexpr{mantel_p(col_distance_matrix, body_weight_distance_matrix)}}$; row: $\mantelstat=\cornum{\Sexpr{mantel_cor(row_distance_matrix, body_weight_distance_matrix)}}$, $p=\probnum{\Sexpr{mantel_p(row_distance_matrix, body_weight_distance_matrix)}}$).
 
-\pgfplotsset{%
-	colormap={coclassification}{color=(white) color=(red)}
-}
-\colorlet{coclassification diagonal}{black!20}
 \begin{figure}
 	\centering
 	\begin{subfigure}{\textwidth}
