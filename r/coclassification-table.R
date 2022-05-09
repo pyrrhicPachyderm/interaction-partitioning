@@ -146,5 +146,5 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 
 #A shortcut for a minimal version.
 minimal_coclassification_kable <- function(mat, colourmap="hot", diagonal_colour="lightgray") {
-	weighted_coclassification_kable(mat, colourmap, diagonal_colour, digits=0, array_stretch=0.8, has_colourbar=FALSE, has_names=FALSE)
+	weighted_coclassification_kable(mat, colourmap, diagonal_colour, digits=0, array_stretch=1, has_colourbar=FALSE, has_names=FALSE)
 }
