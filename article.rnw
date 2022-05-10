@@ -257,7 +257,8 @@ To evaluate the significance of the latter, we performed a Monte Carlo permutati
 
 To summarise the results, we also used the Akaike weights to generate two coclassification matrices, one for the row groupings and one for the column groupings.
 Each cell of a coclassification matrix represents the coclassification of a pair of species, and contains the total Akaike weight of models that place those two species in the same group.
-As such, each cell represents the probability that the most parsimonious model is one that coclassifies those two species. For reference, note that the diagonal of a coclassification matrix is tautologically equal to $1$.
+As such, each cell represents the probability that the most parsimonious model is one that coclassifies those two species.
+For reference, note that the diagonal of a coclassification matrix is tautologically equal to $1$.
 
 There are a number of possible ``null'' expectations for the off-diagonal elements these matrices.
 A neutral model approach would expect all species to be in the same group: every off-diagonal cell would therefore be $1$.
