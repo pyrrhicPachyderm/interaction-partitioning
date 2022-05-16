@@ -11,6 +11,10 @@
 \usepackage{multirow}
 \usepackage{arydshln}
 
+\captionsetup{subrefformat=parens} %Changes only \subref, not \ref.
+\let\Subref\subref
+%TODO: Make \cref figure out if it should be a subref, and use cref throughout.
+
 %Journal font & paper requirements
 \usepackage{newtxtext} %Times New Roman
 \usepackage[letterpaper,margin=1in]{geometry}
@@ -375,11 +379,11 @@ This indicates that the most parsimonious model is not especially likely to be o
 	\caption{%
 		The groupings and competition coefficients of a grouped Lotka--Volterra model fitted to the six studied \emph{Drosophila} species.
 		This represents the single model with the best {\ic} (\probnum{\Sexpr{brute_data$statistics[best_model_index,ic]}}). %TODO: Debug this.
-		\Cref{fig:best-alpha-matrix} shows the competition coefficients, where a competition coefficient in a block represents the same coefficient being used for multiple interactions, per the groupings.
-		\Cref{fig:best-coclassification-cols} and \cref{fig:best-coclassification-rows} show the coclassification matrices derived from the groupings of the columns and rows respectively.
+		\Subref{fig:best-alpha-matrix} shows the competition coefficients, where a competition coefficient in a block represents the same coefficient being used for multiple interactions, per the groupings.
+		\Subref{fig:best-coclassification-cols} and \subref{fig:best-coclassification-rows} show the coclassification matrices derived from the groupings of the columns and rows respectively.
 		These coclassification matrices are averaged for all models, weighted by Akaike weights, to produce \cref{fig:coclassification}.
 		Species have been reordered that species which are grouped together appear adjacent.
-		The ordering is the same in \cref{fig:best-coclassification-cols} and \cref{fig:best-coclassification-rows} as shown in \cref{fig:best-alpha-matrix}.
+		The ordering is the same in \subref{fig:best-coclassification-cols} and \subref{fig:best-coclassification-rows} as shown in \subref{fig:best-alpha-matrix}.
 	}
 	\label{fig:best-model}
 \end{figure}
@@ -435,12 +439,10 @@ Neither the row nor column coclassification matrix was significantly correlated 
 	\caption{%
 		Coclassification matrices of the Lotka--Volterra competitive effects and responses of the six studied \emph{Drosophila} species, weighted by Akaike weights.
 		The cell for a pair of species represents the probability that the best grouping, as determined by the Akaike weights of the grouped models, places those two species in the same group.
-		\Cref{fig:coclassification-cols} represents the grouping of species' competitive effects upon other species (columns of the interaction matrix), while \cref{fig:coclassification-rows} represents the grouping of species' responses to competition (rows of the interaction matrix).
+		\Subref{fig:coclassification-cols} represents the grouping of species' competitive effects upon other species (columns of the interaction matrix), while \subref{fig:coclassification-rows} represents the grouping of species' responses to competition (rows of the interaction matrix).
 	}
 	\label{fig:coclassification}
 \end{figure}
-
-% DBS: Within the caption, the reference to a subfigure should just be (a) and (b), not Figure 2a and fig. 2b.
 
 % DBS: I think a good figure would be to show the ungrouped estimated alpha matrix in one panel and the alpha matrix averaged across all partitions in a second panel, with lines drawn in the second to reflect the "optimal" partitioning of the co-classification matrices.
 
