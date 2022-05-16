@@ -37,8 +37,7 @@
 \usepackage{cleveref}
 
 %Title Page
-% DBS: What about "Simplifying Lotka--Volterra interaction matrices by species grouping", with or without the bit after the colon (and where I lean slightly in favor of the "with" option)
-\title{Regularising Lotka--Volterra interaction matrices by species grouping: optimal groupings are unpredictable} %TODO: Remove the word "regularising" from the title.
+\title{Simplifying Lotka--Volterra interaction matrices by species grouping: optimal groupings are unpredictable}
 \author{Christopher R.\ P.\ Brown}
 \author{Daniel B.\ Stouffer}
 \affil{Centre for Integrative Ecology, School of Biological Sciences, University of Canterbury, Christchurch, New Zealand}
