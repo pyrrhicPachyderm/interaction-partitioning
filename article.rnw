@@ -89,7 +89,7 @@
 \newcommand\ic{\Sexpr{ic_name}}
 
 \newcommand\rsquarednum[1]{\num[round-mode=places,round-precision=3]{#1}}
-\newcommand\icnum[1]{\num{#1}} %For information criteria.
+\newcommand\icnum[1]{\num[round-mode=places,round-precision=2]{#1}} %For information criteria.
 \newcommand\probnum[1]{\num[round-mode=places,round-precision=3]{#1}}
 \newcommand\cornum[1]{\num[round-mode=places,round-precision=3]{#1}}
 
