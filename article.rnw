@@ -155,10 +155,8 @@ As such, the best groupings of species may be different for each of the effects 
 We propose that species might be best partitioned into groups without regard to any \emph{a priori} definition but instead based purely upon which grouping gives the most parsimonious model.
 % DBS: We can say something here about how this data-informed approach has worked very well for other clustering problems, such as modularity in networks. I can point to some very good references along those lines.
 In this study, we investigate the usefulness and correctness of such an approach using experimental data from competition between different \emph{Drosophila} species provided by \textcite{terry2021natural}.
-We fit a Lotka--Volterra model to these data to find the groupings that give the most parsimonious model.
+We fit a Lotka--Volterra model to these data to find the groupings that give the most parsimonious model, and compare these groupings to similarity based upon a species trait (body size).
 While doing so, we group species independently with regard to their effects upon other species and their responses to other species, to find whether the data-informed groupings differ between these two cases.
-%TODO: Mention the comparison to traits (body size)?
-% DBS: If we leave in the traits, then we should mention them at least briefly.
 
 \section{Methods}
 
