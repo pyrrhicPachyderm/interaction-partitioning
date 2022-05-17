@@ -173,8 +173,6 @@ The experiment used six species of \emph{Drosophila} from an Australian rainfore
 The experiment took place in vials with a limited amount of medium for egg-laying and larval development; competition was for space on this medium.
 A fixed number of adult pairs of one or two species were added to each vial and allowed to mate and lay eggs.
 The number of adult pairs of each species emerging from these eggs was counted.
-%---this was the size of the next generation.
-% DBS: Do we need the bit I've commented out above? Plus, it isn't the size of the next generation it's the number of new adults...
 
 Experiments occurred for every single-species and two-species combination of the six species, at a variety of densities.
 The single-species densities were 3, 9, or 12 pairs per vial, and each of these was replicated six times per species.
