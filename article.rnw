@@ -178,7 +178,6 @@ Experiments occurred for every single-species and two-species combination of the
 The single-species densities were 3, 9, or 12 pairs per vial, and each of these was replicated six times per species.
 The two-species densities were (3,3), (3,6), (3,9), (3,12), (6,3), (9,3), or (12,3) pairs per vial (where the paired values give the densities of each of the two species), and each of these was replicated three times per pair of species.
 Vials with a single founding pair were excluded from this study and the original authors' due to an Allee effect that the Lotka--Volterra model cannot accommodate.
- %
 Further details of the experimental methodology can be found in \textcite{terry2021natural}.
 
 \subsection{Model}
