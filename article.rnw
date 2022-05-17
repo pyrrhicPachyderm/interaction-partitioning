@@ -48,6 +48,7 @@
 \date{}
 
 <<include=FALSE>>=
+	knitr::opts_chunk$set(echo = FALSE) #Never show the code, only output.
 	knitr::opts_chunk$set(results = 'asis') #Text is grey without this.
 	knit_hooks$set(inline = function(x) {x}) #Disable automatic formatting of in-line material.
 @
@@ -287,7 +288,7 @@ The ungrouped model gave an {\ic} value of \icnum{\Sexpr{brute_data$fully_separa
 \Cref{fig:ic} shows the distribution of {\ic} values from the models, with some models of interest marked.
 
 \begin{figure}
-	<<echo=FALSE>>=
+	<<>>=
 		hist(brute_data$statistics[[ic]],
 			main="",
 			xlab=ic_name,
@@ -317,7 +318,7 @@ This indicates that the most parsimonious model is not especially likely to be o
 \begin{figure}
 	\centering
 	
-	<<echo=FALSE>>=
+	<<>>=
 		best_model_index <- which.max(brute_data$statistics[[ic_weight]])
 		best_row_grouping <- brute_data$get_row_grouping(best_model_index)
 		best_col_grouping <- brute_data$get_col_grouping(best_model_index)
@@ -335,7 +336,7 @@ This indicates that the most parsimonious model is not especially likely to be o
 	
 	\begin{subfigure}{\textwidth}
 		\centering
-		<<echo=FALSE>>=
+		<<>>=
 			grouped_alpha_matrix(
 				best_species_names,
 				best_row_grouping,
@@ -351,7 +352,7 @@ This indicates that the most parsimonious model is not especially likely to be o
 	
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		<<echo=FALSE>>=
+		<<>>=
 			minimal_coclassification_kable(
 				best_col_coclassification,
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
@@ -363,7 +364,7 @@ This indicates that the most parsimonious model is not especially likely to be o
 	%
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		<<echo=FALSE>>=
+		<<>>=
 			minimal_coclassification_kable(
 				best_row_coclassification,
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
@@ -409,7 +410,7 @@ Neither the row nor column coclassification matrix was significantly correlated 
 	\centering
 	\begin{subfigure}{\textwidth}
 		\centering
-		<<echo=FALSE>>=
+		<<>>=
 			weighted_coclassification_kable(
 				weighted_col_coclassification_matrix[species_output_order,species_output_order],
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
@@ -423,7 +424,7 @@ Neither the row nor column coclassification matrix was significantly correlated 
 	
 	\begin{subfigure}{\textwidth}
 		\centering
-		<<echo=FALSE>>=
+		<<>>=
 			weighted_coclassification_kable(
 				weighted_row_coclassification_matrix[species_output_order,species_output_order],
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
