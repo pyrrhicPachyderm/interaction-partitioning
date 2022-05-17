@@ -189,8 +189,7 @@ The data provided the change in population size from one generation to the next,
 \end{equation}
 where $N_{i,t}$ is the population of species $i$ at time $t$ (the size of the parent generation), $N_{i,t+1}$ is the population at time $t+1$ (the size of the offspring generation), $r_i$ is the intrinsic growth rate of species $i$, and $\alpha_{ij}$ is the per capita effect of species $j$ on species $i$.
 The competition coefficients were not constrained to be positive, allowing for the possibility of mutualistic effects between some species.
-
-% DBS: Let's add something that very briefly outlines how many parameters this model has. Then, below, we can provide formulae for the number of parameters given the number of row and column groups. Even though people can work this out themselves, it is probably useful to make it explicit so that we don't have to depend on them actually mustering up the energy to do so.
+With $n$ species, this model has $n+n^2$ parameters: $n$ growth rates and $n^2$ competition coefficients.
 
 % DBS: We might want to be prepared for reviewers asking us to change from a linear LV model.
 
