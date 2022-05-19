@@ -196,24 +196,25 @@ With $n$ species, this model has $n+n^2$ parameters: $n$ growth rates and $n^2$ 
 \subsubsection{Species grouping}
 
 In order to reduce the number of free parameters in the model, we grouped species together, and constrained the appropriate competition coefficients to be equal for species within the same group.
-In our grouping, we avoided the common assumption that species which are similar in their responses to competition would automatically be similar in their competition effects.
-As such, we had two groupings; one grouping of the competitive responses, and one of the competitive effects.
+Within the model defined above, each species is effectively in its own group, such that all pairs of species interact in a unique fashion.
+At the other extreme, all species could be placed in the same group, such that all pairs of species interact equivalently, reminiscent of the neutral model.
+Given $n$ species, there may be any integer number of groups from $1$ to $n$.
+Groupings are known formally as partitions in mathematics, and the total number of groupings for $n$ species is given by the Bell numbers, denoted $B_n$ \parencite{bell1934exponential}.
 
-The set of competition coefficients in the Lotka--Volterra model can be arranged in an interaction matrix \parencite{novak2016characterizing}, where a row contains all the competitive effects on a single species and a column contains all the competitive effects of a single species.
+It is commonly assumed that species which are similar in their responses to competition would automatically be similar in their competition effects.
+However, competitive responses may be governed by a different set of traits than compeititive effects, so this assumption does not necessarily hold.
+We avoided this assumption by allowing species which were similar in one regard to be dissimilar in the other, and vice versa.
+As such, each model was defined by two groupings of species: one grouping of the competitive responses, and one of the competitive effects.
+
+To better understand the meaning of species grouping of competition coefficients, it is useful to recognize that this component of the Lotka--Volterra model can be represented as an interaction matrix \parencite{novak2016characterizing}, where a row contains all the competitive effects on a single species and a column contains all the competitive effects of a single species.
 As such, if two species are assumed to have the same response to competition, then two rows of the interaction matrix are constrained to be equal.
 Similarly, if two species are assumed to have the same competitive effect, then two columns of the interaction matrix are constrained to be equal.
-This allows us to refer simply to the ``row grouping'' and the ``column grouping''.
+This allows us to refer below to the grouping of the competitive responses as the ``row grouping'' and the grouping of the competitive effects as the ``column grouping''.
 Formally, if species $a$ and $b$ were in the same row group, $\alpha_{aj}\equiv\alpha_{bj} \, \forall j$, and if $a$ and $b$ were in the same column group, $\alpha_{ia}\equiv\alpha_{ib} \, \forall i$.
-As such, the total number of free competition coefficients in the model was equal to the number of row groups multiplied by the number of column groups.
-The species' intrinsic growth rates, $r_i$, were not affected by grouping; each species always had its own growth rate fitted independently of other species.
 
-Groupings are known formally as ``partitions'' in mathematics.
-A grouping divides the species into groups such that each species belongs to one and only one group.
-Given $n$ species, there may be any integer number of groups from $1$ to $n$.
-With $n$ groups, the grouping places each species into its own group, such that all species interact in a unique fashion.
-With $1$ group, every species is placed in the same group, such that all are equal in their interactions, reminiscent of the neutral model.
-The total number of groupings for $n$ species is given by the Bell numbers, denoted $B_n$ \parencite{bell1934exponential}.
 With six species and independently selected row and column groupings, the total number of possible models is ${\left(B_6\right)}^2 = \num{\Sexpr{numbers::bell(6)^2}}$.
+The species' intrinsic growth rates, $r_i$, were not affected by grouping; each species always had its own growth rate fitted independently of other species.
+The total number of parameters in the model is reduced to $n$ growth rates, and a number of competition coefficients equal to the number of row groups multiplied by the number of column groups.
 
 \subsubsection{Model fitting}
 
