@@ -258,7 +258,6 @@ Unfortunately, without a null \emph{distribution} of coclassification matrices, 
 However, we could test the row-grouping and column-grouping coclassification matrices against one another.
 By testing for correlation between the coclassification matrix for the the rows and that for the columns, we could perform a different test regarding the assumption that it is appropriate to use the same grouping for both.
 We did this using a Mantel test, as appropriate for similarity matrices.
- %
 We could also test the coclassification matrices for correlation with an expected dissimilarity matrix.
 We calculated one such dissimilarity matrix based on a species trait: body size (as mean wet mass of female adults, obtained from \cite{terry2021natural}).
 The trait difference matrix was calculated as absolute difference between trait values, while the coclassification matrices were converted to dissimilarity matrices by subtracting them from $1$.
