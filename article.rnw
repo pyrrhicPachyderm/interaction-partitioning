@@ -185,7 +185,7 @@ Further details of the experimental methodology can be found in \textcite{terry2
 The data provided the change in population size from one generation to the next, so we used a discrete-time version of the Lotka--Volterra competition model given by:
 \begin{equation}
 	N_{i,t+1} - N_{i,t} = N_{i,t} \, r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right) \,,
-	\label{LVmodel}
+	\label{eq:lv-model}
 \end{equation}
 where $N_{i,t}$ is the population of species $i$ at time $t$ (the size of the parent generation), $N_{i,t+1}$ is the population at time $t+1$ (the size of the offspring generation), $r_i$ is the intrinsic growth rate of species $i$, and $\alpha_{ij}$ is the per capita effect of species $j$ on species $i$.
 The competition coefficients were not constrained to be positive, allowing for the possibility of mutualistic effects between some species.
@@ -218,7 +218,7 @@ The total number of parameters in the model is reduced to $n$ growth rates, and 
 
 \subsubsection{Model fitting}
 
-The Lotka--Volterra competition model in \cref{LVmodel} is not linear in the parameters.
+The Lotka--Volterra competition model in \cref{eq:lv-model} is not linear in the parameters.
 With the rows of the interaction matrix ungrouped, the regression could be reparameterised to be linear in the parameters by treating $r_i \alpha_{ij}$ as a single regression parameter for each $i,j$ pair.
 With the rows grouped, however, this becomes impossible since each species still has an independent growth rate.
 As such, we instead fit the models with the Gauss--Newton method for non-linear least squares and assumed a normal error distribution of the response variable.
