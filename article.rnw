@@ -123,7 +123,7 @@ This suggests the need for a different, more data-informed, approach to grouping
 
 Models have long been used in community ecology \parencite{lotka1925elements}.
 They allow us to make predictions about things we cannot directly observe, be it the response of a community to novel pressures \parencite{novak2016characterizing} or the stability of an entirely novel assemblage \parencite{maynard2020predicting}.
-The ability to make these predictions is becoming increasingly important as global change accelerates, introducing alien species and applying climatic or other anthropogenic pressures to communities worldwide \parencite{XXX}.
+The ability to make these predictions is becoming increasingly important as global change accelerates, introducing alien species and applying climatic or other anthropogenic pressures to communities worldwide \parencite{gilman2010framework, sutherst2007including}.
 
 Making practical use of a model requires experimentally or observationally determining the values of each of the model's parameters.
 This poses a particular problem for models that include species interactions due to the sheer number of parameters that must be determined.
