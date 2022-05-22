@@ -465,13 +465,6 @@ The intransitivity of coclassification in some instances even suggests that ther
 This could suggest a Bayesian approach is worth exploring in the future, in which the outcome is not a definitive grouping but a distribution of valid groupings.
 Alternatively, it may suggest adopting a mixed-membership approach in which a species can belong to more than one group \parencite{airoldi2008mixed}, reminiscent of the community-level drivers of \textcite{ovaskainen2017species}.
 
-% DBS: Never shoot yourself in the foot in your concluding paragraph! The reviewers will already be primed to do this for you, so I always think it's better to take a glass half full perspective.
-% DBS: Also, there is no hard and fast rule to say we need a "sum it all up" concluding paragraph. Each of the statements below is pretty much already stated above but with more depth. I think we could actually do away with it and lose very little.
-All in all, the method of \emph{a posteriori} parsimony-based selection of groups has not proven to be greatly effective, at least on such a closely related set of species.
-However, the results suggest some advice which might be borne in mind whenever selecting groupings \emph{a priori} for use in species interaction models.
-Firstly, there may be no single best grouping, but perhaps multiple rather distinct groupings which each perform similarly.
-Furthermore, one should not implicitly assume that species are grouped in the same way with regard to their effects upon other species and their response to them; distinct groupings of the two might well be considered.
-
 \FloatBarrier
 \printbibliography
 \end{document}
