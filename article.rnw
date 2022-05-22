@@ -132,7 +132,7 @@ Even the simplest models with no environmental dependence require one parameter 
 Hence the number of parameters scales quadratically with the number of species; at least \num{100} parameters are required for the interactions in a community of ``just'' \num{10} species.
 Determining these parameters experimentally requires at least one experiment per parameter, and preferably more \parencite{hart2018quantify}.
 This is understandably expensive and requires substantial effort.
-As such, model-based predictions of real communities are typically restricted to a small number of focal species \parencite{ovaskainen2017species, XXX}.
+As such, model-based predictions of real communities are typically restricted to a small number of focal species \parencite{ovaskainen2017species,maynard2020predicting}.
 However, real communities can contain hundreds of species \parencite{cornell1999unsaturation}, or even thousands for microbial communities assessed by genetic metabarcoding \parencite{warton2015variables}.
 To bridge this gap between the size of real communities and our ability to parameterise models for them, we need an ecologically-defensible way to reduce the number of parameters that predictive models require.
 
