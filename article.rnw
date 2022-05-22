@@ -454,18 +454,16 @@ Alternatively, the small number of species in the study might not have been suff
 Alas, the brute force method we employed in this study has a very poor algorithmic complexity, preventing the application of the method to studies with more than seven or eight species. %DBS: Add in the number of models for both of these to emphasize the point.
 As such, a better method would be required in order to test for grouping of species interactions among a larger set of species.
 
-% DBS: I think we should swap the order of the following two paragraphs.
-
-The intransitivity of coclassification in some instances even suggests that there may not be a single ``best'' grouping of the species, but rather two or more quite distinct and mutually exclusive groupings of similar validity. A single trait like body size might therefore not be able to capture the multivariate nature of species' ecological niches \parencite{XXX}.
-This could suggest a Bayesian approach is worth exploring in the future, in which the outcome is not a definitive grouping but a distribution of valid groupings.
-Alternatively, it may suggest adopting a mixed-membership approach in which a species can belong to more than one group \parencite{airoldi2008mixed}, reminiscent of the community-level drivers of \textcite{ovaskainen2017species}.
-
 While the results could not definitely show the best grouping, it was clear that the appropriate grouping differed for the rows and columns.
 That is, species that are similar in their response to competition may not be similar in the competitive effects they have on other species, and vice versa.
 This should not be surprising, for it is known that different traits govern species competitive effects than their responses \parencite{goldberg1991competitive}.
 Yet the assumption that species should group equivalently in these two regards is frequently made, often implicitly and without comment \parencite[e.g.][]{martorell2014testing,ives2003estimating,gross2015stability}.
 Our results recommend more explicit questioning, and even testing, of that assumption when building future species interaction models.
 %TODO: Discuss the fact that species were coclassified more in the rows than in the columns?
+
+The intransitivity of coclassification in some instances even suggests that there may not be a single ``best'' grouping of the species, but rather two or more quite distinct and mutually exclusive groupings of similar validity. A single trait like body size might therefore not be able to capture the multivariate nature of species' ecological niches \parencite{XXX}.
+This could suggest a Bayesian approach is worth exploring in the future, in which the outcome is not a definitive grouping but a distribution of valid groupings.
+Alternatively, it may suggest adopting a mixed-membership approach in which a species can belong to more than one group \parencite{airoldi2008mixed}, reminiscent of the community-level drivers of \textcite{ovaskainen2017species}.
 
 % DBS: Never shoot yourself in the foot in your concluding paragraph! The reviewers will already be primed to do this for you, so I always think it's better to take a glass half full perspective.
 % DBS: Also, there is no hard and fast rule to say we need a "sum it all up" concluding paragraph. Each of the statements below is pretty much already stated above but with more depth. I think we could actually do away with it and lose very little.
