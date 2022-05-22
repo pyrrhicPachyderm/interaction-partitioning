@@ -457,7 +457,7 @@ Our results recommend more explicit questioning, and even testing, of that assum
 
 The intransitivity of coclassification in some instances even suggests that there may not be a single ``best'' grouping of the species, but rather two or more quite distinct and mutually exclusive groupings of similar validity.
 A single trait like body size might therefore not be able to capture the multivariate nature of species' ecological niches \parencite{XXX}.
-This could suggest a Bayesian approach is worth exploring in the future, in which the outcome is not a definitive grouping but a distribution of valid groupings.
+This could suggest that a Bayesian approach is worth exploring in the future, in which the outcome is not a definitive grouping but a distribution of valid groupings.
 Alternatively, it may suggest adopting a mixed-membership approach in which a species can belong to more than one group \parencite{airoldi2008mixed}, reminiscent of the community-level drivers of \textcite{ovaskainen2017species}.
 
 \FloatBarrier
