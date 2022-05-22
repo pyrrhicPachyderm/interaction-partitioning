@@ -114,7 +114,7 @@ Here, we assess the validity of such grouping by deriving the optimal groupings 
 We find evidence that grouping can improve the parsimony of species interaction models, but we also observe that there is no single optimal grouping.
 Further, those groupings that did prove beneficial could not be easily predicted from available species attributes \emph{a priori}, calling into question the prevailing method of \emph{a priori} species grouping.
 Lastly, we find that species did not group equivalently in their competitive effect and in their response to competition, invalidating a key assumption often made implicitly when defining species groupings.
-This suggests the need for a different, more data-ifnormed, approach to grouping in species interaction models.
+This suggests the need for a different, more data-informed, approach to grouping in species interaction models.
 
 % DBS: Once we have a title, make sure that we remove all words from the keywords that appear there.
 \keywords{Lotka--Volterra; interaction matrix; competition; grouping; model fitting; parsimony}
