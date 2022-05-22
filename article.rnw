@@ -150,7 +150,7 @@ In all, we are left with the question of how best to group species in community 
 
 To the best of our knowledge, studies that use grouping to simplify models of species interactions have also made one additional, untested assumption: that the same grouping is equally valid for how species affect others as for how species respond to others \parencite{XXX}.
 There is good reason to question this assumption, as it is known that different traits can govern species' competitive effects than govern their responses to competition \parencite{goldberg1991competitive}.
-% DBS: Maybe it's worth adding a concrete example here for the more empirical reader/reviewer.
+For resource competition in particular, competitive effect is determined by how the organism affects local resource availability, while competitive response is determined by the organism is inhibited by depleted resources \parencite{violle2009competition}.
 As such, the best groupings of species may be different for each of the effects and responses.
 
 We propose that species might be best partitioned into groups without regard to any \emph{a priori} definition but instead based purely upon which grouping gives the most parsimonious model.
