@@ -202,11 +202,11 @@ Given $n$ species, there may be any integer number of groups from $1$ to $n$.
 Groupings are known formally as partitions in mathematics, and the total number of groupings for $n$ species is given by the Bell numbers, denoted $B_n$ \parencite{bell1934exponential}.
 
 It is commonly assumed that species which are similar in their responses to competition would automatically be similar in their competition effects.
-However, competitive responses may be governed by a different set of traits than compeititive effects, so this assumption does not necessarily hold.
+However, competitive responses may be governed by a different set of traits than competitive effects, so this assumption does not necessarily hold.
 We avoided this assumption by allowing species which were similar in one regard to be dissimilar in the other, and vice versa.
 As such, each model was defined by two groupings of species: one grouping of the competitive responses, and one of the competitive effects.
 
-To better understand the meaning of species grouping of competition coefficients, it is useful to recognize that this component of the Lotka--Volterra model can be represented as an interaction matrix \parencite{novak2016characterizing}, where a row contains all the competitive effects on a single species and a column contains all the competitive effects of a single species.
+To better understand the meaning of species grouping of competition coefficients, it is useful to recognise that this component of the Lotka--Volterra model can be represented as an interaction matrix \parencite{novak2016characterizing}, where a row contains all the competitive effects on a single species and a column contains all the competitive effects of a single species.
 As such, if two species are assumed to have the same response to competition, then two rows of the interaction matrix are constrained to be equal.
 Similarly, if two species are assumed to have the same competitive effect, then two columns of the interaction matrix are constrained to be equal.
 This allows us to refer below to the grouping of the competitive responses as the ``row grouping'' and the grouping of the competitive effects as the ``column grouping''.
@@ -445,7 +445,7 @@ In the present case, we cannot rule out the possibility that a lack of clarity i
 All the species in this study were members of the same genus, \emph{Drosophila}, and as such were all rather similar.
 A study system with species spanning multiple functional groups, or a broader taxonomy, might have shown clearer groupings.
 Alternatively, the small number of species in the study might not have been sufficient for clear groups to be defined.
-Alas, the brute force method we employed in this study has a very poor algorithmic complexity, preventing the application of the method to studies with more than seven or eight species. %DBS: Add in the number of models for both of these to emphasize the point.
+Alas, the brute force method we employed in this study has a very poor algorithmic complexity, preventing the application of the method to studies with more than seven or eight species. %DBS: Add in the number of models for both of these to emphasise the point.
 As such, a better method would be required in order to test for grouping of species interactions among a larger set of species.
 
 While the results could not definitely show the best grouping, it was clear that the appropriate grouping differed for the rows and columns.
