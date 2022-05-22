@@ -380,7 +380,7 @@ This indicates that the most parsimonious model is not especially likely to be o
 \subsection{Coclassification of species}
 
 Overall, no pair of species can confidently be said to be coclassified together in the row or column groupings; the highest probability of classification was \SI[round-mode=figures,round-precision=3]{\Sexpr{max(weighted_col_coclassification_matrix - diag(num_species), weighted_row_coclassification_matrix - diag(num_species))*100}}{\percent} (\cref{fig:coclassification}).
-Some pairs of species were far more likely to be coclassified than others, however, suggesting some structure to the best groupings.
+However, some pairs of species were far more likely to be coclassified than others, suggesting some structure to the best groupings.
 
 The structure of the coclassifications was very different in the row groups than in the column groups.
 Most pairs of species which had a high probability of being coclassified in one grouping had a very low probability of being coclassified in the other grouping.
