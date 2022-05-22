@@ -137,7 +137,7 @@ However, real communities can contain hundreds of species \parencite{cornell1999
 To bridge this gap between the size of real communities and our ability to parameterise models for them, we need an ecologically-defensible way to reduce the number of parameters that predictive models require.
 
 One simplifying approach is to assume that most pairs of species do not interact or interact weakly, and hence setting many of the parameters to zero \parencite{mutshinda2009drives}.
-However, weak interactions have been shown to be very important to the stability of ecological communities \parencite{XXX, wootton2016many}, and setting these to zero may lose important information.
+However, weak interactions have been shown to be very important to the stability of ecological communities \parencite{mccann1998weak,neutel2002stability,wootton2016many}, and setting these to zero may lose important information.
 Another approach assumes that species fall into groups, such that all species in the same group interact with species in other groups in an identical fashion, thereby collapsing pairwise interaction parameters for all the species in that group into sets of common parameters \parencite{ovaskainen2017species,weiss2021disentangling}.
 
 In ecological contexts, such groups have been defined \emph{a priori} by phylogeny at some taxonomic level or by functional similarity \parencite{uriarte2004spatially,ovaskainen2017species,weiss2021disentangling,martyn2021identifying}.
