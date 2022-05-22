@@ -218,7 +218,7 @@ The total number of parameters in the model is reduced to $n$ growth rates, and 
 
 \subsubsection{Model fitting}
 
-The Lotka--Volterra competition model in Eq.~(\ref{LVmodel}) is not linear in the parameters.
+The Lotka--Volterra competition model in \cref{LVmodel} is not linear in the parameters.
 With the rows of the interaction matrix ungrouped, the regression could be reparameterised to be linear in the parameters by treating $r_i \alpha_{ij}$ as a single regression parameter for each $i,j$ pair.
 With the rows grouped, however, this becomes impossible since each species still has an independent growth rate.
 As such, we instead fit the models with the Gauss--Newton method for non-linear least squares and assumed a normal error distribution of the response variable.
