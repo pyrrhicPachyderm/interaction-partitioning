@@ -127,7 +127,7 @@ The ability to make these predictions is becoming increasingly important as glob
 
 Making practical use of a model requires experimentally or observationally determining the values of each of the model's parameters.
 This poses a particular problem for models that include species interactions due to the sheer number of parameters that must be determined.
-Even the simplest models with no environmental dependence require one parameter to characterise the interaction of each pair of species \parencite{novak2016characterizing, XXX}.
+Even the simplest models with no environmental dependence require one parameter to characterise the interaction of each pair of species \parencite{novak2016characterizing, rocha2005lotka}.
 % DBS: Hmm. Should the above two or rephrased to embrace the directionality of what's going on?
 Hence the number of parameters scales quadratically with the number of species; at least \num{100} parameters are required for the interactions in a community of ``just'' \num{10} species.
 Determining these parameters experimentally requires at least one experiment per parameter, and preferably more \parencite{hart2018quantify}.
