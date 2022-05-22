@@ -379,9 +379,7 @@ This indicates that the most parsimonious model is not especially likely to be o
 
 \subsection{Coclassification of species}
 
-Coclassification matrices for the row and column groupings are shown in \cref{fig:coclassification}.
-% DBS: In general, I am more in favor of just putting something like a pointer to a figure "(Fig.~1)" at the end of the sentence below than an explicit statement of what appears in a figure. Some journals also frown on devoting words to explanations of what appears in figures since that is technically what figure captions are for.
-Overall, no pair of species can confidently be said to be coclassified together in the row or column groupings; the highest probability of classification was \SI[round-mode=figures,round-precision=3]{\Sexpr{max(weighted_col_coclassification_matrix - diag(num_species), weighted_row_coclassification_matrix - diag(num_species))*100}}{\percent}.
+Overall, no pair of species can confidently be said to be coclassified together in the row or column groupings; the highest probability of classification was \SI[round-mode=figures,round-precision=3]{\Sexpr{max(weighted_col_coclassification_matrix - diag(num_species), weighted_row_coclassification_matrix - diag(num_species))*100}}{\percent} (\cref{fig:coclassification}).
 Some pairs of species were far more likely to be coclassified than others, however, suggesting some structure to the best groupings.
 
 The structure of the coclassifications was very different in the row groups than in the column groups.
