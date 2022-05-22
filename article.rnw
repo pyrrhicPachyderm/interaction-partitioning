@@ -222,8 +222,6 @@ The Lotka--Volterra competition model in Eq.~(\ref{LVmodel}) is not linear in th
 With the rows of the interaction matrix ungrouped, the regression could be reparameterised to be linear in the parameters by treating $r_i \alpha_{ij}$ as a single regression parameter for each $i,j$ pair.
 With the rows grouped, however, this becomes impossible since each species still has an independent growth rate.
 As such, we instead fit the models with the Gauss--Newton method for non-linear least squares and assumed a normal error distribution of the response variable.
-%The models were fitted to the data using maximum likelihood regression techniques.
-%Fitting it using precisely a Lotka--Volterra model prevented the use of a link function, rendering most generalised regression techniques infeasible.
 To prevent heteroskedasticity and improve normality, we transformed total population growth to per capita population growth, which corresponds to the following model:
 \begin{equation}
 	\frac{N_{i,t+1} - N_{i,t}}{N_{i,t}} = r_i \left(1 - \sum_j \alpha_{ij} N_{j,t}\right) \,.
@@ -243,7 +241,6 @@ Using these Akaike weights, we calculated two important statistics.
 First, the total Akaike weight of models with a lower {\ic} than the entirely ungrouped model; this is the probability that some model is more parsimonious than the fully ungrouped model.
 Second, the total Akaike weight of models that used the same grouping for the rows as for the columns; this is the probability that the most parsimonious model grouped species equivalently in their competitive effects as in their competitive responses.
 To evaluate the significance of the latter, we performed a Monte Carlo permutation test, comparing the total Akaike weight of those models that grouped rows and columns equivalently to the total Akaike weight of a equally sized random subset of the models.
-%This is a test of whether the most parsimonious model is more likely to group the species equivalently in the rows as in the columns than it would be by chance.
 
 \subsubsection{Coclassification matrices}
 
