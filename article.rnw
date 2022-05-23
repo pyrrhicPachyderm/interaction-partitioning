@@ -197,7 +197,7 @@ With $n$ species, this model has $n+n^2$ parameters: $n$ growth rates and $n^2$ 
 
 In order to reduce the number of free parameters in the model, we grouped species together, and constrained the appropriate competition coefficients to be equal for species within the same group.
 Within the model defined above, each species is effectively in its own group, such that all pairs of species interact in a unique fashion.
-At the other extreme, all species could be placed in the same group, such that all pairs of species interact equivalently; they are ecologically equivalent in the sense of \textcite{mcpeek2019disentangling}.
+At the other extreme, all species could be placed in the same group, such that all pairs of species interact equivalently; they are ecologically equivalent \emph{sensu} \textcite{mcpeek2019disentangling}.
 Given $n$ species, there may be any integer number of groups from $1$ to $n$.
 Groupings are known formally as partitions in mathematics, and the total number of groupings for $n$ species is given by the Bell numbers, denoted $B_n$ \parencite{bell1934exponential}.
 
