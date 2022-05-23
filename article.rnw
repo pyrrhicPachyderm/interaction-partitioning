@@ -439,7 +439,6 @@ It also contrasts with previous studies that have succeeded in finding clear gro
 
 One possible explanation is that species simply do not group to the same extent in a quantitative competitive context as in a binary network.
 That said, the results suggest that this is unlikely as grouping was still likely to increase parsimony.
-Further, there is no reason to suspect that species would not have clear similarities or dissimilarities in their ecological niches, and therefore their competitive effects and responses \parencite{XXX}.
 In the present case, we cannot rule out the possibility that a lack of clarity in the groupings is instead a product of the study system.
 All the species in this study were members of the same genus, \emph{Drosophila}, and as such were all rather similar.
 A study system with species spanning multiple functional groups, or a broader taxonomy, might have shown clearer groupings.
