@@ -300,7 +300,7 @@ The ungrouped model had an {\ic} just \icnum{\Sexpr{brute_data$fully_separated_s
 
 Considering only models in which the rows and columns were grouped using the same grouping, the {\ic} values ranged from \icnum{\Sexpr{min(brute_data$equivalently_grouped_statistics[[ic]])}} to \icnum{\Sexpr{max(brute_data$equivalently_grouped_statistics[[ic]])}}; neither the best nor worst overall models had equivalently grouped rows and columns.
 The total Akaike weight assigned to these models was \probnum{\Sexpr{brute_data$equivalently_grouped_weight}}; this was more than expected by chance (\probnum{\Sexpr{brute_data$equivalently_grouped_expected_weight}}), but not significantly so (Monte Carlo permutation test, $p=\probnum{\Sexpr{brute_data$equivalently_grouped_weight_p #$}}$).
-This indicates that the most parsimonious model is not especially likely to be one that groups the rows and columns equivalently.
+This indicates that the most parsimonious model was not especially likely to be one that grouped the rows and columns equivalently.
 
 \begin{figure}
 	\centering
