@@ -435,10 +435,9 @@ We have shown that it is possible to fit a more parsimonious model of species in
 Indeed, the results show that grouping species was likely to give a more parsimonious model (probability \probnum{\Sexpr{sum(brute_data$statistics[[ic_weight]][brute_data$statistics[[ic]] < brute_data$fully_separated_statistics[[ic]]])}}) than leaving them ungrouped.
 Which grouping would give the most parsimonious model, however, could not be determined with confidence.
 This result stands in contrast to the popular wisdom in ecology that species should form some sort of clear groups, be they the functional groups so often used \parencite{blondel2003guilds,kirwan2009diversity,boulangeat2012improving}, or taxonomic groups per a relationship between phylogeny and ecological niche \parencite{godoy2014phylogenetic,wilcox2018evolutionary}.
-It also contrasts with previous studies that have succeeded in finding clear groups, such as \textcite{allesina2009food}, who used AIC to find the best grouping of species, but in a binary food web rather than a quantitative competitive context.
-% DBS: We're probably doing a disservice to the "groups in ecological communities" literature by only citing the Allesina paper above.
+It also contrasts with previous studies that have succeeded in finding clear groups in other ecological contexts, such as in food webs \parencite{krause2003compartments,allesina2009food} and pollination networks \parencite{olesen2007modularity}.
 
-One possible explanation is that species simply do not group to the same extent in a competitive context.
+One possible explanation is that species simply do not group to the same extent in a quantitative competitive context as in a binary network.
 That said, the results suggest that this is unlikely as grouping was still likely to increase parsimony.
 Further, there is no reason to suspect that species would not have clear similarities or dissimilarities in their ecological niches, and therefore their competitive effects and responses \parencite{XXX}.
 In the present case, we cannot rule out the possibility that a lack of clarity in the groupings is instead a product of the study system.
