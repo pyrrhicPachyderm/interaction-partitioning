@@ -148,7 +148,7 @@ While attempts have been made to define functional groupings that are more usefu
 As such, integrating these into species interaction models leaves us with a circular argument: a functional group is a group of species that interact with others in a similar way, and we therefore assume that all the species in a functional group interact with others in a similar way.
 In all, we are left with the question of how best to group species in community models, and whether we can do so in a meaningful way using less data than required for a fully pairwise parameterisation.
 
-To the best of our knowledge, all studies that use grouping to simplify models of species interactions have also made one additional, untested assumption: that the same grouping is equally valid for how species affect others as for how species respond to others \parencite{XXX}.
+To the best of our knowledge, all studies that use grouping to simplify models of species interactions have also made one additional, untested assumption: that the same grouping is equally valid for how species affect others as for how species respond to others.
 There is good reason to question this assumption, as it is known that different traits can govern species' competitive effects than govern their responses to competition \parencite{goldberg1991competitive}.
 For resource competition in particular, competitive effect is determined by how the organism affects local resource availability, while competitive response is determined by the organism is inhibited by depleted resources \parencite{violle2009competition}.
 As such, the best groupings of species may be different for each of the effects and responses.
