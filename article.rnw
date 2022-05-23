@@ -444,7 +444,7 @@ In the present case, we cannot rule out the possibility that a lack of clarity i
 All the species in this study were members of the same genus, \emph{Drosophila}, and as such were all rather similar.
 A study system with species spanning multiple functional groups, or a broader taxonomy, might have shown clearer groupings.
 Alternatively, the small number of species in the study might not have been sufficient for clear groups to be defined.
-Alas, the brute force method we employed in this study has a very poor algorithmic complexity, preventing the application of the method to studies with more than seven or eight species. %DBS: Add in the number of models for both of these to emphasise the point.
+Alas, the brute force method we employed in this study has a very poor algorithmic complexity, preventing the application of the method to studies with more than seven or eight species (there are ${\left(B_7\right)}^2 = \num{\Sexpr{numbers::bell(7)^2}}$ possible models with $7$ species and ${\left(B_8\right)}^2 = \num{\Sexpr{numbers::bell(8)^2}}$ models with $8$ species).
 As such, a better method would be required in order to test for grouping of species interactions among a larger set of species.
 
 While the results could not definitely show the best grouping, it was clear that the appropriate grouping differed for the rows and columns.
