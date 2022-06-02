@@ -135,9 +135,9 @@ As such, model-based predictions of real communities are typically restricted to
 However, real communities can contain hundreds of species \parencite{cornell1999unsaturation}, or even thousands for microbial communities assessed by genetic metabarcoding \parencite{warton2015variables}.
 To bridge this gap between the size of real communities and our ability to parameterise models for them, we need an ecologically-defensible way to reduce the number of parameters that predictive models require.
 
-One simplifying approach is to assume that most pairs of species do not interact or interact weakly, and hence setting many of the parameters to zero \parencite{mutshinda2009drives}.
-However, weak interactions have been shown to be very important to the stability of ecological communities \parencite{mccann1998weak,neutel2002stability,wootton2016many}, and setting any individual parameter to zero risks losing important information.
-Another approach assumes that species fall into groups, such that all species in the same group interact with species in other groups in an identical fashion, thereby collapsing pairwise interaction parameters for all the species in that group into sets of common parameters \parencite{ovaskainen2017species,weiss2021disentangling}.
+One simplifying approach is to assume that most pairs of species do not interact or interact weakly, and hence setting many of the parameters to zero \parencite{mutshinda2009drives, weiss2021disentangling}.
+However, weak interactions have been shown to be very important to the stability of ecological communities \parencite{mccann1998weak,neutel2002stability,wootton2016many}. Setting any individual parameter to zero thus risks losing important information; moreover, we often do not know with confidence which parameters are likely to be zeros and which are not.
+Another approach assumes that species fall into groups, such that all species in the same group interact with species in other groups in an identical fashion, thereby collapsing pairwise interaction parameters for all the species in that group into sets of common parameters \parencite{ovaskainen2017species}.
 
 In ecological contexts, such groups have been defined \emph{a priori} by phylogeny at some taxonomic level or by functional (i.e., trait) similarity \parencite{uriarte2004spatially,ovaskainen2017species,weiss2021disentangling,martyn2021identifying}.
 The argument for grouping based on phylogeny relies on the principle that closely related species will fill similar ecological niches, and hence will interact with other species in a similar fashion \parencite{godoy2014phylogenetic,webb2002phylogenies,darwin1859origin}. %Darwin Chapter 3 "Struggle for Life Most Severe Between Individuals and Varieties of the Same Species".
@@ -270,7 +270,7 @@ We then performed Mantel tests for correlation between the trait distance matrix
 
 % DBS: Should we add a figure that shows the fit of observed vs predicted? Are we forgetting how much that might resonate with readers and jumping ahead too quickly?
 
-% DBS: We need to add a reference to the partial residual plots in the supps.
+% DBS: As per my comment immediately above, we need to add a reference to the partial residual plots in the supps.
 
 The $R^2$ values of the models ranged from \rsquarednum{\Sexpr{min(brute_data$statistics$R2)}} to \rsquarednum{\Sexpr{max(brute_data$statistics$R2)}}.
 The {\ic} values ranged from \icnum{\Sexpr{min(brute_data$statistics[[ic]])}} to \icnum{\Sexpr{max(brute_data$statistics[[ic]])}}.
