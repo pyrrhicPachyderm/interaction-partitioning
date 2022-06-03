@@ -288,15 +288,15 @@ The ungrouped model gave an {\ic} value of \icnum{\Sexpr{brute_data$fully_separa
 			yaxs='i',
 			ylim=c(0,6000)
 		)
-		abline(v = brute_data$fully_separated_statistics[[ic]], lwd=2, lty="dotted", col="green")
-		abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=2, lty="dashed", col="red")
+		abline(v = brute_data$fully_separated_statistics[[ic]], lwd=2, lty="dashed", col="green")
+		abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=2, lty="dotted", col="red")
 	@
 	\end{subfigure}
 	
 	\caption{%
 		Histogram of the {\ic} values of Lotka--Volterra model fits with all possible groupings of interaction coefficients.
-		The dotted green line shows the {\ic} value (\icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}) of the ungrouped model in which all competition coefficients are fitted independently.
-		The dashed red line shows the {\ic} value (\icnum{\Sexpr{brute_data$fully_grouped_statistics[[ic]]}}) of the fully grouped model in which every pair of species shares a single interaction coefficient.
+		The dashed green line shows the {\ic} value (\icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}) of the ungrouped model in which all competition coefficients are fitted independently.
+		The dotted red line shows the {\ic} value (\icnum{\Sexpr{brute_data$fully_grouped_statistics[[ic]]}}) of the fully grouped model in which every pair of species shares a single interaction coefficient.
 	}
 	\label{fig:ic}
 \end{figure}
