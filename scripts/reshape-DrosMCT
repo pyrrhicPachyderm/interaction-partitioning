@@ -49,10 +49,10 @@ focal_output <- data[["FocalSpecies"]] %>%
 	match(species_names)
 focal_output <- focal_output - 1 #Make it 0-indexed.
 
-response_output <- (data[["ObsCount_Pairs"]] - data[["FocalSpeciesStartDens"]]) / data[["FocalSpeciesStartDens"]]
+response_output <- (data[["ObsCount_Pairs"]] * 2 - data[["FocalSpeciesStartDens"]] * 2) / (data[["FocalSpeciesStartDens"]] * 2) #Times 2 from pairs to individuals.
 
 design_output <- data %>%
-	select(ends_with("_0"))
+	select(ends_with("_0")) * 2 #Times 2 from pairs to individuals.
 
 ################################
 #Turn the outputs into matrices.
