@@ -371,13 +371,10 @@ This indicates that the most parsimonious model was not especially likely to be 
 		Where results are for the single model with the best {\ic} (\probnum{\Sexpr{brute_data$statistics[best_model_index,ic]}}).
 		\Subref{fig:best-alpha-matrix} We show the inferred matrix of competition coefficients, where a competition coefficient in a block represents the same coefficient being used for multiple interactions (per the identified groupings).
 		\Subref{fig:best-coclassification-cols} and \subref{fig:best-coclassification-rows} We show the coclassification matrices derived from the groupings of the columns and rows, respectively.
-		%These coclassification matrices are averaged for all models, weighted by Akaike weights, to produce \cref{fig:coclassification}.
 		Species have been reordered so that species that were grouped together appear adjacent, and the ordering is the same in all of \subref{fig:best-alpha-matrix}, \subref{fig:best-coclassification-cols}, and \subref{fig:best-coclassification-rows}.
 	}
 	\label{fig:best-model}
 \end{figure}
-
-% DBS: I cut out a sentence above in the caption because we say this in the text elsewhere and it's a bit unusual to refer to a later figure in the caption of an earlier one.
 
 \subsection{Coclassification of species}
 
