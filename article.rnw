@@ -456,8 +456,7 @@ Yet the assumption that species should group equivalently in these two regards i
 Our results recommend more explicit questioning, and even testing, of this assumption when building future species interaction models.
 %TODO: Discuss the fact that species were coclassified more in the rows than in the columns?
 
-% DBS: Can we replace "in some instances" below with something a bit more explicit? Do we mean "for some sets of species"?
-The intransitivity of coclassification in some instances even suggests that there may not be a single ``best'' grouping of the species, but rather two or more quite distinct and mutually exclusive groupings of similar validity.
+The intransitivity of coclassification for some sets of species even suggests that there may not be a single ``best'' grouping of the species, but rather two or more quite distinct and mutually exclusive groupings of similar validity.
 A single trait like body size might therefore not be able to capture the multivariate nature of species' ecological niches \parencite{blonder2018hypervolume}.
 % DBS: Should we consider replacing "ecological niches" above with "competitive niches"?
 This could indicate that a Bayesian approach is worth exploring in the future, in which the outcome is not a definitive grouping but a distribution of valid groupings.
