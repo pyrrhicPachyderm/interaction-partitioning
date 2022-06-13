@@ -287,18 +287,17 @@ The ungrouped model gave an {\ic} value of \icnum{\Sexpr{brute_data$fully_separa
 			ylim=c(0,6000)
 		)
 		abline(v = brute_data$fully_separated_statistics[[ic]], lwd=2, lty="dashed", col="green")
-		abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=2, lty="dotted", col="red")
+		abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=2, lty="dotted", col="purple")
 	@
 	\end{subfigure}
 	
 	\caption{%
 		Histogram of the {\ic} values of Lotka--Volterra model fits with all possible groupings of interaction coefficients.
 		The dashed green line shows the {\ic} value (\icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}) of the ungrouped model in which all competition coefficients are fitted independently.
-		The dotted red line shows the {\ic} value (\icnum{\Sexpr{brute_data$fully_grouped_statistics[[ic]]}}) of the fully grouped model in which every pair of species shares a single interaction coefficient.
+		The dotted purple line shows the {\ic} value (\icnum{\Sexpr{brute_data$fully_grouped_statistics[[ic]]}}) of the fully grouped model in which every pair of species shares a single interaction coefficient.
 	}
 	\label{fig:ic}
 \end{figure}
-% DBS: Reconsider green and red to be more colour-blind friendly. I've already changed it so that the lines are different types.
 
 The ``best'' model, as indicated by {\ic}, was not the best with any surety; its Akaike weight indicated a probability of only \probnum{\Sexpr{max(brute_data$statistics[[ic_weight]])}} that it was the best.
 \Cref{fig:best-model} shows the groupings and alpha values of this ``best'' model.
