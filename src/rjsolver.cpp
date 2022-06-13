@@ -236,7 +236,7 @@ Eigen::VectorXd ReversibleJumpSolver::getResiduals() {
 
 double ReversibleJumpSolver::getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, double sourceErrorVariance, double destErrorVariance) {
 	//Having a getLikelihood() function and calling it for source and destination
-	//just results in it returning 0 twice, as it multiplies several hundred small numbers together, and gts too small.
+	//just results in it returning 0 twice, as it multiplies several hundred small numbers together, and gets too small.
 	//So we must calculate the likelihood ratio, getting the ratio as we go.
 	double likelihoodRatio = 1.0;
 	for(size_t i = 0; i < (size_t)sourceResiduals.size(); i++) {
