@@ -451,7 +451,7 @@ As such, a better method would be required in order to test for grouping of spec
 
 While the results could not definitely identify a single best grouping, it was clear that the model-supported groupings differed for the rows and columns.
 That is, species that are similar in their response to competition may not be similar in the competitive effects they have on other species, and vice versa.
-In hindsight, this should not be overly surprising since it is known that different traits govern species competitive effects than govern their responses \parencite{goldberg1991competitive}. % DBS: I think it would be good to find another reference here. Maybe this one? https://onlinelibrary.wiley.com/doi/10.1111/j.1365-2486.2008.01557.x
+In hindsight, this should not be overly surprising since it is known that different traits govern species competitive effects than govern their responses \parencite{goldberg1990components, goldberg1991competitive}.
 Yet the assumption that species should group equivalently in these two regards is frequently made, often implicitly and without comment \parencite[e.g.][]{martorell2014testing,ives2003estimating,gross2015stability}.
 Our results recommend more explicit questioning, and even testing, of this assumption when building future species interaction models.
 %TODO: Discuss the fact that species were coclassified more in the rows than in the columns?
