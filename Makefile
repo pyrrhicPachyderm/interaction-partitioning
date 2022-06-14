@@ -41,8 +41,6 @@ raw_data_file := TCL_DrosMCT/Data/d_both.csv
 processed_data_files := output/focal-vector.data output/response-vector.data output/design-matrix.data
 output_file := output/brute.data
 
-test_data_files := output/test-focal-vector.data output/test-response-vector.data output/test-design-matrix.data
-
 $(processed_data_files) &: scripts/reshape-DrosMCT $(raw_data_file)
 	./$< $(raw_data_file) $(processed_data_files)
 
@@ -58,6 +56,12 @@ $(eval $(call output_template,rjmcmc-aic,rjmcmc,-a))
 
 article.tex: $(output_file)
 
+article.tex: data/species.csv r/parameters.R r/input-data.R r/post-process.R r/brute-post-process.R r/coclassification-table.R r/grouped-matrix.R r/mantel-test.R r/dist-matrix.R
+
+#Test data analysis.
+
+test_data_files := output/test-focal-vector.data output/test-response-vector.data output/test-design-matrix.data
+
 $(test_data_files) &: scripts/generate-test-data
 	./$< $(test_data_files)
 testdata: $(test_data_files)
@@ -66,8 +70,6 @@ testdata: $(test_data_files)
 brutetest: src/brute.out $(test_data_files)
 	./$< $(test_data_files) -
 .PHONY: brutetest
-
-article.tex: data/species.csv r/parameters.R r/input-data.R r/post-process.R r/brute-post-process.R r/coclassification-table.R r/grouped-matrix.R r/mantel-test.R r/dist-matrix.R
 
 #Submodules
 bibliography/% reference-styles/% TCL_DrosMCT/% &:
