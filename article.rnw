@@ -350,7 +350,7 @@ This indicates that the most parsimonious model was not especially likely to be 
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
 			)
 		@
-		\caption{Coclassification matrix of columns}
+		\caption{Coclassification of competitive effects\\(columns)}
 		\label{fig:best-coclassification-cols}
 	\end{subfigure}
 	%
@@ -362,7 +362,7 @@ This indicates that the most parsimonious model was not especially likely to be 
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
 			)
 		@
-		\caption{Coclassification matrix of rows}
+		\caption{Coclassification of competitive responses\\(rows)}
 		\label{fig:best-coclassification-rows}
 	\end{subfigure}
 	
@@ -393,8 +393,6 @@ A relatively high likelihood of coclassification in the row groupings was typica
 More intransitivity was observed in the column groupings: \emph{D. pallidifrons} had a relatively high probability of being coclassified with \emph{D. sulfurigaster}, and \emph{D. sulfurigaster} had a substantial probability of being coclassified with \emph{D. simulans}, but \emph{D. pallidifrons} had a much lower probability of being coclassified with \emph{D. simulans}.
 
 % DBS: But the fact that the labels in figure 3 say effects and responses reminds me of a lingering "doubt" I had when reading the main text. We talk almost entirely about rows and columns but there are a number of junctures where I feel like it would be easier to follow for people who aren't us if we were talking about responses and effects. As long as we're consistent, I'm fine either way. But we need to remember we're writing the paper for the audience and not for ourselves. ;)
-
-% DBS: Adding a new note here. Shouldn't we pick one version that gets used in Fig 2 and in Fig 3 to refer to the two coclassification matrices?
 
 \begin{figure}
 	\centering
