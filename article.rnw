@@ -350,7 +350,7 @@ This indicates that the most parsimonious model was not especially likely to be 
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
 			)
 		@
-		\caption{Coclassification matrix of rows}
+		\caption{Coclassification matrix of columns}
 		\label{fig:best-coclassification-cols}
 	\end{subfigure}
 	%
@@ -362,7 +362,7 @@ This indicates that the most parsimonious model was not especially likely to be 
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
 			)
 		@
-		\caption{Coclassification matrix of columns}
+		\caption{Coclassification matrix of rows}
 		\label{fig:best-coclassification-rows}
 	\end{subfigure}
 	
