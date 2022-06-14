@@ -56,6 +56,7 @@ $(eval $(call output_template,rjmcmc-aic,rjmcmc,-a))
 
 article.tex: $(output_file)
 
+article.tex: $(processed_data_files)
 article.tex: data/species.csv r/parameters.R r/input-data.R r/post-process.R r/brute-post-process.R r/coclassification-table.R r/grouped-matrix.R r/mantel-test.R r/dist-matrix.R
 
 #Test data analysis.
