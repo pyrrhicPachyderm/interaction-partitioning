@@ -25,17 +25,48 @@ is_consecutive_blocks <- function(grouping) {
 forms_consecutive_blocks <- function(grouping, ordering) {
 	is_consecutive_blocks(grouping[ordering])
 }
-#Third, another helper function to get a list of all orderings.
-#In C++, to make use of std::next_permutation().
-Rcpp::cppFunction("List get_all_orderings(int n) {
-	List all_orderings = List::create();
-	std::vector<int> ordering(n);
-	for(int i = 0; i < n; i++) ordering[i] = i+1;
-	do {
-		all_orderings.push_back(NumericVector::import(ordering.begin(), ordering.end()));
-	} while(std::next_permutation(ordering.begin(), ordering.end()));
-	return all_orderings;
-}")
+#Next, we need another helper function to get a list of all orderings.
+#Ordinarily, I would do this in C++, to make use of std::next_permutation().
+#However, you can't conveniently save an Rcpp function to an rda file.
+#So, third, I implement next_permutation in R.
+next_permutation <- function(perm) {
+	#Using the linear-time implementation described here: https://wordaligned.org/articles/next-permutation
+	#First, check that the vector is long enough to have permutations.
+	if(length(perm) < 2) return(perm)
+	#Second, find the longest monotonically decreasing tail.
+	head_of_tail <- NA
+	for(i in (length(perm)-1):1) {
+		if(perm[i+1] > perm[i]) {
+			head_of_tail <- i+1
+			break
+		}
+	}
+	#If head_of_tail is NA, the entire permutation is monotonically decreasing, just reverse it.
+	if(is.na(head_of_tail)) {
+		return(perm[length(perm):1])
+	}
+	#Else, swap the end of the head with the the last element of the tail that is greater than it.
+	temp <- perm[head_of_tail-1]
+	for(i in length(perm):head_of_tail) {
+		if(perm[i] > temp) {
+			perm[head_of_tail-1] <- perm[i]
+			perm[i] <- temp
+			break
+		}
+	}
+	#Reverse the tail.
+	perm[head_of_tail:length(perm)] <- perm[length(perm):head_of_tail]
+	return(perm)
+}
+#Fourth, another helper function to get a list of all orderings.
+get_all_orderings <- function(n) {
+	all_orderings <- vector("list", factorial(n))
+	all_orderings[[1]] <- 1:n
+	for(i in 2:length(all_orderings)) {
+		all_orderings[[i]] <- next_permutation(all_orderings[[i-1]])
+	}
+	return(all_orderings)
+}
 #Now, the function to exhaustively search and find an appropriate ordering.
 #The function takes a list of groupings, and returns an ordering.
 #It is hence sufficiently general to be constrained by any number of groupings, not only two.
