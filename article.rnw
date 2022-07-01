@@ -54,37 +54,8 @@
 @
 
 <<include=FALSE>>=
-	source("r/parameters.R")
-	source("r/input-data.R")
-	source("r/post-process.R")
-	source("r/brute-post-process.R")
-	source("r/mantel-test.R")
-	source("r/dist-matrix.R")
-	source("r/coclassification-table.R")
-	source("r/grouped-matrix.R")
-	
-	species_dat <- read.csv("data/species.csv")
-	species_output_order <- c(4,3,1,2,6,5)
-	
-	input_data <- InputData$new("output/focal-vector.data", "output/response-vector.data", "output/design-matrix.data", is_per_capita=TRUE)
-	
-	num_species <- input_data$num_species
-	num_obs <- input_data$num_obs
-	
-	ic <- "aicc" #The information criterion to use, e.g. "aic" or "aicc"
-	ic_weight <- sprintf("%s_weight", ic)
-	ic_name <- list(aic="AIC", aicc="AICc")[[ic]]
-	
-	brute_data <- BruteData$new("output/brute.data", species_dat$name, ic_weight)
-	
-	#Precalculate the coclassification matrices, as these are active bindings and the slowest part of compilation.
-	weighted_col_coclassification_matrix <- brute_data$weighted_col_coclassification_matrix
-	weighted_row_coclassification_matrix <- brute_data$weighted_row_coclassification_matrix
-	
-	#Precalculate distances matrices as well.
-	col_distance_matrix <- 1 - weighted_col_coclassification_matrix
-	row_distance_matrix <- 1 - weighted_row_coclassification_matrix
-	body_weight_distance_matrix <- build_dist_matrix(species_dat$name, species_dat$body_weight, function(w1,w2){abs(w1-w2)})
+	library(magrittr)
+	load("output/article-data.rda")
 @
 
 \newcommand\ic{\Sexpr{ic_name}}

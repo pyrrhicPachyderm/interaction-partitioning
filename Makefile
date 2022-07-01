@@ -54,10 +54,13 @@ $(eval $(call output_template,brute,brute,))
 $(eval $(call output_template,rjmcmc-flat,rjmcmc,))
 $(eval $(call output_template,rjmcmc-aic,rjmcmc,-a))
 
-article.tex: $(output_file)
+additional_data_files := data/species.csv
+r_source_files := r/parameters.R r/input-data.R r/post-process.R r/brute-post-process.R r/coclassification-table.R r/grouped-matrix.R r/mantel-test.R r/dist-matrix.R
 
-article.tex: $(processed_data_files)
-article.tex: data/species.csv r/parameters.R r/input-data.R r/post-process.R r/brute-post-process.R r/coclassification-table.R r/grouped-matrix.R r/mantel-test.R r/dist-matrix.R
+output/article-data.rda: article-analysis $(processed_data_files) $(output_file) $(additional_data_files) $(r_source_files)
+	./$< $@
+
+article.tex: output/article-data.rda
 
 #Test data analysis.
 
