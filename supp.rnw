@@ -6,4 +6,92 @@
 \begin{document}
 \maketitle
 
+%TODO: x and y axis labels.
+<<echo=FALSE>>=
+	model_fit_plot <- function(parameters) {
+		plot_df <- data.frame(
+			observed = input_data$response_vector,
+			fitted = input_data$get_fitted_values(parameters),
+			focal = species_dat$name[input_data$focal_vector]
+		)
+		plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = observed, y = fitted)) +
+			ggplot2::geom_point() +
+			ggplot2::geom_smooth(method = lm, formula = y~x) +
+			ggplot2::geom_abline(slope = 1, intercept = 0) +
+			ggplot2::facet_wrap(.~focal)
+		return(plot)
+	}
+	
+	partial_residuals_plot <- function(parameters) {
+		#TODO: Give species names on facet plot labels.
+		plot_df <- c()
+		for(row_index in 1:num_species) {
+			for(col_index in 1:num_species) {
+				temp_df <- data.frame(
+					y = input_data$get_partial_residuals(parameters, row_index, col_index),
+					x = input_data$get_partial_residuals_x(row_index, col_index)
+				)
+				temp_df$row_index <- rep(row_index, nrow(temp_df))
+				temp_df$col_index <- rep(col_index, nrow(temp_df))
+				plot_df <- rbind(plot_df, temp_df)
+			}
+		}
+		
+		plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = x, y = y)) +
+			ggplot2::geom_point() +
+			ggplot2::geom_smooth(method = lm, formula = y~x) +
+			ggplot2::facet_grid(row_index~col_index)
+		return(plot)
+	}
+	
+	best_parameters <- brute_data$parameters[[which.max(brute_data$statistics[[ic_weight]])]]
+	average_parameters <- brute_data$average_parameters
+@
+
+%TODO: Reorder partial residual/model fit plots to use same species order as other figures.
+%TODO: Add "S" to figure numbers.
+\begin{figure}
+	<<echo=FALSE>>=
+		plot(model_fit_plot(best_parameters))
+	@
+	
+	\caption{%
+		Plot of model fit using the most parsimonious model.
+	}
+	\label{fig:model-fit-best}
+\end{figure}
+
+\begin{figure}
+	<<echo=FALSE>>=
+		plot(model_fit_plot(average_parameters))
+	@
+	
+	\caption{%
+		Plot of model fit using the model average model.
+	}
+	\label{fig:model-fit-average}
+\end{figure}
+
+\begin{figure}
+	<<echo=FALSE>>=
+		plot(partial_residuals_plot(best_parameters))
+	@
+	
+	\caption{%
+		Partial residuals plot using the most parsimonious model.
+	}
+	\label{fig:partial-residual-best}
+\end{figure}
+
+\begin{figure}
+	<<echo=FALSE>>=
+		plot(partial_residuals_plot(average_parameters))
+	@
+	
+	\caption{%
+		Partial residuals plot using the model average model.
+	}
+	\label{fig:partial-residual-average}
+\end{figure}
+
 \end{document}
