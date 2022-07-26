@@ -4,6 +4,7 @@ RM := rm -f
 
 doc_raws := proposal.tex article.rnw
 supporting_tex_files := references.bib bibliography/references.bib reference-styles/ecology.tex reference-styles/authoryear.tex
+supporting_rnw_files := preamble.rnw
 
 doc_pdfs := $(patsubst %.tex,%.pdf,$(patsubst %.rnw,%.pdf,$(doc_raws)))
 
@@ -12,7 +13,7 @@ all: $(doc_pdfs)
 
 %-dedented.rnw: dedent-noweb %.rnw
 	./$< <$(word 2,$^) >$@
-%.tex: %-dedented.rnw
+%.tex: %-dedented.rnw $(patsubst %.rnw,%-dedented.rnw,$(supporting_rnw_files))
 	R -e 'library(knitr);knit("$<","$@")'
 %.pdf: %.tex $(supporting_tex_files)
 	latexmk $(LATEXMK_FLAGS) --jobname="$(basename $@)" $<

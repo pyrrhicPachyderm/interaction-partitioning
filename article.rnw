@@ -1,78 +1,7 @@
 \documentclass[12pt,titlepage]{article}
-\usepackage{amsmath}
-\usepackage{siunitx}
-\usepackage{import}
-\usepackage{authblk}
 
-%Images & tables
-\usepackage{subcaption}
-\usepackage{pgfplots}
-\usepackage{colortbl}
-\usepackage{multirow}
-\usepackage{arydshln}
-
-\captionsetup{subrefformat=parens} %Changes only \subref, not \ref.
-\let\Subref\subref
-%TODO: Make \cref figure out if it should be a subref, and use cref throughout.
-
-%Journal font & paper requirements
-\usepackage{newtxtext} %Times New Roman
-\usepackage[letterpaper,margin=1in]{geometry}
-
-%Preprint
-\usepackage{lineno} \linenumbers
-\usepackage{setspace} \doublespacing
-\usepackage[nomarkers,tablesfirst,notablist,nofiglist]{endfloat}
-\addtodelayedfloat{figure}{\clearpage} %Each delayed figure on a new page.
-
-%Ensure title page is numbered, as journal style requires it.
-%Using https://tex.stackexchange.com/a/172005, adapted not to bother with two column stuff.
-\makeatletter
-\renewenvironment{titlepage}{\thispagestyle{plain}}{\newpage}
-\makeatother
-
-%Referencing
-\import{reference-styles/}{ecology.tex}
-\addbibresource{bibliography/references.bib}
-\addbibresource{references.bib}
-\usepackage{placeins} %Provides \FloatBarrier
-
-\usepackage{hyperref}
-\usepackage{cleveref}
-
-%Title Page
-\title{Simplifying Lotka--Volterra interaction matrices by species grouping: optimal groupings are unpredictable}
-\author{Christopher R.\ P.\ Brown}
-\author{Daniel B.\ Stouffer}
-\affil{Centre for Integrative Ecology, School of Biological Sciences, University of Canterbury, Christchurch, New Zealand}
-\date{}
-
-<<include=FALSE>>=
-	knitr::opts_chunk$set(echo = FALSE) #Never show the code, only output.
-	knitr::opts_chunk$set(results = 'asis') #Text is grey without this.
-	knit_hooks$set(inline = function(x) {x}) #Disable automatic formatting of in-line material.
+<<preamble,child="preamble.rnw">>=
 @
-
-<<include=FALSE>>=
-	library(magrittr)
-	load("output/article-data.rda")
-@
-
-\newcommand\ic{\Sexpr{ic_name}}
-
-\newcommand\rsquarednum[1]{\num[round-mode=places,round-precision=3]{#1}}
-\newcommand\icnum[1]{\num[round-mode=places,round-precision=2]{#1}} %For information criteria.
-\newcommand\probnum[1]{\num[round-mode=places,round-precision=3]{#1}}
-\newcommand\cornum[1]{\num[round-mode=places,round-precision=3]{#1}}
-
-\newcommand\mantelstat{\ensuremath{r_{\text{M}}}}
-
-\newcommand\keywords[1]{\emph{Key words: #1}}
-
-\pgfplotsset{%
-	colormap={coclassification}{color=(white) color=(red)}
-}
-\colorlet{coclassification diagonal}{black!20}
 
 \begin{document}
 \maketitle
