@@ -1,0 +1,9 @@
+\documentclass[12pt,titlepage]{article}
+
+<<preamble,child="preamble.rnw">>=
+@
+
+\begin{document}
+\maketitle
+
+\end{document}

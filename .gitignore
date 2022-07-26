@@ -21,3 +21,4 @@ output/*
 *-dedented.rnw
 #Some .tex files are generated from rnw files.
 article.tex
+supp.tex

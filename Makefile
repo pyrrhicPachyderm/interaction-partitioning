@@ -2,7 +2,7 @@ SHELL := /bin/bash
 LATEXMK_FLAGS = --pdf --cd
 RM := rm -f
 
-doc_raws := proposal.tex article.rnw
+doc_raws := proposal.tex article.rnw supp.rnw
 supporting_tex_files := references.bib bibliography/references.bib reference-styles/ecology.tex reference-styles/authoryear.tex
 supporting_rnw_files := preamble.rnw
 
