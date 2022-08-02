@@ -7,7 +7,6 @@
 \beginsupplementary
 \maketitle
 
-%TODO: x and y axis labels.
 <<echo=FALSE>>=
 	model_fit_plot <- function(parameters) {
 		plot_df <- data.frame(
@@ -42,7 +41,8 @@
 		plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = x, y = y)) +
 			ggplot2::geom_point() +
 			ggplot2::geom_smooth(method = lm, formula = y~x) +
-			ggplot2::facet_grid(row_index~col_index)
+			ggplot2::facet_grid(row_index~col_index) +
+			ggplot2::labs(x = "Number of individuals of competing species", y = "Partial residual growth rate of focal species (per capita)")
 		return(plot)
 	}
 	
