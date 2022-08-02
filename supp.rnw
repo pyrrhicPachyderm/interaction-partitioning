@@ -19,7 +19,8 @@
 			ggplot2::geom_point() +
 			ggplot2::geom_smooth(method = lm, formula = y~x) +
 			ggplot2::geom_abline(slope = 1, intercept = 0) +
-			ggplot2::facet_wrap(.~focal)
+			ggplot2::facet_wrap(.~focal) +
+			labs(x = "Observed growth rate (per capita)", y = "Fitted growth rate (per capita)")
 		return(plot)
 	}
 	
