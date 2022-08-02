@@ -24,7 +24,6 @@
 	}
 	
 	partial_residuals_plot <- function(parameters) {
-		#TODO: Give species names on facet plot labels.
 		plot_df <- c()
 		for(row_index in 1:num_species) {
 			for(col_index in 1:num_species) {
@@ -38,11 +37,15 @@
 			}
 		}
 		
+		plot_df$row_species <- species_dat$name[plot_df$row_index]
+		plot_df$col_species <- species_dat$name[plot_df$col_index]
+		
 		plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = x, y = y)) +
 			ggplot2::geom_point() +
 			ggplot2::geom_smooth(method = lm, formula = y~x) +
-			ggplot2::facet_grid(row_index~col_index) +
-			ggplot2::labs(x = "Number of individuals of competing species", y = "Partial residual growth rate of focal species (per capita)")
+			ggplot2::facet_grid(row_species~col_species) +
+			ggplot2::labs(x = "Number of individuals of competing species", y = "Partial residual growth rate of focal species (per capita)") +
+			ggplot2::theme(strip.text = ggplot2::element_text(size=7))
 		return(plot)
 	}
 	
