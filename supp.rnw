@@ -4,6 +4,7 @@
 @
 
 \begin{document}
+\beginsupplementary
 \maketitle
 
 %TODO: x and y axis labels.
@@ -49,7 +50,6 @@
 @
 
 %TODO: Reorder partial residual/model fit plots to use same species order as other figures.
-%TODO: Add "S" to figure numbers.
 \begin{figure}
 	<<echo=FALSE>>=
 		plot(model_fit_plot(best_parameters))

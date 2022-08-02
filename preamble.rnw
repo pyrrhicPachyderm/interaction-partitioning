@@ -39,6 +39,14 @@
 \usepackage{hyperref}
 \usepackage{cleveref}
 
+%Supplementary
+\newcommand{\beginsupplementary}{%
+	\setcounter{table}{0}
+	\renewcommand{\thetable}{S\arabic{table}}%
+	\setcounter{figure}{0}
+	\renewcommand{\thefigure}{S\arabic{figure}}%
+}
+
 %Title Page
 \title{Simplifying Lotka--Volterra interaction matrices by species grouping: optimal groupings are unpredictable}
 \author{Christopher R.\ P.\ Brown}
