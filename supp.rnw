@@ -69,6 +69,8 @@
 	
 	\caption{%
 		Plot of model fit using the model average model.
+		The blue line shows a linear regression with \SI{95}{\percent} confidence interval.
+		The black line shows $y=x$.
 	}
 	\label{fig:model-fit-average}
 \end{figure}
@@ -80,6 +82,8 @@
 	
 	\caption{%
 		Partial residuals plot using the most parsimonious model.
+		The blue line shows a linear regression with \SI{95}{\percent} confidence interval.
+		The black line shows $y=x$.
 	}
 	\label{fig:partial-residual-best}
 \end{figure}
