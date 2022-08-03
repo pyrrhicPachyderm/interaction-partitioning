@@ -168,10 +168,7 @@ We then performed Mantel tests for correlation between the trait distance matrix
 
 \section{Results}
 
-% DBS: Should we add a figure that shows the fit of observed vs predicted? Are we forgetting how much that might resonate with readers and jumping ahead too quickly?
-
-% DBS: As per my comment immediately above, we need to add a reference to the partial residual plots in the supps.
-
+Plots of predicted against observed values and partial residual plots for the fitted alpha values are shown in \cref{fig:model-fit-best,fig:model-fit-average,fig:partial-residual-best,fig:partial-residual-average}.
 The $R^2$ values of the models ranged from \rsquarednum{\Sexpr{min(brute_data$statistics$R2)}} to \rsquarednum{\Sexpr{max(brute_data$statistics$R2)}}.
 The {\ic} values ranged from \icnum{\Sexpr{min(brute_data$statistics[[ic]])}} to \icnum{\Sexpr{max(brute_data$statistics[[ic]])}}.
 The ungrouped model gave an {\ic} value of \icnum{\Sexpr{brute_data$fully_separated_statistics[[ic]]}}.
