@@ -8,12 +8,19 @@
 \maketitle
 
 <<echo=FALSE>>=
-	model_fit_plot <- function(parameters) {
+	order_species <- function(vec, names, order) {
+		factor(vec, levels = names[order])
+	}
+	
+	model_fit_plot <- function(parameters, species_output_order) {
 		plot_df <- data.frame(
 			observed = input_data$response_vector,
 			fitted = input_data$get_fitted_values(parameters),
 			focal = species_dat$name[input_data$focal_vector]
 		)
+		
+		plot_df$focal <- order_species(plot_df$focal, species_dat$name, species_output_order)
+		
 		plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = observed, y = fitted)) +
 			ggplot2::geom_point() +
 			ggplot2::geom_smooth(method = lm, formula = y~x) +
@@ -23,7 +30,7 @@
 		return(plot)
 	}
 	
-	partial_residuals_plot <- function(parameters) {
+	partial_residuals_plot <- function(parameters, species_output_order) {
 		plot_df <- c()
 		for(row_index in 1:num_species) {
 			for(col_index in 1:num_species) {
@@ -39,6 +46,8 @@
 		
 		plot_df$row_species <- species_dat$name[plot_df$row_index]
 		plot_df$col_species <- species_dat$name[plot_df$col_index]
+		plot_df$row_species <- order_species(plot_df$row_species, species_dat$name, species_output_order)
+		plot_df$col_species <- order_species(plot_df$col_species, species_dat$name, species_output_order)
 		
 		plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = x, y = y)) +
 			ggplot2::geom_point() +
@@ -56,7 +65,7 @@
 %TODO: Reorder partial residual/model fit plots to use same species order as other figures.
 \begin{figure}
 	<<echo=FALSE>>=
-		plot(model_fit_plot(best_parameters))
+		plot(model_fit_plot(best_parameters, species_output_order))
 	@
 	
 	\caption{%
@@ -69,7 +78,7 @@
 
 \begin{figure}
 	<<echo=FALSE>>=
-		plot(model_fit_plot(average_parameters))
+		plot(model_fit_plot(average_parameters, species_output_order))
 	@
 	
 	\caption{%
@@ -82,7 +91,7 @@
 
 \begin{figure}
 	<<echo=FALSE>>=
-		plot(partial_residuals_plot(best_parameters))
+		plot(partial_residuals_plot(best_parameters, species_output_order))
 	@
 	
 	\caption{%
@@ -93,7 +102,7 @@
 
 \begin{figure}
 	<<echo=FALSE>>=
-		plot(partial_residuals_plot(average_parameters))
+		plot(partial_residuals_plot(average_parameters, species_output_order))
 	@
 	
 	\caption{%
