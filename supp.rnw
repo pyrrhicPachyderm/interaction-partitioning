@@ -62,7 +62,6 @@
 	average_parameters <- brute_data$average_parameters
 @
 
-%TODO: Reorder partial residual/model fit plots to use same species order as other figures.
 \begin{figure}
 	<<echo=FALSE>>=
 		plot(model_fit_plot(best_parameters, species_output_order))
