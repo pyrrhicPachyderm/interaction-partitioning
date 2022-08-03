@@ -3,6 +3,8 @@
 <<preamble,child="preamble.rnw">>=
 @
 
+\externaldocument{supp}
+
 \begin{document}
 \maketitle
 

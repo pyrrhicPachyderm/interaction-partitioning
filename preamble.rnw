@@ -9,6 +9,7 @@
 \usepackage{colortbl}
 \usepackage{multirow}
 \usepackage{arydshln}
+\usepackage{xr}
 
 \captionsetup{subrefformat=parens} %Changes only \subref, not \ref.
 \let\Subref\subref

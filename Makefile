@@ -38,6 +38,9 @@ spellcheck: $(doc_raws)
 	done
 .PHONY: spellcheck
 
+#For xr purposes.
+article.pdf: supp.tex
+
 raw_data_file := TCL_DrosMCT/Data/d_both.csv
 processed_data_files := output/focal-vector.data output/response-vector.data output/design-matrix.data
 output_file := output/brute.data
