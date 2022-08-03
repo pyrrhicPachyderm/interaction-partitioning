@@ -40,6 +40,7 @@
 				)
 				temp_df$row_index <- rep(row_index, nrow(temp_df))
 				temp_df$col_index <- rep(col_index, nrow(temp_df))
+				temp_df$alpha <- parameters$alpha_values[row_index, col_index]
 				plot_df <- rbind(plot_df, temp_df)
 			}
 		}
@@ -52,6 +53,7 @@
 		plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = x, y = y)) +
 			ggplot2::geom_point() +
 			ggplot2::geom_smooth(method = lm, formula = y~x) +
+			ggplot2::geom_abline(ggplot2::aes(slope = alpha, intercept = 0)) +
 			ggplot2::facet_grid(row_species~col_species) +
 			ggplot2::labs(x = "Number of individuals of competing species", y = "Partial residual growth rate of focal species (per capita)") +
 			ggplot2::theme(strip.text = ggplot2::element_text(size=7))
@@ -73,6 +75,8 @@
 	\caption{%
 		Partial residual plots showing the effects of competition coefficients in the #1.
 		Each plot shows the effect of the parameter $\alpha_{ij}$, where $i$ is the focal species for that row of plots, and $j$ is the competing species for that column of plots.
+		The black line shows, by its slope, the alpha value fitted by the model.
+		The blue line shows a linear regression fitted to the plotted points, with \SI{95}{\percent} confidence interval.
 	}%
 }
 
