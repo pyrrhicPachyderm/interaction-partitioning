@@ -30,7 +30,7 @@
 		return(plot)
 	}
 	
-	partial_residuals_plot <- function(parameters, species_output_order) {
+	partial_residual_plot <- function(parameters, species_output_order) {
 		plot_df <- c()
 		for(row_index in 1:num_species) {
 			for(col_index in 1:num_species) {
@@ -90,22 +90,22 @@
 
 \begin{figure}
 	<<echo=FALSE>>=
-		plot(partial_residuals_plot(best_parameters, species_output_order))
+		plot(partial_residual_plot(best_parameters, species_output_order))
 	@
 	
 	\caption{%
-		Partial residuals plot using the most parsimonious model.
+		Partial residual plots using the most parsimonious model.
 	}
 	\label{fig:partial-residual-best}
 \end{figure}
 
 \begin{figure}
 	<<echo=FALSE>>=
-		plot(partial_residuals_plot(average_parameters, species_output_order))
+		plot(partial_residual_plot(average_parameters, species_output_order))
 	@
 	
 	\caption{%
-		Partial residuals plot using the model average model.
+		Partial residual plots using the model average model.
 	}
 	\label{fig:partial-residual-average}
 \end{figure}
