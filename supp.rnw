@@ -94,7 +94,8 @@
 	@
 	
 	\caption{%
-		Partial residual plots using the most parsimonious model.
+		Partial residual plots showing the effects of competition coefficients in the most parsimonious model.
+		Each plot shows the effect of the parameter $\alpha_{ij}$, where $i$ is the focal species for that row of plots, and $j$ is the competing species for that column of plots.
 	}
 	\label{fig:partial-residual-best}
 \end{figure}
@@ -105,7 +106,8 @@
 	@
 	
 	\caption{%
-		Partial residual plots using the model average model.
+		Partial residual plots showing the effects of competition coefficients in model average model.
+		Each plot shows the effect of the parameter $\alpha_{ij}$, where $i$ is the focal species for that row of plots, and $j$ is the competing species for that column of plots.
 	}
 	\label{fig:partial-residual-average}
 \end{figure}
