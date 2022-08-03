@@ -40,6 +40,8 @@
 \usepackage{hyperref}
 \usepackage{cleveref}
 
+\newcommand{\crefrangeconjunction}{--}
+
 %Supplementary
 \newcommand{\beginsupplementary}{%
 	\setcounter{table}{0}
