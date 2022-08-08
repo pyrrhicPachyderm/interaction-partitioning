@@ -111,7 +111,7 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 		ncol=1))
 	}
 	
-	matrix_tab <- knitr::kable(string_mat, escape=FALSE, booktabs=TRUE,
+	matrix_tab <- knitr::kable(string_mat, format="latex", escape=FALSE, booktabs=TRUE,
 		align=ifelse(has_names,
 			c(rep("c",ncol(mat)),"l"),
 			rep("c",ncol(mat))
