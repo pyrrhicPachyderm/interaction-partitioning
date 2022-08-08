@@ -178,12 +178,18 @@ The ungrouped model gave an {\ic} value of \icnum{\Sexpr{brute_data$fully_separa
 	\centering
 	\begin{subfigure}{0.65\textwidth}
 	<<>>=
+		get_breaks <- function(x, bin_width) {
+			lower_bound <- min(x) - min(x)%%bin_width
+			upper_bound <- max(x) + (bin_width - max(x)%%bin_width)%%bin_width
+			return(seq(lower_bound, upper_bound, by = bin_width))
+		}
 		hist(brute_data$statistics[[ic]],
 			main="",
 			xlab=ic_name,
 			xaxs='i',
 			yaxs='i',
-			ylim=c(0,6000)
+			ylim=c(0,2500),
+			breaks=get_breaks(brute_data$statistics[[ic]], 2)
 		)
 		abline(v = brute_data$fully_separated_statistics[[ic]], lwd=2, lty="dashed", col="green")
 		abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=2, lty="dotted", col="purple")
