@@ -143,7 +143,7 @@ These give the probability that each model is the best among the models assessed
 Using these Akaike weights, we calculated two important statistics.
 First, the total Akaike weight of models with a lower {\ic} than the entirely ungrouped model; this is the probability that some model is more parsimonious than the fully ungrouped model.
 Second, the total Akaike weight of models that used the same grouping for the rows as for the columns; this is the probability that the models grouping species equivalently in their competitive effects and competitive responses were more parsimonious than all other models.
-To evaluate the significance of the latter, we performed a Monte Carlo permutation test, comparing the total Akaike weight of those models that grouped rows and columns equivalently to the total Akaike weight of a equally sized random subset of the models.
+To evaluate the significance of the latter, we performed a Monte Carlo permutation test, comparing the total Akaike weight of those models that grouped rows and columns equivalently to the total Akaike weight of an equally sized random subset of the models.
 
 \subsubsection{Coclassification matrices}
 
