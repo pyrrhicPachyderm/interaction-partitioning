@@ -364,6 +364,12 @@ A single trait like body size might therefore not be able to capture the multiva
 This could indicate that a Bayesian approach is worth exploring in the future, in which the outcome is not a definitive grouping but a distribution of valid groupings.
 Alternatively, it may suggest adopting a mixed-membership approach in which a species can belong to more than one group \parencite{airoldi2008mixed}, reminiscent of the community-level drivers of \textcite{ovaskainen2017species}.
 
+\section{Acknowledgements}
+
+I would like to thank Hao Ran Lai for feedback on a draft of the manuscript.
+
+DBS is also grateful for the support of the Marsden Fund Council, from New Zealand Government funding (grant 16-UOC-008).
+
 \FloatBarrier
 \printbibliography
 \end{document}
