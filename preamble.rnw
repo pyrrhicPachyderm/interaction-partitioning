@@ -10,6 +10,7 @@
 \usepackage{multirow}
 \usepackage{arydshln}
 \usepackage{xr}
+\usepackage{xr-hyper}
 
 \captionsetup{subrefformat=parens} %Changes only \subref, not \ref.
 \let\Subref\subref
