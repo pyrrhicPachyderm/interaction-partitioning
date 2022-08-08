@@ -7,65 +7,6 @@
 \beginsupplementary
 \maketitle
 
-<<echo=FALSE>>=
-	order_species <- function(vec, names, order) {
-		#Takes a vector of species names and redefines them as a factor with correctly ordered levels.
-		#This forces ggplot to use them in the correct order for a facet plot.
-		factor(vec, levels = names[order])
-	}
-	
-	model_fit_plot <- function(parameters, species_output_order) {
-		plot_df <- data.frame(
-			observed = input_data$response_vector,
-			fitted = input_data$get_fitted_values(parameters),
-			focal = species_dat$name[input_data$focal_vector]
-		)
-		
-		plot_df$focal <- order_species(plot_df$focal, species_dat$name, species_output_order)
-		
-		plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = observed, y = fitted)) +
-			ggplot2::geom_point() +
-			ggplot2::geom_smooth(method = lm, formula = y~x) +
-			ggplot2::geom_abline(slope = 1, intercept = 0) +
-			ggplot2::facet_wrap(.~focal) +
-			ggplot2::labs(x = "Observed growth rate (per capita)", y = "Predicted growth rate (per capita)")
-		return(plot)
-	}
-	
-	partial_residual_plot <- function(parameters, species_output_order) {
-		plot_df <- c()
-		for(row_index in 1:num_species) {
-			for(col_index in 1:num_species) {
-				temp_df <- data.frame(
-					y = input_data$get_partial_residuals(parameters, row_index, col_index),
-					x = input_data$get_partial_residuals_x(row_index, col_index)
-				)
-				temp_df$row_index <- rep(row_index, nrow(temp_df))
-				temp_df$col_index <- rep(col_index, nrow(temp_df))
-				temp_df$alpha <- parameters$alpha_values[row_index, col_index]
-				plot_df <- rbind(plot_df, temp_df)
-			}
-		}
-		
-		plot_df$row_species <- species_dat$name[plot_df$row_index]
-		plot_df$col_species <- species_dat$name[plot_df$col_index]
-		plot_df$row_species <- order_species(plot_df$row_species, species_dat$name, species_output_order)
-		plot_df$col_species <- order_species(plot_df$col_species, species_dat$name, species_output_order)
-		
-		plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = x, y = y)) +
-			ggplot2::geom_point() +
-			ggplot2::geom_smooth(method = lm, formula = y~x) +
-			ggplot2::geom_abline(ggplot2::aes(slope = alpha, intercept = 0)) +
-			ggplot2::facet_grid(row_species~col_species) +
-			ggplot2::labs(x = "Number of individuals of competing species", y = "Partial residual growth rate of focal species (per capita)") +
-			ggplot2::theme(strip.text = ggplot2::element_text(size=7))
-		return(plot)
-	}
-	
-	best_parameters <- brute_data$parameters[[which.max(brute_data$statistics[[ic_weight]])]]
-	average_parameters <- brute_data$average_parameters
-@
-
 \newcommand\modelfitplotcaption[1]{%
 	\caption[%
 		Plot of model fit using the #1.
@@ -88,7 +29,7 @@
 
 \begin{figure}
 	<<echo=FALSE>>=
-		plot(model_fit_plot(best_parameters, species_output_order))
+		plot(best_model_fit_plot)
 	@
 	
 	\modelfitplotcaption{most parsimonious model}
@@ -97,7 +38,7 @@
 
 \begin{figure}
 	<<echo=FALSE>>=
-		plot(model_fit_plot(average_parameters, species_output_order))
+		plot(average_model_fit_plot)
 	@
 	
 	\modelfitplotcaption{model average model}
@@ -106,7 +47,7 @@
 
 \begin{figure}
 	<<echo=FALSE>>=
-		plot(partial_residual_plot(best_parameters, species_output_order))
+		plot(best_partial_residual_plot)
 	@
 	
 	\partialresidualplotcaption{most parsimonious model}
@@ -115,7 +56,7 @@
 
 \begin{figure}
 	<<echo=FALSE>>=
-		plot(partial_residual_plot(average_parameters, species_output_order))
+		plot(average_partial_residual_plot)
 	@
 	
 	\partialresidualplotcaption{model average model}

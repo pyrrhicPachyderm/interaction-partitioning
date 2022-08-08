@@ -80,7 +80,6 @@
 
 \newcommand\keywords[1]{\emph{Key words: #1}}
 
-\pgfplotsset{%
-	colormap={coclassification}{color=(white) color=(red)}
-}
-\colorlet{coclassification diagonal}{black!20}
+<<>>=
+	cat(coclassification_colour_setup)
+@

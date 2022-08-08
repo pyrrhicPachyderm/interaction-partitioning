@@ -52,6 +52,151 @@ col_distance_matrix <- 1 - weighted_col_coclassification_matrix
 row_distance_matrix <- 1 - weighted_row_coclassification_matrix
 body_weight_distance_matrix <- build_dist_matrix(species_dat$name, species_dat$body_weight, function(w1,w2){abs(w1-w2)})
 
+best_model_index <- which.max(brute_data$statistics[[ic_weight]])
+
+#########
+#Figures.
+#########
+
+coclassification_colourmap <- "coclassification"
+coclassification_diagonal_colour <- "coclassification diagonal"
+coclassification_colour_setup <- paste0(
+	"\\pgfplotsset{colormap={",coclassification_colourmap,"}{color=(white) color=(red)}}\n",
+	"\\colorlet{",coclassification_diagonal_colour,"}{black!20}\n"
+)
+
+ic_histogram <- function(brute_data) {
+	get_breaks <- function(x, bin_width) {
+		lower_bound <- min(x) - min(x)%%bin_width
+		upper_bound <- max(x) + (bin_width - max(x)%%bin_width)%%bin_width
+		return(seq(lower_bound, upper_bound, by = bin_width))
+	}
+	hist(brute_data$statistics[[ic]],
+		main="",
+		xlab=ic_name,
+		xaxs='i',
+		yaxs='i',
+		ylim=c(0,2500),
+		breaks=get_breaks(brute_data$statistics[[ic]], 2)
+	)
+	abline(v = brute_data$fully_separated_statistics[[ic]], lwd=2, lty="dashed", col="green")
+	abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=2, lty="dotted", col="purple")
+}
+
+get_model_output_table <- function(brute_data, model_index) {
+	model_index <- which.max(brute_data$statistics[[ic_weight]])
+	row_grouping <- brute_data$get_row_grouping(model_index)
+	col_grouping <- brute_data$get_col_grouping(model_index)
+	alpha_matrix <- brute_data$parameters[[model_index]]$alpha_values
+	
+	ordering <- get_ordering(list(row_grouping, col_grouping))
+	species_names <- brute_data$species_names[ordering]
+	row_grouping <- row_grouping[ordering]
+	col_grouping <- col_grouping[ordering]
+	alpha_matrix <- alpha_matrix[ordering,ordering]
+	
+	row_coclassification <- as_coclassification_matrix(row_grouping)
+	col_coclassification <- as_coclassification_matrix(col_grouping)
+	
+	grouped_alpha_matrix <- grouped_alpha_matrix(
+		species_names,
+		row_grouping,
+		col_grouping,
+		alpha_matrix
+	)
+	
+	col_coclassification_table <- minimal_coclassification_kable(
+		col_coclassification,
+		colourmap=coclassification_colourmap, diagonal_colour=coclassification_diagonal_colour
+	)
+	
+	row_coclassification_table <- minimal_coclassification_kable(
+		row_coclassification,
+		colourmap=coclassification_colourmap, diagonal_colour=coclassification_diagonal_colour
+	)
+	
+	return(list(
+		grouped_alpha_matrix = grouped_alpha_matrix,
+		col_coclassification_table = col_coclassification_table,
+		row_coclassification_table = row_coclassification_table
+	))
+}
+
+best_model_output_table <- get_model_output_table(brute_data, best_model_index)
+
+weighted_coclassification_matrices <- list(
+	col = weighted_coclassification_kable(
+		weighted_col_coclassification_matrix[species_output_order,species_output_order],
+		colourmap=coclassification_colourmap, diagonal_colour=coclassification_diagonal_colour
+	),
+	row = weighted_coclassification_kable(
+		weighted_row_coclassification_matrix[species_output_order,species_output_order],
+		colourmap=coclassification_colourmap, diagonal_colour=coclassification_diagonal_colour
+	)
+)
+
+order_species <- function(vec, names, order) {
+	#Takes a vector of species names and redefines them as a factor with correctly ordered levels.
+	#This forces ggplot to use them in the correct order for a facet plot.
+	factor(vec, levels = names[order])
+}
+
+model_fit_plot <- function(parameters, species_output_order) {
+	plot_df <- data.frame(
+		observed = input_data$response_vector,
+		fitted = input_data$get_fitted_values(parameters),
+		focal = species_dat$name[input_data$focal_vector]
+	)
+	
+	plot_df$focal <- order_species(plot_df$focal, species_dat$name, species_output_order)
+	
+	plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = observed, y = fitted)) +
+		ggplot2::geom_point() +
+		ggplot2::geom_smooth(method = lm, formula = y~x) +
+		ggplot2::geom_abline(slope = 1, intercept = 0) +
+		ggplot2::facet_wrap(.~focal) +
+		ggplot2::labs(x = "Observed growth rate (per capita)", y = "Predicted growth rate (per capita)")
+	return(plot)
+}
+
+partial_residual_plot <- function(parameters, species_output_order) {
+	plot_df <- c()
+	for(row_index in 1:num_species) {
+		for(col_index in 1:num_species) {
+			temp_df <- data.frame(
+				y = input_data$get_partial_residuals(parameters, row_index, col_index),
+				x = input_data$get_partial_residuals_x(row_index, col_index)
+			)
+			temp_df$row_index <- rep(row_index, nrow(temp_df))
+			temp_df$col_index <- rep(col_index, nrow(temp_df))
+			temp_df$alpha <- parameters$alpha_values[row_index, col_index]
+			plot_df <- rbind(plot_df, temp_df)
+		}
+	}
+	
+	plot_df$row_species <- species_dat$name[plot_df$row_index]
+	plot_df$col_species <- species_dat$name[plot_df$col_index]
+	plot_df$row_species <- order_species(plot_df$row_species, species_dat$name, species_output_order)
+	plot_df$col_species <- order_species(plot_df$col_species, species_dat$name, species_output_order)
+	
+	plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = x, y = y)) +
+		ggplot2::geom_point() +
+		ggplot2::geom_smooth(method = lm, formula = y~x) +
+		ggplot2::geom_abline(ggplot2::aes(slope = alpha, intercept = 0)) +
+		ggplot2::facet_grid(row_species~col_species) +
+		ggplot2::labs(x = "Number of individuals of competing species", y = "Partial residual growth rate of focal species (per capita)") +
+		ggplot2::theme(strip.text = ggplot2::element_text(size=7))
+	return(plot)
+}
+
+best_parameters <- brute_data$parameters[[best_model_index]]
+average_parameters <- brute_data$average_parameters
+
+best_model_fit_plot <- model_fit_plot(best_parameters, species_output_order)
+average_model_fit_plot <- model_fit_plot(average_parameters, species_output_order)
+best_partial_residual_plot <- partial_residual_plot(best_parameters, species_output_order)
+average_partial_residual_plot <- partial_residual_plot(average_parameters, species_output_order)
+
 #############
 #Save output.
 #############

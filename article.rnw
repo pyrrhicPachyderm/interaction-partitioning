@@ -178,21 +178,7 @@ The ungrouped model gave an {\ic} value of \icnum{\Sexpr{brute_data$fully_separa
 	\centering
 	\begin{subfigure}{0.65\textwidth}
 	<<>>=
-		get_breaks <- function(x, bin_width) {
-			lower_bound <- min(x) - min(x)%%bin_width
-			upper_bound <- max(x) + (bin_width - max(x)%%bin_width)%%bin_width
-			return(seq(lower_bound, upper_bound, by = bin_width))
-		}
-		hist(brute_data$statistics[[ic]],
-			main="",
-			xlab=ic_name,
-			xaxs='i',
-			yaxs='i',
-			ylim=c(0,2500),
-			breaks=get_breaks(brute_data$statistics[[ic]], 2)
-		)
-		abline(v = brute_data$fully_separated_statistics[[ic]], lwd=2, lty="dashed", col="green")
-		abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=2, lty="dotted", col="purple")
+		ic_histogram(brute_data)
 	@
 	\end{subfigure}
 	
@@ -215,31 +201,10 @@ This indicates that the most parsimonious model was not especially likely to be 
 \begin{figure}
 	\centering
 	
-	<<>>=
-		best_model_index <- which.max(brute_data$statistics[[ic_weight]])
-		best_row_grouping <- brute_data$get_row_grouping(best_model_index)
-		best_col_grouping <- brute_data$get_col_grouping(best_model_index)
-		best_alpha_matrix <- brute_data$parameters[[best_model_index]]$alpha_values
-		
-		ordering <- get_ordering(list(best_row_grouping, best_col_grouping))
-		best_species_names <- brute_data$species_names[ordering]
-		best_row_grouping <- best_row_grouping[ordering]
-		best_col_grouping <- best_col_grouping[ordering]
-		best_alpha_matrix <- best_alpha_matrix[ordering,ordering]
-		
-		best_row_coclassification <- as_coclassification_matrix(best_row_grouping)
-		best_col_coclassification <- as_coclassification_matrix(best_col_grouping)
-	@
-	
 	\begin{subfigure}{\textwidth}
 		\centering
 		<<>>=
-			cat(grouped_alpha_matrix(
-				best_species_names,
-				best_row_grouping,
-				best_col_grouping,
-				best_alpha_matrix
-			))
+			cat(best_model_output_table$grouped_alpha_matrix)
 		@
 		\caption{Grouped alpha matrix}
 		\label{fig:best-alpha-matrix}
@@ -250,10 +215,7 @@ This indicates that the most parsimonious model was not especially likely to be 
 	\begin{subfigure}{0.49\textwidth}
 		\centering
 		<<>>=
-			cat(minimal_coclassification_kable(
-				best_col_coclassification,
-				colourmap="coclassification", diagonal_colour="coclassification diagonal"
-			))
+			cat(best_model_output_table$row_coclassification_table)
 		@
 		\caption{Coclassification of competitive effects\\(columns)}
 		\label{fig:best-coclassification-cols}
@@ -262,10 +224,7 @@ This indicates that the most parsimonious model was not especially likely to be 
 	\begin{subfigure}{0.49\textwidth}
 		\centering
 		<<>>=
-			cat(minimal_coclassification_kable(
-				best_row_coclassification,
-				colourmap="coclassification", diagonal_colour="coclassification diagonal"
-			))
+			cat(best_model_output_table$row_coclassification_table)
 		@
 		\caption{Coclassification of competitive responses\\(rows)}
 		\label{fig:best-coclassification-rows}
@@ -304,10 +263,7 @@ More intransitivity was observed in the column groupings: \emph{D. pallidifrons}
 	\begin{subfigure}{\textwidth}
 		\centering
 		<<>>=
-			cat(weighted_coclassification_kable(
-				weighted_col_coclassification_matrix[species_output_order,species_output_order],
-				colourmap="coclassification", diagonal_colour="coclassification diagonal"
-			))
+			cat(weighted_coclassification_matrices$col)
 		@
 		\caption{Coclassification of competitive effects}
 		\label{fig:coclassification-cols}
@@ -318,10 +274,7 @@ More intransitivity was observed in the column groupings: \emph{D. pallidifrons}
 	\begin{subfigure}{\textwidth}
 		\centering
 		<<>>=
-			cat(weighted_coclassification_kable(
-				weighted_row_coclassification_matrix[species_output_order,species_output_order],
-				colourmap="coclassification", diagonal_colour="coclassification diagonal"
-			))
+			cat(weighted_coclassification_matrices$row)
 		@
 		\caption{Coclassification of competitive responses}
 		\label{fig:coclassification-rows}
