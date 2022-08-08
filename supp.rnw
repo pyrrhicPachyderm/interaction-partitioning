@@ -9,6 +9,8 @@
 
 <<echo=FALSE>>=
 	order_species <- function(vec, names, order) {
+		#Takes a vector of species names and redefines them as a factor with correctly ordered levels.
+		#This forces ggplot to use them in the correct order for a facet plot.
 		factor(vec, levels = names[order])
 	}
 	
