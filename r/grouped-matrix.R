@@ -237,9 +237,11 @@ grouped_alpha_matrix <- function(species_names, row_grouping, col_grouping, mat,
 	
 	row_lines <- paste(sapply(1:num_species, get_row), collapse="")
 	
-	cat(length_definition)
-	cat(begin)
-	cat(label_line)
-	cat(row_lines)
-	cat(end)
+	return(paste0(
+		length_definition,
+		begin,
+		label_line,
+		row_lines,
+		end
+	))
 }

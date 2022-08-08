@@ -139,9 +139,11 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 		outer_tab <- matrix_tab
 	}
 	
-	cat(length_definition)
-	cat(colour_definitions)
-	cat(outer_tab)
+	return(paste0(
+		length_definition,
+		colour_definitions,
+		outer_tab
+	))
 }
 
 #A shortcut for a minimal version.

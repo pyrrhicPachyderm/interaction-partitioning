@@ -234,12 +234,12 @@ This indicates that the most parsimonious model was not especially likely to be 
 	\begin{subfigure}{\textwidth}
 		\centering
 		<<>>=
-			grouped_alpha_matrix(
+			cat(grouped_alpha_matrix(
 				best_species_names,
 				best_row_grouping,
 				best_col_grouping,
 				best_alpha_matrix
-			)
+			))
 		@
 		\caption{Grouped alpha matrix}
 		\label{fig:best-alpha-matrix}
@@ -250,10 +250,10 @@ This indicates that the most parsimonious model was not especially likely to be 
 	\begin{subfigure}{0.49\textwidth}
 		\centering
 		<<>>=
-			minimal_coclassification_kable(
+			cat(minimal_coclassification_kable(
 				best_col_coclassification,
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
-			)
+			))
 		@
 		\caption{Coclassification of competitive effects\\(columns)}
 		\label{fig:best-coclassification-cols}
@@ -262,10 +262,10 @@ This indicates that the most parsimonious model was not especially likely to be 
 	\begin{subfigure}{0.49\textwidth}
 		\centering
 		<<>>=
-			minimal_coclassification_kable(
+			cat(minimal_coclassification_kable(
 				best_row_coclassification,
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
-			)
+			))
 		@
 		\caption{Coclassification of competitive responses\\(rows)}
 		\label{fig:best-coclassification-rows}
@@ -304,10 +304,10 @@ More intransitivity was observed in the column groupings: \emph{D. pallidifrons}
 	\begin{subfigure}{\textwidth}
 		\centering
 		<<>>=
-			weighted_coclassification_kable(
+			cat(weighted_coclassification_kable(
 				weighted_col_coclassification_matrix[species_output_order,species_output_order],
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
-			)
+			))
 		@
 		\caption{Coclassification of competitive effects}
 		\label{fig:coclassification-cols}
@@ -318,10 +318,10 @@ More intransitivity was observed in the column groupings: \emph{D. pallidifrons}
 	\begin{subfigure}{\textwidth}
 		\centering
 		<<>>=
-			weighted_coclassification_kable(
+			cat(weighted_coclassification_kable(
 				weighted_row_coclassification_matrix[species_output_order,species_output_order],
 				colourmap="coclassification", diagonal_colour="coclassification diagonal"
-			)
+			))
 		@
 		\caption{Coclassification of competitive responses}
 		\label{fig:coclassification-rows}
