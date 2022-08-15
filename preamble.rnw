@@ -59,8 +59,8 @@
 \date{}
 
 <<include=FALSE>>=
-	knitr::opts_chunk$set(echo = FALSE) #Never show the code, only output.
-	knitr::opts_chunk$set(results = 'asis') #Text is grey without this.
+	opts_chunk$set(echo = FALSE) #Never show the code, only output.
+	opts_chunk$set(results = 'asis') #Text is grey without this.
 	knit_hooks$set(inline = function(x) {x}) #Disable automatic formatting of in-line material.
 @
 
