@@ -65,6 +65,14 @@
 @
 
 <<include=FALSE>>=
+	#Compiling more than one document in the same directory leads to theior figures overwriting one another.
+	#This can lead to including the wrong figures when the TeX files are compiled into PDFs.
+	#As such, we set different directories for each file's figures.
+	#'jobname' must be set in the Makefile as the parent document is compiled.
+	opts_chunk$set(fig.path = paste0("figures/", jobname, "/"))
+@
+
+<<include=FALSE>>=
 	library(magrittr)
 	load("output/article-data.rda")
 @

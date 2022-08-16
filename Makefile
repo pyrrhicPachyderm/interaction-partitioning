@@ -14,7 +14,7 @@ all: $(doc_pdfs)
 %-dedented.rnw: dedent-noweb %.rnw
 	./$< <$(word 2,$^) >$@
 %.tex: %-dedented.rnw $(patsubst %.rnw,%-dedented.rnw,$(supporting_rnw_files))
-	R -e 'library(knitr);knit("$<","$@")'
+	R -e 'jobname<-"$*";library(knitr);knit("$<","$@")'
 %.pdf: %.tex $(supporting_tex_files)
 	latexmk $(LATEXMK_FLAGS) --jobname="$(basename $@)" $<
 
