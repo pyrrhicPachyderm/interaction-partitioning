@@ -2,44 +2,16 @@ SHELL := /bin/bash
 LATEXMK_FLAGS = --pdf --cd
 RM := rm -f
 
-doc_raws := proposal.tex article.rnw supp.rnw
-supporting_tex_files := references.bib bibliography/references.bib reference-styles/ecology.tex reference-styles/authoryear.tex
-supporting_rnw_files := preamble.rnw
-
-doc_pdfs := $(patsubst %.tex,%.pdf,$(patsubst %.rnw,%.pdf,$(doc_raws)))
-
-all: $(doc_pdfs)
+all: output/article-data.rda
 .PHONY: all
-
-%-dedented.rnw: dedent-noweb %.rnw
-	./$< <$(word 2,$^) >$@
-%.tex: %-dedented.rnw $(patsubst %.rnw,%-dedented.rnw,$(supporting_rnw_files))
-	R -e 'jobname<-"$*";library(knitr);knit("$<","$@")'
-%.pdf: %.tex $(supporting_tex_files)
-	latexmk $(LATEXMK_FLAGS) --jobname="$(basename $@)" $<
 
 clean:
 	@(\
 		shopt -s globstar;\
-		$(RM) **/*.aux **/*.log **/*.fls **/*.fdb_latexmk;\
-		$(RM) **/*.out **/*.bbl **/*.bcf **/*.blg **/*.run.xml;\
-		$(RM) **/*.fff **/*.lof;\
 		$(RM) **/*.o **/*.d **/*.out;\
-		$(RM) **/*-dedented.rnw;\
 	)
-	@$(RM) $(patsubst %.rnw,%.tex,$(filter %.rnw,$(doc_raws)))
-	@$(RM) $(doc_pdfs)
 	@$(RM) output/*
 .PHONY: clean
-
-spellcheck: $(doc_raws)
-	@for file in $^; do \
-		aspell check --per-conf=./aspell.conf "$$file" ;\
-	done
-.PHONY: spellcheck
-
-#For xr purposes.
-article.pdf: supp.tex
 
 raw_data_file := TCL_DrosMCT/Data/d_both.csv
 processed_data_files := output/focal-vector.data output/response-vector.data output/design-matrix.data
@@ -64,8 +36,6 @@ r_source_files := r/parameters.R r/input-data.R r/post-process.R r/brute-post-pr
 output/article-data.rda: article-analysis $(processed_data_files) $(output_file) $(additional_data_files) $(r_source_files)
 	./$< $@
 
-article.tex: output/article-data.rda
-
 #Test data analysis.
 
 test_data_files := output/test-focal-vector.data output/test-response-vector.data output/test-design-matrix.data
@@ -78,10 +48,6 @@ testdata: $(test_data_files)
 brutetest: src/brute.out $(test_data_files)
 	./$< $(test_data_files) -
 .PHONY: brutetest
-
-#Submodules
-bibliography/% reference-styles/% TCL_DrosMCT/% &:
-	git submodule update --init
 
 #Secondary with no targets prevents deletion of intermediate files.
 .SECONDARY:
