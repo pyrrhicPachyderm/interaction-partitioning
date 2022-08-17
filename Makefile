@@ -1,5 +1,4 @@
 SHELL := /bin/bash
-LATEXMK_FLAGS = --pdf --cd
 RM := rm -f
 
 all: output/article-data.rda
