@@ -78,6 +78,7 @@ Data <- R6::R6Class("Data",
 			
 			growth_rates_df <- self$parameters[,grep("parameters_r_", names(self$parameters))]
 			alpha_values_df <- self$parameters[,grep("parameters_alpha_", names(self$parameters))]
+			error_variance_vector <- self$parameters$parameters_error_variance #This may be NULL.
 			
 			self$parameters <- sapply(1:nrow(self$parameters), function(i) {
 				growth_rates <- as.vector(as.matrix(growth_rates_df[i,]))
@@ -89,8 +90,9 @@ Data <- R6::R6Class("Data",
 					byrow = TRUE
 				)
 				alpha_values <- group_alpha_values[row_grouping,col_grouping]
+				error_variance <- error_variance_vector[i] #This may be NULL.
 				
-				return(Parameters$new(growth_rates, alpha_values))
+				return(Parameters$new(growth_rates, alpha_values, error_variance))
 			})
 		},
 		
