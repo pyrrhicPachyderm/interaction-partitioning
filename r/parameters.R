@@ -17,13 +17,13 @@ Parameters <- R6::R6Class("Parameters",
 parameters_weighted_mean <- function(parameters_list, weights) {
 	growth_rates_list <- lapply(parameters_list, function(p){p$growth_rates})
 	alpha_values_list <- lapply(parameters_list, function(p){p$alpha_values})
-	error_variance_list <- lapply(parameters_list, function(p){p$error_variance})
+	error_variance_vec <- unlist(lapply(parameters_list, function(p){p$error_variance}))
 	weighted_growth_rates_list <- lapply(1:length(weights), function(i){growth_rates_list[[i]] * weights[i]})
 	weighted_alpha_values_list <- lapply(1:length(weights), function(i){alpha_values_list[[i]] * weights[i]})
-	weighted_error_variance_list <- weights * error_variance_list
+	weighted_error_variance_vec <- weights * error_variance_vec
 	growth_rates <- Reduce("+", weighted_growth_rates_list) / sum(weights)
 	alpha_values <- Reduce("+", weighted_alpha_values_list) / sum(weights)
-	error_variance <- sum(weighted_error_variance_list) / sum(weights)
+	error_variance <- sum(weighted_error_variance_vec) / sum(weights)
 	return(Parameters$new(growth_rates, alpha_values, error_variance))
 }
 
