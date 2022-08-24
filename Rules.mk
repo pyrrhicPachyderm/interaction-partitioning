@@ -43,6 +43,10 @@ brutetest: $(from_root)/src/brute.out $(test_data_files)
 	./$< $(test_data_files) -
 .PHONY: brutetest
 
+#Submodules
+$(from_root)/TCL_DrosMCT/%:
+	git -C "$(from_root)" submodule update --init
+
 #Secondary with no targets prevents deletion of intermediate files.
 .SECONDARY:
 
