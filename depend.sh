@@ -1,6 +1,6 @@
 #!/bin/bash
 #From Peter Miller's "Recursive Make Considered Harmful".
-#Adapted for to work for c or c++, by accepting gcc or g++ as its first argument
+#Adapted for to work for c or c++, by accepting gcc or g++ as its first argument.
 CC="$1"
 shift 1
 DIR="$1"
