@@ -87,4 +87,4 @@ $(from_root)/%.out: $(from_root)/%.o $(CSUPPOBJ)
 include $(COBJ:.o=.d)
 #Rule to build dependencies files
 $(from_root)/%.d: $(from_root)/%.$(CEXT) $(from_root)/depend.sh
-	./$(word 2,$^) $(CC) $(shell dirname $<) $(CFLAGS) $< > $@
+	./$(word 2,$^) $(CC) $(from_root) $(shell dirname $<) $(CFLAGS) $< > $@
