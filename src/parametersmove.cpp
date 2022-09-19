@@ -1,4 +1,4 @@
-//This is a part of the parameters module, but is specifcally the part that deals with a Reversible Jump MCMC trans-model move.
+//This is a part of the parameters module, but is specifically the part that deals with a Reversible Jump MCMC trans-model move.
 #include "parameters.hpp"
 
 static Eigen::VectorXd mergeParameterVectors(const std::pair<Eigen::VectorXd, Eigen::VectorXd> &splitParameters, const GroupingMove &groupingMove) {
