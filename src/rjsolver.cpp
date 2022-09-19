@@ -14,8 +14,8 @@ double ReversibleJumpSolver::getTransModelJumpProbability(GroupingIndexSet sourc
 }
 
 double ReversibleJumpSolver::getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices, double multiplier) const {
-	double sourceHyperprior = hyperpriorFunc(getGroupings(sourceGroupingIndices));
-	double destHyperprior = hyperpriorFunc(getGroupings(destGroupingIndices));
+	double sourceHyperprior = hyperprior.getDensity(getGroupings(sourceGroupingIndices));
+	double destHyperprior = hyperprior.getDensity(getGroupings(destGroupingIndices));
 	return multiplier * std::min(1.0, destHyperprior/sourceHyperprior);
 }
 
@@ -81,15 +81,6 @@ double ReversibleJumpSolver::getTransModelJumpProbabilityMultiplier() const {
 	double unscaledMaxTransModelJumpProbability = getUnscaledMaxTransModelJumpProbability(0, GroupingIndexSet());
 	
 	return MAX_TRANS_MODEL_JUMP_PROBABILITY / unscaledMaxTransModelJumpProbability;
-}
-
-double ReversibleJumpSolver::flatHyperprior(GroupingSet groupings) {
-	return 1.0;
-}
-
-double ReversibleJumpSolver::aicHyperprior(GroupingSet groupings) {
-	size_t numParameters = groupings[GROWTH].getNumGroups() + groupings[ROW].getNumGroups() * groupings[COL].getNumGroups();
-	return exp(-1.0 * (double)numParameters);
 }
 
 GroupingSet ReversibleJumpSolver::getGroupings(GroupingIndexSet groupingIndices) const {
@@ -248,7 +239,7 @@ double ReversibleJumpSolver::getLikelihoodRatio(Eigen::VectorXd sourceResiduals,
 }
 
 double ReversibleJumpSolver::getPriorDensity() const {
-	double hyperprior = hyperpriorFunc(getGroupings());
+	double hyperpriorDensity = hyperprior.getDensity(getGroupings());
 	
 	//TODO: There should also be the prior of all the parameters here.
 	//Currently, the competition coefficients have a prior.

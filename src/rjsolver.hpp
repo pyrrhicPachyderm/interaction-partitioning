@@ -3,22 +3,19 @@
 
 #include "lattice.hpp"
 #include "solver.hpp"
+#include "priors.hpp"
 
 #define INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER 0.01
 
 class ReversibleJumpSolver : public Solver {
 	public:
-		typedef std::function<double(GroupingSet groupings)> HyperpriorFunc;
 		enum JumpType {MERGE_JUMP, SPLIT_JUMP, WITHIN_JUMP, NUM_JUMP_TYPES};
-		
-		static double flatHyperprior(GroupingSet groupings);
-		static double aicHyperprior(GroupingSet groupings);
 	protected:
 		typedef std::array<size_t, NUM_GROUPING_TYPES> GroupingIndexSet;
 		typedef std::array<bool, NUM_GROUPING_TYPES> GroupingBooleanSet;
 		
 		GroupingLattice groupingLattice;
-		HyperpriorFunc hyperpriorFunc;
+		Hyperprior hyperprior;
 		
 		GroupingIndexSet currentGroupings;
 		AugmentedParameters<1> currentParameters;
@@ -41,8 +38,8 @@ class ReversibleJumpSolver : public Solver {
 		double jumpVarianceMultiplier = 1.0;
 		double competitionCoefficientPriorVariance = pow(data.guessCompetitionCoefficientMagnitude(), 2);
 	public:
-		ReversibleJumpSolver(Data data, HyperpriorFunc hyperpriorFunc, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
-			Solver(data), groupingLattice(GroupingLattice(data.getNumSpecies())), hyperpriorFunc(hyperpriorFunc), isChangingGroupings(isChangingGroupings) {
+		ReversibleJumpSolver(Data data, Hyperprior hyperprior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
+			Solver(data), groupingLattice(GroupingLattice(data.getNumSpecies())), hyperprior(hyperprior), isChangingGroupings(isChangingGroupings) {
 				currentGroupings = getGroupingIndices(groupings);
 				currentParameters = AugmentedParameters<1>(data, groupings, {data.getResponseVariance()});
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
