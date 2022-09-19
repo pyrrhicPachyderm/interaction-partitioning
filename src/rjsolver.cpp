@@ -247,33 +247,33 @@ double ReversibleJumpSolver::getLikelihoodRatio(Eigen::VectorXd sourceResiduals,
 	return likelihoodRatio;
 }
 
-double ReversibleJumpSolver::getPrior() const {
+double ReversibleJumpSolver::getPriorDensity() const {
 	double hyperprior = hyperpriorFunc(getGroupings());
 	
 	//TODO: There should also be the prior of all the parameters here.
 	//Currently, the competition coefficients have a prior.
 	//But I'm trying some sort of improper flat prior for the growth rates; this is only really valid as long as their are no trans-model jumps changing the number of growth rates.
 	//Lastly, some prior on the variance might be suitable.
-	double parameterPrior = 1.0;
+	double parameterPriorDensity = 1.0;
 	
 	Eigen::MatrixXd competitionCoefficients = getParameters().getCompetitionCoefficients();
 	for(size_t i = 0; i < (size_t)competitionCoefficients.rows(); i++) {
 		for(size_t j = 0; j < (size_t)competitionCoefficients.cols(); j++) {
-			parameterPrior *= getNormalDensity(competitionCoefficientPriorVariance, competitionCoefficients(i,j));
+			parameterPriorDensity *= getNormalDensity(competitionCoefficientPriorVariance, competitionCoefficients(i,j));
 		}
 	}
 	
-	return hyperprior * parameterPrior;
+	return hyperpriorDensity * parameterPriorDensity;
 }
 
 bool ReversibleJumpSolver::makeJump(bool canTransModelJump) {
-	double sourcePrior = getPrior();
+	double sourcePrior = getPriorDensity();
 	Eigen::VectorXd sourceResiduals = getResiduals();
 	double sourceErrorVariance = getErrorVariance();
 	
 	double jumpingDensityRatio = canTransModelJump ? proposeJump() : proposeWithinModelJump();
 	
-	double destPrior = getPrior();
+	double destPrior = getPriorDensity();
 	Eigen::VectorXd destResiduals = getResiduals();
 	double destErrorVariance = getErrorVariance();
 	
