@@ -42,7 +42,7 @@ class ReversibleJumpSolver : public Solver {
 		ReversibleJumpSolver(Data data, Hyperprior hyperprior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data), groupingLattice(GroupingLattice(data.getNumSpecies())), hyperprior(hyperprior), isChangingGroupings(isChangingGroupings) {
 				currentGroupings = getGroupingIndices(groupings);
-				currentParameters = AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {data.getResponseVariance()});
+				currentParameters = AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {{data.getResponseVariance()}});
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
 			};
 	protected:

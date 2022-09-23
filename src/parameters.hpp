@@ -53,18 +53,19 @@ class Parameters {
 //Augmented parameters, e.g. parameters plus a normal distribution variance parameter.
 //Note that this does not overwrite functions from Parameters, so getNumParameters(), getAsVector(), and the like all ignore the additional parameters.
 template<size_t nAug> class AugmentedParameters : public Parameters {
+	public:
+		typedef Eigen::Array<double, nAug, 1> AdditionalParametersVector;
 	protected:
-		std::array<double, nAug> additionalParameters;
+		AdditionalParametersVector additionalParameters;
 	public:
 		using Parameters::Parameters;
-		AugmentedParameters(Data data, GroupingSet groupings, std::array<double, nAug> additionalParameters):
+		AugmentedParameters(Data data, GroupingSet groupings, AdditionalParametersVector additionalParameters):
 			Parameters(data, groupings), additionalParameters(additionalParameters) {};
-		
 		const double &getAdditionalParameter(size_t index) const {
 			return additionalParameters[index];
 		}
 		
-		const std::array<double, nAug> &getAdditionalParameters() const {
+		const AdditionalParametersVector &getAdditionalParameters() const {
 			return additionalParameters;
 		}
 		
