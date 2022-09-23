@@ -10,6 +10,7 @@
 class ReversibleJumpSolver : public Solver {
 	public:
 		const static size_t NUM_ADDITIONAL_PARAMETERS = 1;
+		typedef AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>::AdditionalParametersVector AdditionalParametersVector;
 		enum JumpType {MERGE_JUMP, SPLIT_JUMP, WITHIN_JUMP, NUM_JUMP_TYPES};
 	protected:
 		typedef std::array<size_t, NUM_GROUPING_TYPES> GroupingIndexSet;
@@ -35,7 +36,7 @@ class ReversibleJumpSolver : public Solver {
 		double transModelJumpProbabilityMultiplier;
 		double growthRateApproximatePosteriorVariance = data.guessGrowthRate() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		double competitionCoefficientApproximatePosteriorVariance = data.guessCompetitionCoefficientMagnitude() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
-		double varianceApproximatePosteriorVariance = data.getResponseVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
+		AdditionalParametersVector additionalParametersApproximatePosteriorVariance = {{data.getResponseVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
 		double jumpVarianceMultiplier = 1.0;
 		double competitionCoefficientPriorVariance = pow(data.guessCompetitionCoefficientMagnitude(), 2);
 	public:
@@ -82,7 +83,7 @@ class ReversibleJumpSolver : public Solver {
 		
 		double getGrowthRateJumpVariance() const;
 		double getCompetitionCoefficientJumpVariance() const;
-		double getVarianceJumpVariance() const;
+		AdditionalParametersVector getAdditionalParametersJumpVariance() const;
 		double getTransModelJumpVariance(GroupingType groupingType) const;
 		
 		//The "propose" functions return the jumping density component of the acceptance ratio (including the Jacobian determinant).

@@ -102,8 +102,8 @@ double ReversibleJumpSolver::getCompetitionCoefficientJumpVariance() const {
 	return competitionCoefficientApproximatePosteriorVariance * jumpVarianceMultiplier;
 }
 
-double ReversibleJumpSolver::getVarianceJumpVariance() const {
-	return varianceApproximatePosteriorVariance * jumpVarianceMultiplier;
+ReversibleJumpSolver::AdditionalParametersVector ReversibleJumpSolver::getAdditionalParametersJumpVariance() const {
+	return additionalParametersApproximatePosteriorVariance * jumpVarianceMultiplier;
 }
 
 double ReversibleJumpSolver::getTransModelJumpVariance(GroupingType groupingType) const {
@@ -174,7 +174,10 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	
 	RandomVariableFunc getGrowthRateJump = std::bind(getRandomNormal, getGrowthRateJumpVariance());
 	RandomVariableFunc getCompetitionCoefficientJump = std::bind(getRandomNormal, getCompetitionCoefficientJumpVariance());
-	std::array<RandomVariableFunc, NUM_ADDITIONAL_PARAMETERS> getAdditionalParameterJumps = {std::bind(getRandomNormal, getVarianceJumpVariance())};
+	std::array<RandomVariableFunc, NUM_ADDITIONAL_PARAMETERS> getAdditionalParameterJumps;
+	for(size_t i = 0; i < NUM_ADDITIONAL_PARAMETERS; i++) {
+		getAdditionalParameterJumps[i] = std::bind(getRandomNormal, getAdditionalParametersJumpVariance()[i]);
+	}
 	
 	proposedParameters.moveParameters(getGrowthRateJump, getCompetitionCoefficientJump, getAdditionalParameterJumps);
 	
@@ -313,7 +316,7 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 		//For the first method.
 		std::vector<double> growthRates;
 		std::vector<double> competitionCoefficients;
-		std::vector<double> errorVariances;
+		std::array<std::vector<double>, NUM_ADDITIONAL_PARAMETERS> additionalParameters;
 		
 		//For the second method.
 		Eigen::Array<double, NUM_JUMP_TYPES, 1> numProposals = Eigen::Array<double, NUM_JUMP_TYPES, 1>::Zero();
@@ -329,11 +332,15 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 			//So we just take the first of each.
 			growthRates.push_back(getParameters().getGrowthRate(0));
 			competitionCoefficients.push_back(getParameters().getCompetitionCoefficient(0,0));
-			errorVariances.push_back(getErrorVariance());
+			for(size_t i = 0; i < NUM_ADDITIONAL_PARAMETERS; i++) {
+				additionalParameters[i].push_back(getParameters().getAdditionalParameter(i));
+			}
 		}
 		growthRateApproximatePosteriorVariance = getVariance(growthRates);
 		competitionCoefficientApproximatePosteriorVariance = getVariance(competitionCoefficients);
-		varianceApproximatePosteriorVariance = getVariance(errorVariances);
+		for(size_t i = 0; i < NUM_ADDITIONAL_PARAMETERS; i++) {
+			additionalParametersApproximatePosteriorVariance[i] = getVariance(additionalParameters[i]);
+		}
 		
 		Eigen::Array<double, NUM_JUMP_TYPES, 1> acceptanceRates = numAccepts / numProposals;
 		
