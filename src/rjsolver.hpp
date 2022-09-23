@@ -9,6 +9,7 @@
 
 class ReversibleJumpSolver : public Solver {
 	public:
+		const static size_t NUM_ADDITIONAL_PARAMETERS = 1;
 		enum JumpType {MERGE_JUMP, SPLIT_JUMP, WITHIN_JUMP, NUM_JUMP_TYPES};
 	protected:
 		typedef std::array<size_t, NUM_GROUPING_TYPES> GroupingIndexSet;
@@ -18,7 +19,7 @@ class ReversibleJumpSolver : public Solver {
 		Hyperprior hyperprior;
 		
 		GroupingIndexSet currentGroupings;
-		AugmentedParameters<1> currentParameters;
+		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> currentParameters;
 		
 		GroupingBooleanSet isChangingGroupings;
 		
@@ -26,7 +27,7 @@ class ReversibleJumpSolver : public Solver {
 		bool isProposing = false;
 		
 		GroupingIndexSet proposedGroupings;
-		AugmentedParameters<1> proposedParameters;
+		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> proposedParameters;
 		
 		JumpType proposedJumpType;
 		
@@ -41,7 +42,7 @@ class ReversibleJumpSolver : public Solver {
 		ReversibleJumpSolver(Data data, Hyperprior hyperprior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data), groupingLattice(GroupingLattice(data.getNumSpecies())), hyperprior(hyperprior), isChangingGroupings(isChangingGroupings) {
 				currentGroupings = getGroupingIndices(groupings);
-				currentParameters = AugmentedParameters<1>(data, groupings, {data.getResponseVariance()});
+				currentParameters = AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {data.getResponseVariance()});
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
 			};
 	protected:
@@ -63,7 +64,7 @@ class ReversibleJumpSolver : public Solver {
 			return getGroupings(isProposing ? proposedGroupings : currentGroupings);
 		}
 		
-		const AugmentedParameters<1> &getParameters() const {
+		const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &getParameters() const {
 			return isProposing ? proposedParameters : currentParameters;
 		}
 	protected:

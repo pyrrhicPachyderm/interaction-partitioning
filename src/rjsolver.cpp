@@ -174,7 +174,7 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	
 	RandomVariableFunc getGrowthRateJump = std::bind(getRandomNormal, getGrowthRateJumpVariance());
 	RandomVariableFunc getCompetitionCoefficientJump = std::bind(getRandomNormal, getCompetitionCoefficientJumpVariance());
-	std::array<RandomVariableFunc, 1> getAdditionalParameterJumps = {std::bind(getRandomNormal, getVarianceJumpVariance())};
+	std::array<RandomVariableFunc, NUM_ADDITIONAL_PARAMETERS> getAdditionalParameterJumps = {std::bind(getRandomNormal, getVarianceJumpVariance())};
 	
 	proposedParameters.moveParameters(getGrowthRateJump, getCompetitionCoefficientJump, getAdditionalParameterJumps);
 	
