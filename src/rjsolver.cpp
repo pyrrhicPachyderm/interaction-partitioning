@@ -1,5 +1,6 @@
 #include <numeric> //Gives std::accumulate.
 #include <random>
+#include "utils/array.hpp"
 #include "rjsolver.hpp"
 
 #define RANDOM_SEED 42
@@ -84,14 +85,21 @@ double ReversibleJumpSolver::getTransModelJumpProbabilityMultiplier() const {
 }
 
 GroupingSet ReversibleJumpSolver::getGroupings(GroupingIndexSet groupingIndices) const {
-	//TODO: This should be done based on NUM_GROUPING_TYPES, but constructing a std::array is hard.
-	//Perhaps look at https://stackoverflow.com/a/32175958
-	return GroupingSet({groupingLattice.getGrouping(groupingIndices[GROWTH]), groupingLattice.getGrouping(groupingIndices[ROW]), groupingLattice.getGrouping(groupingIndices[COL])});
+	return array_map(
+		[this, groupingIndices] (size_t index) -> Grouping {
+			return groupingLattice.getGrouping(groupingIndices[index]);
+		},
+		make_index_array<NUM_GROUPING_TYPES>()
+	);
 }
 
 ReversibleJumpSolver::GroupingIndexSet ReversibleJumpSolver::getGroupingIndices(GroupingSet groupings) const {
-	//TODO: Should also be done based on NUM_GROUPING_TYPES.
-	return GroupingIndexSet({groupingLattice.getIndex(groupings[GROWTH]), groupingLattice.getIndex(groupings[ROW]), groupingLattice.getIndex(groupings[COL])});
+	return array_map(
+		[this, groupings] (size_t index) -> size_t {
+			return groupingLattice.getIndex(groupings[index]);
+		},
+		make_index_array<NUM_GROUPING_TYPES>()
+	);
 }
 
 double ReversibleJumpSolver::getGrowthRateJumpVariance() const {
