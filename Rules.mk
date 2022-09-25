@@ -56,7 +56,7 @@ $(from_root)/TCL_DrosMCT/%:
 #`CC` should be `gcc` or `g++`, and `CEXT` should correspondingly `c` or `cpp`
 CC := g++
 CEXT := cpp
-CFLAGS += -std=c++17 -Wall -Wpedantic -Wextra -Wno-unused-parameter -O3 -I/usr/include/eigen3
+CFLAGS += -std=c++20 -Wall -Wpedantic -Wextra -Wno-unused-parameter -O3 -I/usr/include/eigen3
 CLIBS := -lm
 
 #These two should work for most projects, but keep an eye on them.
