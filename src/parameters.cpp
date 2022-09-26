@@ -85,21 +85,21 @@ size_t Parameters::getAsVectorCompetitionCoefficientIndex(size_t rowIndex, size_
 	return growthRates.size() + competitionCoefficients.cols() * rowIndex + colIndex;
 }
 
-void Parameters::moveParameters(RandomVariableFunc getGrowthRateJump, RandomVariableFunc getCompetitionCoefficientJump) {
+void Parameters::moveParameters(Distribution<double> growthRateJump, Distribution<double> competitionCoefficientJump) {
 	for(size_t i = 0; i < (size_t)growthRates.size(); i++) {
-		growthRates[i] += getGrowthRateJump();
+		growthRates[i] += growthRateJump.getRandom();
 	}
 	for(size_t i = 0; i < (size_t)competitionCoefficients.rows(); i++) {
 		for(size_t j = 0; j < (size_t)competitionCoefficients.cols(); j++) {
-			competitionCoefficients(i, j) += getCompetitionCoefficientJump();
+			competitionCoefficients(i, j) += competitionCoefficientJump.getRandom();
 		}
 	}
 }
 
-template<size_t nAug> void AugmentedParameters<nAug>::moveParameters(RandomVariableFunc getGrowthRateJump, RandomVariableFunc getCompetitionCoefficientJump, std::array<RandomVariableFunc, nAug> getAdditionalParameterJumps) {
-	Parameters::moveParameters(getGrowthRateJump, getCompetitionCoefficientJump); //Call the base class function.
+template<size_t nAug> void AugmentedParameters<nAug>::moveParameters(Distribution<double> growthRateJump, Distribution<double> competitionCoefficientJump, std::array<Distribution<double>, nAug> additionalParameterJumps) {
+	Parameters::moveParameters(growthRateJump, competitionCoefficientJump); //Call the base class function.
 	for(size_t i = 0; i < nAug; i++) {
-		additionalParameters[i] += getAdditionalParameterJumps[i]();
+		additionalParameters[i] += additionalParameterJumps[i].getRandom();
 	}
 }
 

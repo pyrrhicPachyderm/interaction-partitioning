@@ -102,23 +102,28 @@ ReversibleJumpSolver::GroupingIndexSet ReversibleJumpSolver::getGroupingIndices(
 	);
 }
 
-double ReversibleJumpSolver::getGrowthRateJumpVariance() const {
-	return growthRateApproximatePosteriorVariance * jumpVarianceMultiplier;
+Distribution<double> ReversibleJumpSolver::getGrowthRateJumpDistribution() const {
+	return Distribution<double>(new Distributions::Normal(0.0, growthRateApproximatePosteriorVariance * jumpVarianceMultiplier));
 }
 
-double ReversibleJumpSolver::getCompetitionCoefficientJumpVariance() const {
-	return competitionCoefficientApproximatePosteriorVariance * jumpVarianceMultiplier;
+Distribution<double> ReversibleJumpSolver::getCompetitionCoefficientJumpDistribution() const {
+	return Distribution<double>(new Distributions::Normal(0.0, competitionCoefficientApproximatePosteriorVariance * jumpVarianceMultiplier));
 }
 
-ReversibleJumpSolver::AdditionalParametersVector ReversibleJumpSolver::getAdditionalParametersJumpVariance() const {
-	return additionalParametersApproximatePosteriorVariance * jumpVarianceMultiplier;
+std::array<Distribution<double>, ReversibleJumpSolver::NUM_ADDITIONAL_PARAMETERS> ReversibleJumpSolver::getAdditionalParametersJumpDistribution() const {
+	return array_map(
+		[this] (size_t index) -> Distribution<double> {
+			return Distribution<double>(new Distributions::Normal(0.0, additionalParametersApproximatePosteriorVariance[index] * jumpVarianceMultiplier));
+		},
+		make_index_array<NUM_ADDITIONAL_PARAMETERS>()
+	);
 }
 
-double ReversibleJumpSolver::getTransModelJumpVariance(GroupingType groupingType) const {
+Distribution<double> ReversibleJumpSolver::getTransModelJumpDistribution(GroupingType groupingType) const {
 	if(groupingType == GROWTH) {
-		return getGrowthRateJumpVariance();
+		return getGrowthRateJumpDistribution();
 	} else if(groupingType == ROW || groupingType == COL) {
-		return getCompetitionCoefficientJumpVariance();
+		return getCompetitionCoefficientJumpDistribution();
 	} else __builtin_unreachable();
 }
 
@@ -130,15 +135,7 @@ static double getVariance(std::vector<double> nums) {
 
 static double getRandomProbability() {
 	//A random double in [0,1).
-	return std::uniform_real_distribution(0.0, 1.0)(randomNumberGenerator);
-}
-
-static double getRandomNormal(double variance) {
-	return std::normal_distribution(0.0, sqrt(variance))(randomNumberGenerator);
-}
-
-static double getNormalDensity(double variance, double residual) {
-	return 1.0 / sqrt(2 * M_PI * variance) * exp(-0.5 * residual*residual / variance);
+	return Distributions::Uniform(0,1).getRandom();
 }
 
 //We need to use this, rather than direct setting, to ensure it also dirties the groupings.
@@ -159,12 +156,10 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	proposedGroupings = currentGroupings;
 	proposedGroupings[groupingType] = newGroupingIndex;
 	
-	double jumpVariance = getTransModelJumpVariance(groupingType);
-	RandomVariableFunc getRandomVariable = std::bind(getRandomNormal, jumpVariance);
-	RandomVariableDensityFunc getRandomVariableDensity = std::bind(getNormalDensity, jumpVariance, std::placeholders::_1);
+	Distribution<double> randomVariableDistribution = getTransModelJumpDistribution(groupingType);;
 	
 	proposedParameters = currentParameters;
-	double acceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, getRandomVariable, getRandomVariableDensity);
+	double acceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, randomVariableDistribution);
 	
 	acceptanceRatio *= getTransModelJumpProbability(currentGroupings, proposedGroupings) / getTransModelJumpProbability(proposedGroupings, currentGroupings);
 	
@@ -180,14 +175,7 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	proposedGroupings = currentGroupings;
 	proposedParameters = currentParameters;
 	
-	RandomVariableFunc getGrowthRateJump = std::bind(getRandomNormal, getGrowthRateJumpVariance());
-	RandomVariableFunc getCompetitionCoefficientJump = std::bind(getRandomNormal, getCompetitionCoefficientJumpVariance());
-	std::array<RandomVariableFunc, NUM_ADDITIONAL_PARAMETERS> getAdditionalParameterJumps;
-	for(size_t i = 0; i < NUM_ADDITIONAL_PARAMETERS; i++) {
-		getAdditionalParameterJumps[i] = std::bind(getRandomNormal, getAdditionalParametersJumpVariance()[i]);
-	}
-	
-	proposedParameters.moveParameters(getGrowthRateJump, getCompetitionCoefficientJump, getAdditionalParameterJumps);
+	proposedParameters.moveParameters(getGrowthRateJumpDistribution(), getCompetitionCoefficientJumpDistribution(), getAdditionalParametersJumpDistribution());
 	
 	proposedJumpType = WITHIN_JUMP;
 	setIsProposing(true);
@@ -227,23 +215,24 @@ void ReversibleJumpSolver::rejectJump() {
 	setIsProposing(false);
 }
 
-double ReversibleJumpSolver::getErrorVariance() const {
-	//This is the additional parameter, and is used in calculating the likelihood.
-	return getParameters().getAdditionalParameter(0);
+Distribution<double> ReversibleJumpSolver::getErrorDistribution() const {
+	//This uses the additional parameter, and is used in calculating the likelihood.
+	double errorVariance = getParameters().getAdditionalParameter(0);
+	return Distribution(new Distributions::Normal(0, errorVariance));
 }
 
 Eigen::VectorXd ReversibleJumpSolver::getResiduals() {
 	return Solver::getResiduals(isProposing ? (Parameters)proposedParameters : (Parameters)currentParameters);
 }
 
-double ReversibleJumpSolver::getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, double sourceErrorVariance, double destErrorVariance) {
+double ReversibleJumpSolver::getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, Distribution<double> sourceErrorDistribution,  Distribution<double> destErrorDistribution) {
 	//Having a getLikelihood() function and calling it for source and destination
 	//just results in it returning 0 twice, as it multiplies several hundred small numbers together, and gets too small.
 	//So we must calculate the likelihood ratio, getting the ratio as we go.
 	double likelihoodRatio = 1.0;
 	for(size_t i = 0; i < (size_t)sourceResiduals.size(); i++) {
-		double sourceLikelihood = getNormalDensity(sourceErrorVariance, sourceResiduals[i]);
-		double destLikelihood = getNormalDensity(destErrorVariance, destResiduals[i]);
+		double sourceLikelihood = sourceErrorDistribution.getDensity(sourceResiduals[i]);
+		double destLikelihood = destErrorDistribution.getDensity(destResiduals[i]);
 		likelihoodRatio *= destLikelihood / sourceLikelihood;
 	}
 	return likelihoodRatio;
@@ -261,7 +250,7 @@ double ReversibleJumpSolver::getPriorDensity() const {
 	Eigen::MatrixXd competitionCoefficients = getParameters().getCompetitionCoefficients();
 	for(size_t i = 0; i < (size_t)competitionCoefficients.rows(); i++) {
 		for(size_t j = 0; j < (size_t)competitionCoefficients.cols(); j++) {
-			parameterPriorDensity *= getNormalDensity(competitionCoefficientPriorVariance, competitionCoefficients(i,j));
+			parameterPriorDensity *= Distributions::Normal(0.0, competitionCoefficientPriorVariance).getDensity(competitionCoefficients(i,j));
 		}
 	}
 	
@@ -271,16 +260,16 @@ double ReversibleJumpSolver::getPriorDensity() const {
 bool ReversibleJumpSolver::makeJump(bool canTransModelJump) {
 	double sourcePrior = getPriorDensity();
 	Eigen::VectorXd sourceResiduals = getResiduals();
-	double sourceErrorVariance = getErrorVariance();
+	Distribution<double> sourceErrorDistribution = getErrorDistribution();
 	
 	double jumpingDensityRatio = canTransModelJump ? proposeJump() : proposeWithinModelJump();
 	
 	double destPrior = getPriorDensity();
 	Eigen::VectorXd destResiduals = getResiduals();
-	double destErrorVariance = getErrorVariance();
+	Distribution<double> destErrorDistribution = getErrorDistribution();
 	
 	double priorRatio = destPrior / sourcePrior;
-	double likelihoodRatio = getLikelihoodRatio(sourceResiduals, destResiduals, sourceErrorVariance, destErrorVariance);
+	double likelihoodRatio = getLikelihoodRatio(sourceResiduals, destResiduals, sourceErrorDistribution, destErrorDistribution);
 	double acceptanceRatio = priorRatio * likelihoodRatio * jumpingDensityRatio;
 	
 	

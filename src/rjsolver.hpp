@@ -81,10 +81,10 @@ class ReversibleJumpSolver : public Solver {
 		double getUnscaledMaxTransModelJumpProbability(size_t recursionLevel, GroupingIndexSet groupingIndices) const; //A helper function for the above.
 		double getUnscaledTotalTransModelJumpProbability(GroupingIndexSet groupingIndices) const; //Another helper function.
 		
-		double getGrowthRateJumpVariance() const;
-		double getCompetitionCoefficientJumpVariance() const;
-		AdditionalParametersVector getAdditionalParametersJumpVariance() const;
-		double getTransModelJumpVariance(GroupingType groupingType) const;
+		Distribution<double> getGrowthRateJumpDistribution() const;
+		Distribution<double> getCompetitionCoefficientJumpDistribution() const;
+		std::array<Distribution<double>, NUM_ADDITIONAL_PARAMETERS> getAdditionalParametersJumpDistribution() const;
+		Distribution<double> getTransModelJumpDistribution(GroupingType groupingType) const;
 		
 		//The "propose" functions return the jumping density component of the acceptance ratio (including the Jacobian determinant).
 		double proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t newGroupingIndex);
@@ -94,10 +94,10 @@ class ReversibleJumpSolver : public Solver {
 		void acceptJump();
 		void rejectJump();
 		
-		double getErrorVariance() const;
+		Distribution<double> getErrorDistribution() const;
 		Eigen::VectorXd getResiduals();
 		
-		double getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, double sourceErrorVariance, double destErrorVariance);
+		double getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, Distribution<double> sourceErrorDistribution,  Distribution<double> destErrorDistribution);
 		double getPriorDensity() const;
 		
 		bool makeJump(bool canTransModelJump);

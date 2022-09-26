@@ -4,14 +4,10 @@
 #include "grouping.hpp"
 #include "lattice.hpp"
 #include "data.hpp"
+#include "distribution.hpp"
 
 enum GroupingType {GROWTH, ROW, COL, NUM_GROUPING_TYPES};
 typedef std::array<Grouping, NUM_GROUPING_TYPES> GroupingSet;
-
-//Functions for dealing with the random variables involved in splitting and merging groups.
-typedef std::function<double()> RandomVariableFunc;
-typedef std::function<double(double)> RandomVariableDensityFunc;
-
 
 class Parameters {
 	protected:
@@ -43,11 +39,11 @@ class Parameters {
 	public:
 		//Splits or merges parameters as appropriate, returning the relevant component of the acceptance ratio.
 		//That is, the Jacobian determinant, times the jumping density ratio of the additional random variables u^(k) and u^(k').
-		double moveModel(GroupingType groupingType, MoveType moveType, const GroupingMove &groupingMove, RandomVariableFunc getRandomVariable, RandomVariableDensityFunc getRandomVariableDensity);
+		double moveModel(GroupingType groupingType, MoveType moveType, const GroupingMove &groupingMove, Distribution<double> randomVariableDistribution);
 		
 		//TODO: If we were to use a non-symmetric jumping density, this would need to return a component of the acceptance ratio.
 		//But it would also need to work a bit differently in other ways.
-		void moveParameters(RandomVariableFunc getGrowthRateJump, RandomVariableFunc getCompetitionCoefficientJump);
+		void moveParameters(Distribution<double> growthRateJump, Distribution<double> competitionCoefficientJump);
 };
 
 //Augmented parameters, e.g. parameters plus a normal distribution variance parameter.
@@ -69,7 +65,7 @@ template<size_t nAug> class AugmentedParameters : public Parameters {
 			return additionalParameters;
 		}
 		
-		void moveParameters(RandomVariableFunc getGrowthRateJump, RandomVariableFunc getCompetitionCoefficientJump, std::array<RandomVariableFunc, nAug> getAdditionalParameterJumps);
+		void moveParameters(Distribution<double> growthRateJump, Distribution<double> competitionCoefficientJump, std::array<Distribution<double>, nAug> additionalParameterJumps);
 };
 
 #endif

@@ -7,7 +7,7 @@ static Eigen::VectorXd mergeParameterVectors(const std::pair<Eigen::VectorXd, Ei
 	return (splitParameters.first * size1 + splitParameters.second * size2) / (size1 + size2);
 }
 
-static std::pair<Eigen::VectorXd, Eigen::VectorXd> splitParameterVectors(const Eigen::VectorXd &mergedParameters, const GroupingMove &groupingMove, RandomVariableFunc getRandomVariable) {
+static std::pair<Eigen::VectorXd, Eigen::VectorXd> splitParameterVectors(const Eigen::VectorXd &mergedParameters, const GroupingMove &groupingMove, Distribution<double> randomVariableDistribution) {
 	size_t size1 = groupingMove.getSplitGroupSizes().first;
 	size_t size2 = groupingMove.getSplitGroupSizes().second;
 	double scaling1 = (double)size2 / (size1 + size2);
@@ -17,7 +17,7 @@ static std::pair<Eigen::VectorXd, Eigen::VectorXd> splitParameterVectors(const E
 	
 	Eigen::VectorXd randomVariable(mergedParameters.size());
 	for(size_t i = 0; i < (size_t)randomVariable.size(); i++) {
-		randomVariable[i] = getRandomVariable();
+		randomVariable[i] = randomVariableDistribution.getRandom();
 	}
 	
 	Eigen::VectorXd splitParameters1 = mergedParameters + randomVariable * scaling1; //Raise the first parameter.
@@ -30,12 +30,12 @@ static Eigen::VectorXd reverseEngineerRandomVariable(const Eigen::VectorXd &merg
 	return splitParameters.second - splitParameters.first;
 }
 
-static double getRandomVariableJumpingDensity(MoveType moveType, const Eigen::VectorXd &mergedParameters, const std::pair<Eigen::VectorXd, Eigen::VectorXd> &splitParameters, RandomVariableDensityFunc getRandomVariableDensity) {
+static double getRandomVariableJumpingDensity(MoveType moveType, const Eigen::VectorXd &mergedParameters, const std::pair<Eigen::VectorXd, Eigen::VectorXd> &splitParameters, Distribution<double> randomVariableDistribution) {
 	Eigen::VectorXd randomVariable = reverseEngineerRandomVariable(mergedParameters, splitParameters);
 	
 	double jumpingDensity = 1.0;
 	for(size_t i = 0; i < (size_t)randomVariable.size(); i++) {
-		jumpingDensity *= getRandomVariableDensity(randomVariable[i]);
+		jumpingDensity *= randomVariableDistribution.getDensity(randomVariable[i]);
 	}
 	
 	//If we are performing a split, this is on the denominator of the ratio.
@@ -59,7 +59,7 @@ static double getJacobianDeterminant(MoveType moveType, const Eigen::VectorXd &m
 	return determinant;
 }
 
-double Parameters::moveModel(GroupingType groupingType, MoveType moveType, const GroupingMove &groupingMove, RandomVariableFunc getRandomVariable, RandomVariableDensityFunc getRandomVariableDensity) {
+double Parameters::moveModel(GroupingType groupingType, MoveType moveType, const GroupingMove &groupingMove, Distribution<double> randomVariableDistribution) {
 	size_t mergedGroup = groupingMove.getMergedGroup();
 	std::pair<size_t,size_t> splitGroups = groupingMove.getSplitGroups();
 	
@@ -116,7 +116,7 @@ double Parameters::moveModel(GroupingType groupingType, MoveType moveType, const
 	if(moveType == MERGE) {
 		mergedParameters = mergeParameterVectors(splitParameters, groupingMove);
 	} else if(moveType == SPLIT) {
-		splitParameters = splitParameterVectors(mergedParameters, groupingMove, getRandomVariable);
+		splitParameters = splitParameterVectors(mergedParameters, groupingMove, randomVariableDistribution);
 	} else __builtin_unreachable();
 	
 	//Populate newGrowthRates or newCompetitionCoefficients, as appropriate.
@@ -172,7 +172,7 @@ double Parameters::moveModel(GroupingType groupingType, MoveType moveType, const
 	
 	//Calculate and return the acceptance ratio.
 	double acceptanceRatio =
-		getRandomVariableJumpingDensity(moveType, mergedParameters, splitParameters, getRandomVariableDensity) *
+		getRandomVariableJumpingDensity(moveType, mergedParameters, splitParameters, randomVariableDistribution) *
 		getJacobianDeterminant(moveType, mergedParameters, splitParameters, groupingMove);
 	return acceptanceRatio;
 }
