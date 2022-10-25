@@ -66,7 +66,8 @@ coclassification_colour_setup <- paste0(
 	"\\colorlet{",coclassification_diagonal_colour,"}{black!20}\n"
 )
 
-ic_histogram <- function(brute_data) {
+ic_histogram <- function(brute_data, lty = c("dashed", "dotted"), col = c("green", "purple"), legend = FALSE) {
+	lwd <- 2
 	get_breaks <- function(x, bin_width) {
 		lower_bound <- min(x) - min(x)%%bin_width
 		upper_bound <- max(x) + (bin_width - max(x)%%bin_width)%%bin_width
@@ -80,8 +81,16 @@ ic_histogram <- function(brute_data) {
 		ylim=c(0,2500),
 		breaks=get_breaks(brute_data$statistics[[ic]], 2)
 	)
-	abline(v = brute_data$fully_separated_statistics[[ic]], lwd=2, lty="dashed", col="green")
-	abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=2, lty="dotted", col="purple")
+	abline(v = brute_data$fully_separated_statistics[[ic]], lwd=lwd, lty=lty[1], col=col[1])
+	abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=lwd, lty=lty[2], col=col[2])
+	if(legend) {
+		legend("topleft", inset = c(0.2,0),
+			legend = c("Fully separated", "Fully grouped"),
+			lwd = lwd,
+			lty = lty,
+			col = col
+		)
+	}
 }
 
 get_model_output_table <- function(brute_data, model_index) {
