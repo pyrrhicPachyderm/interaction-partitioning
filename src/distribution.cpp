@@ -23,5 +23,3 @@ double Distributions::Normal::getDensity(double x) const {
 double Distributions::Normal::getRandom() const {
 	return std::normal_distribution(mean, sqrt(variance))(randomNumberGenerator);
 }
-
-Distribution<double> a(new Distributions::Normal(0,1));
