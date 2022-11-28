@@ -11,7 +11,7 @@ raw_data_file := $(from_root)/TCL_DrosMCT/Data/d_both.csv
 processed_data_files := $(patsubst %,$(from_root)/output/%,focal-vector.data response-vector.data design-matrix.data)
 output_file := $(from_root)/output/brute.data
 
-$(processed_data_files) &: $(from_root)/scripts/reshape-DrosMCT $(raw_data_file)
+$(processed_data_files) &: $(from_root)/scripts/reshape-tcl $(raw_data_file)
 	./$< $(raw_data_file) $(processed_data_files)
 
 #output_template takes the output file name, the program file name, and the flags.
