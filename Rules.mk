@@ -4,43 +4,43 @@ $(from_root)-clean:
 		cd $(from_root) &&\
 		$(RM) **/*.o **/*.d **/*.out;\
 	)
-	@$(RM) $(from_root)/output/*
+	@$(RM) $(from_root)/output/*/*
+	@for i in $(from_root)/output/*; do if [ -f "$$i" ]; then $(RM) "$$i"; fi; done
 .PHONY: $(from_root)-clean
 
-raw_data_file := $(from_root)/TCL_DrosMCT/Data/d_both.csv
-processed_data_files := $(patsubst %,$(from_root)/output/%,focal-vector.data response-vector.data design-matrix.data)
-output_file := $(from_root)/output/brute.data
+processed_data_files = $(patsubst %,$(from_root)/output/$(1)/%,focal-vector.data response-vector.data design-matrix.data)
 
-$(processed_data_files) &: $(from_root)/scripts/reshape-tcl $(raw_data_file)
-	./$< $(raw_data_file) $(processed_data_files)
+tcl_raw_data := $(from_root)/TCL_DrosMCT/Data/d_both.csv
 
-#output_template takes the output file name, the program file name, and the flags.
-define output_template =
-$(from_root)/output/$(1).data: $(from_root)/src/$(2).out $$(processed_data_files)
-	./$$< $$(processed_data_files) $$@ -p $(3)
+#process_data_template takes the dataset abbreviation and the raw data file(s).
+define process_data_template =
+$$(call processed_data_files,$(1)) &: $(from_root)/scripts/process-$(1) $(2)
+	./$$< $(2) $$(call processed_data_files,$(1))
 endef
 
-$(eval $(call output_template,brute,brute,))
-$(eval $(call output_template,rjmcmc-flat,rjmcmc,))
-$(eval $(call output_template,rjmcmc-aic,rjmcmc,-a))
+$(eval $(call process_data_template,tcl,$(tcl_raw_data)))
+$(eval $(call process_data_template,test,))
 
-additional_data_files := $(from_root)/data/species.csv
+#output_template takes the dataset abbreviation, output file name, the program file name, and the flags.
+define output_template =
+$(from_root)/output/$(1)/$(2).data: $(from_root)/src/$(3).out $$(call processed_data_files,$(1))
+	./$$< $$(call processed_data_files,$(1)) $$@ -p $(4)
+endef
+
+$(eval $(call output_template,tcl,brute,brute,))
+$(eval $(call output_template,tcl,rjmcmc-flat,rjmcmc,))
+$(eval $(call output_template,tcl,rjmcmc-aic,rjmcmc,-a))
+$(eval $(call output_template,test,brute,brute,))
+
+tcl_data_files := $(call processed_data_files,tcl) $(from_root)/data/tcl-species.csv $(from_root)/output/tcl/brute.data
 r_source_files := $(patsubst %,$(from_root)/r/%,parameters.R input-data.R post-process.R brute-post-process.R coclassification-table.R grouped-matrix.R mantel-test.R dist-matrix.R)
 
-$(from_root)/output/article-data.rda: $(from_root)/article-analysis $(processed_data_files) $(output_file) $(additional_data_files) $(r_source_files)
+$(from_root)/output/article-data.rda: $(from_root)/article-analysis $(tcl_data_files) $(r_source_files)
 	./$< $@
 
 #Test data analysis.
 
-test_data_files := $(patsubst %,$(from_root)/ouput/%,test-focal-vector.data test-response-vector.data test-design-matrix.data)
-
-$(test_data_files) &: $(from_root)/scripts/generate-test-data
-	./$< $(test_data_files)
-testdata: $(test_data_files)
-.PHONY: testdata
-
-brutetest: $(from_root)/src/brute.out $(test_data_files)
-	./$< $(test_data_files) -
+brutetest: $(from_root)/output/test/brute.data
 .PHONY: brutetest
 
 #Submodules

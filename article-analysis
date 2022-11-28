@@ -30,10 +30,10 @@ attach(arguments$options)
 #Analysis.
 ##########
 
-species_dat <- read.csv(paste0(this_dir, "/data/species.csv"))
+species_dat <- read.csv(paste0(this_dir, "/data/tcl-species.csv"))
 species_output_order <- c(4,3,1,2,6,5)
 
-input_data <- InputData$new(paste0(this_dir, "/output/focal-vector.data"), paste0(this_dir, "/output/response-vector.data"), paste0(this_dir, "/output/design-matrix.data"), is_per_capita=TRUE)
+input_data <- InputData$new(paste0(this_dir, "/output/tcl/focal-vector.data"), paste0(this_dir, "/output/tcl/response-vector.data"), paste0(this_dir, "/output/tcl/design-matrix.data"), is_per_capita=TRUE)
 
 num_species <- input_data$num_species
 num_obs <- input_data$num_obs
@@ -42,7 +42,7 @@ ic <- "aicc" #The information criterion to use, e.g. "aic" or "aicc"
 ic_weight <- sprintf("%s_weight", ic)
 ic_name <- list(aic="AIC", aicc="AICc")[[ic]]
 
-brute_data <- BruteData$new(paste0(this_dir, "/output/brute.data"), species_dat$name, ic_weight)
+brute_data <- BruteData$new(paste0(this_dir, "/output/tcl/brute.data"), species_dat$name, ic_weight)
 
 #Precalculate the coclassification matrices, as these are active bindings and the slowest part of compilation.
 weighted_col_coclassification_matrix <- brute_data$weighted_col_coclassification_matrix

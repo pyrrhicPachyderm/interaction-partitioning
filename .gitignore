@@ -4,3 +4,6 @@
 
 output/*
 !output/.gitignore
+!output/*/
+output/*/*
+!output/*/.gitignore
