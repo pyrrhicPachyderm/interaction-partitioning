@@ -75,7 +75,7 @@ double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(size_t recu
 }
 
 double ReversibleJumpSolver::getTransModelJumpProbabilityMultiplier() const {
-	//This is the value of c used in trans-model jump probabilities, as given defined in Green 1995 and the report.
+	//This is the value of c used in trans-model jump probabilities, as used in section 4.3 of Green 1995.
 	
 	//The GroupingIndexSet to pass the recursive function doesn't matter.
 	//It's only determined for indices below recursionLevel, which is zero.
