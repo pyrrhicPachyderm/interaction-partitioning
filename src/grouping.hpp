@@ -12,11 +12,6 @@ class Grouping {
 		//It must form a valid rhyming scheme, 0-indexed.
 		//That is, the first integer must be 0, and subsequent integers must be no more than 1 higher than the highest integer seen yet.
 		std::vector<size_t> groups;
-		
-		//The vector maxGroup consists of one integer per species.
-		//It consists of a cumulative maximum of the group vector.
-		//It is used in finding the next group.
-		std::vector<size_t> maxGroups;
 	public:
 		//Resets to the lexigraphically first grouping.
 		void reset();
@@ -29,12 +24,16 @@ class Grouping {
 		//Returns false if and only if it wrapped, facilitating a do while loop.
 		bool advance();
 	protected:
+		//A helper function used by advance().
+		//Returns the cumulative maximum of the group vector.
+		std::vector<size_t> getMaxGroups() const;
+		
 		//A recursive function to be used in advancing to the lexigraphically next grouping.
 		//Increments the specified index by one, if it is valid to do, and resets all species after it to group 0.
 		//Recurses on the index to the left if this one cannot be validly incremented.
 		//Calls reset() if this is the lexigraphically final grouping.
 		//Returns false if and only if it reset, facilitating a do while loop.
-		bool advanceIndex(size_t index);
+		bool advanceIndex(const std::vector<size_t> &maxGroups, size_t index);
 	public:
 		//If called without a provided group, put every species in the same group.
 		Grouping(size_t numSpecies): numSpecies(numSpecies) {

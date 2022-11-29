@@ -3,21 +3,30 @@
 
 void Grouping::reset() {
 	groups = std::vector<size_t>(numSpecies, 0);
-	maxGroups = std::vector<size_t>(numSpecies, 0);
 }
 
 void Grouping::separate() {
 	for(size_t i = 0; i < numSpecies; i++) {
 		groups[i] = i;
-		maxGroups[i] = i;
 	}
 }
 
 bool Grouping::advance() {
-	return advanceIndex(numSpecies - 1);
+	std::vector<size_t> maxGroups = getMaxGroups();
+	return advanceIndex(maxGroups, numSpecies - 1);
 }
 
-bool Grouping::advanceIndex(size_t index) {
+std::vector<size_t> Grouping::getMaxGroups() const {
+	std::vector<size_t> maxGroups(numSpecies, 0);
+	//Start the loop from 1, as it must always be the case that groups[0] = 0,
+	//hence also maxGroups[0] = 0.
+	for(size_t i = 1; i < numSpecies; i++) {
+		maxGroups[i] = std::max(groups[i], maxGroups[i-1]);
+	}
+	return maxGroups;
+}
+
+bool Grouping::advanceIndex(const std::vector<size_t> &maxGroups, size_t index) {
 	//It is never valid to increment the first element, so reset.
 	if(index == 0) {
 		reset();
@@ -28,21 +37,19 @@ bool Grouping::advanceIndex(size_t index) {
 	//We must reset all group numbers to the right of it to 0
 	if(groups[index] <= maxGroups[index-1]) {
 		groups[index]++;
-		maxGroups[index] = std::max(maxGroups[index], groups[index]);
 		for(size_t i = index+1; i < numSpecies; i++) {
 			groups[i] = 0;
-			maxGroups[i] = maxGroups[index];
 		}
 		return true;
 	}
 	//Otherwise, it is not valid to increment it, so we recurse.
-	return advanceIndex(index-1);
+	return advanceIndex(maxGroups, index-1);
 }
 
 size_t Grouping::getNumGroups() const {
-	//The number of groups is simply the highest group number seen before or including the final element.
+	//The number of groups is simply the highest group number present.
 	//Plus one, as the groups are zero indexed.
-	return maxGroups[numSpecies - 1] + 1;
+	return *std::max_element(groups.begin(), groups.end()) + 1;
 }
 
 std::vector<size_t> Grouping::fixGrouping(std::vector<size_t> improperGrouping) {
