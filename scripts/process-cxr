@@ -1,0 +1,112 @@
+#!/usr/bin/env Rscript
+suppressPackageStartupMessages(library(optparse))
+suppressPackageStartupMessages(library(magrittr))
+
+##################
+#Argument parsing.
+##################
+
+usage = "%prog FOCAL_OUTPUT_FILE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE"
+description = "Takes the neigh_list data from the csr package, and reshapes it into the three files desired by the C++ code.
+Namely, the 0-indexed numerical focal species vector, the response variable vector, and the species density design matrix.
+All are output as tab-separated matrices, without column headers, with vectors in the form column vectors."
+option_list <- list(
+	make_option(
+		c("-m", "--minobs"), dest = "bare_min_obs", type = "integer", default = 2,
+		help = "The minimum number of replicate observations required for each species pair"
+	)
+)
+parser <- OptionParser(usage = usage, description=description, option_list=option_list)
+arguments <- parse_args(parser, positional_arguments = 3)
+
+focal_outfile <- arguments$args[1]
+response_outfile <- arguments$args[2]
+design_outfile <- arguments$args[3]
+
+attach(arguments$options)
+
+###############
+#Load the data.
+###############
+
+suppressPackageStartupMessages(library(cxr))
+data(neigh_list)
+
+##############################
+#Filter to the maximal clique.
+##############################
+
+species <- names(neigh_list)
+
+#A function to get a maximum-size clique such that all pairs have at least min_obs observations.
+get_max_clique <- function(min_obs) {
+	adj_mat <- sapply(species, function(i) {
+		sapply(species, function(j) {
+			sum(neigh_list[[i]][[j]] > 0) >= min_obs && sum(neigh_list[[j]][[i]] > 0) >= min_obs
+		})
+	})
+	dist_mat <- as.dist(1 - adj_mat)
+	cliques <- optpart::clique(dist_mat, 0)$member
+	clique_sizes <- sapply(cliques, length)
+	return(cliques[[which.max(clique_sizes)]])
+}
+
+#We want to find the highest value of min_obs such that the largest clique
+#still has the same size as at the bare minimum value of min_obs we will accept.
+max_clique_size <- length(get_max_clique(bare_min_obs))
+min_obs <- bare_min_obs
+while(length(get_max_clique(min_obs + 1)) == max_clique_size) {
+	min_obs <- min_obs + 1
+}
+
+included_species <- species[get_max_clique(min_obs)]
+excluded_species <- species[!species %in% included_species]
+
+#Append all data in one data frame.
+#Only including cases where the included species are the focals.
+#Adding a "focal" column.
+#And adding one to the focal density, to include the individual itself.
+data <- data.frame()
+for(sp in included_species) {
+	neigh_list[[sp]]$focal <- sp
+	neigh_list[[sp]][[sp]] <- neigh_list[[sp]][[sp]] + 1 #TODO: Check this.
+	data <- rbind(data, neigh_list[[sp]])
+}
+
+#Collapse all excluded species into an "other" column.
+data$other <- rowSums(data[,excluded_species])
+data <- data[,!names(data) %in% excluded_species]
+
+species_names <- c(included_species, "other")
+
+#################################
+#Extract the relevant components.
+#################################
+
+focal_output <- data[["focal"]] %>%
+	match(species_names)
+focal_output <- focal_output - 1 #Make it 0-indexed.
+
+response_output <- data[["fitness"]]
+
+design_output <- data[,species_names]
+
+##############################################
+#Turn the outputs into matrices, and finalise.
+##############################################
+
+focal_output %<>% matrix(ncol=1)
+response_output %<>% matrix(ncol=1)
+design_output %<>% as.matrix()
+
+###################
+#Print the outputs.
+###################
+
+print_table <- function(table, outfile) {
+	write.table(table, outfile, row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t")
+}
+
+print_table(focal_output, focal_outfile)
+print_table(response_output, response_outfile)
+print_table(design_output, design_outfile)

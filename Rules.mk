@@ -20,6 +20,7 @@ endef
 
 $(eval $(call process_data_template,tcl,$(tcl_raw_data)))
 $(eval $(call process_data_template,test,))
+$(eval $(call process_data_template,cxr,))
 
 #output_template takes the dataset abbreviation, output file name, the program file name, and the flags.
 define output_template =
