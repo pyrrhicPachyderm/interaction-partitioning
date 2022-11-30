@@ -5,7 +5,7 @@
 #include <utility>
 #include <type_traits>
 
-//Applies func to each element of arr, returning an array of equal lenght to the input array.
+//Applies func to each element of arr, returning an array of equal length to the input array.
 template<typename Func, typename InputType, size_t n> std::array<std::invoke_result_t<Func, InputType>, n> array_map(Func func, std::array<InputType, n> arr) {
 	return [] <std::size_t... I> (Func func, std::array<InputType, n> arr, std::index_sequence<I...>) -> std::array<std::invoke_result_t<Func, InputType>, n> {
 		return {func(arr[I])...};
