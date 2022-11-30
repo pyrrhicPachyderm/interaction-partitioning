@@ -11,65 +11,68 @@
 static std::default_random_engine randomNumberGenerator(RANDOM_SEED);
 
 double ReversibleJumpSolver::getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices) const {
-	return getTransModelJumpProbability(sourceGroupingIndices, destGroupingIndices, transModelJumpProbabilityMultiplier);
-}
-
-double ReversibleJumpSolver::getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices, double multiplier) const {
-	double sourceHyperprior = hyperprior.getDensity(getGroupings(sourceGroupingIndices));
-	double destHyperprior = hyperprior.getDensity(getGroupings(destGroupingIndices));
-	return multiplier * std::min(1.0, destHyperprior/sourceHyperprior);
+	return transModelJumpProbabilityMultiplier * getUnscaledTransModelJumpProbability(
+		getGroupingSizeSet(getGroupings(sourceGroupingIndices)),
+		getGroupingSizeSet(getGroupings(destGroupingIndices))
+	);
 }
 
 std::vector<double> ReversibleJumpSolver::getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType) const {
-	return getTransModelJumpProbabilities(groupingType, moveType, currentGroupings, transModelJumpProbabilityMultiplier);
-}
-
-std::vector<double> ReversibleJumpSolver::getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType, GroupingIndexSet groupingIndices, double multiplier) const {
-	const std::vector<size_t> &destIndices = groupingLattice.getMoveDests(moveType, groupingIndices[groupingType]);
+	const std::vector<size_t> &destIndices = groupingLattice.getMoveDests(moveType, currentGroupings[groupingType]);
 	std::vector<double> probabilities;
 	
-	GroupingIndexSet newGroupingIndices = groupingIndices;
+	GroupingIndexSet newGroupingIndices = currentGroupings;
 	for(size_t i = 0; i < destIndices.size(); i++) {
 		newGroupingIndices[groupingType] = destIndices[i];
-		probabilities.push_back(getTransModelJumpProbability(groupingIndices, newGroupingIndices, multiplier));
+		probabilities.push_back(getTransModelJumpProbability(currentGroupings, newGroupingIndices));
 	}
 	
 	return probabilities;
 }
 
-double ReversibleJumpSolver::getUnscaledTotalTransModelJumpProbability(GroupingIndexSet groupingIndices) const {
+double ReversibleJumpSolver::getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const {
+	double sourceHyperprior = hyperprior.getDensity(sourceGroupingSizes);
+	double destHyperprior = hyperprior.getDensity(destGroupingSizes);
+	return std::min(1.0, destHyperprior/sourceHyperprior);
+}
+
+double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes) const {
 	double result = 0.0;
 	for(size_t groupingType = 0; groupingType < NUM_GROUPING_TYPES; groupingType++) {
 		if(!isChangingGroupings[groupingType]) continue;
-		for(size_t moveType = 0; moveType < NUM_MOVE_TYPES; moveType++) {
-			std::vector<double> probabilities = getTransModelJumpProbabilities((GroupingType)groupingType, (MoveType)moveType, groupingIndices, 1.0);
-			result += std::accumulate(probabilities.begin(), probabilities.end(), 0.0);
-		}
+		
+		GroupingSizeSet newGroupingSizes = groupingSizes;
+		//Merges:
+		newGroupingSizes[groupingType] -= 1;
+		result += getUnscaledTransModelJumpProbability(groupingSizes, newGroupingSizes) * Grouping::getNumMerges(groupingSizes[groupingType]);
+		//Splits:
+		newGroupingSizes[groupingType] += 2; //We'd already subtracted 1, so this takes it to 1 above original.
+		result += getUnscaledTransModelJumpProbability(groupingSizes, newGroupingSizes) * Grouping::getMaxNumSplits(data.getNumSpecies(), groupingSizes[groupingType]);
 	}
 	return result;
 }
 
-double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(size_t recursionLevel, GroupingIndexSet groupingIndices) const {
+double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes, size_t recursionLevel) const {
 	//We need to loop over each type of model that's changing; this is a NUM_GROUPING_TYPES-times nested loop.
 	//However, whether each loop exists is conditional on isChangingGroupings.
 	//So the neatest way to do this is recursion.
 	//recursionLevel is an index into a GroupingSet; the index to loop over in this recursion.
-	//groupingIndices is only determined for indices below recursionLevel.
+	//groupingSizes is only determined for indices below recursionLevel.
 	
 	if(recursionLevel == NUM_GROUPING_TYPES) {
-		return getUnscaledTotalTransModelJumpProbability(groupingIndices);
+		return getUnscaledMaxTransModelJumpProbability(groupingSizes);
 	}
 	
 	if(!isChangingGroupings[recursionLevel]) {
 		//We're not looping at this level; just set the actual grouping we're using at this level.
-		groupingIndices[recursionLevel] = currentGroupings[recursionLevel];
-		return getUnscaledMaxTransModelJumpProbability(recursionLevel+1, groupingIndices);
+		groupingSizes[recursionLevel] = getGrouping((GroupingType)recursionLevel).getNumGroups();
+		return getUnscaledMaxTransModelJumpProbability(groupingSizes, recursionLevel+1);
 	}
 	
 	double result = 0.0;
-	for(size_t i = 0; i < groupingLattice.getNumGroupings(); i++) {
-		groupingIndices[recursionLevel] = i;
-		result = std::max(result, getUnscaledMaxTransModelJumpProbability(recursionLevel+1, groupingIndices));
+	for(size_t i = 1; i <= data.getNumSpecies(); i++) {
+		groupingSizes[recursionLevel] = i;
+		result = std::max(result, getUnscaledMaxTransModelJumpProbability(groupingSizes, recursionLevel+1));
 	}
 	return result;
 }
@@ -79,7 +82,7 @@ double ReversibleJumpSolver::getTransModelJumpProbabilityMultiplier() const {
 	
 	//The GroupingIndexSet to pass the recursive function doesn't matter.
 	//It's only determined for indices below recursionLevel, which is zero.
-	double unscaledMaxTransModelJumpProbability = getUnscaledMaxTransModelJumpProbability(0, GroupingIndexSet());
+	double unscaledMaxTransModelJumpProbability = getUnscaledMaxTransModelJumpProbability(GroupingSizeSet(), 0);
 	
 	return MAX_TRANS_MODEL_JUMP_PROBABILITY / unscaledMaxTransModelJumpProbability;
 }

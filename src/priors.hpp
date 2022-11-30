@@ -3,6 +3,12 @@
 
 #include "parameters.hpp"
 
+//It is a limitation of the fact the way RJSolver::getTransModelJumpProbabilityMultiplier() works
+//that hyperpriors may only depend on the number of groups in a grouping,
+//not the full structure of the grouping.
+//This is necessary to find the relevant constant in polynomial time.
+//This limitation enforced by only passing the relevant information to a a HyperpriorFunc.
+
 class Hyperprior {
 	protected:
 		typedef std::function<double(const GroupingSizeSet &groupingSizes)> HyperpriorFunc;

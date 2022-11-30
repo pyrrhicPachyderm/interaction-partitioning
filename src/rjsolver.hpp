@@ -69,17 +69,14 @@ class ReversibleJumpSolver : public Solver {
 			return isProposing ? proposedParameters : currentParameters;
 		}
 	protected:
-		//The following functions have an arbitrary version, which is used by getTransModelJumpProbabilityMultiplier,
-		//and a canonical version, which uses the current parameters.
-		//The type parameters decide which grouping the jump changes, and how it changes it.
-		double getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices, double multiplier) const;
 		double getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices) const;
-		std::vector<double> getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType, GroupingIndexSet groupingIndices, double multiplier) const;
 		std::vector<double> getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType) const;
 		
+		//The function to get transModelJumpProbabilityMultiplier during initialisation, and three helper functions.
 		double getTransModelJumpProbabilityMultiplier() const;
-		double getUnscaledMaxTransModelJumpProbability(size_t recursionLevel, GroupingIndexSet groupingIndices) const; //A helper function for the above.
-		double getUnscaledTotalTransModelJumpProbability(GroupingIndexSet groupingIndices) const; //Another helper function.
+		double getUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes, size_t recursionLevel) const;
+		double getUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes) const;
+		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const;
 		
 		Distribution<double> getGrowthRateJumpDistribution() const;
 		Distribution<double> getCompetitionCoefficientJumpDistribution() const;
