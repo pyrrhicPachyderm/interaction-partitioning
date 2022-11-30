@@ -45,6 +45,9 @@ class Grouping {
 		
 		size_t getNumGroups() const;
 		
+		//Returns the number of elements in each group.
+		std::vector<size_t> getGroupSizes() const;
+		
 		static std::vector<size_t> fixGrouping(std::vector<size_t> improperGrouping);
 		
 		//Checks whether the provided grouping matches this one.

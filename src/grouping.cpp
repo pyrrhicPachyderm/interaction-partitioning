@@ -52,6 +52,25 @@ size_t Grouping::getNumGroups() const {
 	return *std::max_element(groups.begin(), groups.end()) + 1;
 }
 
+std::vector<size_t> Grouping::getGroupSizes() const {
+	std::vector<size_t> groupSizes;
+	
+	//Reserve at least enough capacity, so that no reallocs will be necessary.
+	groupSizes.reserve(numSpecies);
+	
+	for(size_t i = 0; i < numSpecies; i++) {
+		if(groups[i] >= groupSizes.size()) {
+			//A new group must be added. As a grouping is rhyming scheme, we can assume this is the next group numerically.
+			//So we just push a 1 to the end of the vector.
+			goupSizes.push_back(1);
+		} else {
+			groupSizes[groups[i]] += 1;
+		}
+	}
+	
+	return groupSizes;
+}
+
 std::vector<size_t> Grouping::fixGrouping(std::vector<size_t> improperGrouping) {
 	//We must make the improperGrouping a proper grouping.
 	//Species are in the same group if and only if they have the same number in improperGrouping.
