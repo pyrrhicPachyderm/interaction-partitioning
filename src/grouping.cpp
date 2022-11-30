@@ -62,13 +62,60 @@ std::vector<size_t> Grouping::getGroupSizes() const {
 		if(groups[i] >= groupSizes.size()) {
 			//A new group must be added. As a grouping is rhyming scheme, we can assume this is the next group numerically.
 			//So we just push a 1 to the end of the vector.
-			goupSizes.push_back(1);
+			groupSizes.push_back(1);
 		} else {
 			groupSizes[groups[i]] += 1;
 		}
 	}
 	
 	return groupSizes;
+}
+
+size_t Grouping::getNumMerges(size_t numGroups) {
+	//Each pair of groups can be merged.
+	//So this is (number of groups) choose 2.
+	return numGroups * (numGroups - 1) / 2;
+}
+
+static inline size_t getNumSplitsSingleGroup(size_t groupSize) {
+	//The number of ways of splitting a single group with k elements is:
+	//2^(k-1) - 1 if k > 1
+	//0 if k = 1
+	//The latter is obvious: a group cannot be split in two if it has only one element.
+	//For the former:
+	//Assume, without loss of generality, that the first element of the group is assigned to the first new group.
+	//The other k-1 elements of the group must be assigned to either the first new group or the second; there are 2^(k-1) ways of doing so.
+	//However, one of these assigns every element to the first new group and none to the second; this is invalid, so we subtract that one.
+	//Lastly, note that if k = 1, 2^(k-1) - 1 = 0, so the conditional is unnecessary.
+	return (1 << (groupSize - 1)) - 1;
+}
+
+size_t Grouping::getMaxNumSplits(size_t numSpecies, size_t numGroups) {
+	//The number of splits for a given grouping is documented in getNumSplitsSingleGroup().
+	//It is clear that the greatest number of splits for a given numSpecies and numGroups
+	//is achieved by making all but one group of size 1, and the last group as large as possible.
+	//Proof:
+	//Suppose two different groups both have more than one element.
+	//By transferring an element from the smaller of these groups to the larger (or even in the case of equality)
+	//the larger group now provides more than twice as many splits.
+	//This must more than offset any splits lost by shrinking the smaller group.
+	size_t bigGroupSize = numSpecies - numGroups + 1;
+	//Only the big group can be split, not any of the singletons, so no sum is necessary here.
+	return getNumSplitsSingleGroup(bigGroupSize);
+}
+
+size_t Grouping::getNumMerges() const {
+	return getNumMerges(getNumGroups());
+}
+
+size_t Grouping::getNumSplits() const {
+	//The number of possible split moves is the sum of the number of ways of splitting each group.
+	std::vector<size_t> groupSizes = getGroupSizes();
+	size_t numSplits = 0;
+	for(size_t i = 0; i < groupSizes.size(); i++) {
+		numSplits += getNumSplitsSingleGroup(groupSizes[i]);
+	}
+	return numSplits;
 }
 
 std::vector<size_t> Grouping::fixGrouping(std::vector<size_t> improperGrouping) {

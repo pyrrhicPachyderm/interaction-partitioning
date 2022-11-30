@@ -48,6 +48,16 @@ class Grouping {
 		//Returns the number of elements in each group.
 		std::vector<size_t> getGroupSizes() const;
 		
+		//Returns the maximum number of merges/splits that come from a grouping with the given parameters.
+		//Used for finding a constant when setting up an RJSolver.
+		//For getNumMerges, this isn't just the max; it's always the same number.
+		static size_t getNumMerges(size_t numGroups);
+		static size_t getMaxNumSplits(size_t numSpecies, size_t numGroups);
+		
+		//Returns the actual number of merges/splits from a given grouping.
+		size_t getNumMerges() const;
+		size_t getNumSplits() const;
+		
 		static std::vector<size_t> fixGrouping(std::vector<size_t> improperGrouping);
 		
 		//Checks whether the provided grouping matches this one.
