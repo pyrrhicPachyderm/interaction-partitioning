@@ -1,6 +1,7 @@
 #ifndef UTILS_ARRAY_HPP
 #define UTILS_ARRAY_HPP
 
+#include <stddef.h>
 #include <array>
 #include <utility>
 #include <type_traits>
