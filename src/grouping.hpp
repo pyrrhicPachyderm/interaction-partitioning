@@ -62,6 +62,10 @@ class Grouping {
 		
 		//Checks whether the provided grouping matches this one.
 		bool isMatch(std::vector<size_t> grouping) const;
+		
+		//Operator overloading.
+		bool operator==(const Grouping& g) const;
+		bool operator!=(const Grouping& g) const;
 };
 
 #endif

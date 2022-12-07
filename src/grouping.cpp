@@ -155,3 +155,15 @@ bool Grouping::isMatch(std::vector<size_t> grouping) const {
 	}
 	return true;
 }
+
+bool Grouping::operator==(const Grouping& g) const {
+	if(numSpecies != g.numSpecies) return false;
+	for(size_t i = 0; i < numSpecies; i++) {
+		if(groups[i] != g.groups[i]) return false;
+	}
+	return true;
+}
+
+bool Grouping::operator!=(const Grouping& g) const {
+	return !(*this == g);
+}
