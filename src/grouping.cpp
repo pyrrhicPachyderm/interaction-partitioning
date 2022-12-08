@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <assert.h>
 #include "grouping.hpp"
 
 void Grouping::reset() {
@@ -154,6 +155,13 @@ bool Grouping::isMatch(std::vector<size_t> grouping) const {
 		if(grouping[i] != groups[i]) return false;
 	}
 	return true;
+}
+
+void Grouping::operator=(const Grouping& g) {
+	//As numSpecies is const, we must assert here.
+	//TODO: This is an ugly way of doing it; come up with something better.
+	assert(numSpecies == g.numSpecies);
+	groups = g.groups;
 }
 
 bool Grouping::operator==(const Grouping& g) const {

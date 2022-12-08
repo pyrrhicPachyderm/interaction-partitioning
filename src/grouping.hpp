@@ -39,6 +39,7 @@ class Grouping {
 		Grouping(size_t numSpecies): numSpecies(numSpecies) {
 			reset();
 		};
+		Grouping(const Grouping &g) = default;
 		
 		const std::vector<size_t> &getGroups() const {return groups;}
 		size_t getGroup(size_t species) const {return groups[species];}
@@ -64,6 +65,7 @@ class Grouping {
 		bool isMatch(std::vector<size_t> grouping) const;
 		
 		//Operator overloading.
+		void operator=(const Grouping& g);
 		bool operator==(const Grouping& g) const;
 		bool operator!=(const Grouping& g) const;
 };
