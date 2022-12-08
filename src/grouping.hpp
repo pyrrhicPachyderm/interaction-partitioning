@@ -59,7 +59,14 @@ class Grouping {
 		size_t getNumMerges() const;
 		size_t getNumSplits() const;
 		
+		//Gets the indexth merge/split.
+		//The order is arbitrary, but consistent.
+		//index must be at less than getNumMerges()/getNumSplits().
+		Grouping getMerge(size_t index) const;
+		Grouping getSplit(size_t index) const;
+		
 		static std::vector<size_t> fixGrouping(std::vector<size_t> improperGrouping);
+		void fix();
 		
 		//Checks whether the provided grouping matches this one.
 		bool isMatch(std::vector<size_t> grouping) const;

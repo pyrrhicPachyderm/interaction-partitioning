@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <assert.h>
+#include "utils/math.hpp"
 #include "grouping.hpp"
 
 void Grouping::reset() {
@@ -119,6 +120,61 @@ size_t Grouping::getNumSplits() const {
 	return numSplits;
 }
 
+Grouping Grouping::getMerge(size_t index) const {
+	//First, we want to find the maximum triangular number less than index.
+	//However, rather than the usual triangular number formulation,
+	//what we're really interested in is m choose 2, so instead we want
+	//floor(m) such that m*(m-1)/2 = n.
+	//This gives floor((sqrt(8 * n + 1) + 1) / 2).
+	//Or, using integer square root and integer division:
+	size_t secondGroup = (isqrt(8 * index + 1) + 1) / 2;
+	//It is not possible to find the indexth pair within the first m,
+	//so one of the groups to merge must fall outside, m itsel when adjusting for 0-indexing.
+	//The index of the other can be found by subtracting (m choose 2) from index.
+	size_t firstGroup = index - secondGroup * (secondGroup - 1) / 2;
+	
+	Grouping newGrouping(*this); //Copy the current grouping.
+	for(size_t i = 0; i < numSpecies; i++) {
+		if(groups[i] == secondGroup) newGrouping.groups[i] = firstGroup;
+	}
+	
+	newGrouping.fix();
+	return newGrouping;
+}
+
+Grouping Grouping::getSplit(size_t index) const {
+	std::vector<size_t> groupSizes = getGroupSizes();
+	
+	for(size_t i = 0; i < groupSizes.size(); i++) {
+		size_t numSplits = getNumSplitsSingleGroup(groupSizes[i]);
+		if(index < numSplits) {
+			Grouping newGrouping(*this); //Copy the current grouping.
+			size_t newGroupNumber = groupSizes.size(); //The next available group number.
+			//We are splitting the current group.
+			//The first element of this group will always go in the first of the two child groups.
+			//Everything else shall be based on the bits of index,
+			//assigned to the second shild group on a 0 bit or the first child group on a 1 bit.
+			//The limitation imposed on the size of index by numSplits ensures not everything is 1-bits,
+			//so *something* will be assigned to the second group.
+			bool skipped = false; //Have we skipped the first element of the group yet.
+			for(size_t j = 0; j < numSpecies; j++) {
+				if(groups[j] != i) continue; //Not part of the group we're splitting.
+				if(!skipped) {
+					skipped = true;
+					continue;
+				}
+				if(index % 2 == 0) newGrouping.groups[j] = newGroupNumber;
+				index /= 2; //Right shift off the least significant bit.
+			}
+			newGrouping.fix();
+			return newGrouping;
+		}
+		index -= numSplits;
+	}
+	
+	assert(false && "index passed to getSplits() exceeds number of possible splits");
+}
+
 std::vector<size_t> Grouping::fixGrouping(std::vector<size_t> improperGrouping) {
 	//We must make the improperGrouping a proper grouping.
 	//Species are in the same group if and only if they have the same number in improperGrouping.
@@ -148,6 +204,10 @@ std::vector<size_t> Grouping::fixGrouping(std::vector<size_t> improperGrouping) 
 	}
 	
 	return properGrouping;
+}
+
+void Grouping::fix() {
+	groups = fixGrouping(groups);
 }
 
 bool Grouping::isMatch(std::vector<size_t> grouping) const {
