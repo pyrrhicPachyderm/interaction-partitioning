@@ -156,10 +156,10 @@ void ReversibleJumpSolver::setIsProposing(bool b) {
 	}
 }
 
-double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t adjIndex) {
-	//adjIndex is the index into the adjacency list of the relevant part of groupingLattice.
-	size_t newGroupingIndex = groupingLattice.getMoveDest(moveType, currentGroupings[groupingType], adjIndex);
-	GroupingMove groupingMove = groupingLattice.getMove(moveType, currentGroupings[groupingType], adjIndex);
+double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t index) {
+	//index is the index into the adjacency list of the relevant part of groupingLattice.
+	size_t newGroupingIndex = groupingLattice.getMoveDest(moveType, currentGroupings[groupingType], index);
+	GroupingMove groupingMove = groupingLattice.getMove(moveType, currentGroupings[groupingType], index);
 	
 	proposedGroupings = currentGroupings;
 	proposedGroupings[groupingType] = newGroupingIndex;
