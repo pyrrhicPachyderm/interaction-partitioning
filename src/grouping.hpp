@@ -34,6 +34,9 @@ class Grouping {
 		//Calls reset() if this is the lexigraphically final grouping.
 		//Returns false if and only if it reset, facilitating a do while loop.
 		bool advanceIndex(const std::vector<size_t> &maxGroups, size_t index);
+		
+		//A function to fix a grouping that is not a proper rhyming scheme.
+		void fix();
 	public:
 		//If called without a provided group, put every species in the same group.
 		Grouping(size_t numSpecies): numSpecies(numSpecies) {
@@ -64,9 +67,6 @@ class Grouping {
 		//index must be at less than getNumMerges()/getNumSplits().
 		Grouping getMerge(size_t index) const;
 		Grouping getSplit(size_t index) const;
-		
-		//A function to fix a grouping that is not a proper rhyming scheme.
-		void fix();
 		
 		//Operator overloading.
 		void operator=(const Grouping& g);
