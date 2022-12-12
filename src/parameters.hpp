@@ -2,7 +2,7 @@
 #define PARAMETERS_HPP
 
 #include "grouping.hpp"
-#include "lattice.hpp"
+#include "groupingmove.hpp"
 #include "data.hpp"
 #include "distribution.hpp"
 

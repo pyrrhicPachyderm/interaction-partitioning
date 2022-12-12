@@ -1,5 +1,5 @@
-#ifndef LATTICE_HPP
-#define LATTICE_HPP
+#ifndef GROUPING_MOVE_HPP
+#define GROUPING_MOVE_HPP
 
 #include <assert.h>
 #include <array>

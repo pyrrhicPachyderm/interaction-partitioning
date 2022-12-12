@@ -1,7 +1,7 @@
 #ifndef REVERSIBLE_JUMP_SOLVER_HPP
 #define REVERSIBLE_JUMP_SOLVER_HPP
 
-#include "lattice.hpp"
+#include "groupingmove.hpp"
 #include "solver.hpp"
 #include "priors.hpp"
 

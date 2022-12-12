@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "lattice.hpp"
+#include "groupingmove.hpp"
 
 void GroupingLattice::constructAllGroupings() {
 	Grouping grouping(numSpecies);
