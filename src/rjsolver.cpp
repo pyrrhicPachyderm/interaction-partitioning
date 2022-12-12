@@ -36,18 +36,28 @@ double ReversibleJumpSolver::getUnscaledTransModelJumpProbability(GroupingSizeSe
 	return std::min(1.0, destHyperprior/sourceHyperprior);
 }
 
+double ReversibleJumpSolver::getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType, bool reverse) const {
+	GroupingSizeSet destGroupingSizes = sourceGroupingSizes;
+	destGroupingSizes[groupingType] += moveType == MERGE ? -1 : 1;
+	return reverse ?
+		getUnscaledTransModelJumpProbability(destGroupingSizes, sourceGroupingSizes) :
+		getUnscaledTransModelJumpProbability(sourceGroupingSizes, destGroupingSizes);
+}
+
+double ReversibleJumpSolver::getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType) const {
+	return getUnscaledTransModelJumpProbability(sourceGroupingSizes, groupingType, moveType, false);
+}
+
 double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes) const {
 	double result = 0.0;
 	for(size_t groupingType = 0; groupingType < NUM_GROUPING_TYPES; groupingType++) {
 		if(!isChangingGroupings[groupingType]) continue;
-		
-		GroupingSizeSet newGroupingSizes = groupingSizes;
-		//Merges:
-		newGroupingSizes[groupingType] -= 1;
-		result += getUnscaledTransModelJumpProbability(groupingSizes, newGroupingSizes) * Grouping::getNumMerges(groupingSizes[groupingType]);
-		//Splits:
-		newGroupingSizes[groupingType] += 2; //We'd already subtracted 1, so this takes it to 1 above original.
-		result += getUnscaledTransModelJumpProbability(groupingSizes, newGroupingSizes) * Grouping::getMaxNumSplits(data.getNumSpecies(), groupingSizes[groupingType]);
+		for(size_t moveType = 0; moveType < NUM_MOVE_TYPES; moveType++) {
+			size_t maxNumMoves = moveType == MERGE ?
+				Grouping::getNumMerges(groupingSizes[groupingType]) :
+				Grouping::getMaxNumSplits(data.getNumSpecies(), groupingSizes[groupingType]);
+			result += maxNumMoves * getUnscaledTransModelJumpProbability(groupingSizes, (GroupingType)groupingType, (MoveType)moveType);
+		}
 	}
 	return result;
 }

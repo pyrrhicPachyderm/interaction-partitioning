@@ -72,10 +72,12 @@ class ReversibleJumpSolver : public Solver {
 		double getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices) const;
 		std::vector<double> getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType) const;
 		
-		//The function to get transModelJumpProbabilityMultiplier during initialisation, and three helper functions.
+		//The function to get transModelJumpProbabilityMultiplier during initialisation, and some helper functions.
 		double getTransModelJumpProbabilityMultiplier() const;
 		double getUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes, size_t recursionLevel) const;
 		double getUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes) const;
+		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType) const;
+		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType, bool reverse) const;
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const;
 		
 		Distribution<double> getGrowthRateJumpDistribution() const;
