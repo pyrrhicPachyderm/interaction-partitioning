@@ -175,16 +175,16 @@ Grouping Grouping::getSplit(size_t index) const {
 	assert(false && "index passed to getSplits() exceeds number of possible splits");
 }
 
-std::vector<size_t> Grouping::fixGrouping(std::vector<size_t> improperGrouping) {
-	//We must make the improperGrouping a proper grouping.
-	//Species are in the same group if and only if they have the same number in improperGrouping.
-	//However, improperGrouping is not required to be a valid rhyming scheme.
+void Grouping::fix() {
+	//We must make the improper grouping a proper grouping.
+	//Species are in the same group if and only if they have the same number in the current grouping.
+	//However, the current grouping is not required to be a valid rhyming scheme.
 	
-	//We will use something akin to countingSort.
-	//That is, we will assume the largest number in improperGrouping is not too large.
+	//We will use something akin to counting sort.
+	//That is, we will assume the largest number in the improper group is not too large.
 	//We will suffer issues with space complexity if that is not true.
 	
-	size_t maxImproperGroup = *std::max_element(improperGrouping.begin(), improperGrouping.end());
+	size_t maxImproperGroup = *std::max_element(groups.begin(), groups.end());
 	
 	//We will have a vector of mappings.
 	//Index into this using the number of improperGrouping, and it will give the proper group number.
@@ -192,22 +192,14 @@ std::vector<size_t> Grouping::fixGrouping(std::vector<size_t> improperGrouping) 
 	std::vector<size_t> mappedGroup(maxImproperGroup+1);
 	std::vector<size_t> isMapped(maxImproperGroup+1, false);
 	
-	std::vector<size_t> properGrouping(improperGrouping.size());
-	
 	size_t nextGroup = 0;
-	for(size_t i = 0; i < improperGrouping.size(); i++) {
-		if(!isMapped[improperGrouping[i]]) {
-			mappedGroup[improperGrouping[i]] = nextGroup++;
-			isMapped[improperGrouping[i]] = true;
+	for(size_t i = 0; i < numSpecies; i++) {
+		if(!isMapped[groups[i]]) {
+			mappedGroup[groups[i]] = nextGroup++;
+			isMapped[groups[i]] = true;
 		}
-		properGrouping[i] = mappedGroup[improperGrouping[i]];
+		groups[i] = mappedGroup[groups[i]];
 	}
-	
-	return properGrouping;
-}
-
-void Grouping::fix() {
-	groups = fixGrouping(groups);
 }
 
 void Grouping::operator=(const Grouping& g) {

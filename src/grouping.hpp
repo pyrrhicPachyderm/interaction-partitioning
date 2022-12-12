@@ -65,7 +65,7 @@ class Grouping {
 		Grouping getMerge(size_t index) const;
 		Grouping getSplit(size_t index) const;
 		
-		static std::vector<size_t> fixGrouping(std::vector<size_t> improperGrouping);
+		//A function to fix a grouping that is not a proper rhyming scheme.
 		void fix();
 		
 		//Operator overloading.
