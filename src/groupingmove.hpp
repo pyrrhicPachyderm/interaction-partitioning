@@ -7,54 +7,6 @@
 
 enum MoveType {MERGE, SPLIT, NUM_MOVE_TYPES};
 
-class GroupingMove;
-
-//A GroupingLattice is the set of all partitions of a given number of species, partially ordered by refinement.
-//It forms a lattice, in the mathematical sense that there is a unique supremum and a unique infimum.
-class GroupingLattice {
-	public:
-		const size_t numSpecies;
-	protected:
-		std::vector<Grouping> groupings;
-		
-		//Adjacency lists for upward and downward moves.
-		std::array<std::vector<std::vector<size_t>>, NUM_MOVE_TYPES> moveDests;
-		std::array<std::vector<std::vector<GroupingMove>>, NUM_MOVE_TYPES> moves;
-		
-		//Takes a grouping, and finds its index in groupings.
-		size_t findMatch(const std::vector<size_t> &grouping) const;
-		
-		void constructAllGroupings();
-		void constructAdjacencyLists();
-	public:
-		GroupingLattice(size_t numSpecies): numSpecies(numSpecies) {
-			constructAllGroupings();
-			constructAdjacencyLists();
-		};
-		
-		size_t getNumGroupings() const {
-			return groupings.size();
-		}
-		
-		const Grouping &getGrouping(size_t index) const {
-			return groupings[index];
-		}
-		
-		size_t getIndex(const Grouping &grouping) const;
-		
-		size_t getMoveDest(MoveType moveType, size_t sourceIndex, size_t adjIndex) const {
-			return moveDests[moveType][sourceIndex][adjIndex];
-		}
-		
-		const std::vector<size_t> &getMoveDests(MoveType moveType, size_t sourceIndex) const {
-			return moveDests[moveType][sourceIndex];
-		}
-		
-		const GroupingMove &getMove(MoveType moveType, size_t sourceIndex, size_t adjIndex) const {
-			return moves[moveType][sourceIndex][adjIndex];
-		}
-};
-
 //A move between two partitions, by merging two groups or splitting one.
 //The same move represents both directions.
 class GroupingMove {
