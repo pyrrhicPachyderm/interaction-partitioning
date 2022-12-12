@@ -22,9 +22,6 @@ class GroupingMove {
 		std::vector<size_t> mergeMap;
 		std::vector<size_t> splitMap;
 	public:
-		//g1 and g2 are the two group numbers that are merged.
-		GroupingMove(std::vector<size_t> splitGrouping, std::vector<size_t> mergedGrouping, size_t g1, size_t g2);
-		
 		//A move represents both directions, so grouping1 and grouping2 are interchangeable.
 		GroupingMove(const Grouping &grouping1, const Grouping &grouping2);
 		
