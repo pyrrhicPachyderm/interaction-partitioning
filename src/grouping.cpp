@@ -210,13 +210,6 @@ void Grouping::fix() {
 	groups = fixGrouping(groups);
 }
 
-bool Grouping::isMatch(std::vector<size_t> grouping) const {
-	for(size_t i = 0; i < numSpecies; i++) {
-		if(grouping[i] != groups[i]) return false;
-	}
-	return true;
-}
-
 void Grouping::operator=(const Grouping& g) {
 	//As numSpecies is const, we must assert here.
 	//TODO: This is an ugly way of doing it; come up with something better.

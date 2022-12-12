@@ -68,9 +68,6 @@ class Grouping {
 		static std::vector<size_t> fixGrouping(std::vector<size_t> improperGrouping);
 		void fix();
 		
-		//Checks whether the provided grouping matches this one.
-		bool isMatch(std::vector<size_t> grouping) const;
-		
 		//Operator overloading.
 		void operator=(const Grouping& g);
 		bool operator==(const Grouping& g) const;
