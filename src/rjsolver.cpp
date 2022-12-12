@@ -157,12 +157,13 @@ void ReversibleJumpSolver::setIsProposing(bool b) {
 }
 
 double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t index) {
-	//index is the index into the adjacency list of the relevant part of groupingLattice.
-	size_t newGroupingIndex = groupingLattice.getMoveDest(moveType, currentGroupings[groupingType], index);
-	GroupingMove groupingMove = groupingLattice.getMove(moveType, currentGroupings[groupingType], index);
+	Grouping newGrouping = moveType == MERGE ?
+		getGrouping(groupingType).getMerge(index) :
+		getGrouping(groupingType).getSplit(index);
+	GroupingMove groupingMove = GroupingMove(getGrouping(groupingType), newGrouping);
 	
 	proposedGroupings = currentGroupings;
-	proposedGroupings[groupingType] = newGroupingIndex;
+	proposedGroupings[groupingType] = groupingLattice.getIndex(newGrouping);
 	
 	Distribution<double> randomVariableDistribution = getTransModelJumpDistribution(groupingType);
 	
