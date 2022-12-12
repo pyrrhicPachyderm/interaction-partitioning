@@ -1,14 +1,10 @@
 #include <numeric> //Gives std::accumulate.
-#include <random>
 #include "utils/array.hpp"
 #include "rjsolver.hpp"
 
-#define RANDOM_SEED 42
 #define MAX_TRANS_MODEL_JUMP_PROBABILITY 0.9
 #define DESIRED_ACCEPTANCE_RATE 0.23 //For within-model jumps.
 #define MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE 2.0 //Controls how quickly dialIn changes the jump variance multiplier.
-
-static std::default_random_engine randomNumberGenerator(RANDOM_SEED);
 
 //The probability of any particular jump.
 double ReversibleJumpSolver::getTransModelJumpProbability(GroupingType groupingType, MoveType moveType) const {
