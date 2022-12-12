@@ -16,13 +16,13 @@ double ReversibleJumpSolver::getTransModelJumpProbability(GroupingType groupingT
 }
 
 double ReversibleJumpSolver::getTransModelJumpProbability(GroupingType groupingType, MoveType moveType, bool reverse) const {
-	GroupingSizeSet sourceGroupingSizes = getGroupingSizeSet(getGroupings(currentGroupings));
+	GroupingSizeSet sourceGroupingSizes = getGroupingSizeSet(currentGroupings);
 	return transModelJumpProbabilityMultiplier * getUnscaledTransModelJumpProbability(sourceGroupingSizes, groupingType, moveType, reverse);
 }
 
 //The number of possible moves of a specified type.
 size_t ReversibleJumpSolver::getNumTransModelJumps(GroupingType groupingType, MoveType moveType) const {
-	return moveType == MERGE ? getGrouping(groupingType).getNumMerges() : getGrouping(groupingType).getNumSplits();
+	return moveType == MERGE ? currentGroupings[groupingType].getNumMerges() : currentGroupings[groupingType].getNumSplits();
 }
 
 double ReversibleJumpSolver::getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const {
@@ -92,24 +92,6 @@ double ReversibleJumpSolver::getTransModelJumpProbabilityMultiplier() const {
 	return MAX_TRANS_MODEL_JUMP_PROBABILITY / unscaledMaxTransModelJumpProbability;
 }
 
-GroupingSet ReversibleJumpSolver::getGroupings(GroupingIndexSet groupingIndices) const {
-	return array_map(
-		[this, groupingIndices] (size_t index) -> Grouping {
-			return groupingLattice.getGrouping(groupingIndices[index]);
-		},
-		make_index_array<NUM_GROUPING_TYPES>()
-	);
-}
-
-ReversibleJumpSolver::GroupingIndexSet ReversibleJumpSolver::getGroupingIndices(GroupingSet groupings) const {
-	return array_map(
-		[this, groupings] (size_t index) -> size_t {
-			return groupingLattice.getIndex(groupings[index]);
-		},
-		make_index_array<NUM_GROUPING_TYPES>()
-	);
-}
-
 Distribution<double> ReversibleJumpSolver::getGrowthRateJumpDistribution() const {
 	return Distribution<double>(new Distributions::Normal(0.0, growthRateApproximatePosteriorVariance * jumpVarianceMultiplier));
 }
@@ -158,12 +140,12 @@ void ReversibleJumpSolver::setIsProposing(bool b) {
 
 double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t index) {
 	Grouping newGrouping = moveType == MERGE ?
-		getGrouping(groupingType).getMerge(index) :
-		getGrouping(groupingType).getSplit(index);
-	GroupingMove groupingMove = GroupingMove(getGrouping(groupingType), newGrouping);
+		currentGroupings[groupingType].getMerge(index) :
+		currentGroupings[groupingType].getSplit(index);
+	GroupingMove groupingMove = GroupingMove(currentGroupings[groupingType], newGrouping);
 	
 	proposedGroupings = currentGroupings;
-	proposedGroupings[groupingType] = groupingLattice.getIndex(newGrouping);
+	proposedGroupings[groupingType] = newGrouping;
 	
 	Distribution<double> randomVariableDistribution = getTransModelJumpDistribution(groupingType);
 	

@@ -13,13 +13,11 @@ class ReversibleJumpSolver : public Solver {
 		typedef AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>::AdditionalParametersVector AdditionalParametersVector;
 		enum JumpType {MERGE_JUMP, SPLIT_JUMP, WITHIN_JUMP, NUM_JUMP_TYPES};
 	protected:
-		typedef std::array<size_t, NUM_GROUPING_TYPES> GroupingIndexSet;
 		typedef std::array<bool, NUM_GROUPING_TYPES> GroupingBooleanSet;
 		
-		GroupingLattice groupingLattice;
 		Hyperprior hyperprior;
 		
-		GroupingIndexSet currentGroupings;
+		GroupingSet currentGroupings;
 		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> currentParameters;
 		
 		GroupingBooleanSet isChangingGroupings;
@@ -27,8 +25,9 @@ class ReversibleJumpSolver : public Solver {
 		//If isProposing, then base class functions such as getResiduals() will use the propsed groupings.
 		bool isProposing = false;
 		
-		GroupingIndexSet proposedGroupings;
-		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> proposedParameters;
+		//These do not *need* default values, as isProposing is initially false, but need some value as Grouping does not have a default constructor.
+		GroupingSet proposedGroupings = currentGroupings;
+		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> proposedParameters = currentParameters;
 		
 		JumpType proposedJumpType;
 		
@@ -41,9 +40,12 @@ class ReversibleJumpSolver : public Solver {
 		double competitionCoefficientPriorVariance = pow(data.guessCompetitionCoefficientMagnitude(), 2);
 	public:
 		ReversibleJumpSolver(Data data, Hyperprior hyperprior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
-			Solver(data), groupingLattice(GroupingLattice(data.getNumSpecies())), hyperprior(hyperprior), isChangingGroupings(isChangingGroupings) {
-				currentGroupings = getGroupingIndices(groupings);
-				currentParameters = AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {{data.getResponseVariance()}});
+			Solver(data),
+			hyperprior(hyperprior),
+			currentGroupings(groupings),
+			currentParameters(AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {{data.getResponseVariance()}})),
+			isChangingGroupings(isChangingGroupings)
+			{
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
 			};
 	protected:
@@ -51,18 +53,15 @@ class ReversibleJumpSolver : public Solver {
 		void dirtyDataSubclass() override {}
 		void dirtyGroupingSubclass(GroupingType groupingType) override {}
 		
-		GroupingSet getGroupings(GroupingIndexSet groupingIndices) const;
-		GroupingIndexSet getGroupingIndices(GroupingSet groupings) const;
-		
 		void setIsProposing(bool b);
 	public:
 		//Functions to retrieve groupings.
 		const Grouping &getGrouping(GroupingType groupingType) const override {
-			return groupingLattice.getGrouping(isProposing ? proposedGroupings[groupingType] : currentGroupings[groupingType]);
+			return isProposing ? proposedGroupings[groupingType] : currentGroupings[groupingType];
 		}
 		
 		GroupingSet getGroupings() const {
-			return getGroupings(isProposing ? proposedGroupings : currentGroupings);
+			return isProposing ? proposedGroupings : currentGroupings;
 		}
 		
 		const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &getParameters() const {
