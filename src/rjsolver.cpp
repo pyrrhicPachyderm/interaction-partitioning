@@ -10,24 +10,19 @@
 
 static std::default_random_engine randomNumberGenerator(RANDOM_SEED);
 
-double ReversibleJumpSolver::getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices) const {
-	return transModelJumpProbabilityMultiplier * getUnscaledTransModelJumpProbability(
-		getGroupingSizeSet(getGroupings(sourceGroupingIndices)),
-		getGroupingSizeSet(getGroupings(destGroupingIndices))
-	);
+//The probability of any particular jump.
+double ReversibleJumpSolver::getTransModelJumpProbability(GroupingType groupingType, MoveType moveType) const {
+	return getTransModelJumpProbability(groupingType, moveType, false);
 }
 
-std::vector<double> ReversibleJumpSolver::getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType) const {
-	const std::vector<size_t> &destIndices = groupingLattice.getMoveDests(moveType, currentGroupings[groupingType]);
-	std::vector<double> probabilities;
-	
-	GroupingIndexSet newGroupingIndices = currentGroupings;
-	for(size_t i = 0; i < destIndices.size(); i++) {
-		newGroupingIndices[groupingType] = destIndices[i];
-		probabilities.push_back(getTransModelJumpProbability(currentGroupings, newGroupingIndices));
-	}
-	
-	return probabilities;
+double ReversibleJumpSolver::getTransModelJumpProbability(GroupingType groupingType, MoveType moveType, bool reverse) const {
+	GroupingSizeSet sourceGroupingSizes = getGroupingSizeSet(getGroupings(currentGroupings));
+	return transModelJumpProbabilityMultiplier * getUnscaledTransModelJumpProbability(sourceGroupingSizes, groupingType, moveType, reverse);
+}
+
+//The number of possible moves of a specified type.
+size_t ReversibleJumpSolver::getNumTransModelJumps(GroupingType groupingType, MoveType moveType) const {
+	return moveType == MERGE ? getGrouping(groupingType).getNumMerges() : getGrouping(groupingType).getNumSplits();
 }
 
 double ReversibleJumpSolver::getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const {
@@ -174,7 +169,8 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	proposedParameters = currentParameters;
 	double acceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, randomVariableDistribution);
 	
-	acceptanceRatio *= getTransModelJumpProbability(currentGroupings, proposedGroupings) / getTransModelJumpProbability(proposedGroupings, currentGroupings);
+	acceptanceRatio *= getTransModelJumpProbability(groupingType, moveType, false)
+		/ getTransModelJumpProbability(groupingType, moveType, true);
 	
 	if(moveType == MERGE) proposedJumpType = MERGE_JUMP;
 	else if(moveType == SPLIT) proposedJumpType = SPLIT_JUMP;
@@ -205,12 +201,15 @@ double ReversibleJumpSolver::proposeJump() {
 	for(size_t groupingType = 0; groupingType < NUM_GROUPING_TYPES; groupingType++) {
 		if(!isChangingGroupings[groupingType]) continue;
 		for(size_t moveType = 0; moveType < NUM_MOVE_TYPES; moveType++) {
-			std::vector<double> probabilities = getTransModelJumpProbabilities((GroupingType)groupingType, (MoveType)moveType);
-			for(size_t adjIndex = 0; adjIndex < probabilities.size(); adjIndex++) {
-				selector -= probabilities[adjIndex];
-				if(selector < 0) {
-					return proposeTransModelJump((GroupingType)groupingType, (MoveType)moveType, adjIndex);
-				}
+			//Get the number of jumps, and the probability of each jump, and multiply to find the total.
+			double probability = getTransModelJumpProbability((GroupingType)groupingType, (MoveType)moveType);
+			size_t numJumps = getNumTransModelJumps((GroupingType)groupingType, (MoveType)moveType);
+			double totalProbability = probability * numJumps;
+			if(selector < totalProbability) {
+				size_t index = selector / probability;
+				return proposeTransModelJump((GroupingType)groupingType, (MoveType)moveType, index);
+			} else {
+				selector -= totalProbability;
 			}
 		}
 	}

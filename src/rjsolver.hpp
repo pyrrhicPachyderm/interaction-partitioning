@@ -69,8 +69,9 @@ class ReversibleJumpSolver : public Solver {
 			return isProposing ? proposedParameters : currentParameters;
 		}
 	protected:
-		double getTransModelJumpProbability(GroupingIndexSet sourceGroupingIndices, GroupingIndexSet destGroupingIndices) const;
-		std::vector<double> getTransModelJumpProbabilities(GroupingType groupingType, MoveType moveType) const;
+		double getTransModelJumpProbability(GroupingType groupingType, MoveType moveType) const;
+		double getTransModelJumpProbability(GroupingType groupingType, MoveType moveType, bool reverse) const;
+		size_t getNumTransModelJumps(GroupingType groupingType, MoveType moveType) const;
 		
 		//The function to get transModelJumpProbabilityMultiplier during initialisation, and some helper functions.
 		double getTransModelJumpProbabilityMultiplier() const;
