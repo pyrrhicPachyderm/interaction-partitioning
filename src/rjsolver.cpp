@@ -46,7 +46,7 @@ double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(GroupingSiz
 		for(size_t moveType = 0; moveType < NUM_MOVE_TYPES; moveType++) {
 			size_t maxNumMoves = moveType == MERGE ?
 				Grouping::getNumMerges(groupingSizes[groupingType]) :
-				Grouping::getMaxNumSplits(data.getNumSpecies(), groupingSizes[groupingType]);
+				Grouping::getMaxNumSplits(data.getNumSpecies((GroupingType)groupingType), groupingSizes[groupingType]);
 			result += maxNumMoves * getUnscaledTransModelJumpProbability(groupingSizes, (GroupingType)groupingType, (MoveType)moveType);
 		}
 	}
@@ -71,7 +71,7 @@ double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(GroupingSiz
 	}
 	
 	double result = 0.0;
-	for(size_t i = 1; i <= data.getNumSpecies(); i++) {
+	for(size_t i = 1; i <= data.getNumSpecies((GroupingType)recursionLevel); i++) {
 		groupingSizes[recursionLevel] = i;
 		result = std::max(result, getUnscaledMaxTransModelJumpProbability(groupingSizes, recursionLevel+1));
 	}

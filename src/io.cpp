@@ -110,13 +110,14 @@ template<> void OutputColumn<Eigen::VectorXd>::printHeader(std::ostream &stream)
 }
 
 template<> void OutputColumn<Parameters>::printHeader(std::ostream &stream) const {
-	size_t numSpecies = column[0].getNumSpecies();
-	printMultiHeader(stream, name + "_" + OUTPUT_GROWTH_RATE_STRING, numSpecies);
+	size_t numRowSpecies = column[0].getNumRowSpecies();
+	size_t numColSpecies = column[0].getNumColSpecies();
+	printMultiHeader(stream, name + "_" + OUTPUT_GROWTH_RATE_STRING, numRowSpecies);
 	stream << OUTPUT_TABLE_SEPARATOR;
 	
-	for(size_t i = 0; i < numSpecies; i++) {
-		printMultiHeader(stream, name + "_" + OUTPUT_COMPETITION_COEFFICIENT_STRING + "_" + std::to_string(i), numSpecies);
-		if(i != numSpecies-1) stream << OUTPUT_TABLE_SEPARATOR;
+	for(size_t i = 0; i < numRowSpecies; i++) {
+		printMultiHeader(stream, name + "_" + OUTPUT_COMPETITION_COEFFICIENT_STRING + "_" + std::to_string(i), numColSpecies);
+		if(i != numRowSpecies-1) stream << OUTPUT_TABLE_SEPARATOR;
 	}
 }
 
@@ -141,10 +142,11 @@ template<> void OutputColumn<Eigen::VectorXd>::printElement(std::ostream &stream
 }
 
 template<> void OutputColumn<Parameters>::printElement(std::ostream &stream, size_t index) const {
-	size_t numSpecies = column[index].getNumSpecies();
+	size_t numRowSpecies = column[index].getNumRowSpecies();
+	size_t numColSpecies = column[index].getNumColSpecies();
 	
 	Eigen::VectorXd growthRates = column[index].getGrowthRates();
-	for(size_t i = 0; i < numSpecies; i++) {
+	for(size_t i = 0; i < numRowSpecies; i++) {
 		if(i < (size_t)growthRates.size()) {
 			stream << growthRates[i];
 		} else {
@@ -154,14 +156,14 @@ template<> void OutputColumn<Parameters>::printElement(std::ostream &stream, siz
 	}
 	
 	Eigen::MatrixXd competitionCoefficients = column[index].getCompetitionCoefficients();
-	for(size_t i = 0; i < numSpecies; i++) {
-		for(size_t j = 0; j < numSpecies; j++) {
+	for(size_t i = 0; i < numRowSpecies; i++) {
+		for(size_t j = 0; j < numColSpecies; j++) {
 			if(i < (size_t)competitionCoefficients.rows() && j < (size_t)competitionCoefficients.cols()) {
 				stream << competitionCoefficients(i, j);
 			} else {
 				stream << OUTPUT_NULL_VALUE_STRING;
 			}
-			if(i != numSpecies-1 || j != numSpecies-1) stream << OUTPUT_TABLE_SEPARATOR;
+			if(i != numRowSpecies-1 || j != numColSpecies-1) stream << OUTPUT_TABLE_SEPARATOR;
 		}
 	}
 }

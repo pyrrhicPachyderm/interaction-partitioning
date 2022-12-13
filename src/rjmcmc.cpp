@@ -11,14 +11,16 @@
 int main(int argc, char **argv) {
 	Input input(argc, argv, {'a'});
 	
-	Grouping grouping(input.getData().getNumSpecies());
-	grouping.separate();
+	Grouping rowGrouping(input.getData().getNumRowSpecies());
+	Grouping colGrouping(input.getData().getNumColSpecies());
+	rowGrouping.separate();
+	colGrouping.separate();
 	
 	Hyperprior hyperprior = input.getBoolOptResult('a') ?
 		Hyperprior::aic() :
 		Hyperprior::flat();
 	
-	ReversibleJumpSolver solver(input.getData(), hyperprior, {grouping, grouping, grouping}, {false, true, true});
+	ReversibleJumpSolver solver(input.getData(), hyperprior, {rowGrouping, rowGrouping, colGrouping}, {false, true, true});
 	
 	solver.dialIn(JUMPS_PER_DIAL, NUM_DIALS);
 	solver.burnIn(BURN_IN);

@@ -12,8 +12,12 @@ GroupingSizeSet getGroupingSizeSet(const GroupingSet &groupingSet) {
 	);
 }
 
-double Parameters::getNumSpecies() const {
-	return numSpecies;
+double Parameters::getNumRowSpecies() const {
+	return numRowSpecies;
+}
+
+double Parameters::getNumColSpecies() const {
+	return numColSpecies;
 }
 
 double Parameters::getGrowthRate(size_t index) const {
@@ -43,7 +47,7 @@ size_t Parameters::getNumParameters() const {
 }
 
 Parameters::Parameters(Data data, GroupingSet groupings):
-	numSpecies(groupings[GROWTH].numSpecies)
+	numRowSpecies(data.getNumRowSpecies()), numColSpecies(data.getNumColSpecies())
 {
 	//This is the standard constructor.
 	//It will try to make somewhat reasonable initial guesses for all the parameter values.
@@ -70,7 +74,7 @@ Eigen::VectorXd Parameters::getTolerances(Data data, GroupingSet groupings) {
 }
 
 Parameters::Parameters(Eigen::VectorXd parameters, GroupingSet groupings):
-	numSpecies(groupings[GROWTH].numSpecies)
+	numRowSpecies(groupings[ROW].numSpecies), numColSpecies(groupings[COL].numSpecies)
 {
 	size_t numGrowthRates = groupings[GROWTH].getNumGroups();
 	size_t numRowGroups = groupings[ROW].getNumGroups();

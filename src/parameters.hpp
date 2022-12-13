@@ -6,7 +6,6 @@
 #include "data.hpp"
 #include "distribution.hpp"
 
-enum GroupingType {GROWTH, ROW, COL, NUM_GROUPING_TYPES};
 typedef std::array<Grouping, NUM_GROUPING_TYPES> GroupingSet;
 typedef std::array<size_t, NUM_GROUPING_TYPES> GroupingSizeSet;
 //A GroupingSizeSet is the number of groups in each grouping of a GroupingSet.
@@ -15,13 +14,15 @@ GroupingSizeSet getGroupingSizeSet(const GroupingSet &groupingSet);
 
 class Parameters {
 	protected:
-		size_t numSpecies = 0;
+		size_t numRowSpecies = 0;
+		size_t numColSpecies = 0;
 		//The grouping sizes will be implicitly stored in the sizes of the growth rates vector and competition coefficients matrix.
 		//The matrix will be stored in row-major order.
 		Eigen::VectorXd growthRates;
 		Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> competitionCoefficients;
 	public:
-		double getNumSpecies() const;
+		double getNumRowSpecies() const;
+		double getNumColSpecies() const;
 		double getGrowthRate(size_t index) const;
 		const Eigen::VectorXd &getGrowthRates() const;
 		double getCompetitionCoefficient(size_t rowIndex, size_t colIndex) const;

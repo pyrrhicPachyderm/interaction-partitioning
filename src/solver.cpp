@@ -4,7 +4,7 @@ void Solver::calculateColGroupedDesign() {
 	colGroupedDesign = Eigen::MatrixXd::Zero(data.getNumObservations(), getGrouping(COL).getNumGroups());
 	
 	for(size_t obs = 0; obs < data.getNumObservations(); obs++) {
-		for(size_t sp = 0; sp < data.getNumSpecies(); sp++) {
+		for(size_t sp = 0; sp < data.getNumColSpecies(); sp++) {
 			colGroupedDesign(obs, getGrouping(COL).getGroup(sp)) += data.getDesign()(obs, sp);
 		}
 	}
