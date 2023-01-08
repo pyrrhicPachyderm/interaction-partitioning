@@ -24,7 +24,8 @@ as_coclassification_matrix <- function(grouping) {
 
 Data <- R6::R6Class("Data",
 	public = list(
-		num_species = NULL,
+		num_row_species = NULL,
+		num_col_species = NULL,
 		species_names = NULL,
 		row_groupings = NULL, #A data frame of row groupings, named by the species names.
 		col_groupings = NULL, #As above, for col groupings.
@@ -34,17 +35,16 @@ Data <- R6::R6Class("Data",
 		initialize = function(data_file_name, species_names) {
 			data_table <- read.table(data_file_name, header=TRUE)
 			
-			self$num_species <- length(species_names)
 			self$species_names <- species_names
-			
-			private$validate_data(data_table, self$num_species)
 			
 			#Extract the groupings and other data.
 			#Add one to the groupings to make them 1-indexed, as R prefers.
 			self$row_groupings <- data_table[,grep("row_group", names(data_table))] + 1
 			self$col_groupings <- data_table[,grep("col_group", names(data_table))] + 1
-			names(self$row_groupings) <- species_names
-			names(self$col_groupings) <- species_names
+			self$num_row_species <- ncol(self$row_groupings)
+			self$num_col_species <- ncol(self$col_groupings)
+			names(self$row_groupings) <- species_names[1:self$num_row_species]
+			names(self$col_groupings) <- species_names[1:self$num_col_species]
 			self$parameters <- data_table[,grep("parameters", names(data_table))]
 			private$objectify_parameters()
 			self$statistics <- data_table[,grep("_[0-9]*$|parameters", names(data_table), invert=TRUE)]
@@ -63,16 +63,6 @@ Data <- R6::R6Class("Data",
 	),
 	
 	private = list(
-		validate_data = function(data_table, num_species) {
-			#Checks whether a data table is for the correct number of species.
-			if(
-				length(grep("row_group", names(data_table))) != num_species |
-				length(grep("col_group", names(data_table))) != num_species
-			) {
-				stop("Data table has the wrong number of species.")
-			}
-		},
-		
 		objectify_parameters = function() {
 			#Turns self$parameters from a data frame of raw parameter values to a vector of R6 Parameters objects.
 			
@@ -86,7 +76,8 @@ Data <- R6::R6Class("Data",
 				col_grouping <- self$get_col_grouping(i)
 				group_alpha_values <- matrix(
 					as.vector(as.matrix(alpha_values_df[i,])),
-					nrow = self$num_species,
+					nrow = self$num_row_species,
+					ncol = self$num_col_species,
 					byrow = TRUE
 				)
 				alpha_values <- group_alpha_values[row_grouping,col_grouping]
@@ -133,9 +124,9 @@ Data <- R6::R6Class("Data",
 		},
 		
 		annotate_matrix = function(mat) {
-			#Annotates a num_species by num_species matrix with the species names.
-			rownames(mat) <- self$species_names
-			colnames(mat) <- self$species_names
+			#Annotates a matrix with the species names.
+			rownames(mat) <- self$species_names[1:nrow(mat)]
+			colnames(mat) <- self$species_names[1:ncol(mat)]
 			return(mat)
 		},
 		
@@ -167,19 +158,26 @@ Data <- R6::R6Class("Data",
 			return(self$statistics[private$match_groupings(self$row_groupings,self$col_groupings),])
 		},
 		fully_grouped_statistics = function() {
-			grouping <- rep(1, self$num_species)
-			return(private$get_statistics_row(grouping, grouping))
+			row_grouping <- rep(1, self$num_row_species)
+			col_grouping <- rep(1, self$num_col_species)
+			return(private$get_statistics_row(row_grouping, col_grouping))
 		},
 		fully_separated_statistics = function() {
-			grouping <- 1:self$num_species
-			return(private$get_statistics_row(grouping, grouping))
+			row_grouping <- 1:self$num_row_species
+			col_grouping <- 1:self$num_col_species
+			return(private$get_statistics_row(row_grouping, col_grouping))
 		},
 		
-		fully_grouped_coclassification_matrix = function() {
-			return(matrix(1, self$num_species, self$num_species))
+		fully_grouped_coclassification_matrix = function(num_species) {
+			return(matrix(1, num_species, num_species))
 		},
-		fully_separated_coclassification_matrix = function() {
-			return(diag(self$num_species))
-		}
+		fully_separated_coclassification_matrix = function(num_species) {
+			return(diag(num_species))
+		},
+		
+		fully_grouped_row_coclassification_matrix = function(num_species) {return(fully_grouped_coclassification_matrix(self$num_row_species))},
+		fully_grouped_col_coclassification_matrix = function(num_species) {return(fully_grouped_coclassification_matrix(self$num_col_species))},
+		fully_separated_row_coclassification_matrix = function(num_species) {return(fully_separated_coclassification_matrix(self$num_row_species))},
+		fully_separated_col_coclassification_matrix = function(num_species) {return(fully_separated_coclassification_matrix(self$num_col_species))}
 	)
 )
