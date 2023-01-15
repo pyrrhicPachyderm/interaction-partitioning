@@ -342,3 +342,11 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 		}
 	}
 }
+
+void ReversibleJumpSolver::resetChain() {
+	currentGroupings = initialGroupings;
+	currentParameters = initialParameters;
+	for(size_t i = 0; i < NUM_GROUPING_TYPES; i++) {
+		dirtyGrouping((GroupingType)i);
+	}
+}

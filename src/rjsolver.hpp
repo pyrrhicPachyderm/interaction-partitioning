@@ -17,8 +17,11 @@ class ReversibleJumpSolver : public Solver {
 		
 		Hyperprior hyperprior;
 		
-		GroupingSet currentGroupings;
-		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> currentParameters;
+		GroupingSet initialGroupings; //For resetting to when starting a new chain.
+		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> initialParameters;
+		
+		GroupingSet currentGroupings = initialGroupings;
+		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> currentParameters = initialParameters;
 		
 		GroupingBooleanSet isChangingGroupings;
 		
@@ -26,8 +29,8 @@ class ReversibleJumpSolver : public Solver {
 		bool isProposing = false;
 		
 		//These do not *need* default values, as isProposing is initially false, but need some value as Grouping does not have a default constructor.
-		GroupingSet proposedGroupings = currentGroupings;
-		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> proposedParameters = currentParameters;
+		GroupingSet proposedGroupings = initialGroupings;
+		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> proposedParameters = initialParameters;
 		
 		JumpType proposedJumpType;
 		
@@ -42,8 +45,8 @@ class ReversibleJumpSolver : public Solver {
 		ReversibleJumpSolver(Data data, Hyperprior hyperprior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data),
 			hyperprior(hyperprior),
-			currentGroupings(groupings),
-			currentParameters(AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {{data.getResponseVariance()}})),
+			initialGroupings(groupings),
+			initialParameters(AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {{data.getResponseVariance()}})),
 			isChangingGroupings(isChangingGroupings)
 			{
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
@@ -111,6 +114,8 @@ class ReversibleJumpSolver : public Solver {
 		};
 		
 		void dialIn(size_t jumpsPerDial, size_t numDials);
+		
+		void resetChain();
 };
 
 #endif
