@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 			outputAICs.insert(solver.getAIC());
 			outputAICcs.insert(solver.getAICc());
 			outputR2s.insert(solver.getR2());
-			outputParameters.insert(solver.getSolution());
+			outputParameters.insert(Parameters(solver.getSolution(), solver.getGroupings()));
 		} while(solver.updateGrouping(ROW, &Grouping::advance));
 	} while(solver.updateGrouping(COL, &Grouping::advance));
 	

@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 			solver.makeJump();
 			outputRowGroupings.insert(solver.getGrouping(ROW));
 			outputColGroupings.insert(solver.getGrouping(COL));
-			outputParameters.insert(solver.getParameters());
+			outputParameters.insert(Parameters(solver.getParameters(), solver.getGroupings()));
 			outputErrorVariance.insert(solver.getParameters().getAdditionalParameter(0));
 		}
 	}

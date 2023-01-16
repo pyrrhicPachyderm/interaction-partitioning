@@ -72,15 +72,12 @@ Data <- R6::R6Class("Data",
 			
 			self$parameters <- sapply(1:nrow(self$parameters), function(i) {
 				growth_rates <- as.vector(as.matrix(growth_rates_df[i,]))
-				row_grouping <- self$get_row_grouping(i)
-				col_grouping <- self$get_col_grouping(i)
-				group_alpha_values <- matrix(
+				alpha_values <- matrix(
 					as.vector(as.matrix(alpha_values_df[i,])),
 					nrow = self$num_row_species,
 					ncol = self$num_col_species,
 					byrow = TRUE
 				)
-				alpha_values <- group_alpha_values[row_grouping,col_grouping]
 				error_variance <- error_variance_vector[i] #This may be NULL.
 				
 				return(Parameters$new(growth_rates, alpha_values, error_variance))
