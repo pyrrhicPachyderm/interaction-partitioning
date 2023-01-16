@@ -46,6 +46,9 @@ class MaximumLikelihoodSolver : public Solver {
 		const Grouping &getGrouping(GroupingType groupingType) const override {
 			return groupings[groupingType];
 		}
+		GroupingSet getGroupings() const {
+			return groupings;
+		}
 	protected:
 		Eigen::VectorXd getResidualsFromVector(const Eigen::VectorXd &parameterVector);
 		
