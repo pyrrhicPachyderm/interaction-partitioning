@@ -84,6 +84,22 @@ Parameters::Parameters(Eigen::VectorXd parameters, GroupingSet groupings):
 	competitionCoefficients = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(&parameters[numGrowthRates], numRowGroups, numColGroups);
 }
 
+Parameters::Parameters(Parameters p, GroupingSet groupings):
+	numRowSpecies(groupings[ROW].numSpecies), numColSpecies(groupings[COL].numSpecies)
+{
+	//This gives ungrouped parameters (one parameter per species/pair of species), based on grouped parameters and their groups.
+	growthRates = Eigen::VectorXd(numRowSpecies);
+	competitionCoefficients = Eigen::MatrixXd(numRowSpecies, numColSpecies);
+	for(size_t i = 0; i < numRowSpecies; i++) {
+		growthRates[i] = p.growthRates[groupings[GROWTH].getGroup(i)];
+	}
+	for(size_t i = 0; i < numRowSpecies; i++) {
+		for(size_t j = 0; j < numColSpecies; j++) {
+			competitionCoefficients(i,j) = p.competitionCoefficients(groupings[ROW].getGroup(i), groupings[COL].getGroup(j));
+		}
+	}
+}
+
 Eigen::VectorXd Parameters::getAsVector() const {
 	return (Eigen::VectorXd(growthRates.size() + competitionCoefficients.size()) <<
 		growthRates,

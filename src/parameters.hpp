@@ -32,6 +32,7 @@ class Parameters {
 	public:
 		Parameters() = default;
 		Parameters(Data data, GroupingSet groupings);
+		Parameters(Parameters p, GroupingSet groupings); //Undoes the grouping, giving a full set of parameters for every species.
 		
 		//Some functions to allow converting back and forth as a pure vector, for systems (such as the NLS module) that need it that way.
 		Parameters(Eigen::VectorXd parameters, GroupingSet groupings);
@@ -62,6 +63,8 @@ template<size_t nAug> class AugmentedParameters : public Parameters {
 		using Parameters::Parameters;
 		AugmentedParameters(Data data, GroupingSet groupings, AdditionalParametersVector additionalParameters):
 			Parameters(data, groupings), additionalParameters(additionalParameters) {};
+		AugmentedParameters(AugmentedParameters p, GroupingSet groupings): //Undoes the grouping, giving a full set of parameters for every species.
+			Parameters((Parameters)p, groupings), additionalParameters(p.additionalParameters) {};
 		const double &getAdditionalParameter(size_t index) const {
 			return additionalParameters[index];
 		}
