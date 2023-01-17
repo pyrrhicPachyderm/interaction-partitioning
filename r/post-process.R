@@ -95,10 +95,13 @@ Data <- R6::R6Class("Data",
 		
 		match_groupings = function(grouping_table_1, grouping_table_2) {
 			#Returns the indices at which the rows of the two grouping tables are equivalent.
-			rowwise_match <- sapply(1:nrow(grouping_table_1), function(i) {
-				return(all(as.vector(as.matrix(grouping_table_1[i,])) == as.vector(as.matrix(grouping_table_2[i,]))))
+			elementwise_match <- lapply(1:ncol(grouping_table_1), function(i) {
+				return(grouping_table_1[[i]] == grouping_table_2[[i]])
 			})
-			return(rowwise_match)
+			
+			rowwise_match <- Reduce("&", elementwise_match)
+			
+			return(which(rowwise_match))
 		},
 		
 		annotate_matrix = function(mat) {
