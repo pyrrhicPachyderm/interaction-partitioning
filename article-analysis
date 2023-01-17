@@ -97,7 +97,7 @@ get_model_output_table <- function(brute_data, model_index) {
 	model_index <- which.max(brute_data$statistics[[ic_weight]])
 	row_grouping <- brute_data$get_row_grouping(model_index)
 	col_grouping <- brute_data$get_col_grouping(model_index)
-	alpha_matrix <- brute_data$parameters[[model_index]]$alpha_values
+	alpha_matrix <- brute_data$get_parameters(model_index)$alpha_values
 	
 	ordering <- get_ordering(list(row_grouping, col_grouping))
 	species_names <- brute_data$species_names[ordering]
@@ -199,7 +199,7 @@ partial_residual_plot <- function(parameters, species_output_order) {
 	return(plot)
 }
 
-best_parameters <- brute_data$parameters[[best_model_index]]
+best_parameters <- brute_data$get_parameters(best_model_index)
 average_parameters <- brute_data$average_parameters
 
 best_model_fit_plot <- model_fit_plot(best_parameters, species_output_order)

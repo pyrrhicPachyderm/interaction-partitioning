@@ -46,7 +46,6 @@ Data <- R6::R6Class("Data",
 			names(self$row_groupings) <- species_names[1:self$num_row_species]
 			names(self$col_groupings) <- species_names[1:self$num_col_species]
 			self$parameters <- data_table[,grep("parameters", names(data_table))]
-			private$objectify_parameters()
 			self$statistics <- data_table[,grep("_[0-9]*$|parameters", names(data_table), invert=TRUE)]
 			
 			#Add additional columns of statistics.
@@ -59,31 +58,13 @@ Data <- R6::R6Class("Data",
 		},
 		get_col_grouping = function(index) {
 			as.vector(as.matrix(self$col_groupings[index,]))
+		},
+		get_parameters = function(index) {
+			Parameters$new(self$parameters[index,])
 		}
 	),
 	
 	private = list(
-		objectify_parameters = function() {
-			#Turns self$parameters from a data frame of raw parameter values to a vector of R6 Parameters objects.
-			
-			growth_rates_df <- self$parameters[,grep("parameters_r_", names(self$parameters))]
-			alpha_values_df <- self$parameters[,grep("parameters_alpha_", names(self$parameters))]
-			error_variance_vector <- self$parameters$parameters_error_variance #This may be NULL.
-			
-			self$parameters <- sapply(1:nrow(self$parameters), function(i) {
-				growth_rates <- as.vector(as.matrix(growth_rates_df[i,]))
-				alpha_values <- matrix(
-					as.vector(as.matrix(alpha_values_df[i,])),
-					nrow = self$num_row_species,
-					ncol = self$num_col_species,
-					byrow = TRUE
-				)
-				error_variance <- error_variance_vector[i] #This may be NULL.
-				
-				return(Parameters$new(growth_rates, alpha_values, error_variance))
-			})
-		},
-		
 		add_aic_weights = function() {
 			self$statistics$aic_weight <- information_criterion_weights(self$statistics$aic)
 		},
