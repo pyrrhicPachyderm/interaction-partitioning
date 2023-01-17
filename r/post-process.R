@@ -108,24 +108,19 @@ Data <- R6::R6Class("Data",
 			return(mat)
 		},
 		
-		get_coclassification_matrix = function(grouping_table, index) {
-			#Returns a binary matrix of whether two species are grouped together in a given row of a grouping table.
-			grouping <- as.vector(as.matrix(grouping_table[index,]))
-			return(as_coclassification_matrix(grouping))
-		},
-		
 		get_weighted_coclassification_matrix = function(grouping_table, weights) {
-			#Returns a coclassification matrix, as above, averaged across the whole table.
+			#Returns a coclassification matrix, averaged across the whole table.
 			#Uses a weighted average by a given set of weights.
-			weighted_matrices <- lapply(1:nrow(grouping_table), function(i) {
-				return(private$get_coclassification_matrix(grouping_table, i) * weights[i])
+			sapply(grouping_table, function(group1) {
+				sapply(grouping_table, function(group2) {
+					sum((group1 == group2) * weights) / sum(weights)
+				})
 			})
-			return(Reduce("+", weighted_matrices))
 		},
 		
 		get_average_coclassification_matrix = function(grouping_table) {
 			#As above, but with all weights equal.
-			weights <- rep(1 / nrow(grouping_table), nrow(grouping_table))
+			weights <- rep(1, nrow(grouping_table))
 			return(private$get_weighted_coclassification_matrix(grouping_table, weights))
 		}
 	),
