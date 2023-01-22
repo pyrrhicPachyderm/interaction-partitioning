@@ -1,0 +1,101 @@
+#!/usr/bin/env Rscript
+suppressPackageStartupMessages(library(optparse))
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(dplyr))
+
+#################
+#Parse arguments.
+#################
+
+usage = "%prog [options] INPUT_TABLE_FILE INPUT_FIGURE_FOLDER FOCAL_OUTPUT_FILE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE"
+description = "Takes the data from table 1 and figure 2 of Goldberg & Landa 1991, and reshapes it into the three files desired by the C++ code.
+Namely, the 0-indexed numerical focal species vector, the response variable vector, and the species density design matrix.
+All are output as tab-separated matrices, without column headers, with vectors in the form column vectors."
+option_list <- list()
+parser <- OptionParser(usage = usage, description=description, option_list=option_list)
+arguments <- parse_args(parser, positional_arguments = 5)
+
+infile <- arguments$args[1]
+infolder <- arguments$args[2]
+focal_outfile <- arguments$args[3]
+response_outfile <- arguments$args[4]
+design_outfile <- arguments$args[5]
+
+attach(arguments$options)
+
+#########
+#Read in.
+#########
+
+table_data <- read.csv(infile)
+
+files <- grep(".*_[0-9][0-9].csv", list.files(infolder, full.names = TRUE), value = TRUE)
+figure_data <- lapply(files, read.csv)
+
+################
+#Clean the data.
+################
+
+#Every pair of species should have one with zero neighbours.
+#However, the point-and-click program used to extract data from the figures does not produce this precisely.
+#In fact, sometimes it produces negative x values.
+#So convert the smallest x value to a zero.
+#Just sort each data frame on x, then convert.
+
+figure_data <- lapply(figure_data, function(df) {
+	names(df) <- c("x","y")
+	df <- df[order(df$x),]
+	df$x[1] <- 0
+	return(df)
+})
+
+#############################
+#Build a combined data frame.
+#############################
+
+focals <-     as.integer(sub(".*_([0-9])([0-9]).csv", "\\1", files))
+neighbours <- as.integer(sub(".*_([0-9])([0-9]).csv", "\\2", files))
+
+data <- do.call(rbind, lapply(1:length(figure_data), function(i) {
+	df <- figure_data[[i]]
+	focal <- focals[i]
+	neighbour <- neighbours[i]
+	return(data.frame(
+		focal = focal,
+		neighbour = neighbour,
+		response = table_data$max_biomass[focal] / df$y,
+		neighbour_density = df$x
+	))
+}))
+
+#################################
+#Extract the relevant components.
+#################################
+
+focal_output <- data$focal - 1 #Make it 0-indexed.
+
+response_output <- data$response
+
+design_output <- sapply(1:max(neighbours), function(col) {
+	(col == data$neighbour) * data$neighbour_density + (col == data$focal)
+})
+
+################################
+#Turn the outputs into matrices.
+################################
+
+focal_output %<>% matrix(ncol=1)
+response_output %<>% matrix(ncol=1)
+design_output %<>% as.matrix()
+
+###################
+#Print the outputs.
+###################
+
+print_table <- function(table, outfile) {
+	write.table(table, outfile, row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t")
+}
+
+print_table(focal_output, focal_outfile)
+print_table(response_output, response_outfile)
+print_table(design_output, design_outfile)
