@@ -35,6 +35,7 @@ $(eval $(call output_template,tcl,rjmcmc-flat,rjmcmc,))
 $(eval $(call output_template,tcl,rjmcmc-aic,rjmcmc,-a))
 $(eval $(call output_template,test,brute,brute,))
 $(eval $(call output_template,cxr,rjmcmc,rjmcmc,))
+$(eval $(call output_template,goldberg,rjmcmc,rjmcmc,))
 
 tcl_data_files := $(call processed_data_files,tcl) $(from_root)/data/tcl-species.csv $(from_root)/output/tcl/brute.data
 r_source_files := $(patsubst %,$(from_root)/r/%,parameters.R input-data.R post-process.R brute-post-process.R coclassification-table.R grouped-matrix.R mantel-test.R dist-matrix.R)
