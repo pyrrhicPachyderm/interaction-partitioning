@@ -31,8 +31,7 @@ $(from_root)/output/$(1)/$(2).data: $(from_root)/src/$(3).out $$(call processed_
 endef
 
 $(eval $(call output_template,tcl,brute,brute,))
-$(eval $(call output_template,tcl,rjmcmc-flat,rjmcmc,))
-$(eval $(call output_template,tcl,rjmcmc-aic,rjmcmc,-a))
+$(eval $(call output_template,tcl,rjmcmc,rjmcmc,))
 $(eval $(call output_template,test,brute,brute,))
 $(eval $(call output_template,cxr,rjmcmc,rjmcmc,))
 $(eval $(call output_template,goldberg,rjmcmc,rjmcmc,))
