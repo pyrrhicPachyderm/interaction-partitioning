@@ -40,7 +40,7 @@ $(eval $(call output_template,goldberg,rjmcmc,rjmcmc,))
 tcl_data_files := $(call processed_data_files,tcl) $(from_root)/data/tcl-species.csv $(from_root)/output/tcl/brute.data
 r_source_files := $(patsubst %,$(from_root)/r/%,parameters.R input-data.R post-process.R brute-post-process.R coclassification-table.R grouped-matrix.R mantel-test.R dist-matrix.R)
 
-$(from_root)/output/article-data.rda: $(from_root)/article-analysis $(tcl_data_files) $(r_source_files)
+$(from_root)/output/article-data-1.rda: $(from_root)/article-analysis-1 $(tcl_data_files) $(r_source_files)
 	./$< $@
 
 #Test data analysis.
