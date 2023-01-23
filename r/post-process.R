@@ -33,7 +33,7 @@ Data <- R6::R6Class("Data",
 		statistics = NULL, #A data frame of all output values besides the above.
 		
 		initialize = function(data_file_name, species_names) {
-			data_table <- read.table(data_file_name, header=TRUE)
+			data_table <- as.data.frame(data.table::fread(data_file_name)) #fread is much faster than read.table.
 			
 			self$species_names <- species_names
 			
