@@ -6,7 +6,7 @@ suppressPackageStartupMessages(library(magrittr))
 #Argument parsing.
 ##################
 
-usage = "%prog FOCAL_OUTPUT_FILE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE"
+usage = "%prog SPECIES_DATA_INPUT_FILE FOCAL_OUTPUT_FILE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE SPECIES_DATA_OUTPUT_FILE"
 description = "Takes the neigh_list data from the csr package, and reshapes it into the three files desired by the C++ code.
 Namely, the 0-indexed numerical focal species vector, the response variable vector, and the species density design matrix.
 All are output as tab-separated matrices, without column headers, with vectors in the form column vectors."
@@ -17,11 +17,13 @@ option_list <- list(
 	)
 )
 parser <- OptionParser(usage = usage, description=description, option_list=option_list)
-arguments <- parse_args(parser, positional_arguments = 3)
+arguments <- parse_args(parser, positional_arguments = 5)
 
-focal_outfile <- arguments$args[1]
-response_outfile <- arguments$args[2]
-design_outfile <- arguments$args[3]
+species_data_infile <- arguments$args[1]
+focal_outfile <- arguments$args[2]
+response_outfile <- arguments$args[3]
+design_outfile <- arguments$args[4]
+species_data_outfile <- arguments$args[5]
 
 attach(arguments$options)
 
@@ -31,6 +33,8 @@ attach(arguments$options)
 
 suppressPackageStartupMessages(library(cxr))
 data(neigh_list)
+
+species_names_data <- read.csv(species_data_infile)
 
 ##############################
 #Filter to the maximal clique.
@@ -77,19 +81,19 @@ for(sp in included_species) {
 data$other <- rowSums(data[,excluded_species])
 data <- data[,!names(data) %in% excluded_species]
 
-species_names <- c(included_species, "other")
+species_codes <- c(included_species, "other")
 
 #################################
 #Extract the relevant components.
 #################################
 
 focal_output <- data[["focal"]] %>%
-	match(species_names)
+	match(species_codes)
 focal_output <- focal_output - 1 #Make it 0-indexed.
 
 response_output <- data[["fitness"]]
 
-design_output <- data[,species_names]
+design_output <- data[,species_codes]
 
 ##############################################
 #Turn the outputs into matrices, and finalise.
@@ -98,6 +102,15 @@ design_output <- data[,species_names]
 focal_output %<>% matrix(ncol=1)
 response_output %<>% matrix(ncol=1)
 design_output %<>% as.matrix()
+
+################################
+#Create the species data output.
+################################
+
+species_names <- c(species_names_data$name[species_names_data$code %in% included_species], "other")
+species_data <- data.frame(
+	name = species_names
+)
 
 ###################
 #Print the outputs.
@@ -110,3 +123,5 @@ print_table <- function(table, outfile) {
 print_table(focal_output, focal_outfile)
 print_table(response_output, response_outfile)
 print_table(design_output, design_outfile)
+
+write.csv(species_data, species_data_outfile, row.names = FALSE)

@@ -11,7 +11,10 @@ $(from_root)-clean:
 processed_data_files = $(patsubst %,$(from_root)/output/$(1)/%,focal-vector.data response-vector.data design-matrix.data)
 
 tcl_raw_data := $(from_root)/TCL_DrosMCT/Data/d_both.csv
+cxr_raw_data := $(from_root)/data/cxr/species-names.csv
 goldberg_raw_data := $(from_root)/data/goldberg-species.csv $(from_root)/data/goldberg/figure2
+
+cxr_additional_output := $(from_root)/output/cxr-species.csv
 
 #process_data_template takes the dataset abbreviation and the raw data file(s).
 define process_data_template =
@@ -20,7 +23,7 @@ $$(call processed_data_files,$(1)) $(3) &: $(from_root)/scripts/process-$(1) $(2
 endef
 
 $(eval $(call process_data_template,tcl,$(tcl_raw_data),))
-$(eval $(call process_data_template,cxr,,))
+$(eval $(call process_data_template,cxr,$(cxr_raw_data),$(cxr_additional_output)))
 $(eval $(call process_data_template,goldberg,$(goldberg_raw_data),))
 $(eval $(call process_data_template,test,,))
 
