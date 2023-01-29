@@ -31,8 +31,7 @@ attach(arguments$options)
 #Load the data.
 ###############
 
-suppressPackageStartupMessages(library(cxr))
-data(neigh_list)
+data(neigh_list, package = "cxr")
 
 species_names_data <- read.csv(species_data_infile)
 
