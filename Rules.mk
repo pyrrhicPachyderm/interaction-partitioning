@@ -15,14 +15,14 @@ goldberg_raw_data := $(from_root)/data/goldberg-species.csv $(from_root)/data/go
 
 #process_data_template takes the dataset abbreviation and the raw data file(s).
 define process_data_template =
-$$(call processed_data_files,$(1)) &: $(from_root)/scripts/process-$(1) $(2)
-	./$$< $(2) $$(call processed_data_files,$(1))
+$$(call processed_data_files,$(1)) $(3) &: $(from_root)/scripts/process-$(1) $(2)
+	./$$< $(2) $$(call processed_data_files,$(1)) $(3)
 endef
 
-$(eval $(call process_data_template,tcl,$(tcl_raw_data)))
-$(eval $(call process_data_template,cxr,))
-$(eval $(call process_data_template,goldberg,$(goldberg_raw_data)))
-$(eval $(call process_data_template,test,))
+$(eval $(call process_data_template,tcl,$(tcl_raw_data),))
+$(eval $(call process_data_template,cxr,,))
+$(eval $(call process_data_template,goldberg,$(goldberg_raw_data),))
+$(eval $(call process_data_template,test,,))
 
 #output_template takes the dataset abbreviation, output file name, the program file name, and the flags.
 define output_template =
