@@ -10,7 +10,7 @@
 #define NUM_CHAINS 10
 
 int main(int argc, char **argv) {
-	Input input(argc, argv, {'a'});
+	Input input(argc, argv, {'a', 'g'});
 	
 	Grouping rowGrouping(input.getData().getNumRowSpecies());
 	Grouping colGrouping(input.getData().getNumColSpecies());
@@ -21,8 +21,11 @@ int main(int argc, char **argv) {
 		Hyperprior::aic() :
 		Hyperprior::flat();
 	
-	ReversibleJumpSolver solver(input.getData(), hyperprior, {rowGrouping, rowGrouping, colGrouping}, {false, true, true});
+	bool isGrowthVarying = input.getBoolOptResult('g');
 	
+	ReversibleJumpSolver solver(input.getData(), hyperprior, {rowGrouping, rowGrouping, colGrouping}, {isGrowthVarying, true, true});
+	
+	OutputColumn<Grouping> outputGrowthGroupings("growth_group");
 	OutputColumn<Grouping> outputRowGroupings("row_group");
 	OutputColumn<Grouping> outputColGroupings("col_group");
 	OutputColumn<Parameters> outputParameters("parameters");
@@ -34,6 +37,7 @@ int main(int argc, char **argv) {
 		solver.burnIn(BURN_IN);
 		for(size_t i = 0; i < NUM_STEPS; i++) {
 			solver.makeJump();
+			outputGrowthGroupings.insert(solver.getGrouping(GROWTH));
 			outputRowGroupings.insert(solver.getGrouping(ROW));
 			outputColGroupings.insert(solver.getGrouping(COL));
 			outputParameters.insert(Parameters(solver.getParameters(), solver.getGroupings()));
@@ -41,7 +45,7 @@ int main(int argc, char **argv) {
 		}
 	}
 	
-	outputTable(input.getOutputFile(), outputRowGroupings, outputColGroupings, outputParameters, outputErrorVariance);
+	outputTable(input.getOutputFile(), outputGrowthGroupings, outputRowGroupings, outputColGroupings, outputParameters, outputErrorVariance);
 	
 	return 0;
 }
