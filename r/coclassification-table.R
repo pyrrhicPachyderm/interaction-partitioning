@@ -111,12 +111,9 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 		ncol=1))
 	}
 	
-	matrix_tab <- knitr::kable(string_mat, format="latex", escape=FALSE, booktabs=TRUE,
-		align=ifelse(has_names,
-			c(rep("c",ncol(mat)),"l"),
-			rep("c",ncol(mat))
-		)
-	) %>%
+	align <- if(has_names) c(rep("c",ncol(mat)),"l") else rep("c",ncol(mat))
+	
+	matrix_tab <- knitr::kable(string_mat, format="latex", escape=FALSE, booktabs=TRUE, align=align) %>%
 		strip_booktabs_rules() %>%
 		sub("\\begin{tabular}", "\\begin{tabular}[b]", ., fixed=TRUE) #Baseline at the bottom, for colourbar alignment.
 	
