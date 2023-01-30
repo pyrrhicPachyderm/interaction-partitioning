@@ -17,13 +17,12 @@ option_list <- list(
 	)
 )
 parser <- OptionParser(usage = usage, description=description, option_list=option_list)
-arguments <- parse_args(parser, positional_arguments = 5)
+arguments <- parse_args(parser, positional_arguments = 4)
 
-species_data_infile <- arguments$args[1]
-focal_outfile <- arguments$args[2]
-response_outfile <- arguments$args[3]
-design_outfile <- arguments$args[4]
-species_data_outfile <- arguments$args[5]
+focal_outfile <- arguments$args[1]
+response_outfile <- arguments$args[2]
+design_outfile <- arguments$args[3]
+species_data_outfile <- arguments$args[4]
 
 attach(arguments$options)
 
@@ -32,8 +31,7 @@ attach(arguments$options)
 ###############
 
 data(neigh_list, package = "cxr")
-
-species_names_data <- read.csv(species_data_infile)
+data(species_rates, package = "cxr") #With names of each species.
 
 ##############################
 #Filter to the maximal clique.
@@ -106,10 +104,22 @@ design_output %<>% as.matrix()
 #Create the species data output.
 ################################
 
-species_names <- c(species_names_data$name[species_names_data$code %in% included_species], "other")
 species_data <- data.frame(
-	name = species_names
+	name = species_rates$species,
+	code = species_rates$code,
+	germination_rate = species_rates$germination.rate,
+	seed_survival = species_rates$seed.survival
 )
+
+species_data$name <- sub("([[:alpha:]])([[:alpha:]]+)_([[:alpha:]]*)", "\\U\\1\\E\\2 \\3", species_data$name, perl = TRUE) #Format binomial names properly.
+
+species_data <- species_data[species_data$code %in% included_species,]
+species_data <- rbind(species_data, list(
+	name = "other",
+	code = "OTHR",
+	germination_rate = NA,
+	seed_survival = NA
+))
 
 ###################
 #Print the outputs.
