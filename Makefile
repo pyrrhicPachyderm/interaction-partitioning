@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 RM := rm -f
 
-all: output/article-data.rda
+all: output/article-data-1.rda output/article-data-2.rda
 .PHONY: all
 
 from_root := .
