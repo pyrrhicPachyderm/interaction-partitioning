@@ -56,6 +56,7 @@ coclassification_colour_setup <- paste0(
 get_coclassification_matrices <- function(data, output_order) {
 	lapply(
 		list(
+			growth = data$weighted_growth_coclassification_matrix,
 			row = data$weighted_row_coclassification_matrix,
 			col = data$weighted_col_coclassification_matrix
 		),
