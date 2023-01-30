@@ -23,6 +23,8 @@ design_outfile <- arguments$args[5]
 
 attach(arguments$options)
 
+focal_self_count <- 9 #The number of focal individuals per plot (magic number obtained from paper).
+
 #########
 #Read in.
 #########
@@ -77,7 +79,7 @@ focal_output <- data$focal - 1 #Make it 0-indexed.
 response_output <- data$response
 
 design_output <- sapply(1:max(neighbours), function(col) {
-	(col == data$neighbour) * data$neighbour_density + (col == data$focal)
+	(col == data$neighbour) * data$neighbour_density + (col == data$focal) * focal_self_count
 })
 
 ################################
