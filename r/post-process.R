@@ -27,7 +27,8 @@ Data <- R6::R6Class("Data",
 		num_row_species = NULL,
 		num_col_species = NULL,
 		species_names = NULL,
-		row_groupings = NULL, #A data frame of row groupings, named by the species names.
+		growth_groupings = NULL, #A data frame of growth groupings, named by the species names.
+		row_groupings = NULL, #As above, for row groupings.
 		col_groupings = NULL, #As above, for col groupings.
 		parameters = NULL, #A data frame of parameter values.
 		statistics = NULL, #A data frame of all output values besides the above.
@@ -39,10 +40,12 @@ Data <- R6::R6Class("Data",
 			
 			#Extract the groupings and other data.
 			#Add one to the groupings to make them 1-indexed, as R prefers.
+			self$growth_groupings <- data_table[,grep("growth_group", names(data_table))] + 1
 			self$row_groupings <- data_table[,grep("row_group", names(data_table))] + 1
 			self$col_groupings <- data_table[,grep("col_group", names(data_table))] + 1
 			self$num_row_species <- ncol(self$row_groupings)
 			self$num_col_species <- ncol(self$col_groupings)
+			if(ncol(self$growth_groupings) > 0) names(self$growth_groupings) <- species_names[1:self$num_row_species]
 			names(self$row_groupings) <- species_names[1:self$num_row_species]
 			names(self$col_groupings) <- species_names[1:self$num_col_species]
 			self$parameters <- data_table[,grep("parameters", names(data_table))]
@@ -53,6 +56,9 @@ Data <- R6::R6Class("Data",
 			if(!is.null(self$statistics$aicc)) private$add_aicc_weights()
 		},
 		
+		get_growth_grouping = function(index) {
+			as.vector(as.matrix(self$growth_groupings[index,]))
+		},
 		get_row_grouping = function(index) {
 			as.vector(as.matrix(self$row_groupings[index,]))
 		},
@@ -85,6 +91,7 @@ Data <- R6::R6Class("Data",
 			return(which(rowwise_match))
 		},
 		
+		#TODO: A version of the below that includes growth_grouping.
 		get_statistics_row = function(row_grouping, col_grouping) {
 			#row_grouping and col_grouping should be vectors representing the groupings.
 			#Extracts those rows of statistics matching those groupings.
@@ -129,6 +136,7 @@ Data <- R6::R6Class("Data",
 	),
 	
 	active = list(
+		#TODO: Versions of the below three functions that include growth_groupings.
 		equivalently_grouped_statistics = function() {
 			#Where the row grouping is the same as the column grouping.
 			return(self$statistics[private$match_groupings(self$row_groupings,self$col_groupings),])
@@ -151,8 +159,10 @@ Data <- R6::R6Class("Data",
 			return(diag(num_species))
 		},
 		
+		fully_grouped_growth_coclassification_matrix = function(num_species) {return(fully_grouped_coclassification_matrix(self$num_row_species))},
 		fully_grouped_row_coclassification_matrix = function(num_species) {return(fully_grouped_coclassification_matrix(self$num_row_species))},
 		fully_grouped_col_coclassification_matrix = function(num_species) {return(fully_grouped_coclassification_matrix(self$num_col_species))},
+		fully_separated_growth_coclassification_matrix = function(num_species) {return(fully_separated_coclassification_matrix(self$num_row_species))},
 		fully_separated_row_coclassification_matrix = function(num_species) {return(fully_separated_coclassification_matrix(self$num_row_species))},
 		fully_separated_col_coclassification_matrix = function(num_species) {return(fully_separated_coclassification_matrix(self$num_col_species))}
 	)

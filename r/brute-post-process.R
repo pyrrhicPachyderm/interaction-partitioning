@@ -43,6 +43,9 @@ BruteData <- R6::R6Class("BruteData",
 		unweighted_average_coclassification_matrix = function() {
 			return(private$annotate_matrix(private$get_average_coclassification_matrix(self$row_groupings)))
 		},
+		weighted_growth_coclassification_matrix = function() {
+			return(private$annotate_matrix(private$get_weighted_coclassification_matrix(self$growth_groupings, self$statistics[[self$weight_column]])))
+		},
 		weighted_row_coclassification_matrix = function() {
 			return(private$annotate_matrix(private$get_weighted_coclassification_matrix(self$row_groupings, self$statistics[[self$weight_column]])))
 		},
