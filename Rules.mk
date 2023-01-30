@@ -44,6 +44,7 @@ $(from_root)/output/article-data-$(1).rda: $(from_root)/article-analysis-$(1) $(
 endef
 
 $(eval $(call article_analysis_template,1))
+$(eval $(call article_analysis_template,2))
 
 #Test data analysis.
 
