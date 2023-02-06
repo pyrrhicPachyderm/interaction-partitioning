@@ -32,9 +32,9 @@ $(from_root)/output/$(1)/$(2).data: $(from_root)/src/$(3).out $$(call processed_
 	./$$< $$(call processed_data_files,$(1)) $$@ -p $(4)
 endef
 
+$(eval $(call output_template,test,brute,brute,))
 $(eval $(call output_template,tcl,brute,brute,))
 $(eval $(call output_template,tcl,rjmcmc,rjmcmc,))
-$(eval $(call output_template,test,brute,brute,))
 $(eval $(call output_template,cxr,rjmcmc,rjmcmc,))
 $(eval $(call output_template,goldberg,rjmcmc,rjmcmc,))
 
