@@ -8,6 +8,8 @@ class Input {
 	protected:
 		std::vector<char> boolOpts;
 		std::vector<bool> boolOptResults = std::vector<bool>(boolOpts.size(), false);
+		std::vector<char> intOpts;
+		std::vector<size_t> intOptResults;
 		
 		std::string optsString;
 		
@@ -17,13 +19,15 @@ class Input {
 		void setOptsString();
 		void parseOptInput(char opt, const char *optarg);
 	public:
-		Input(int argc, char** argv, std::vector<char> boolOpts);
+		Input(int argc, char** argv, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults);
+		Input(int argc, char** argv, std::vector<char> boolOpts): Input(argc, argv, boolOpts, {}, {}) {};
 		Input(int argc, char** argv): Input(argc, argv, {}) {};
 		
 		const Data &getData() {return data;};
 		const std::string &getOutputFile() {return outputFile;};
 	public:
 		bool getBoolOptResult(char opt) const;
+		size_t getIntOptResult(char opt) const;
 };
 
 #endif

@@ -30,9 +30,13 @@ static void printUsage(int argc, const char **argv) {
 	//TODO: Take boolOpts and some sort of boolOptsHelpStrings as an argument, and include those as well.
 }
 
-Input::Input(int argc, char** argv, std::vector<char> boolOpts):
-	boolOpts(boolOpts)
+Input::Input(int argc, char** argv, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults):
+	boolOpts(boolOpts),
+	intOpts(intOpts),
+	intOptResults(intOptDefaults)
 {
+	assert(intOpts.size() == intOptResults.size());
+	
 	setOptsString();
 	
 	bool isPerCapita = false;
@@ -79,6 +83,10 @@ void Input::setOptsString() {
 	for(char opt : boolOpts) {
 		optsString.push_back(opt);
 	}
+	for(char opt : intOpts) {
+		optsString.push_back(opt);
+		optsString.push_back(':');
+	}
 }
 
 //Returns the index of the first occurrence of opt in opts.
@@ -92,12 +100,21 @@ static int getOptIndex(std::vector<char> opts, char opt) {
 }
 
 bool Input::getBoolOptResult(char opt) const {
-	int boolIndex = getOptIndex(boolOpts, opt);
-	assert(boolIndex >= 0);
-	return boolOptResults[boolIndex];
+	int index = getOptIndex(boolOpts, opt);
+	assert(index >= 0);
+	return boolOptResults[index];
+}
+
+size_t Input::getIntOptResult(char opt) const {
+	int index = getOptIndex(intOpts, opt);
+	assert(index >= 0);
+	return intOptResults[index];
 }
 
 void Input::parseOptInput(char opt, const char *optarg) {
-	int boolIndex = getOptIndex(boolOpts, opt);
-	if(boolIndex >= 0) boolOptResults[boolIndex] = true;
+	int index = -1;
+	index = getOptIndex(boolOpts, opt);
+	if(index >= 0) boolOptResults[index] = true;
+	index = getOptIndex(intOpts, opt);
+	if(index >= 0) intOptResults[index] = strtoull(optarg, NULL, 0); //TODO: Error handling for strtoull.
 }
