@@ -37,7 +37,7 @@ Input::Input(int argc, char** argv, std::vector<char> boolOpts, std::vector<char
 {
 	assert(intOpts.size() == intOptResults.size());
 	
-	setOptsString();
+	std::string optsString = getOptsString();
 	
 	bool isPerCapita = false;
 	
@@ -77,8 +77,8 @@ Input::Input(int argc, char** argv, std::vector<char> boolOpts, std::vector<char
 	);
 }
 
-void Input::setOptsString() {
-	optsString = DEFAULT_OPTS_STRING;
+std::string Input::getOptsString() {
+	std::string optsString = DEFAULT_OPTS_STRING;
 	
 	for(char opt : boolOpts) {
 		optsString.push_back(opt);
@@ -87,6 +87,8 @@ void Input::setOptsString() {
 		optsString.push_back(opt);
 		optsString.push_back(':');
 	}
+	
+	return optsString;
 }
 
 //Returns the index of the first occurrence of opt in opts.

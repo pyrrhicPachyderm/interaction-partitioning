@@ -11,12 +11,10 @@ class Input {
 		std::vector<char> intOpts;
 		std::vector<size_t> intOptResults;
 		
-		std::string optsString;
-		
 		Data data;
 		std::string outputFile;
 		
-		void setOptsString();
+		std::string getOptsString();
 		void parseOptInput(char opt, const char *optarg);
 	public:
 		Input(int argc, char** argv, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults);
