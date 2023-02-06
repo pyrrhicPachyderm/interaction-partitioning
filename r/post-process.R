@@ -32,6 +32,7 @@ Data <- R6::R6Class("Data",
 		col_groupings = NULL, #As above, for col groupings.
 		parameters = NULL, #A data frame of parameter values.
 		statistics = NULL, #A data frame of all output values besides the above.
+		chain_id = NULL, #The ID of each MCMC chain.
 		
 		initialize = function(data_file_name, species_names) {
 			data_table <- as.data.frame(data.table::fread(data_file_name)) #fread is much faster than read.table.
@@ -50,11 +51,13 @@ Data <- R6::R6Class("Data",
 			names(self$col_groupings) <- species_names[1:self$num_col_species]
 			self$parameters <- data_table[grep("parameters", names(data_table))]
 			names(self$parameters) <- sub("parameters_", "", names(self$parameters))
-			self$statistics <- data_table[grep("_[0-9]*$|parameters", names(data_table), invert=TRUE)]
+			self$statistics <- data_table[grep("_[0-9]*$|parameters|chain_id", names(data_table), invert=TRUE)]
 			
 			#Add additional columns of statistics.
 			if(!is.null(self$statistics$aic)) private$add_aic_weights()
 			if(!is.null(self$statistics$aicc)) private$add_aicc_weights()
+			
+			if(!is.null(data_table$chain_id)) self$chain_id <- data_table$chain_id
 		},
 		
 		get_growth_grouping = function(index) {
