@@ -40,6 +40,7 @@ int main(int argc, char **argv) {
 	OutputColumn<Grouping> outputColGroupings("col_group");
 	OutputColumn<Parameters> outputParameters("parameters");
 	OutputColumn<double> outputErrorVariance("parameters_error_variance");
+	OutputColumn<size_t> outputChainID("chain_id");
 	
 	solver.dialIn(jumpsPerDial, numDials);
 	
@@ -52,10 +53,11 @@ int main(int argc, char **argv) {
 			outputColGroupings.insert(solver.getGrouping(COL));
 			outputParameters.insert(Parameters(solver.getParameters(), solver.getGroupings()));
 			outputErrorVariance.insert(solver.getParameters().getAdditionalParameter(0));
+			outputChainID.insert(chain);
 		}
 	}
 	
-	outputTable(input.getOutputFile(), outputGrowthGroupings, outputRowGroupings, outputColGroupings, outputParameters, outputErrorVariance);
+	outputTable(input.getOutputFile(), outputGrowthGroupings, outputRowGroupings, outputColGroupings, outputParameters, outputErrorVariance, outputChainID);
 	
 	return 0;
 }

@@ -171,6 +171,7 @@ template<> void OutputColumn<Parameters>::printElement(std::ostream &stream, siz
 //Explicitly instantiate the templates.
 //Templated functions existing only in the .cpp file require explicit instantiation.
 template class OutputColumn<double>;
+template class OutputColumn<size_t>;
 template class OutputColumn<Grouping>;
 template class OutputColumn<Eigen::VectorXd>;
 template class OutputColumn<Parameters>;
