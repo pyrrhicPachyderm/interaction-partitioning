@@ -3,14 +3,18 @@
 #include "input.hpp"
 #include "rjsolver.hpp"
 
-#define JUMPS_PER_DIAL 1e3
-#define NUM_DIALS 1e2
-#define BURN_IN 1e5
-#define NUM_STEPS 1e5
-#define NUM_CHAINS 10
+#define DEFAULT_JUMPS_PER_DIAL 1000
+#define DEFAULT_NUM_DIALS 100
+#define DEFAULT_BURN_IN 100000
+#define DEFAULT_NUM_STEPS 100000
+#define DEFAULT_NUM_CHAINS 10
 
 int main(int argc, char **argv) {
-	Input input(argc, argv, {'a', 'g'});
+	Input input(argc, argv,
+		{'a', 'g'},
+		{'j', 'd', 'b', 's', 'c'},
+		{DEFAULT_JUMPS_PER_DIAL, DEFAULT_NUM_DIALS, DEFAULT_BURN_IN, DEFAULT_NUM_STEPS, DEFAULT_NUM_CHAINS}
+	);
 	
 	Grouping rowGrouping(input.getData().getNumRowSpecies());
 	Grouping colGrouping(input.getData().getNumColSpecies());
@@ -23,6 +27,12 @@ int main(int argc, char **argv) {
 	
 	bool isGrowthVarying = input.getBoolOptResult('g');
 	
+	size_t jumpsPerDial = input.getIntOptResult('j');
+	size_t numDials = input.getIntOptResult('d');
+	size_t burnIn = input.getIntOptResult('b');
+	size_t numSteps = input.getIntOptResult('s');
+	size_t numChains = input.getIntOptResult('c');
+	
 	ReversibleJumpSolver solver(input.getData(), hyperprior, {rowGrouping, rowGrouping, colGrouping}, {isGrowthVarying, true, true});
 	
 	OutputColumn<Grouping> outputGrowthGroupings("growth_group");
@@ -31,11 +41,11 @@ int main(int argc, char **argv) {
 	OutputColumn<Parameters> outputParameters("parameters");
 	OutputColumn<double> outputErrorVariance("parameters_error_variance");
 	
-	solver.dialIn(JUMPS_PER_DIAL, NUM_DIALS);
+	solver.dialIn(jumpsPerDial, numDials);
 	
-	for(size_t chain = 0; chain < NUM_CHAINS; chain++) {
-		solver.burnIn(BURN_IN);
-		for(size_t i = 0; i < NUM_STEPS; i++) {
+	for(size_t chain = 0; chain < numChains; chain++) {
+		solver.burnIn(burnIn);
+		for(size_t i = 0; i < numSteps; i++) {
 			solver.makeJump();
 			outputGrowthGroupings.insert(solver.getGrouping(GROWTH));
 			outputRowGroupings.insert(solver.getGrouping(ROW));
