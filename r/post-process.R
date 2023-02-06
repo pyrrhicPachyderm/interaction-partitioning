@@ -40,17 +40,17 @@ Data <- R6::R6Class("Data",
 			
 			#Extract the groupings and other data.
 			#Add one to the groupings to make them 1-indexed, as R prefers.
-			self$growth_groupings <- data_table[,grep("growth_group", names(data_table))] + 1
-			self$row_groupings <- data_table[,grep("row_group", names(data_table))] + 1
-			self$col_groupings <- data_table[,grep("col_group", names(data_table))] + 1
+			self$growth_groupings <- data_table[grep("growth_group", names(data_table))] + 1
+			self$row_groupings <- data_table[grep("row_group", names(data_table))] + 1
+			self$col_groupings <- data_table[grep("col_group", names(data_table))] + 1
 			self$num_row_species <- ncol(self$row_groupings)
 			self$num_col_species <- ncol(self$col_groupings)
 			if(ncol(self$growth_groupings) > 0) names(self$growth_groupings) <- species_names[1:self$num_row_species]
 			names(self$row_groupings) <- species_names[1:self$num_row_species]
 			names(self$col_groupings) <- species_names[1:self$num_col_species]
-			self$parameters <- data_table[,grep("parameters", names(data_table))]
+			self$parameters <- data_table[grep("parameters", names(data_table))]
 			names(self$parameters) <- sub("parameters_", "", names(self$parameters))
-			self$statistics <- data_table[,grep("_[0-9]*$|parameters", names(data_table), invert=TRUE)]
+			self$statistics <- data_table[grep("_[0-9]*$|parameters", names(data_table), invert=TRUE)]
 			
 			#Add additional columns of statistics.
 			if(!is.null(self$statistics$aic)) private$add_aic_weights()
