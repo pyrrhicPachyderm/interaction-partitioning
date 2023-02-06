@@ -27,16 +27,27 @@ attach(arguments$options)
 #Analysis.
 ##########
 
-species_datas <- list(
-	tcl = read.csv(paste0(this_dir, "/data/tcl-species.csv")),
-	cxr = read.csv(paste0(this_dir, "/output/cxr-species.csv")),
-	goldberg = read.csv(paste0(this_dir, "/data/goldberg-species.csv"))
+species_datas <- lapply(
+	list(
+		tcl = "/data/tcl-species.csv",
+		cxr = "/output/cxr-species.csv",
+		goldberg = "/data/goldberg-species.csv"
+	),
+	function(file) {
+		read.csv(paste0(this_dir, file))
+	}
 )
 
-datas <- list(
-	tcl = RJMCMCData$new(paste0(this_dir, "/output/tcl/rjmcmc.data"), species_datas$tcl$name),
-	cxr = RJMCMCData$new(paste0(this_dir, "/output/cxr/rjmcmc.data"), species_datas$cxr$name),
-	goldberg = RJMCMCData$new(paste0(this_dir, "/output/goldberg/rjmcmc.data"), species_datas$goldberg$name)
+datas <- mapply(
+	function(file, species_data) {
+		RJMCMCData$new(paste0(this_dir, file), species_data$name)
+	},
+	list(
+		tcl = "/output/tcl/rjmcmc.data",
+		cxr = "/output/cxr/rjmcmc.data",
+		goldberg = "/output/goldberg/rjmcmc.data"
+	),
+	species_datas
 )
 
 output_orders <- list(
