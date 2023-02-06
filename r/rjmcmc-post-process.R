@@ -53,6 +53,10 @@ RJMCMCData <- R6::R6Class("RJMCMCData",
 		},
 		weighted_col_coclassification_matrix = function() {
 			return(private$annotate_matrix(private$get_average_coclassification_matrix(self$col_groupings)))
+		},
+		
+		rhats = function() {
+			lapply(self$parameters, get_rhat, self$chain_id)
 		}
 	)
 )
