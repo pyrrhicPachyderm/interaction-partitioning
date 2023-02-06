@@ -27,20 +27,23 @@ attach(arguments$options)
 #Analysis.
 ##########
 
-tcl_species_data <- read.csv(paste0(this_dir, "/data/tcl-species.csv"))
-cxr_species_data <- read.csv(paste0(this_dir, "/output/cxr-species.csv"))
-goldberg_species_data <- read.csv(paste0(this_dir, "/data/goldberg-species.csv"))
+species_datas <- list(
+	tcl = read.csv(paste0(this_dir, "/data/tcl-species.csv")),
+	cxr = read.csv(paste0(this_dir, "/output/cxr-species.csv")),
+	goldberg = read.csv(paste0(this_dir, "/data/goldberg-species.csv"))
+)
 
-tcl_data <- RJMCMCData$new(paste0(this_dir, "/output/tcl/rjmcmc.data"), tcl_species_data$name)
-cxr_data <- RJMCMCData$new(paste0(this_dir, "/output/cxr/rjmcmc.data"), cxr_species_data$name)
-goldberg_data <- RJMCMCData$new(paste0(this_dir, "/output/goldberg/rjmcmc.data"), goldberg_species_data$name)
+datas <- list(
+	tcl = RJMCMCData$new(paste0(this_dir, "/output/tcl/rjmcmc.data"), species_datas$tcl$name),
+	cxr = RJMCMCData$new(paste0(this_dir, "/output/cxr/rjmcmc.data"), species_datas$cxr$name),
+	goldberg = RJMCMCData$new(paste0(this_dir, "/output/goldberg/rjmcmc.data"), species_datas$goldberg$name)
+)
 
-tcl_output_order <- c(4,3,1,2,6,5)
-cxr_output_order <- c(8,7,1,2,3,6,5,4,9)
-goldberg_output_order <- c(1,5,3,6,7,2,4)
-
-datasets <- list("tcl", "cxr", "goldberg")
-names(datasets) <- datasets
+output_orders <- list(
+	tcl = c(4,3,1,2,6,5),
+	cxr = c(8,7,1,2,3,6,5,4,9),
+	goldberg = c(1,5,3,6,7,2,4)
+)
 
 #########
 #Figures.
@@ -70,9 +73,7 @@ get_coclassification_matrices <- function(data, output_order) {
 	)
 }
 
-coclassification_matrices <- lapply(datasets, function(name) {
-	get_coclassification_matrices(eval(parse(text=paste0(name,"_data"))), eval(parse(text=paste0(name,"_output_order"))))
-})
+coclassification_matrices <- mapply(get_coclassification_matrices, datas, output_orders, SIMPLIFY = FALSE)
 
 #############
 #Save output.
