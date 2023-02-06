@@ -7,6 +7,30 @@ get_chain_lengths <- function(chain_ids) {
 	as.vector(table(chain_ids))
 }
 
+get_rhat <- function(parameter, chain_id) {
+	#Calculates the Gelman-Rubin statistic for a single parameter.
+	#Per Bayesian Data Analysis, Third Edition, Gelman et al., pgs. 284-285.
+	
+	#First, split into a list of chains.
+	chains <- split(parameter, chain_id)
+	#Split each chain in two.
+	chains <- unlist(lapply(chains, function(v){
+		list(v[1:(length(v)/2)], v[(length(v)/2+1):length(v)])
+	}), recursive = FALSE)
+	
+	#Verify all chains are the same length (necessary for the calculation of n).
+	stopifnot(length(unique(sapply(chains, length))) == 1)
+	
+	#Perform the calculations.
+	n <- length(chains[[1]])
+	b <- n * var(sapply(chains, mean))
+	w <- mean(sapply(chains, var))
+	v <- (n-1) / n * w + 1 / n * b
+	rhat <- sqrt(v / w)
+	
+	return(rhat)
+}
+
 RJMCMCData <- R6::R6Class("RJMCMCData",
 	inherit = Data,
 	
