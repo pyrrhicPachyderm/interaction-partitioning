@@ -17,7 +17,7 @@ class Input {
 		void setOptsString();
 		void parseOptInput(char opt, const char *optarg);
 	public:
-		Input(int argc, char** argv, std::vector<char> boolFlags);
+		Input(int argc, char** argv, std::vector<char> boolOpts);
 		Input(int argc, char** argv): Input(argc, argv, {}) {};
 		
 		const Data &getData() {return data;};
