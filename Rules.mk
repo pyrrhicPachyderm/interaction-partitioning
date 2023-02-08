@@ -8,35 +8,37 @@ $(from_root)-clean:
 	@for i in $(from_root)/output/*; do if [ -f "$$i" ]; then $(RM) "$$i"; fi; done
 .PHONY: $(from_root)-clean
 
-processed_data_files = $(patsubst %,$(from_root)/output/$(1)/%,focal-vector.data response-vector.data design-matrix.data)
+#'indv' for individual response or 'time' for time series.
+processed_indv_data_files = $(patsubst %,$(from_root)/output/$(1)/%,focal-vector.data response-vector.data design-matrix.data)
+processed_time_data_files = $(patsubst %,$(from_root)/output/$(1)/%,id-vector.data time-vector.data density-matrix.data)
 
 tcl_raw_data := $(from_root)/TCL_DrosMCT/Data/d_both.csv
 goldberg_raw_data := $(from_root)/data/goldberg-species.csv $(from_root)/data/goldberg/figure2
 
 cxr_additional_output := $(from_root)/output/cxr-species.csv
 
-#process_data_template takes the dataset abbreviation, the raw data file(s), and any additional output files.
+#process_data_template takes the dataset abbreviation, the dataset type (indv or time), the raw data file(s), and any additional output files.
 define process_data_template =
-$$(call processed_data_files,$(1)) $(3) &: $(from_root)/scripts/process-$(1) $(2)
-	./$$< $(2) $$(call processed_data_files,$(1)) $(3)
+$$(call processed_$(2)_data_files,$(1)) $(4) &: $(from_root)/scripts/process-$(1) $(3)
+	./$$< $(3) $$(call processed_$(2)_data_files,$(1)) $(4)
 endef
 
-$(eval $(call process_data_template,tcl,$(tcl_raw_data),))
-$(eval $(call process_data_template,cxr,,$(cxr_additional_output)))
-$(eval $(call process_data_template,goldberg,$(goldberg_raw_data),))
-$(eval $(call process_data_template,test,,))
+$(eval $(call process_data_template,tcl,indv,$(tcl_raw_data),))
+$(eval $(call process_data_template,cxr,indv,,$(cxr_additional_output)))
+$(eval $(call process_data_template,goldberg,indv,$(goldberg_raw_data),))
+$(eval $(call process_data_template,test,indv,,))
 
-#output_template takes the dataset abbreviation, output file name, the program file name, and the flags.
+#output_template takes the dataset abbreviation, the dataset type (indv or time), output file name, the program file name, and the flags.
 define output_template =
-$(from_root)/output/$(1)/$(2).data: $(from_root)/src/$(3).out $$(call processed_data_files,$(1))
-	./$$< $$(call processed_data_files,$(1)) $$@ -p $(4)
+$(from_root)/output/$(1)/$(3).data: $(from_root)/src/$(4).out $$(call processed_$(2)_data_files,$(1))
+	./$$< $$(call processed_$(2)_data_files,$(1)) $$@ -p $(5)
 endef
 
-$(eval $(call output_template,test,brute,brute,))
-$(eval $(call output_template,tcl,brute,brute,))
-$(eval $(call output_template,tcl,rjmcmc,rjmcmc,))
-$(eval $(call output_template,cxr,rjmcmc,rjmcmc,))
-$(eval $(call output_template,goldberg,rjmcmc,rjmcmc,))
+$(eval $(call output_template,test,indv,brute,brute,))
+$(eval $(call output_template,tcl,indv,brute,brute,))
+$(eval $(call output_template,tcl,indv,rjmcmc,rjmcmc,))
+$(eval $(call output_template,cxr,indv,rjmcmc,rjmcmc,))
+$(eval $(call output_template,goldberg,indv,rjmcmc,rjmcmc,))
 
 define article_analysis_template =
 $(from_root)/output/article-data-$(1).rda: $(from_root)/article-analysis-$(1) $(shell grep -oE '"/[^"]*\.((R)|(csv)|(data))"' $(from_root)/article-analysis-$(1) | sed 's/"\(.*\)"/$(from_root)\1/' | tr '\n' ' ')
