@@ -14,6 +14,7 @@ processed_time_data_files = $(patsubst %,$(from_root)/output/$(1)/%,id-vector.da
 
 tcl_raw_data := $(from_root)/TCL_DrosMCT/Data/d_both.csv
 goldberg_raw_data := $(from_root)/data/goldberg-species.csv $(from_root)/data/goldberg/figure2
+carrara_raw_data := $(from_root)/data/carrara/data.xls
 
 cxr_additional_output := $(from_root)/output/cxr-species.csv
 
@@ -26,6 +27,7 @@ endef
 $(eval $(call process_data_template,tcl,indv,$(tcl_raw_data),))
 $(eval $(call process_data_template,cxr,indv,,$(cxr_additional_output)))
 $(eval $(call process_data_template,goldberg,indv,$(goldberg_raw_data),))
+$(eval $(call process_data_template,carrara,time,$(carrara_raw_data),))
 $(eval $(call process_data_template,test,indv,,))
 
 #output_template takes the dataset abbreviation, the dataset type (indv or time), output file name, the program file name, and the flags.
