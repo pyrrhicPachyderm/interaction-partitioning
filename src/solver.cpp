@@ -28,10 +28,8 @@ Eigen::VectorXd Solver::getPredictions(const Parameters &parameters) {
 		size_t focalRowGroup = getGrouping(ROW).getGroup(focal);
 		
 		double focalGrowthRate = parameters.getGrowthRate(focalGrowthGroup);
-		double focalDensity = data.getDesign()(obs, focal);
 		
 		double intrinsicGrowth = focalGrowthRate;
-		if(!data.getIsPerCapita()) intrinsicGrowth *= focalDensity;
 		double totalCompetition = parameters.getCompetitionCoefficientsRow(focalRowGroup).dot(colGroupedDesign.row(obs));
 		double prediction = intrinsicGrowth * (1.0 - totalCompetition);
 		predictions[obs] = prediction;

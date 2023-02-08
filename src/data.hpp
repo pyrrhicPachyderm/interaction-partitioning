@@ -13,7 +13,6 @@ class Data {
 		size_t numRowSpecies;
 		size_t numColSpecies;
 		size_t numObservations;
-		bool isPerCapita; //Is the response variable total, or per capita?
 		
 		//The index of the species used as the focal in each observation.
 		std::vector<size_t> focal;
@@ -32,11 +31,10 @@ class Data {
 		bool areFocalsFirst() const;
 	public:
 		Data() = default;
-		Data(const std::vector<size_t> &focal, const Eigen::VectorXd &response, const Eigen::MatrixXd &design, bool isPerCapita):
+		Data(const std::vector<size_t> &focal, const Eigen::VectorXd &response, const Eigen::MatrixXd &design):
 			numRowSpecies(findNumFocals(focal)),
 			numColSpecies(design.cols()),
 			numObservations(design.rows()),
-			isPerCapita(isPerCapita),
 			focal(focal),
 			response(response),
 			design(design)
@@ -61,7 +59,6 @@ class Data {
 		size_t getNumRowSpecies() const {return numRowSpecies;};
 		size_t getNumColSpecies() const {return numColSpecies;};
 		size_t getNumObservations() const {return numObservations;};
-		bool getIsPerCapita() const {return isPerCapita;};
 		
 		const std::vector<size_t> &getFocal() const {return focal;};
 		const Eigen::VectorXd &getResponse() const {return response;};

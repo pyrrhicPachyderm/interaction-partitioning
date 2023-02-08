@@ -18,7 +18,6 @@ MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Par
 		size_t focalRowGroup = groupings[ROW].getGroup(focal);
 		
 		double focalGrowthRate = parameters.getGrowthRate(focalGrowthGroup);
-		double focalDensity = data.getDesign()(obs, focal);
 		
 		//First, the derivatives with respect to the growth rates.
 		//If it's not the growth rate of the observation's focal species, this is zero.
@@ -26,16 +25,14 @@ MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Par
 		//This one will be equal to the prediction, divided by the growth rate itself.
 		double totalCompetition = parameters.getCompetitionCoefficientsRow(focalRowGroup).dot(colGroupedDesign.row(obs));
 		double derivative = 1.0 - totalCompetition;
-		if(!data.getIsPerCapita()) derivative *= focalDensity;
 		jacobian(obs, parameters.getAsVectorGrowthRateIndex(focalGrowthGroup)) = -derivative;
 		
 		//Second, the derivatives with respect to the competition coefficients.
 		//If it's not a competition coefficient *on* the focal species, this is zero.
 		//So there will be a number per row equal to the number of column groups.
-		//This will be the negative of the focal growth rate, times the focal density (if not per capita), times the column group density.
+		//This will be the negative of the focal growth rate times the column group density.
 		for(size_t colGroup = 0; colGroup < groupings[COL].getNumGroups(); colGroup++) {
 			double derivative = - focalGrowthRate * colGroupedDesign(obs, colGroup);
-			if(!data.getIsPerCapita()) derivative *= focalDensity;
 			jacobian(obs, parameters.getAsVectorCompetitionCoefficientIndex(focalRowGroup, colGroup)) = -derivative;
 		}
 	}

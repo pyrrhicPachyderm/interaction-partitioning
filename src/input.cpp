@@ -20,10 +20,6 @@ static void printUsage(int argc, const char **argv) {
 		
 		"\t-?\n"
 		"\t\tShow this help message and exit.\n"
-		
-		"\t-p\n"
-		"\t\tResponse variables are per capita growth/fecundity.\n"
-		"\t\tOtherwise, the response is assumed to be a measure of the total change in population size from one generation to the next.\n"
 		,
 		argv[0]
 	);
@@ -39,15 +35,10 @@ Input::Input(int argc, char** argv, std::vector<char> boolOpts, std::vector<char
 	
 	std::string optsString = getOptsString();
 	
-	bool isPerCapita = false;
-	
 	//Parse the options. getopt should shuffle all the mandatory arguments to the end by itself.
 	int opt;
 	while((opt = getopt(argc, argv, optsString.c_str())) != -1) { //No initial colon means leaving on automatic error reporting.
 		switch(opt) {
-			case 'p':
-				isPerCapita = true;
-				break;
 			case '?': //This covers an explicit ? as well as other errors.
 				//TODO: Some additional error parsing. Perhaps see https://stackoverflow.com/a/44371579
 				printUsage(argc, (const char**)argv);
@@ -72,8 +63,7 @@ Input::Input(int argc, char** argv, std::vector<char> boolOpts, std::vector<char
 	data = Data(
 		focal,
 		response,
-		design,
-		isPerCapita
+		design
 	);
 }
 
