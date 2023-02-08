@@ -23,7 +23,7 @@ double Data::getResponseVariance() const {
 }
 
 double Data::guessGrowthRate() const {
-	//we might assume that all the species are in one group, and that all competition coefficients are zero.
+	//We might assume that all the species are in one group, and that all competition coefficients are zero.
 	//This gives us the average observed response.
 	//If this is total, rather than per capita, we must divide by the average species density in the design.
 	double guess = response.mean();
