@@ -27,4 +27,25 @@ class Hyperprior {
 		double getDensity(GroupingSet groupings) const {return getDensity(getGroupingSizeSet(groupings));}
 };
 
+class ParametersPrior {
+	protected:
+		Distribution<double> growthRatePrior;
+		Distribution<double> competitionCoefficientPrior;
+	public:
+		ParametersPrior(Distribution<double> growthRatePrior, Distribution<double> competitionCoefficientPrior):
+			growthRatePrior(growthRatePrior), competitionCoefficientPrior(competitionCoefficientPrior) {};
+		
+		double getDensity(Parameters parameters) const;
+};
+
+template<size_t nAug> class AugmentedParametersPrior : public ParametersPrior {
+	protected:
+		std::array<Distribution<double>, nAug> additionalParameterPriors;
+	public:
+		AugmentedParametersPrior(Distribution<double> growthRatePrior, Distribution<double> competitionCoefficientPrior, std::array<Distribution<double>, nAug> additionalParameterPriors):
+			ParametersPrior(growthRatePrior, competitionCoefficientPrior), additionalParameterPriors(additionalParameterPriors) {};
+		
+		double getDensity(AugmentedParameters<nAug> parameters) const;
+};
+
 #endif
