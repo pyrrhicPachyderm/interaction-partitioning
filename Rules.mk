@@ -15,7 +15,7 @@ goldberg_raw_data := $(from_root)/data/goldberg-species.csv $(from_root)/data/go
 
 cxr_additional_output := $(from_root)/output/cxr-species.csv
 
-#process_data_template takes the dataset abbreviation and the raw data file(s).
+#process_data_template takes the dataset abbreviation, the raw data file(s), and any additional output files.
 define process_data_template =
 $$(call processed_data_files,$(1)) $(3) &: $(from_root)/scripts/process-$(1) $(2)
 	./$$< $(2) $$(call processed_data_files,$(1)) $(3)
