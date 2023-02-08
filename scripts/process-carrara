@@ -1,0 +1,143 @@
+#!/usr/bin/env Rscript
+suppressPackageStartupMessages(library(optparse))
+suppressPackageStartupMessages(library(magrittr))
+
+#################
+#Parse arguments.
+#################
+
+usage = "%prog [options] INPUT_FILE ID_OUTPUT_FILE TIME_OUTPUT_FILE DENSITY_OUTPUT_FILE"
+description = "Takes the data file provided by Florian, and reshapes it into the three files desired by the C++ code.
+Namely, the experiment ID vector, the time vector, and the species density matrix.
+All are output as tab-separated matrices, without column headers, with vectors in the form column vectors."
+option_list <- list()
+parser <- OptionParser(usage = usage, description=description, option_list=option_list)
+arguments <- parse_args(parser, positional_arguments = 4)
+
+infile <- arguments$args[1]
+id_outfile <- arguments$args[2]
+time_outfile <- arguments$args[3]
+density_outfile <- arguments$args[4]
+
+attach(arguments$options)
+
+#########
+#Read in.
+#########
+
+pairs_data <- as.data.frame(readxl::read_excel(infile, sheet = 1))
+all_species_data <- as.data.frame(readxl::read_excel(infile, sheet = 2))
+
+start_time <- 0
+end_time <- 21 #From the paper, in days.
+
+################
+#Clean the data.
+################
+
+#The all_species_data contains some blank rows; drop them.
+all_species_data <- all_species_data[!is.na(all_species_data[[1]]),]
+
+#Both sheets have some explanation written over on the right hand side, leading to garbage columns.
+#These are all NA past the first few rows.
+#They're the only NAs in the data, so we can just drop all columns with any NAs.
+pairs_data <- pairs_data[,!sapply(pairs_data, function(col){any(is.na(col))})]
+all_species_data <- all_species_data[,!sapply(all_species_data, function(col){any(is.na(col))})]
+
+#Get the species names.
+species_names <- unique(pairs_data$species)
+
+#We only want three columns from the all_species_data: the species name, the density, and the replicate number.
+#Of these, only the density column is named, so we will have to find the others by their contents.
+all_species_data <- data.frame(
+	rep = all_species_data[,sapply(all_species_data, function(col){all(grepl("^rep", col))})],
+	name = all_species_data[,sapply(all_species_data, function(col){all(col %in% species_names)})],
+	density = all_species_data[,grep("density", names(all_species_data), ignore.case = TRUE)]
+)
+
+#The replicates column of all_species_data is strings (rep1, rep2, ...) rather than numerical.
+all_species_data$rep <- as.integer(sub(".*([0-9]+).*", "\\1", all_species_data$rep))
+
+#################################
+#Calculate the initial densities.
+#################################
+
+num_species <- length(species_names)
+
+#Get the carrying capacity for each species.
+#This is the average of cases where the species was paired with itself in pairs_data.
+k <- sapply(species_names, function(name) {
+	mean(pairs_data[pairs_data$species == name,name])
+})
+
+#Calculate the initial densities for the two types of experiment.
+pairs_initial_density <- k / 2
+all_species_initial_density <- k / num_species
+
+#################################
+#Extract the relevant components.
+#################################
+
+#Fill the id and time columns; these depend only on the number of experiments, not the data itself.
+num_experiments <- (num_species - 1) * nrow(pairs_data) / 2 + length(unique(all_species_data$rep))
+id_output <- rep(0:(num_experiments-1), each = 2) #Two recordings per experiment; start and end.
+time_output <- rep(c(start_time, end_time), times = num_experiments)
+
+#Find the density matrix in two parts: one for the pairs experiment, one for the all species experiments.
+#Each will require interleaving with the initial densities, so we define a helper function for this.
+interleave <- function(scalar, vector) {
+	#Alternates the scalar within the vector, starting with the scalar.
+	as.vector(rbind(scalar, vector))
+}
+
+#Create a data frame for each pair of species (with sp1 preceeding sp2, to prevent repetition).
+#Reduce them all into one data frame with rbind.
+pairs_density <- Reduce(rbind, lapply(1:(length(species_names)-1), function(i) {
+	sp1 <- species_names[i]
+	Reduce(rbind, lapply((i+1):length(species_names), function(j) {
+		sp2 <- species_names[j]
+		#Create a data frame with do.call.
+		#It will have vectors for focal and competitor,
+		#while other arguments will recycle the atomic vector 0 to the correct length.
+		setNames(do.call(data.frame, lapply(species_names, function(sp) {
+			#If this is a non-zero vector, the initial values need interleaving among the final values.
+			if(sp == sp1) return(
+				interleave(pairs_initial_density[sp], pairs_data[pairs_data$species == sp2,sp1])
+			)
+			if(sp == sp2) return(
+				interleave(pairs_initial_density[sp], pairs_data[pairs_data$species == sp1,sp2])
+			)
+			else return(0)
+		})), species_names)
+	}))
+}))
+
+#The all_species_data first needs reshaping from long to wide format.
+all_species_density <- reshape(all_species_data, direction = "wide", idvar = "rep", timevar = "name", varying = species_names)
+all_species_density <- all_species_density[-1] #Drop the "rep" column after reshaping.
+#Next, it needs the initial densities interleaving in.
+all_species_density <- rbind(all_species_density, all_species_initial_density)
+all_species_density <- all_species_density[interleave(nrow(all_species_density), 1:(nrow(all_species_density)-1)),]
+
+#Finally, rbind the two together.
+density_output <- rbind(pairs_density, all_species_density)
+
+################################
+#Turn the outputs into matrices.
+################################
+
+id_output %<>% matrix(ncol=1)
+time_output %<>% matrix(ncol=1)
+density_output %<>% as.matrix()
+
+###################
+#Print the outputs.
+###################
+
+print_table <- function(table, outfile) {
+	write.table(table, outfile, row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t")
+}
+
+print_table(id_output, id_outfile)
+print_table(time_output, time_outfile)
+print_table(density_output, density_outfile)
