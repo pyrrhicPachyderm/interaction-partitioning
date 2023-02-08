@@ -73,7 +73,7 @@ class Data {
 		//Functions to get rough guesses of parameter values from the data.
 		//Useful for initial values of iterative processes, or tolerances, but not much else.
 		//0 is a good guess for the values of competition coefficients,
-		//so there is separate a function for guessing the approximate maximum magnitude of them.
+		//so there is a separate function for guessing the approximate maximum magnitude of them.
 		double guessGrowthRate() const;
 		double guessCompetitionCoefficient() const {return 0.0;}
 		double guessCompetitionCoefficientMagnitude() const;
