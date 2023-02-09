@@ -33,3 +33,8 @@ double Data::guessCompetitionCoefficientMagnitude() const {
 	//This gives us 1, divided by the average density, divided by the number of species.
 	return 1.0 / design.mean() / numColSpecies;
 }
+
+double Data::guessErrorVariance() const {
+	//Simply return the variance of the response variable.
+	return getResponseVariance();
+}

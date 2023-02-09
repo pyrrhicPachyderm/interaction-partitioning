@@ -74,6 +74,7 @@ class Data {
 		double guessGrowthRate() const;
 		double guessCompetitionCoefficient() const {return 0.0;}
 		double guessCompetitionCoefficientMagnitude() const;
+		double guessErrorVariance() const;
 };
 
 #endif

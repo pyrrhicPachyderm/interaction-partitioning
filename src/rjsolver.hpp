@@ -38,7 +38,7 @@ class ReversibleJumpSolver : public Solver {
 		double transModelJumpProbabilityMultiplier;
 		double growthRateApproximatePosteriorVariance = data.guessGrowthRate() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		double competitionCoefficientApproximatePosteriorVariance = data.guessCompetitionCoefficientMagnitude() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
-		AdditionalParametersVector additionalParametersApproximatePosteriorVariance = {{data.getResponseVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
+		AdditionalParametersVector additionalParametersApproximatePosteriorVariance = {{data.guessErrorVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
 		double jumpVarianceMultiplier = 1.0;
 		double competitionCoefficientPriorVariance = pow(data.guessCompetitionCoefficientMagnitude(), 2);
 	public:
@@ -46,7 +46,7 @@ class ReversibleJumpSolver : public Solver {
 			Solver(data),
 			hyperprior(hyperprior),
 			initialGroupings(groupings),
-			initialParameters(AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {{data.getResponseVariance()}})),
+			initialParameters(AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {{data.guessErrorVariance()}})),
 			isChangingGroupings(isChangingGroupings)
 			{
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
