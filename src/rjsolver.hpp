@@ -25,7 +25,7 @@ class ReversibleJumpSolver : public Solver {
 		
 		GroupingBooleanSet isChangingGroupings;
 		
-		//If isProposing, then base class functions such as getResiduals() will use the propsed groupings.
+		//If isProposing, then base class functions such as getResiduals() will use the proposed groupings.
 		bool isProposing = false;
 		
 		//These do not *need* default values, as isProposing is initially false, but need some value as Grouping does not have a default constructor.
