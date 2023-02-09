@@ -64,9 +64,6 @@ class Data {
 		const Eigen::VectorXd &getResponse() const {return response;};
 		const Eigen::MatrixXd &getDesign() const {return design;};
 		
-		double getResponseMean() const;
-		double getResponseVariance() const;
-		
 		//Functions to get rough guesses of parameter values from the data.
 		//Useful for initial values of iterative processes, or tolerances, but not much else.
 		//0 is a good guess for the values of competition coefficients,

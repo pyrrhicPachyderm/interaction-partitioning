@@ -13,15 +13,6 @@ bool Data::areFocalsFirst() const {
 	return *std::max_element(focal.begin(), focal.end()) < numRowSpecies;
 }
 
-double Data::getResponseMean() const {
-	return response.mean();
-}
-
-double Data::getResponseVariance() const {
-	Eigen::VectorXd residuals = response - Eigen::VectorXd::Constant(response.size(), response.mean());
-	return residuals.dot(residuals) / residuals.size();
-}
-
 double Data::guessGrowthRate() const {
 	//We might assume that all the species are in one group, and that all competition coefficients are zero.
 	//This gives us the average observed response.
@@ -36,5 +27,6 @@ double Data::guessCompetitionCoefficientMagnitude() const {
 
 double Data::guessErrorVariance() const {
 	//Simply return the variance of the response variable.
-	return getResponseVariance();
+	Eigen::VectorXd residuals = response - Eigen::VectorXd::Constant(response.size(), response.mean());
+	return residuals.dot(residuals) / residuals.size();
 }
