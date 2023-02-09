@@ -5,15 +5,32 @@
 #include <vector>
 #include <iostream>
 #include <Eigen/Core>
+#include "distribution.hpp"
+
+/////////////////////////////////
+//"Internal" variables/functions.
+/////////////////////////////////
+
+//These should only be needed by the io module.
+//However, they are used by outputTable, which needs to be defined in the header file.
+//It is far too complicated a template to explicitly instantiate.
 
 extern const char *OUTPUT_TABLE_SEPARATOR;
 
 std::istream &openInput(std::string filename);
 std::ostream &openOutput(std::string filename);
 
+//////////////////
+//Input functions.
+//////////////////
+
 extern std::vector<size_t> readIndexVector(std::string filename);
 extern Eigen::VectorXd readDoubleVector(std::string filename);
 extern Eigen::MatrixXd readDoubleMatrix(std::string filename);
+
+///////////////////
+//Output functions.
+///////////////////
 
 template<typename T> class OutputColumn {
 	protected:
