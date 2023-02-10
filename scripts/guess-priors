@@ -1,0 +1,131 @@
+#!/usr/bin/env Rscript
+suppressPackageStartupMessages(library(optparse))
+suppressPackageStartupMessages(library(magrittr))
+
+##################
+#Argument parsing.
+##################
+
+usage = "%prog [options] OUTPUT_FILE indv FOCAL_INPUT_FILE RESPONSE_INPUT_FILE DESIGN_INPUT_FILE
+%prog [options] OUTPUT_FILE time ID_INPUT_FILE TIME_INPUT_FILE DENSITY_INPUT_FILE"
+description = "Takes the files desired by the C++ code (as appropriate to individual response data (indv) or time series data (time),
+and guesses appropriate priors for Bayesian analysis.
+The file of priors is produced in the format expected by the C++ code: growth rate, competition coefficient, then error variance."
+option_list <- list(
+	make_option(
+		c("-r", "--growth"), dest = "growth_rate_magnitude", type = "double", default = 1,
+		help = "An estimate of the magnitude of the growth rate [default %default]."
+	)
+)
+parser <- OptionParser(usage = usage, description = description, option_list = option_list)
+arguments <- parse_args(parser, positional_arguments = 5)
+
+outfile <- arguments$args[1]
+data_type <- arguments$args[2]
+infiles <- arguments$args[3:5]
+
+attach(arguments$options)
+
+####################
+#Set up the results.
+####################
+
+#Some of the values are common among all data types.
+#The growth rate could only reasonably be estimated from the results, which it's incorrect to do for the prior.
+#So that is specified manually on the command line, with -r.
+#We take that estimate to be the mean and standard deviation of the prior for growth rate.
+#The mean for the competition coefficient is zero, but the variance will need calculating.
+#An inverse gamma distribution is nice for error variance.
+#We will leave a shape of 1, but scale will need calculating.
+
+priors <- data.frame(
+	row.names = c("growth_rate", "competition_coefficient", "error_variance"),
+	type = c("Normal", "Normal", "InverseGamma"),
+	p1 = c(growth_rate_magnitude, 0, 1),
+	p2 = c(growth_rate_magnitude^2, NA, NA)
+)
+
+####################
+#Split on data type.
+####################
+
+if(data_type == "indv") {
+	#########
+	#Read in.
+	#########
+	
+	focal <- read.table(infiles[1])[[1]]
+	#Do not read the response; we're not allowed to use this for the priors.
+	design <- read.table(infiles[3])
+	
+	#########################
+	#Competition coefficient.
+	#########################
+	
+	#To find the approximate magnitude of the competition coefficients, we will assume that with all species present at average density, growth halts.
+	#This gives us 1, divided by the average density, divided by the number of species.
+	#We square this to give us the variance.
+	priors["competition_coefficient","p2"] <- (1 / mean(as.matrix(design)) / ncol(design))^2
+	
+	################
+	#Error variance.
+	################
+	
+	#We set scale such that the mode (the mean of an inverse gamma function is undefined for shape = 1) is equal to the variance of the growth rate prior.
+	#This gives scale = (shape + 1) * (growth rate prior variance)
+	priors["error_variance","p2"] <- (priors["error_variance","p1"] + 1) * priors["growth_rate","p2"]
+} else if(data_type == "time") {
+	#########
+	#Read in.
+	#########
+	
+	id <- read.table(infiles[1])[[1]]
+	time <- read.table(infiles[2])[[1]]
+	density <- read.table(infiles[3])
+	
+	################
+	#Clean the data.
+	################
+	
+	#Before dropping some data, we want the time range.
+	time_range <- max(time) - min(time)
+	
+	#Sort by id, then time.
+	perm <- order(id, time)
+	id <- id[perm]
+	time <- time[perm]
+	density <- density[perm,]
+	
+	#Drop all but the first observation of each experiment; we're not allowed to use those for the priors.
+	drop <- c(FALSE, sapply(2:length(id), function(i){id[i-1] < id[i]}))
+	id <- id[!drop]
+	time <- time[!drop]
+	density <- density[!drop,]
+	
+	#########################
+	#Competition coefficient.
+	#########################
+	
+	#As for individual response data.
+	priors["competition_coefficient","p2"] <- (1 / mean(as.matrix(density)) / ncol(density))^2
+	
+	################
+	#Error variance.
+	################
+	
+	#As for individual response data, except that the growth rate acts over time_range.
+	#A proper calculation here would involve solving the DE, but as a simplification we shall simply multiply by time_range.
+	priors["error_variance","p2"] <- (priors["error_variance","p1"] + 1) * priors["growth_rate","p2"] * time_range
+} else {
+	stop("Invalid data type")
+}
+
+###########
+#Write out.
+###########
+
+print_table <- function(table, outfile) {
+	write.table(table, outfile, row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t")
+}
+
+print_table(priors, outfile)
