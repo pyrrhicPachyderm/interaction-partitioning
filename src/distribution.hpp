@@ -36,6 +36,18 @@ namespace Distributions {
 			double getDensity(double x) const override;
 			double getRandom() const override;
 	};
+	
+	class InverseGamma : public Base<double> {
+		protected:
+			double shape;
+			double scale;
+		public:
+			InverseGamma(double shape, double scale):
+				shape(shape), scale(scale) {};
+			
+			double getDensity(double x) const override;
+			double getRandom() const override;
+	};
 }
 
 //A wrapper class to deal with maintaining the pointer required for runtime polymorphism.

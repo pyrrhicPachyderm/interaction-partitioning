@@ -1,4 +1,5 @@
 #include <math.h>
+#include <assert.h>
 #include <random>
 #include "distribution.hpp"
 
@@ -22,4 +23,13 @@ double Distributions::Normal::getDensity(double x) const {
 
 double Distributions::Normal::getRandom() const {
 	return std::normal_distribution(mean, sqrt(variance))(randomNumberGenerator);
+}
+
+double Distributions::InverseGamma::getDensity(double x) const {
+	return pow(scale, shape) / tgamma(shape) * pow(1 / x, shape + 1) * exp(-scale / x);
+}
+
+double Distributions::InverseGamma::getRandom() const {
+	//TODO: Implement.
+	assert(false);
 }

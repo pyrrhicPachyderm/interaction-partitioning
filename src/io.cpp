@@ -113,6 +113,8 @@ static Distribution<double> readDistributionLine(std::istream &stream) {
 		return readDistribution<Distributions::Uniform>(stream);
 	} else if(distribution == "normal") {
 		return readDistribution<Distributions::Normal>(stream);
+	} else if(distribution == "inversegamma") {
+		return readDistribution<Distributions::InverseGamma>(stream);
 	} else {
 		fprintf(stderr, "%s is not a recognised distribution\n", distribution.c_str());
 		exit(1);
