@@ -13,10 +13,10 @@ processed_indv_data_files = $(patsubst %,$(from_root)/output/$(1)/%,focal-vector
 processed_time_data_files = $(patsubst %,$(from_root)/output/$(1)/%,id-vector.data time-vector.data density-matrix.data)
 
 tcl_raw_data := $(from_root)/TCL_DrosMCT/Data/d_both.csv
-goldberg_raw_data := $(from_root)/data/goldberg-species.csv $(from_root)/data/goldberg/figure2
+goldberg_raw_data := $(from_root)/data/goldberg/species.csv $(from_root)/data/goldberg/figure2
 carrara_raw_data := $(from_root)/data/carrara/data.xls
 
-cxr_additional_output := $(from_root)/output/cxr-species.csv
+cxr_additional_output := $(from_root)/output/cxr/species.csv
 
 #process_data_template takes the dataset abbreviation, the dataset type (indv or time), the raw data file(s), and any additional output files.
 define process_data_template =

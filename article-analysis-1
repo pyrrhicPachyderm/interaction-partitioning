@@ -30,7 +30,7 @@ attach(arguments$options)
 #Analysis.
 ##########
 
-species_dat <- read.csv(paste0(this_dir, "/data/tcl-species.csv"))
+species_dat <- read.csv(paste0(this_dir, "/data/tcl/species.csv"))
 species_output_order <- c(4,3,1,2,6,5)
 
 input_data <- InputData$new(paste0(this_dir, "/output/tcl/focal-vector.data"), paste0(this_dir, "/output/tcl/response-vector.data"), paste0(this_dir, "/output/tcl/design-matrix.data"))

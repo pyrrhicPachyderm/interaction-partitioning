@@ -29,9 +29,9 @@ attach(arguments$options)
 
 species_datas <- lapply(
 	list(
-		tcl = "/data/tcl-species.csv",
-		cxr = "/output/cxr-species.csv",
-		goldberg = "/data/goldberg-species.csv"
+		tcl = "/data/tcl/species.csv",
+		cxr = "/output/cxr/species.csv",
+		goldberg = "/data/goldberg/species.csv"
 	),
 	function(file) {
 		read.csv(paste0(this_dir, file))
