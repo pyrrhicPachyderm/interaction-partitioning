@@ -9,6 +9,8 @@
 #include "utils/refl.hpp"
 #include "io.hpp"
 
+const char *INPUT_COMMENT_STRING = "#";
+
 const char *OUTPUT_TABLE_SEPARATOR = "\t";
 const char *OUTPUT_GROWTH_RATE_STRING = "r";
 const char *OUTPUT_COMPETITION_COEFFICIENT_STRING = "alpha";
@@ -126,11 +128,16 @@ std::vector<Distribution<double>> readDistributionList(std::string filename) {
 	std::istream &file = openInput(filename);
 	
 	std::string line;
-	std::getline(file, line);
-	while(line.size() > 0) {
+	while(!file.eof()) {
+		std::getline(file, line);
+		//Remove a comment.
+		size_t commentPos = line.find(INPUT_COMMENT_STRING);
+		if(commentPos != std::string::npos) line.erase(commentPos, std::string::npos);
+		//Skip blank lines.
+		if(line.length() == 0) continue;
+		//Read the distribution.
 		std::istringstream lineStream(line);
 		result.push_back(readDistributionLine(lineStream));
-		std::getline(file, line);
 	}
 	
 	return result;
