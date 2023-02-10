@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <fstream>
 #include <iterator>
+#include <tuple>
 #include "grouping.hpp"
 #include "parameters.hpp"
+#include "distribution.hpp"
+#include "utils/refl.hpp"
 #include "io.hpp"
 
 const char *OUTPUT_TABLE_SEPARATOR = "\t";
@@ -78,6 +81,56 @@ Eigen::MatrixXd readDoubleMatrix(std::string filename) {
 	
 	//Ensure the mapping is done row-major.
 	Eigen::MatrixXd result = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>::Map(&raw[0], raw.size() / numCols, numCols);
+	return result;
+}
+
+template<class T> T readDistributionParameter(std::istream &stream) {
+	T result;
+	stream >> result; //TODO: Error handling.
+	return result;
+}
+
+template<class TupleT> static TupleT readDistributionParameters(std::istream &stream) {
+	return [] <std::size_t... I> (std::istream &stream, std::index_sequence<I...>) -> TupleT {
+		//Using a braced initialiser list instead of make_tuple to fix ordering.
+		//See https://stackoverflow.com/a/42047998
+		return std::tuple{readDistributionParameter<std::tuple_element_t<I, TupleT>>(stream)...};
+	} (stream, std::make_index_sequence<std::tuple_size<TupleT>{}>{});
+}
+
+template<class T> static Distribution<double> readDistribution(std::istream &stream) {
+	return Distribution<double>(new auto(std::make_from_tuple<T>(readDistributionParameters<refl::ctor_as_tuple<T>>(stream))));
+}
+
+static Distribution<double> readDistributionLine(std::istream &stream) {
+	std::string distribution;
+	stream >> distribution;
+	
+	//Convert the distribution to lowercase.
+	std::transform(distribution.begin(), distribution.end(), distribution.begin(), [](unsigned char c){return std::tolower(c);});
+	
+	if(distribution == "uniform") {
+		return readDistribution<Distributions::Uniform>(stream);
+	} else if(distribution == "normal") {
+		return readDistribution<Distributions::Normal>(stream);
+	} else {
+		fprintf(stderr, "%s is not a recognised distribution\n", distribution.c_str());
+		exit(1);
+	}
+}
+
+std::vector<Distribution<double>> readDistributionList(std::string filename) {
+	std::vector<Distribution<double>> result;
+	std::istream &file = openInput(filename);
+	
+	std::string line;
+	std::getline(file, line);
+	while(line.size() > 0) {
+		std::istringstream lineStream(line);
+		result.push_back(readDistributionLine(lineStream));
+		std::getline(file, line);
+	}
+	
 	return result;
 }
 
