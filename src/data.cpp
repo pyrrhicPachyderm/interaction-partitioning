@@ -1,3 +1,4 @@
+#include "parameters.hpp"
 #include "data.hpp"
 
 size_t Data::findNumFocals(std::vector<size_t> focals) {
@@ -23,6 +24,30 @@ Eigen::MatrixXd Data::getColGroupedDesign(const Grouping &grouping) const {
 	}
 	
 	return colGroupedDesign;
+}
+
+Eigen::VectorXd Data::getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
+	Eigen::VectorXd predictions = Eigen::VectorXd::Zero(response.size());
+	
+	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign(groupings[COL]);
+	
+	for(size_t obs = 0; obs < numObservations; obs++) {
+		size_t focalGrowthGroup = groupings[GROWTH].getGroup(focal[obs]);
+		size_t focalRowGroup = groupings[ROW].getGroup(focal[obs]);
+		
+		double focalDensity = 1.0;
+		double focalGrowthRate = parameters.getGrowthRate(focalGrowthGroup);
+		Eigen::VectorXd densities = colGroupedDesign.row(obs);
+		Eigen::VectorXd competitionCoefficients = parameters.getCompetitionCoefficientsRow(focalRowGroup);
+		
+		predictions[obs] = model.getDerivative(focalDensity, focalGrowthRate, densities, competitionCoefficients);
+	}
+	
+	return predictions;
+}
+
+Eigen::VectorXd Data::getResiduals(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
+	return getResponse() - getPredictions(model, parameters, groupings);
 }
 
 double Data::guessGrowthRate() const {

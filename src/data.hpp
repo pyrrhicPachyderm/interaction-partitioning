@@ -5,7 +5,10 @@
 #include <assert.h>
 #include <vector>
 #include <Eigen/Core>
+#include "model.hpp"
 #include "grouping.hpp"
+
+class Parameters;
 
 class Data {
 	protected:
@@ -63,6 +66,9 @@ class Data {
 		const Eigen::VectorXd &getResponse() const {return response;};
 		const Eigen::MatrixXd &getDesign() const {return design;};
 		Eigen::MatrixXd getColGroupedDesign(const Grouping &grouping) const;
+		
+		Eigen::VectorXd getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const;
+		Eigen::VectorXd getResiduals(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const;
 		
 		//Functions to get rough guesses of parameter values from the data.
 		//Useful for initial values of iterative processes, or tolerances, but not much else.
