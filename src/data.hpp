@@ -7,8 +7,6 @@
 #include <Eigen/Core>
 #include "grouping.hpp"
 
-enum GroupingType {GROWTH, ROW, COL, NUM_GROUPING_TYPES};
-
 class Data {
 	protected:
 		size_t numRowSpecies;

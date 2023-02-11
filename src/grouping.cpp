@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <assert.h>
 #include "utils/math.hpp"
+#include "utils/array.hpp"
 #include "grouping.hpp"
 
 void Grouping::reset() {
@@ -219,4 +220,13 @@ bool Grouping::operator==(const Grouping& g) const {
 
 bool Grouping::operator!=(const Grouping& g) const {
 	return !(*this == g);
+}
+
+GroupingSizeSet getGroupingSizeSet(const GroupingSet &groupingSet) {
+	return array_map(
+		[groupingSet] (size_t index) -> size_t {
+			return groupingSet[index].getNumGroups();
+		},
+		make_index_array<NUM_GROUPING_TYPES>()
+	);
 }

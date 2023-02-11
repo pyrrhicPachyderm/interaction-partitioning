@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <vector>
+#include <array>
 
 class Grouping {
 	public:
@@ -73,5 +74,13 @@ class Grouping {
 		bool operator==(const Grouping& g) const;
 		bool operator!=(const Grouping& g) const;
 };
+
+enum GroupingType {GROWTH, ROW, COL, NUM_GROUPING_TYPES};
+
+typedef std::array<Grouping, NUM_GROUPING_TYPES> GroupingSet;
+typedef std::array<size_t, NUM_GROUPING_TYPES> GroupingSizeSet;
+//A GroupingSizeSet is the number of groups in each grouping of a GroupingSet.
+
+extern GroupingSizeSet getGroupingSizeSet(const GroupingSet &groupingSet);
 
 #endif

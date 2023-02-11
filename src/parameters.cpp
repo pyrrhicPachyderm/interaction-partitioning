@@ -1,16 +1,6 @@
-#include "utils/array.hpp"
 #include "parameters.hpp"
 
 #define RELATIVE_TOLERANCE 1e-6
-
-GroupingSizeSet getGroupingSizeSet(const GroupingSet &groupingSet) {
-	return array_map(
-		[groupingSet] (size_t index) -> size_t {
-			return groupingSet[index].getNumGroups();
-		},
-		make_index_array<NUM_GROUPING_TYPES>()
-	);
-}
 
 double Parameters::getNumRowSpecies() const {
 	return numRowSpecies;
