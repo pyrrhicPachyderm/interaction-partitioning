@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <unistd.h> //Gives getopt
+#include "utils/array.hpp"
 #include "input.hpp"
 
 #define NUM_MANDATORY_ARGS 4
+#define NUM_UNAUGMENTED_PRIORS 2
 
 const static std::string DEFAULT_OPTS_STRING = "p";
 
@@ -117,3 +119,22 @@ void Input::parseOptInput(char opt, const char *optarg) {
 	index = getOptIndex(intOpts, opt);
 	if(index >= 0) intOptResults[index] = strtoull(optarg, NULL, 0); //TODO: Error handling for strtoull.
 }
+
+template<size_t nAug> AugmentedParametersPrior<nAug> Input::getPriors() const {
+	if(priors.size() != NUM_UNAUGMENTED_PRIORS + nAug) {
+		fprintf(stderr, "Wrong number of priors\n");
+		//TODO: Integrate this into the constructor so that it *can* print usage.
+		//printUsage(argc, (const char**)argv, needsPriors);
+		exit(1);
+	}
+	
+	return AugmentedParametersPrior<nAug>(priors[0], priors[1], array_map(
+		[this] (size_t index) -> decltype(priors)::value_type {
+			return priors[NUM_UNAUGMENTED_PRIORS + index];
+		},
+		make_index_array<nAug>()
+	));
+}
+
+//Explicitly instantiate.
+template AugmentedParametersPrior<1> Input::getPriors() const;

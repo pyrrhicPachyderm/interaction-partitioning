@@ -3,6 +3,7 @@
 
 #include "io.hpp"
 #include "data.hpp"
+#include "priors.hpp"
 
 class Input {
 	protected:
@@ -24,6 +25,7 @@ class Input {
 		
 		const Data &getData() const {return data;};
 		const std::string &getOutputFile() const {return outputFile;};
+		template<size_t nAug> AugmentedParametersPrior<nAug> getPriors() const;
 		
 		bool getBoolOptResult(char opt) const;
 		size_t getIntOptResult(char opt) const;
