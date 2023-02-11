@@ -16,6 +16,7 @@ class ReversibleJumpSolver : public Solver {
 		typedef std::array<bool, NUM_GROUPING_TYPES> GroupingBooleanSet;
 		
 		Hyperprior hyperprior;
+		AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior;
 		
 		GroupingSet initialGroupings; //For resetting to when starting a new chain.
 		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> initialParameters;
@@ -40,11 +41,11 @@ class ReversibleJumpSolver : public Solver {
 		double competitionCoefficientApproximatePosteriorVariance = data.guessCompetitionCoefficientMagnitude() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		AdditionalParametersVector additionalParametersApproximatePosteriorVariance = {{data.guessErrorVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
 		double jumpVarianceMultiplier = 1.0;
-		double competitionCoefficientPriorVariance = pow(data.guessCompetitionCoefficientMagnitude(), 2);
 	public:
-		ReversibleJumpSolver(Data data, Hyperprior hyperprior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
+		ReversibleJumpSolver(Data data, Hyperprior hyperprior, AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(data),
 			hyperprior(hyperprior),
+			parametersPrior(parametersPrior),
 			initialGroupings(groupings),
 			initialParameters(AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {{data.guessErrorVariance()}})),
 			isChangingGroupings(isChangingGroupings)

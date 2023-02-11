@@ -25,6 +25,7 @@ int main(int argc, char **argv) {
 	Hyperprior hyperprior = input.getBoolOptResult('a') ?
 		Hyperprior::aic() :
 		Hyperprior::flat();
+	auto parametersPrior = input.getPriors<ReversibleJumpSolver::NUM_ADDITIONAL_PARAMETERS>();
 	
 	bool isGrowthVarying = input.getBoolOptResult('g');
 	
@@ -35,7 +36,7 @@ int main(int argc, char **argv) {
 	size_t numChains = input.getIntOptResult('c');
 	size_t thinningFactor = input.getIntOptResult('t');
 	
-	ReversibleJumpSolver solver(input.getData(), hyperprior, {rowGrouping, rowGrouping, colGrouping}, {isGrowthVarying, true, true});
+	ReversibleJumpSolver solver(input.getData(), hyperprior, parametersPrior, {rowGrouping, rowGrouping, colGrouping}, {isGrowthVarying, true, true});
 	
 	OutputColumn<Grouping> outputGrowthGroupings("growth_group");
 	OutputColumn<Grouping> outputRowGroupings("row_group");
