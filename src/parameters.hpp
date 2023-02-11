@@ -10,7 +10,7 @@ typedef std::array<Grouping, NUM_GROUPING_TYPES> GroupingSet;
 typedef std::array<size_t, NUM_GROUPING_TYPES> GroupingSizeSet;
 //A GroupingSizeSet is the number of groups in each grouping of a GroupingSet.
 
-GroupingSizeSet getGroupingSizeSet(const GroupingSet &groupingSet);
+extern GroupingSizeSet getGroupingSizeSet(const GroupingSet &groupingSet);
 
 class Parameters {
 	protected:
