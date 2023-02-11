@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <vector>
 #include <Eigen/Core>
+#include "grouping.hpp"
 
 enum GroupingType {GROWTH, ROW, COL, NUM_GROUPING_TYPES};
 
@@ -63,6 +64,7 @@ class Data {
 		const std::vector<size_t> &getFocal() const {return focal;};
 		const Eigen::VectorXd &getResponse() const {return response;};
 		const Eigen::MatrixXd &getDesign() const {return design;};
+		Eigen::MatrixXd getColGroupedDesign(const Grouping &grouping) const;
 		
 		//Functions to get rough guesses of parameter values from the data.
 		//Useful for initial values of iterative processes, or tolerances, but not much else.

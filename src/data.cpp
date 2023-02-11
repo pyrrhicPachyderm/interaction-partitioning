@@ -13,6 +13,18 @@ bool Data::areFocalsFirst() const {
 	return *std::max_element(focal.begin(), focal.end()) < numRowSpecies;
 }
 
+Eigen::MatrixXd Data::getColGroupedDesign(const Grouping &grouping) const {
+	Eigen::MatrixXd colGroupedDesign = Eigen::MatrixXd::Zero(design.rows(), grouping.getNumGroups());
+	
+	for(size_t obs = 0; obs < (size_t)design.rows(); obs++) {
+		for(size_t sp = 0; sp < (size_t)design.cols(); sp++) {
+			colGroupedDesign(obs, grouping.getGroup(sp)) += design(obs, sp);
+		}
+	}
+	
+	return colGroupedDesign;
+}
+
 double Data::guessGrowthRate() const {
 	//We might assume that all the species are in one group, and that all competition coefficients are zero.
 	//This gives us the average observed response.
