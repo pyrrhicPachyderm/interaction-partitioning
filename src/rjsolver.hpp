@@ -53,10 +53,6 @@ class ReversibleJumpSolver : public Solver {
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
 			};
 	protected:
-		//Functions to say that particular elements have changed and mark appropriate things as dirty.
-		void dirtyDataSubclass() override {}
-		void dirtyGroupingSubclass(GroupingType groupingType) override {}
-		
 		void setIsProposing(bool b);
 	public:
 		//Functions to retrieve groupings.

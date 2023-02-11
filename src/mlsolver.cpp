@@ -1,11 +1,11 @@
 #include "nls.hpp"
 #include "mlsolver.hpp"
 
-Eigen::VectorXd MaximumLikelihoodSolver::getResidualsFromVector(const Eigen::VectorXd &parameterVector) {
+Eigen::VectorXd MaximumLikelihoodSolver::getResidualsFromVector(const Eigen::VectorXd &parameterVector) const {
 	return getResiduals(Parameters(parameterVector, groupings));
 }
 
-MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Parameters &parameters) {
+MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Parameters &parameters) const {
 	MaximumLikelihoodSolver::Jacobian jacobian = Eigen::MatrixXd::Zero(data.getNumObservations(), parameters.getNumParameters());
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
@@ -40,7 +40,7 @@ MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobian(const Par
 	return jacobian;
 }
 
-MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobianFromVector(const Eigen::VectorXd &parameterVector) {
+MaximumLikelihoodSolver::Jacobian MaximumLikelihoodSolver::getJacobianFromVector(const Eigen::VectorXd &parameterVector) const {
 	return getJacobian(Parameters(parameterVector, groupings));
 }
 

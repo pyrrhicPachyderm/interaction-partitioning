@@ -124,16 +124,6 @@ static double getRandomProbability() {
 	return Distributions::Uniform(0,1).getRandom();
 }
 
-//We need to use this, rather than direct setting, to ensure it also dirties the groupings.
-//Further, this requires that this function is called after any changes to current or proposed groupings are performed.
-void ReversibleJumpSolver::setIsProposing(bool b) {
-	if(isProposing == b) return;
-	isProposing = b;
-	for(size_t i = 0; i < NUM_GROUPING_TYPES; i++) {
-		if(currentGroupings[i] != proposedGroupings[i]) dirtyGrouping((GroupingType)i);
-	}
-}
-
 double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t index) {
 	Grouping newGrouping = moveType == MERGE ?
 		currentGroupings[groupingType].getMerge(index) :
@@ -154,7 +144,7 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	if(moveType == MERGE) proposedJumpType = MERGE_JUMP;
 	else if(moveType == SPLIT) proposedJumpType = SPLIT_JUMP;
 	else __builtin_unreachable();
-	setIsProposing(true);
+	isProposing = true;
 	
 	return acceptanceRatio;
 }
@@ -166,7 +156,7 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	proposedParameters.moveParameters(getGrowthRateJumpDistribution(), getCompetitionCoefficientJumpDistribution(), getAdditionalParametersJumpDistribution());
 	
 	proposedJumpType = WITHIN_JUMP;
-	setIsProposing(true);
+	isProposing = true;
 	
 	//TODO: If using a non-symmetric jumping density, the jumping density component of the acceptance ratio may not be 1.
 	return 1.0;
@@ -199,11 +189,11 @@ double ReversibleJumpSolver::proposeJump() {
 void ReversibleJumpSolver::acceptJump() {
 	currentGroupings = proposedGroupings;
 	currentParameters = proposedParameters;
-	setIsProposing(false);
+	isProposing = false;
 }
 
 void ReversibleJumpSolver::rejectJump() {
-	setIsProposing(false);
+	isProposing = false;
 }
 
 Distribution<double> ReversibleJumpSolver::getErrorDistribution() const {
@@ -333,7 +323,4 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 void ReversibleJumpSolver::resetChain() {
 	currentGroupings = initialGroupings;
 	currentParameters = initialParameters;
-	for(size_t i = 0; i < NUM_GROUPING_TYPES; i++) {
-		dirtyGrouping((GroupingType)i);
-	}
 }

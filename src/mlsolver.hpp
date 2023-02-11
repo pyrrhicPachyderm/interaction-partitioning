@@ -26,19 +26,11 @@ class MaximumLikelihoodSolver : public Solver {
 	protected:
 		Parameters solution;
 		bool isDirtySolution = true;
-		
-		//Functions to say that particular elements have changed and mark appropriate things as dirty.
-		void dirtyDataSubclass() override {
-			isDirtySolution = true;
-		}
-		void dirtyGroupingSubclass(GroupingType groupingType) override {
-			isDirtySolution = true;
-		}
 	public:
 		//Functions to update groupings.
 		//Can use reset(), separate(), or advance().
 		template<typename T> T updateGrouping(GroupingType groupingType, T (Grouping::*updateFunc)()) {
-			dirtyGrouping(groupingType);
+			isDirtySolution = true;
 			return (groupings[groupingType].*updateFunc)();
 		}
 		
@@ -50,10 +42,10 @@ class MaximumLikelihoodSolver : public Solver {
 			return groupings;
 		}
 	protected:
-		Eigen::VectorXd getResidualsFromVector(const Eigen::VectorXd &parameterVector);
+		Eigen::VectorXd getResidualsFromVector(const Eigen::VectorXd &parameterVector) const;
 		
-		Jacobian getJacobian(const Parameters &parameters);
-		Jacobian getJacobianFromVector(const Eigen::VectorXd &parameterVector);
+		Jacobian getJacobian(const Parameters &parameters) const;
+		Jacobian getJacobianFromVector(const Eigen::VectorXd &parameterVector) const;
 		
 		void calculateSolution();
 	public:

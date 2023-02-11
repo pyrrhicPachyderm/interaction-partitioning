@@ -1,7 +1,7 @@
 #include "solver.hpp"
 
-void Solver::calculateColGroupedDesign() {
-	colGroupedDesign = Eigen::MatrixXd::Zero(data.getNumObservations(), getGrouping(COL).getNumGroups());
+Eigen::MatrixXd Solver::getColGroupedDesign() const {
+	Eigen::MatrixXd colGroupedDesign = Eigen::MatrixXd::Zero(data.getNumObservations(), getGrouping(COL).getNumGroups());
 	
 	for(size_t obs = 0; obs < data.getNumObservations(); obs++) {
 		for(size_t sp = 0; sp < data.getNumColSpecies(); sp++) {
@@ -9,15 +9,10 @@ void Solver::calculateColGroupedDesign() {
 		}
 	}
 	
-	isDirtyColGroupedDesign = false;
-}
-
-Eigen::MatrixXd Solver::getColGroupedDesign() {
-	if(isDirtyColGroupedDesign) calculateColGroupedDesign();
 	return colGroupedDesign;
 }
 
-Eigen::VectorXd Solver::getPredictions(const Parameters &parameters) {
+Eigen::VectorXd Solver::getPredictions(const Parameters &parameters) const {
 	Eigen::VectorXd predictions = Eigen::VectorXd::Zero(data.getNumObservations());
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign();
@@ -38,6 +33,6 @@ Eigen::VectorXd Solver::getPredictions(const Parameters &parameters) {
 	return predictions;
 }
 
-Eigen::VectorXd Solver::getResiduals(const Parameters &parameters) {
+Eigen::VectorXd Solver::getResiduals(const Parameters &parameters) const {
 	return data.getResponse() - getPredictions(parameters);
 }
