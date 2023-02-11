@@ -22,8 +22,8 @@ class Input {
 		Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts): Input(argc, argv, needsPriors, boolOpts, {}, {}) {};
 		Input(int argc, char** argv, bool needsPriors): Input(argc, argv, needsPriors, {}) {};
 		
-		const Data &getData() {return data;};
-		const std::string &getOutputFile() {return outputFile;};
+		const Data &getData() const {return data;};
+		const std::string &getOutputFile() const {return outputFile;};
 		
 		bool getBoolOptResult(char opt) const;
 		size_t getIntOptResult(char opt) const;
