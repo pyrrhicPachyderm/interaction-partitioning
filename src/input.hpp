@@ -24,7 +24,7 @@ class Input {
 		
 		const Data &getData() {return data;};
 		const std::string &getOutputFile() {return outputFile;};
-	public:
+		
 		bool getBoolOptResult(char opt) const;
 		size_t getIntOptResult(char opt) const;
 };
