@@ -9,7 +9,7 @@ const static std::string DEFAULT_OPTS_STRING = "p";
 //Prints the usage spiel to stderr.
 static void printUsage(int argc, const char **argv) {
 	//Making of use of concatenated string literals in the following:
-	fprintf(stderr, "Usage: %s OUTPUT_FILE FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE [options]\n\n"
+	fprintf(stderr, "Usage: %s [options] OUTPUT_FILE FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE\n\n"
 		"\tThe focal vector is an integer vector giving the index of the focal species for each observation, 0-indexed.\n"
 		"\tThe response vector is a numeric vector giving the growth, fecundity, or other response variable for each observation.\n"
 		"\tThe design matrix is a numeric matrix with one row per observation and one column per species, giving the design densities.\n"
