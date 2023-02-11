@@ -11,7 +11,7 @@
 #define DEFAULT_THINNING_FACTOR 1
 
 int main(int argc, char **argv) {
-	Input input(argc, argv,
+	Input input(argc, argv, true,
 		{'a', 'g'},
 		{'j', 'd', 'b', 's', 'c', 't'},
 		{DEFAULT_JUMPS_PER_DIAL, DEFAULT_NUM_DIALS, DEFAULT_BURN_IN, DEFAULT_NUM_STEPS, DEFAULT_NUM_CHAINS, DEFAULT_THINNING_FACTOR}

@@ -7,13 +7,14 @@
 const static std::string DEFAULT_OPTS_STRING = "p";
 
 //Prints the usage spiel to stderr.
-static void printUsage(int argc, const char **argv) {
+static void printUsage(int argc, const char **argv, bool needsPriors) {
 	//Making of use of concatenated string literals in the following:
-	fprintf(stderr, "Usage: %s [options] OUTPUT_FILE FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE\n\n"
+	fprintf(stderr, "Usage: %s [options] OUTPUT_FILE FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE%s\n\n"
 		"\tThe focal vector is an integer vector giving the index of the focal species for each observation, 0-indexed.\n"
 		"\tThe response vector is a numeric vector giving the growth, fecundity, or other response variable for each observation.\n"
 		"\tThe design matrix is a numeric matrix with one row per observation and one column per species, giving the design densities.\n"
 		"\tVectors should be written as column vectors.\n"
+		"%s"
 		"\tA file may be given as -, to use stdin/stdout.\n"
 		"\n"
 		"Options:\n"
@@ -21,12 +22,16 @@ static void printUsage(int argc, const char **argv) {
 		"\t-?\n"
 		"\t\tShow this help message and exit.\n"
 		,
-		argv[0]
+		argv[0],
+		!needsPriors ? "" : " PRIORS_FILE",
+		!needsPriors ? "" :
+			"\tA priors file has three lines, giving the priors for the growth rates, competition coefficients, and error variance respectively.\n"
+			"\tEach line begins with the name of a distribution (case-insensitive, without spaces), then has a whitespace separated list of parameters.\n"
 	);
 	//TODO: Take boolOpts and some sort of boolOptsHelpStrings as an argument, and include those as well.
 }
 
-Input::Input(int argc, char** argv, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults):
+Input::Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults):
 	boolOpts(boolOpts),
 	intOpts(intOpts),
 	intOptResults(intOptDefaults)
@@ -41,7 +46,7 @@ Input::Input(int argc, char** argv, std::vector<char> boolOpts, std::vector<char
 		switch(opt) {
 			case '?': //This covers an explicit ? as well as other errors.
 				//TODO: Some additional error parsing. Perhaps see https://stackoverflow.com/a/44371579
-				printUsage(argc, (const char**)argv);
+				printUsage(argc, (const char**)argv, needsPriors);
 				exit(1);
 			default:
 				parseOptInput(opt, optarg);
@@ -49,16 +54,18 @@ Input::Input(int argc, char** argv, std::vector<char> boolOpts, std::vector<char
 	}
 	
 	//Get the mandatory arguments.
-	int remainingArgs = argc - optind;
-	if(remainingArgs != NUM_MANDATORY_ARGS) {
+	int numRemainingArgs = argc - optind;
+	int numRequiredArgs = NUM_MANDATORY_ARGS + (int)needsPriors; //The priors file is an additional argument.
+	if(numRemainingArgs != numRequiredArgs) {
 		fprintf(stderr, "Wrong number of mandatory arguments\n");
-		printUsage(argc, (const char**)argv);
+		printUsage(argc, (const char**)argv, needsPriors);
 		exit(1);
 	}
 	outputFile = argv[optind];
 	std::vector<size_t> focal = readIndexVector(argv[optind+1]);
 	Eigen::VectorXd response = readDoubleVector(argv[optind+2]);
 	Eigen::MatrixXd design = readDoubleMatrix(argv[optind+3]);
+	if(needsPriors) priors = readDistributionList(argv[optind+4]);
 	
 	data = Data(
 		focal,

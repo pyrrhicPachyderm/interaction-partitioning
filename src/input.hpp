@@ -13,13 +13,14 @@ class Input {
 		
 		Data data;
 		std::string outputFile;
+		std::vector<Distribution<double>> priors;
 		
 		std::string getOptsString();
 		void parseOptInput(char opt, const char *optarg);
 	public:
-		Input(int argc, char** argv, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults);
-		Input(int argc, char** argv, std::vector<char> boolOpts): Input(argc, argv, boolOpts, {}, {}) {};
-		Input(int argc, char** argv): Input(argc, argv, {}) {};
+		Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults);
+		Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts): Input(argc, argv, needsPriors, boolOpts, {}, {}) {};
+		Input(int argc, char** argv, bool needsPriors): Input(argc, argv, needsPriors, {}) {};
 		
 		const Data &getData() {return data;};
 		const std::string &getOutputFile() {return outputFile;};
