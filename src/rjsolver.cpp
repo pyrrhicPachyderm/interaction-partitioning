@@ -269,7 +269,7 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 	//The first tries to estimate the variance of each posterior.
 	//The second aims for a given within-model acceptance ratio.
 	
-	for(size_t i = 0; i < numDials; i++) {
+	for(size_t dialIndex = 0; dialIndex < numDials; dialIndex++) {
 		//For the first method.
 		std::vector<double> growthRates;
 		std::vector<double> competitionCoefficients;
