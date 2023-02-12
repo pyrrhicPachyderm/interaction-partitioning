@@ -26,10 +26,7 @@ class ReversibleJumpSolver : public Solver {
 		
 		GroupingBooleanSet isChangingGroupings;
 		
-		//If isProposing, then base class functions such as getResiduals() will use the proposed groupings.
-		bool isProposing = false;
-		
-		//These do not *need* default values, as isProposing is initially false, but need some value as Grouping does not have a default constructor.
+		//These do not *need* default values, as a jump will be proposed before they are used, but need some value as Grouping does not have a default constructor.
 		GroupingSet proposedGroupings = initialGroupings;
 		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> proposedParameters = initialParameters;
 		
@@ -52,19 +49,10 @@ class ReversibleJumpSolver : public Solver {
 			{
 				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
 			};
-	protected:
-		void setIsProposing(bool b);
-	public:
-		const GroupingSet &getGroupings() const {
-			return isProposing ? proposedGroupings : currentGroupings;
-		}
-		const Grouping &getGrouping(GroupingType groupingType) const {
-			return getGroupings()[groupingType];
-		}
 		
-		const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &getParameters() const {
-			return isProposing ? proposedParameters : currentParameters;
-		}
+		const GroupingSet &getGroupings() const {return currentGroupings;}
+		const Grouping &getGrouping(GroupingType groupingType) const {return currentGroupings[groupingType];}
+		const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &getParameters() const {return currentParameters;}
 	protected:
 		double getTransModelJumpProbability(GroupingType groupingType, MoveType moveType) const;
 		double getTransModelJumpProbability(GroupingType groupingType, MoveType moveType, bool reverse) const;
@@ -91,11 +79,10 @@ class ReversibleJumpSolver : public Solver {
 		void acceptJump();
 		void rejectJump();
 		
-		Distribution<double> getErrorDistribution() const;
-		Eigen::VectorXd getResiduals();
+		Distribution<double> getErrorDistribution(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const;
 		
 		double getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, Distribution<double> sourceErrorDistribution,  Distribution<double> destErrorDistribution);
-		double getPriorDensity() const;
+		double getPriorDensity(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters, const GroupingSet &groupings) const;
 		
 		bool makeJump(bool canTransModelJump);
 		void burnIn(size_t numJumps, bool canTransModelJump);

@@ -144,7 +144,6 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	if(moveType == MERGE) proposedJumpType = MERGE_JUMP;
 	else if(moveType == SPLIT) proposedJumpType = SPLIT_JUMP;
 	else __builtin_unreachable();
-	isProposing = true;
 	
 	return acceptanceRatio;
 }
@@ -156,7 +155,6 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	proposedParameters.moveParameters(getGrowthRateJumpDistribution(), getCompetitionCoefficientJumpDistribution(), getAdditionalParametersJumpDistribution());
 	
 	proposedJumpType = WITHIN_JUMP;
-	isProposing = true;
 	
 	//TODO: If using a non-symmetric jumping density, the jumping density component of the acceptance ratio may not be 1.
 	return 1.0;
@@ -189,21 +187,16 @@ double ReversibleJumpSolver::proposeJump() {
 void ReversibleJumpSolver::acceptJump() {
 	currentGroupings = proposedGroupings;
 	currentParameters = proposedParameters;
-	isProposing = false;
 }
 
 void ReversibleJumpSolver::rejectJump() {
-	isProposing = false;
+	return;
 }
 
-Distribution<double> ReversibleJumpSolver::getErrorDistribution() const {
+Distribution<double> ReversibleJumpSolver::getErrorDistribution(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const {
 	//This uses the additional parameter, and is used in calculating the likelihood.
-	double errorVariance = getParameters().getAdditionalParameter(0);
+	double errorVariance = parameters.getAdditionalParameter(0);
 	return Distribution(new Distributions::Normal(0, errorVariance));
-}
-
-Eigen::VectorXd ReversibleJumpSolver::getResiduals() {
-	return Solver::getResiduals(isProposing ? (Parameters)proposedParameters : (Parameters)currentParameters, getGroupings());
 }
 
 double ReversibleJumpSolver::getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, Distribution<double> sourceErrorDistribution,  Distribution<double> destErrorDistribution) {
@@ -219,22 +212,21 @@ double ReversibleJumpSolver::getLikelihoodRatio(Eigen::VectorXd sourceResiduals,
 	return likelihoodRatio;
 }
 
-double ReversibleJumpSolver::getPriorDensity() const {
-	double hyperpriorDensity = hyperprior.getDensity(getGroupings());
-	double parametersPriorDensity = parametersPrior.getDensity(getParameters());
+double ReversibleJumpSolver::getPriorDensity(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters, const GroupingSet &groupings) const {
+	double hyperpriorDensity = hyperprior.getDensity(groupings);
+	double parametersPriorDensity = parametersPrior.getDensity(parameters);
 	return hyperpriorDensity * parametersPriorDensity;
 }
 
 bool ReversibleJumpSolver::makeJump(bool canTransModelJump) {
-	double sourcePrior = getPriorDensity();
-	Eigen::VectorXd sourceResiduals = getResiduals();
-	Distribution<double> sourceErrorDistribution = getErrorDistribution();
-	
 	double jumpingDensityRatio = canTransModelJump ? proposeJump() : proposeWithinModelJump();
 	
-	double destPrior = getPriorDensity();
-	Eigen::VectorXd destResiduals = getResiduals();
-	Distribution<double> destErrorDistribution = getErrorDistribution();
+	double sourcePrior = getPriorDensity(currentParameters, currentGroupings);
+	double destPrior = getPriorDensity(proposedParameters, proposedGroupings);
+	Eigen::VectorXd sourceResiduals = getResiduals(currentParameters, currentGroupings);
+	Eigen::VectorXd destResiduals = getResiduals(proposedParameters, proposedGroupings);
+	Distribution<double> sourceErrorDistribution = getErrorDistribution(currentParameters);
+	Distribution<double> destErrorDistribution = getErrorDistribution(proposedParameters);
 	
 	double priorRatio = destPrior / sourcePrior;
 	double likelihoodRatio = getLikelihoodRatio(sourceResiduals, destResiduals, sourceErrorDistribution, destErrorDistribution);
@@ -295,10 +287,10 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 			//We can't rely on there being a certain number of growth rates or competition coefficients.
 			//And it's altogether too much work to tally multiple sets of growth rates or competition coefficients, and take the variance of each set.
 			//So we just take the first of each.
-			growthRates.push_back(getParameters().getGrowthRate(0));
-			competitionCoefficients.push_back(getParameters().getCompetitionCoefficient(0,0));
+			growthRates.push_back(currentParameters.getGrowthRate(0));
+			competitionCoefficients.push_back(currentParameters.getCompetitionCoefficient(0,0));
 			for(size_t i = 0; i < NUM_ADDITIONAL_PARAMETERS; i++) {
-				additionalParameters[i].push_back(getParameters().getAdditionalParameter(i));
+				additionalParameters[i].push_back(currentParameters.getAdditionalParameter(i));
 			}
 		}
 		growthRateApproximatePosteriorVariance = getVariance(growthRates);
