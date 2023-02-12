@@ -49,6 +49,7 @@ int main(int argc, char **argv) {
 	solver.dialIn(jumpsPerDial, numDials);
 	
 	for(size_t chain = 0; chain < numChains; chain++) {
+		solver.resetChain();
 		solver.burnIn(burnIn);
 		for(size_t i = 0; i < numSteps; i++) {
 			solver.makeJump();
