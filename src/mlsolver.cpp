@@ -2,11 +2,11 @@
 #include "mlsolver.hpp"
 
 Eigen::VectorXd MaximumLikelihoodSolver::getResidualsFromVector(const Eigen::VectorXd &parameterVector) const {
-	return getResiduals(Parameters(parameterVector, groupings));
+	return getResiduals(Parameters(parameterVector, groupings), groupings);
 }
 
 Data::Jacobian MaximumLikelihoodSolver::getResidualsJacobianFromVector(const Eigen::VectorXd &parameterVector) const {
-	return getResidualsJacobian(Parameters(parameterVector, groupings));
+	return getResidualsJacobian(Parameters(parameterVector, groupings), groupings);
 }
 
 void MaximumLikelihoodSolver::calculateSolution() {
@@ -28,12 +28,12 @@ Parameters MaximumLikelihoodSolver::getSolution() {
 
 Eigen::VectorXd MaximumLikelihoodSolver::getSolutionPredictions() {
 	//TODO: Memoise.
-	return getPredictions(getSolution());
+	return getPredictions(getSolution(), groupings);
 }
 
 Eigen::VectorXd MaximumLikelihoodSolver::getSolutionResiduals() {
 	//TODO: Memoise.
-	return getResiduals(getSolution());
+	return getResiduals(getSolution(), groupings);
 }
 
 double MaximumLikelihoodSolver::getDeviance() {

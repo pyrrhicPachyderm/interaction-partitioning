@@ -55,8 +55,11 @@ class ReversibleJumpSolver : public Solver {
 	protected:
 		void setIsProposing(bool b);
 	public:
-		const GroupingSet &getGroupings() const override {
+		const GroupingSet &getGroupings() const {
 			return isProposing ? proposedGroupings : currentGroupings;
+		}
+		const Grouping &getGrouping(GroupingType groupingType) const {
+			return getGroupings()[groupingType];
 		}
 		
 		const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &getParameters() const {

@@ -27,9 +27,8 @@ class MaximumLikelihoodSolver : public Solver {
 			return (groupings[groupingType].*updateFunc)();
 		}
 		
-		const GroupingSet &getGroupings() const override {
-			return groupings;
-		}
+		const GroupingSet &getGroupings() const {return groupings;}
+		const Grouping &getGrouping(GroupingType groupingType) const {return groupings[groupingType];}
 	protected:
 		Eigen::VectorXd getResidualsFromVector(const Eigen::VectorXd &parameterVector) const;
 		Data::Jacobian getResidualsJacobianFromVector(const Eigen::VectorXd &parameterVector) const;

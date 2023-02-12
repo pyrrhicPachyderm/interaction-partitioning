@@ -203,7 +203,7 @@ Distribution<double> ReversibleJumpSolver::getErrorDistribution() const {
 }
 
 Eigen::VectorXd ReversibleJumpSolver::getResiduals() {
-	return Solver::getResiduals(isProposing ? (Parameters)proposedParameters : (Parameters)currentParameters);
+	return Solver::getResiduals(isProposing ? (Parameters)proposedParameters : (Parameters)currentParameters, getGroupings());
 }
 
 double ReversibleJumpSolver::getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, Distribution<double> sourceErrorDistribution,  Distribution<double> destErrorDistribution) {

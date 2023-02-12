@@ -11,23 +11,18 @@ class Solver {
 		Data data;
 	public:
 		Solver(Model model, Data data): model(model), data(data) {};
-		
-		const Grouping &getGrouping(GroupingType groupingType) const {
-			return getGroupings()[groupingType];
-		}
-		virtual const GroupingSet &getGroupings() const = 0;
 	protected:
-		Eigen::VectorXd getPredictions(const Parameters &parameters) const {
-			return data.getPredictions(model, parameters, getGroupings());
+		Eigen::VectorXd getPredictions(const Parameters &parameters, const GroupingSet &groupings) const {
+			return data.getPredictions(model, parameters, groupings);
 		}
-		Eigen::VectorXd getResiduals(const Parameters &parameters) const {
-			return data.getResiduals(model, parameters, getGroupings());
+		Eigen::VectorXd getResiduals(const Parameters &parameters, const GroupingSet &groupings) const {
+			return data.getResiduals(model, parameters, groupings);
 		}
-		Data::Jacobian getPredictionsJacobian(const Parameters &parameters) const {
-			return data.getPredictionsJacobian(model, parameters, getGroupings());
+		Data::Jacobian getPredictionsJacobian(const Parameters &parameters, const GroupingSet &groupings) const {
+			return data.getPredictionsJacobian(model, parameters, groupings);
 		}
-		Data::Jacobian getResidualsJacobian(const Parameters &parameters) const {
-			return data.getResidualsJacobian(model, parameters, getGroupings());
+		Data::Jacobian getResidualsJacobian(const Parameters &parameters, const GroupingSet &groupings) const {
+			return data.getResidualsJacobian(model, parameters, groupings);
 		}
 };
 
