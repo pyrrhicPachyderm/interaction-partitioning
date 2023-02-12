@@ -113,12 +113,6 @@ Distribution<double> ReversibleJumpSolver::getTransModelJumpDistribution(Groupin
 	} else __builtin_unreachable();
 }
 
-static double getVariance(std::vector<double> nums) {
-	Eigen::Map<Eigen::VectorXd> vec(&nums[0], nums.size());
-	Eigen::VectorXd residuals = vec - Eigen::VectorXd::Constant(vec.size(), vec.mean());
-	return residuals.dot(residuals) / (residuals.size() - 1);
-}
-
 static double getRandomProbability() {
 	//A random double in [0,1).
 	return Distributions::Uniform(0,1).getRandom();
@@ -260,6 +254,17 @@ static void lowerJumpVarianceMultiplier(double &multiplier, double discrepantPro
 	multiplier /= 1.0 + discrepantProportion * (MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE - 1.0);
 }
 
+//A function to calculate approximate posterior variances for dialing in.
+//It takes a matrix where each row is a draw from the posterior, and each column is one parameter (after ungrouping).
+static double getAverageColumnwiseVariance(Eigen::MatrixXd mat) {
+	double sum = 0.0;
+	for(auto col : mat.colwise()) {
+		Eigen::VectorXd residuals = col - Eigen::VectorXd::Constant(col.size(), col.mean());
+		double variance = residuals.dot(residuals) / (residuals.size() - 1);
+		sum += variance;
+	}
+	return sum / mat.cols();
+}
 
 void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 	//Dials in the jumping variances.
@@ -271,9 +276,12 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 	
 	for(size_t dialIndex = 0; dialIndex < numDials; dialIndex++) {
 		//For the first method.
-		std::vector<double> growthRates;
-		std::vector<double> competitionCoefficients;
-		std::array<std::vector<double>, NUM_ADDITIONAL_PARAMETERS> additionalParameters;
+		//We want to track the variance of each growth rate/competition coefficient (after ungrouping) separately.
+		//So we build matrices for them.
+		Eigen::MatrixXd growthRates = Eigen::MatrixXd(jumpsPerDial, data.getNumRowSpecies());
+		Eigen::MatrixXd competitionCoefficients = Eigen::MatrixXd(jumpsPerDial, data.getNumRowSpecies() * data.getNumColSpecies());
+		std::array<Eigen::VectorXd, NUM_ADDITIONAL_PARAMETERS> additionalParameters;
+		additionalParameters.fill(Eigen::VectorXd(jumpsPerDial));
 		
 		//For the second method.
 		Eigen::Array<double, NUM_JUMP_TYPES, 1> numProposals = Eigen::Array<double, NUM_JUMP_TYPES, 1>::Zero();
@@ -284,21 +292,19 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 			numProposals[proposedJumpType] += 1.0;
 			if(accepted) numAccepts[proposedJumpType] += 1.0;
 			
-			//We can't track the variability of each growth rate or competition coefficient separately, as they regroup.
-			//And we can't take the variance of all of them together, as that captures more of the variation between them than variation within one.
-			//So we just take the first of each.
-			//Alas, this has the potential to bias things if the first species has an unusual growth rate or rate of intraspecific competition.
-			//TODO: Improve this.
-			growthRates.push_back(currentParameters.getGrowthRate(0));
-			competitionCoefficients.push_back(currentParameters.getCompetitionCoefficient(0,0));
+			//To get consistency, we need to ungroup the parameters.
+			AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> ungroupedParameters(currentParameters, currentGroupings);
+			
+			growthRates.row(j) = ungroupedParameters.getGrowthRates();
+			competitionCoefficients.row(j) = ungroupedParameters.getCompetitionCoefficients().reshaped();
 			for(size_t i = 0; i < NUM_ADDITIONAL_PARAMETERS; i++) {
-				additionalParameters[i].push_back(currentParameters.getAdditionalParameter(i));
+				additionalParameters[i][j] = ungroupedParameters.getAdditionalParameter(i);
 			}
 		}
-		growthRateApproximatePosteriorVariance = getVariance(growthRates);
-		competitionCoefficientApproximatePosteriorVariance = getVariance(competitionCoefficients);
+		growthRateApproximatePosteriorVariance = getAverageColumnwiseVariance(growthRates);
+		competitionCoefficientApproximatePosteriorVariance = getAverageColumnwiseVariance(competitionCoefficients);
 		for(size_t i = 0; i < NUM_ADDITIONAL_PARAMETERS; i++) {
-			additionalParametersApproximatePosteriorVariance[i] = getVariance(additionalParameters[i]);
+			additionalParametersApproximatePosteriorVariance[i] = getAverageColumnwiseVariance(additionalParameters[i]);
 		}
 		
 		Eigen::Array<double, NUM_JUMP_TYPES, 1> acceptanceRates = numAccepts / numProposals;
