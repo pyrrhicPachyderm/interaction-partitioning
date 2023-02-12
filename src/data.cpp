@@ -50,6 +50,38 @@ Eigen::VectorXd Data::getResiduals(const Model &model, const Parameters &paramet
 	return getResponse() - getPredictions(model, parameters, groupings);
 }
 
+Data::Jacobian Data::getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
+	Data::Jacobian jacobian = Eigen::MatrixXd::Zero(numObservations, parameters.getNumParameters());
+	
+	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign(groupings[COL]);
+	
+	//Note that this is the Jacobian of the residuals, not of the predicted values.
+	//As such, it is negated, compared to the predicted values.
+	for(size_t obs = 0; obs < numObservations; obs++) {
+		size_t focalGrowthGroup = groupings[GROWTH].getGroup(focal[obs]);
+		size_t focalRowGroup = groupings[ROW].getGroup(focal[obs]);
+		
+		double focalDensity = 1.0;
+		double focalGrowthRate = parameters.getGrowthRate(focalGrowthGroup);
+		Eigen::VectorXd densities = colGroupedDesign.row(obs);
+		Eigen::VectorXd competitionCoefficients = parameters.getCompetitionCoefficientsRow(focalRowGroup);
+		
+		//First, the derivatives with respect to the growth rates.
+		//If it's not the growth rate of the observation's focal species, this is zero.
+		//So there will be only one per observation.
+		jacobian(obs, parameters.getAsVectorGrowthRateIndex(focalGrowthGroup)) = model.getGrowthRateJacobian(focalDensity, focalGrowthRate, densities, competitionCoefficients);
+		
+		//Second, the derivatives with respect to the competition coefficients.
+		//If it's not a competition coefficient *on* the focal species, this is zero.
+		//So there will be a number per row equal to the number of column groups.
+		for(size_t colGroup = 0; colGroup < groupings[COL].getNumGroups(); colGroup++) {
+			jacobian(obs, parameters.getAsVectorCompetitionCoefficientIndex(focalRowGroup, colGroup)) = model.getCompetitionCoefficientJacobian(focalDensity, focalGrowthRate, densities, competitionCoefficients, colGroup);
+		}
+	}
+	
+	return jacobian;
+}
+
 double Data::guessGrowthRate() const {
 	//We might assume that all the species are in one group, and that all competition coefficients are zero.
 	//This gives us the average observed response.

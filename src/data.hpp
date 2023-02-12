@@ -24,6 +24,13 @@ class Data {
 		
 		//The design density matrix, with numColSpecies columns and numObservations rows.
 		Eigen::MatrixXd design;
+	public:
+		//A Jacobian will be represented simply as a matrix.
+		//It has a number of rows equal to the number of observations, and
+		//a number of columns equal to the number of parameters.
+		//It treats parameters in the order given by Parameters::getAsVector().
+		//TODO: Do this more nicely.
+		typedef Eigen::MatrixXd Jacobian;
 	private:
 		static size_t findNumFocals(std::vector<size_t> focals);
 		
@@ -69,6 +76,12 @@ class Data {
 		
 		Eigen::VectorXd getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const;
 		Eigen::VectorXd getResiduals(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const;
+		
+		//NLS requires the Jacobian of the residuals, which is the negative of the Jacobian of the predicted values.
+		Jacobian getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const;
+		Jacobian getResidualsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
+			return -getPredictionsJacobian(model, parameters, groupings);
+		}
 		
 		//Functions to get rough guesses of parameter values from the data.
 		//Useful for initial values of iterative processes, or tolerances, but not much else.
