@@ -55,12 +55,7 @@ class ReversibleJumpSolver : public Solver {
 	protected:
 		void setIsProposing(bool b);
 	public:
-		//Functions to retrieve groupings.
-		const Grouping &getGrouping(GroupingType groupingType) const override {
-			return isProposing ? proposedGroupings[groupingType] : currentGroupings[groupingType];
-		}
-		
-		GroupingSet getGroupings() const {
+		const GroupingSet &getGroupings() const override {
 			return isProposing ? proposedGroupings : currentGroupings;
 		}
 		

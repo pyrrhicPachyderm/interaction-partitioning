@@ -11,7 +11,10 @@ class Solver {
 	public:
 		Solver(Data data): data(data) {};
 		
-		virtual const Grouping &getGrouping(GroupingType groupingType) const = 0;
+		const Grouping getGrouping(GroupingType groupingType) const {
+			return getGroupings()[groupingType];
+		}
+		virtual const GroupingSet &getGroupings() const = 0;
 	protected:
 		Eigen::MatrixXd getColGroupedDesign() const;
 		

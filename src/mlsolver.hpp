@@ -34,11 +34,7 @@ class MaximumLikelihoodSolver : public Solver {
 			return (groupings[groupingType].*updateFunc)();
 		}
 		
-		//Functions to retrieve groupings.
-		const Grouping &getGrouping(GroupingType groupingType) const override {
-			return groupings[groupingType];
-		}
-		GroupingSet getGroupings() const {
+		const GroupingSet &getGroupings() const override {
 			return groupings;
 		}
 	protected:
