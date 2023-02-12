@@ -267,7 +267,7 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 	//The first to balance the sizes of jumps in different variables against one another.
 	//The second to balance overall sizes of jumps.
 	//The first tries to estimate the variance of each posterior.
-	//The second aims for a given within-model acceptance ratio, and tries to equalise merge and split acceptance ratios.
+	//The second aims for a given within-model acceptance ratio.
 	
 	for(size_t i = 0; i < numDials; i++) {
 		//For the first method.
