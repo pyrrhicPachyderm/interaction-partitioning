@@ -12,7 +12,7 @@ class Solver {
 	public:
 		Solver(Model model, Data data): model(model), data(data) {};
 		
-		const Grouping getGrouping(GroupingType groupingType) const {
+		const Grouping &getGrouping(GroupingType groupingType) const {
 			return getGroupings()[groupingType];
 		}
 		virtual const GroupingSet &getGroupings() const = 0;
