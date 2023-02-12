@@ -69,11 +69,11 @@ Input::Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts
 	Eigen::MatrixXd design = readDoubleMatrix(argv[optind+3]);
 	if(needsPriors) priors = readDistributionList(argv[optind+4]);
 	
-	data = Data(
+	data = Data(new Datasets::IndividualResponse(
 		focal,
 		response,
 		design
-	);
+	));
 }
 
 std::string Input::getOptsString() {

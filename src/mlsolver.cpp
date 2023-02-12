@@ -5,7 +5,7 @@ Eigen::VectorXd MaximumLikelihoodSolver::getResidualsFromVector(const Eigen::Vec
 	return getResiduals(Parameters(parameterVector, groupings), groupings);
 }
 
-Data::Jacobian MaximumLikelihoodSolver::getResidualsJacobianFromVector(const Eigen::VectorXd &parameterVector) const {
+Datasets::Jacobian MaximumLikelihoodSolver::getResidualsJacobianFromVector(const Eigen::VectorXd &parameterVector) const {
 	return getResidualsJacobian(Parameters(parameterVector, groupings), groupings);
 }
 
