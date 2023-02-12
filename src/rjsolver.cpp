@@ -284,12 +284,13 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 			numProposals[proposedJumpType] += 1.0;
 			if(accepted) numAccepts[proposedJumpType] += 1.0;
 			
-			//We can't keep a jumping distribution for each growth rate or competition coefficient, as the groupings change.
-			//As such, we will stick all growth rates in one vector, and all competition coefficients in another.
-			growthRates.insert(growthRates.end(), currentParameters.getGrowthRates().begin(), currentParameters.getGrowthRates().end());
-			//We need to flatten the competition coefficient matrix for std::vector::insert(), but Eigen::Matrix::reshaped() gives a view, so we need to save it is a vector.
-			Eigen::VectorXd competitionCoefficientsFlat = currentParameters.getCompetitionCoefficients().reshaped();
-			competitionCoefficients.insert(competitionCoefficients.end(), competitionCoefficientsFlat.begin(), competitionCoefficientsFlat.end());
+			//We can't track the variability of each growth rate or competition coefficient separately, as they regroup.
+			//And we can't take the variance of all of them together, as that captures more of the variation between them than variation within one.
+			//So we just take the first of each.
+			//Alas, this has the potential to bias things if the first species has an unusual growth rate or rate of intraspecific competition.
+			//TODO: Improve this.
+			growthRates.push_back(currentParameters.getGrowthRate(0));
+			competitionCoefficients.push_back(currentParameters.getCompetitionCoefficient(0,0));
 			for(size_t i = 0; i < NUM_ADDITIONAL_PARAMETERS; i++) {
 				additionalParameters[i].push_back(currentParameters.getAdditionalParameter(i));
 			}
