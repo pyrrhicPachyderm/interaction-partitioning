@@ -4,7 +4,8 @@
 int main(int argc, char **argv) {
 	Input input(argc, argv, false);
 	
-	MaximumLikelihoodSolver solver = MaximumLikelihoodSolver(input.getData());
+	Model model = Model(new Models::LotkaVolterra());
+	MaximumLikelihoodSolver solver = MaximumLikelihoodSolver(model, input.getData());
 	solver.updateGrouping(GROWTH, &Grouping::separate);
 	
 	OutputColumn<Grouping> outputRowGroupings("row_group");

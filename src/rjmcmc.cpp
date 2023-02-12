@@ -36,7 +36,8 @@ int main(int argc, char **argv) {
 	size_t numChains = input.getIntOptResult('c');
 	size_t thinningFactor = input.getIntOptResult('t');
 	
-	ReversibleJumpSolver solver(input.getData(), hyperprior, parametersPrior, {rowGrouping, rowGrouping, colGrouping}, {isGrowthVarying, true, true});
+	Model model = Model(new Models::LotkaVolterra());
+	ReversibleJumpSolver solver(model, input.getData(), hyperprior, parametersPrior, {rowGrouping, rowGrouping, colGrouping}, {isGrowthVarying, true, true});
 	
 	OutputColumn<Grouping> outputGrowthGroupings("growth_group");
 	OutputColumn<Grouping> outputRowGroupings("row_group");

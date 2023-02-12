@@ -42,8 +42,8 @@ class ReversibleJumpSolver : public Solver {
 		AdditionalParametersVector additionalParametersApproximatePosteriorVariance = {{data.guessErrorVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
 		double jumpVarianceMultiplier = 1.0;
 	public:
-		ReversibleJumpSolver(Data data, Hyperprior hyperprior, AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
-			Solver(data),
+		ReversibleJumpSolver(Model model, Data data, Hyperprior hyperprior, AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
+			Solver(model, data),
 			hyperprior(hyperprior),
 			parametersPrior(parametersPrior),
 			initialGroupings(groupings),
