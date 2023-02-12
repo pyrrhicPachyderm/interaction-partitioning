@@ -17,8 +17,6 @@ class Solver {
 		}
 		virtual const GroupingSet &getGroupings() const = 0;
 	protected:
-		Eigen::MatrixXd getColGroupedDesign() const;
-		
 		Eigen::VectorXd getPredictions(const Parameters &parameters) const {
 			return data.getPredictions(model, parameters, getGroupings());
 		}
