@@ -68,12 +68,10 @@ class Data {
 		size_t getNumRowSpecies() const {return numRowSpecies;};
 		size_t getNumColSpecies() const {return numColSpecies;};
 		size_t getNumObservations() const {return numObservations;};
-		
-		const std::vector<size_t> &getFocal() const {return focal;};
-		const Eigen::VectorXd &getResponse() const {return response;};
-		const Eigen::MatrixXd &getDesign() const {return design;};
+	protected:
 		Eigen::MatrixXd getColGroupedDesign(const Grouping &grouping) const;
-		
+	public:
+		const Eigen::VectorXd &getObservations() const {return response;};
 		Eigen::VectorXd getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const;
 		Eigen::VectorXd getResiduals(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const;
 		

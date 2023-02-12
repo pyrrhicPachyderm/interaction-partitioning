@@ -85,7 +85,7 @@ double MaximumLikelihoodSolver::getAICc() {
 double MaximumLikelihoodSolver::getR2() {
 	//Returns R^2, the coefficient of determination.
 	
-	Eigen::VectorXd response = data.getResponse();
+	Eigen::VectorXd response = data.getObservations();
 	Eigen::VectorXd normalisedResponse = response - Eigen::VectorXd::Constant(response.size(), response.mean());
 	double totalSS = normalisedResponse.dot(normalisedResponse);
 	

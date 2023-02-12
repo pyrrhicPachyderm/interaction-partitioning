@@ -47,7 +47,7 @@ Eigen::VectorXd Data::getPredictions(const Model &model, const Parameters &param
 }
 
 Eigen::VectorXd Data::getResiduals(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
-	return getResponse() - getPredictions(model, parameters, groupings);
+	return getObservations() - getPredictions(model, parameters, groupings);
 }
 
 Data::Jacobian Data::getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
