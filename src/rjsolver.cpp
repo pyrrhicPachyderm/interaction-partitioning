@@ -284,11 +284,12 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 			numProposals[proposedJumpType] += 1.0;
 			if(accepted) numAccepts[proposedJumpType] += 1.0;
 			
-			//We can't rely on there being a certain number of growth rates or competition coefficients.
-			//And it's altogether too much work to tally multiple sets of growth rates or competition coefficients, and take the variance of each set.
-			//So we just take the first of each.
-			growthRates.push_back(currentParameters.getGrowthRate(0));
-			competitionCoefficients.push_back(currentParameters.getCompetitionCoefficient(0,0));
+			//We can't keep a jumping distribution for each growth rate or competition coefficient, as the groupings change.
+			//As such, we will stick all growth rates in one vector, and all competition coefficients in another.
+			growthRates.insert(growthRates.end(), currentParameters.getGrowthRates().begin(), currentParameters.getGrowthRates().end());
+			//We need to flatten the competition coefficient matrix for std::vector::insert(), but Eigen::Matrix::reshaped() gives a view, so we need to save it is a vector.
+			Eigen::VectorXd competitionCoefficientsFlat = currentParameters.getCompetitionCoefficients().reshaped();
+			competitionCoefficients.insert(competitionCoefficients.end(), competitionCoefficientsFlat.begin(), competitionCoefficientsFlat.end());
 			for(size_t i = 0; i < NUM_ADDITIONAL_PARAMETERS; i++) {
 				additionalParameters[i].push_back(currentParameters.getAdditionalParameter(i));
 			}
