@@ -13,8 +13,14 @@ namespace Models {
 			
 			//TODO: Eigen::VectorXd getDerivatives(const Eigen::VectorXd &focalDensities, const Eigen::VectorXd &focalGrowthRates, const Eigen::VectorXd &densities, const Eigen::MatrixXd &competitionCoefficients) const;
 			
-			//TODO: getGrowthRateJacobian()
-			//TODO: getCompetitionCoefficientJacobian()
+			//These get single elements of the Jacobian matrix (an element for a single parameter and observation).
+			//They are the rate of change of dN/dt with respect to the parameter of interest.
+			//Note that the competition coefficient one requires one extra parameter: the index of which competition coefficient we're interested in.
+			//Also note that these functions cannot be called for every element of the Jacobian matrix: they cannot be called for parameters which do not affect the focal species of the observation.
+			//All elements for which they cannot be called are zero.
+			//This makes them useless for time series data.
+			virtual double getGrowthRateJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const = 0;
+			virtual double getCompetitionCoefficientJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients, size_t index) const = 0;
 			
 			//Virtual destructor, as this is an abstract class.
 			virtual ~Base() {};
@@ -23,6 +29,8 @@ namespace Models {
 	class LotkaVolterra : public Base {
 		public:
 			double getDerivative(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const override;
+			double getGrowthRateJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const override;
+			double getCompetitionCoefficientJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients, size_t index) const override;
 	};
 }
 
@@ -36,6 +44,12 @@ class Model {
 		
 		double getDerivative(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
 			return m->getDerivative(focalDensity, focalGrowthRate, densities, competitionCoefficients);
+		};
+		double getGrowthRateJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
+			return m->getGrowthRateJacobian(focalDensity, focalGrowthRate, densities, competitionCoefficients);
+		};
+		double getCompetitionCoefficientJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients, size_t index) const {
+			return m->getCompetitionCoefficientJacobian(focalDensity, focalGrowthRate, densities, competitionCoefficients, index);
 		};
 };
 
