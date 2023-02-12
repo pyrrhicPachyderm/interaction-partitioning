@@ -116,7 +116,7 @@ Distribution<double> ReversibleJumpSolver::getTransModelJumpDistribution(Groupin
 static double getVariance(std::vector<double> nums) {
 	Eigen::Map<Eigen::VectorXd> vec(&nums[0], nums.size());
 	Eigen::VectorXd residuals = vec - Eigen::VectorXd::Constant(vec.size(), vec.mean());
-	return residuals.dot(residuals) / residuals.size();
+	return residuals.dot(residuals) / (residuals.size() - 1);
 }
 
 static double getRandomProbability() {

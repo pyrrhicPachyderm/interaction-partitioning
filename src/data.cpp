@@ -97,5 +97,5 @@ double Data::guessCompetitionCoefficientMagnitude() const {
 double Data::guessErrorVariance() const {
 	//Simply return the variance of the response variable.
 	Eigen::VectorXd residuals = response - Eigen::VectorXd::Constant(response.size(), response.mean());
-	return residuals.dot(residuals) / residuals.size();
+	return residuals.dot(residuals) / (residuals.size() - 1);
 }
