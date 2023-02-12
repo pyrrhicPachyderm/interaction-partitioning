@@ -3,8 +3,8 @@
 #include "input.hpp"
 #include "rjsolver.hpp"
 
-#define DEFAULT_JUMPS_PER_DIAL 1000
-#define DEFAULT_NUM_DIALS 100
+#define DEFAULT_JUMPS_PER_DIAL 50000
+#define DEFAULT_NUM_DIALS 10
 #define DEFAULT_BURN_IN 100000
 #define DEFAULT_NUM_STEPS 100000
 #define DEFAULT_NUM_CHAINS 10
