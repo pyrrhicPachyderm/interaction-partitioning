@@ -77,12 +77,12 @@ Eigen::VectorXd readDoubleVector(std::string filename) {
 	return result;
 }
 
-Eigen::MatrixXd readDoubleMatrix(std::string filename) {
+Eigen::MatrixXdRowMajor readDoubleMatrix(std::string filename) {
 	size_t numCols = 0;
 	std::vector<double> raw = readMatrix<double>(filename, &numCols);
 	
 	//Ensure the mapping is done row-major.
-	Eigen::MatrixXd result = Eigen::MatrixXdRowMajor::Map(&raw[0], raw.size() / numCols, numCols);
+	Eigen::MatrixXdRowMajor result = Eigen::MatrixXdRowMajor::Map(&raw[0], raw.size() / numCols, numCols);
 	return result;
 }
 
@@ -217,7 +217,7 @@ template<> void OutputColumn<Parameters>::printElement(std::ostream &stream, siz
 		stream << OUTPUT_TABLE_SEPARATOR;
 	}
 	
-	Eigen::MatrixXd competitionCoefficients = column[index].getCompetitionCoefficients();
+	Eigen::MatrixXdRowMajor competitionCoefficients = column[index].getCompetitionCoefficients();
 	for(size_t i = 0; i < numRowSpecies; i++) {
 		for(size_t j = 0; j < numColSpecies; j++) {
 			if(i < (size_t)competitionCoefficients.rows() && j < (size_t)competitionCoefficients.cols()) {

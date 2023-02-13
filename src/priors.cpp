@@ -17,7 +17,7 @@ double ParametersPrior::getDensity(Parameters parameters) const {
 		density *= growthRatePrior.getDensity(growthRates(i));
 	}
 	
-	Eigen::MatrixXd competitionCoefficients = parameters.getCompetitionCoefficients();
+	Eigen::MatrixXdRowMajor competitionCoefficients = parameters.getCompetitionCoefficients();
 	for(size_t i = 0; i < (size_t)competitionCoefficients.rows(); i++) {
 		for(size_t j = 0; j < (size_t)competitionCoefficients.cols(); j++) {
 			density *= competitionCoefficientPrior.getDensity(competitionCoefficients(i,j));

@@ -45,7 +45,7 @@ Parameters::Parameters(Data data, GroupingSet groupings):
 	double competitionCoefficient = data.guessCompetitionCoefficient();
 	
 	growthRates = Eigen::VectorXd::Constant(groupings[GROWTH].getNumGroups(), growthRate);
-	competitionCoefficients = Eigen::MatrixXd::Constant(groupings[ROW].getNumGroups(), groupings[COL].getNumGroups(), competitionCoefficient);
+	competitionCoefficients = Eigen::MatrixXdRowMajor::Constant(groupings[ROW].getNumGroups(), groupings[COL].getNumGroups(), competitionCoefficient);
 }
 
 Eigen::VectorXd Parameters::getTolerances(Data data, GroupingSet groupings) {
@@ -79,7 +79,7 @@ Parameters::Parameters(Parameters p, GroupingSet groupings):
 {
 	//This gives ungrouped parameters (one parameter per species/pair of species), based on grouped parameters and their groups.
 	growthRates = Eigen::VectorXd(numRowSpecies);
-	competitionCoefficients = Eigen::MatrixXd(numRowSpecies, numColSpecies);
+	competitionCoefficients = Eigen::MatrixXdRowMajor(numRowSpecies, numColSpecies);
 	for(size_t i = 0; i < numRowSpecies; i++) {
 		growthRates[i] = p.growthRates[groupings[GROWTH].getGroup(i)];
 	}

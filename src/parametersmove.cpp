@@ -69,7 +69,7 @@ double Parameters::moveModel(GroupingType groupingType, MoveType moveType, const
 	
 	//Only one of these will ever be intialised, and then written back.
 	Eigen::VectorXd newGrowthRates;
-	Eigen::MatrixXd newCompetitionCoefficients;
+	Eigen::MatrixXdRowMajor newCompetitionCoefficients;
 	
 	//A number to use as the upper bounds of iteration later: the number of groups in the altered grouping pre-move.
 	size_t oldGroupingSize;
@@ -91,20 +91,20 @@ double Parameters::moveModel(GroupingType groupingType, MoveType moveType, const
 		case ROW:
 			oldGroupingSize = competitionCoefficients.rows();
 			if(moveType == MERGE) {
-				newCompetitionCoefficients = Eigen::MatrixXd(competitionCoefficients.rows() - 1, competitionCoefficients.cols());
+				newCompetitionCoefficients = Eigen::MatrixXdRowMajor(competitionCoefficients.rows() - 1, competitionCoefficients.cols());
 				splitParameters = std::make_pair(competitionCoefficients.row(splitGroups.first), competitionCoefficients.row(splitGroups.second));
 			} else if(moveType == SPLIT) {
-				newCompetitionCoefficients = Eigen::MatrixXd(competitionCoefficients.rows() + 1, competitionCoefficients.cols());
+				newCompetitionCoefficients = Eigen::MatrixXdRowMajor(competitionCoefficients.rows() + 1, competitionCoefficients.cols());
 				mergedParameters = competitionCoefficients.row(mergedGroup);
 			} else __builtin_unreachable();
 			break;
 		case COL:
 			oldGroupingSize = competitionCoefficients.cols();
 			if(moveType == MERGE) {
-				newCompetitionCoefficients = Eigen::MatrixXd(competitionCoefficients.rows(), competitionCoefficients.cols() - 1);
+				newCompetitionCoefficients = Eigen::MatrixXdRowMajor(competitionCoefficients.rows(), competitionCoefficients.cols() - 1);
 				splitParameters = std::make_pair(competitionCoefficients.col(splitGroups.first), competitionCoefficients.col(splitGroups.second));
 			} else if(moveType == SPLIT) {
-				newCompetitionCoefficients = Eigen::MatrixXd(competitionCoefficients.rows(), competitionCoefficients.cols() + 1);
+				newCompetitionCoefficients = Eigen::MatrixXdRowMajor(competitionCoefficients.rows(), competitionCoefficients.cols() + 1);
 				mergedParameters = competitionCoefficients.col(mergedGroup);
 			} else __builtin_unreachable();
 			break;

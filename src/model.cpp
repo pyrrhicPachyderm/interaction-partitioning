@@ -1,6 +1,6 @@
 #include "model.hpp"
 
-Eigen::VectorXd Models::Base::getDerivatives(const Eigen::VectorXd &densities, const Eigen::VectorXd &growthRates, const Eigen::MatrixXd &competitionCoefficients) const {
+Eigen::VectorXd Models::Base::getDerivatives(const Eigen::VectorXd &densities, const Eigen::VectorXd &growthRates, const Eigen::MatrixXdRowMajor &competitionCoefficients) const {
 	Eigen::VectorXd derivatives(densities.size());
 	for(size_t i = 0; i < (size_t)derivatives.size(); i++) {
 		derivatives[i] = getDerivative(densities[i], growthRates[i], densities, competitionCoefficients.row(i));

@@ -18,8 +18,8 @@ bool Datasets::IndividualResponse::areFocalsFirst() const {
 	return *std::max_element(focal.begin(), focal.end()) < numRowSpecies;
 }
 
-Eigen::MatrixXd Datasets::IndividualResponse::getColGroupedDesign(const Grouping &grouping) const {
-	Eigen::MatrixXd colGroupedDesign = Eigen::MatrixXd::Zero(design.rows(), grouping.getNumGroups());
+Eigen::MatrixXdRowMajor Datasets::IndividualResponse::getColGroupedDesign(const Grouping &grouping) const {
+	Eigen::MatrixXdRowMajor colGroupedDesign = Eigen::MatrixXdRowMajor::Zero(design.rows(), grouping.getNumGroups());
 	
 	for(size_t obs = 0; obs < (size_t)design.rows(); obs++) {
 		for(size_t sp = 0; sp < (size_t)design.cols(); sp++) {
@@ -33,7 +33,7 @@ Eigen::MatrixXd Datasets::IndividualResponse::getColGroupedDesign(const Grouping
 Eigen::VectorXd Datasets::IndividualResponse::getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
 	Eigen::VectorXd predictions = Eigen::VectorXd::Zero(response.size());
 	
-	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign(groupings[COL]);
+	Eigen::MatrixXdRowMajor colGroupedDesign = getColGroupedDesign(groupings[COL]);
 	
 	for(size_t obs = 0; obs < numObservations; obs++) {
 		size_t focalGrowthGroup = groupings[GROWTH].getGroup(focal[obs]);
@@ -53,7 +53,7 @@ Eigen::VectorXd Datasets::IndividualResponse::getPredictions(const Model &model,
 Jacobian Datasets::IndividualResponse::getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
 	Jacobian jacobian = Jacobian::Zero(numObservations, parameters.getNumParameters());
 	
-	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign(groupings[COL]);
+	Eigen::MatrixXdRowMajor colGroupedDesign = getColGroupedDesign(groupings[COL]);
 	
 	//Note that this is the Jacobian of the residuals, not of the predicted values.
 	//As such, it is negated, compared to the predicted values.
@@ -110,7 +110,7 @@ size_t Datasets::TimeSeries::findNumExperiments(std::vector<size_t> id) {
 	return nRows - nIds;
 }
 
-Datasets::TimeSeries::TimeSeries(const std::vector<size_t> &id, const Eigen::VectorXd &time, const Eigen::MatrixXd &density):
+Datasets::TimeSeries::TimeSeries(const std::vector<size_t> &id, const Eigen::VectorXd &time, const Eigen::MatrixXdRowMajor &density):
 	Datasets::Base(density.cols(), density.cols(), findNumExperiments(id) * density.cols()),
 	initialDensity(numExperiments, numColSpecies),
 	finalDensity(numExperiments, numColSpecies)

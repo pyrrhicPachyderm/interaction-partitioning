@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <vector>
 #include <iostream>
-#include <Eigen/Core>
+#include "types.hpp"
 #include "distribution.hpp"
 
 /////////////////////////////////
@@ -26,7 +26,7 @@ std::ostream &openOutput(std::string filename);
 
 extern std::vector<size_t> readIndexVector(std::string filename);
 extern Eigen::VectorXd readDoubleVector(std::string filename);
-extern Eigen::MatrixXd readDoubleMatrix(std::string filename);
+extern Eigen::MatrixXdRowMajor readDoubleMatrix(std::string filename);
 extern std::vector<Distribution<double>> readDistributionList(std::string filename);
 
 ///////////////////

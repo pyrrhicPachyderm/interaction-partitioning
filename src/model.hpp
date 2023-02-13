@@ -2,7 +2,7 @@
 #define MODEL_HPP
 
 #include <memory>
-#include <Eigen/Core>
+#include "types.hpp"
 
 namespace Models {
 	//An abstract class, for other models to inherit from.
@@ -13,7 +13,7 @@ namespace Models {
 			
 			//A wrapper around getDerivatives that handles a population.
 			//It takes one set of densities, treating each as focal (in turn) and as competitors.
-			Eigen::VectorXd getDerivatives(const Eigen::VectorXd &densities, const Eigen::VectorXd &growthRates, const Eigen::MatrixXd &competitionCoefficients) const;
+			Eigen::VectorXd getDerivatives(const Eigen::VectorXd &densities, const Eigen::VectorXd &growthRates, const Eigen::MatrixXdRowMajor &competitionCoefficients) const;
 			
 			//These get single elements of the Jacobian matrix (an element for a single parameter and observation).
 			//They are the rate of change of dN/dt with respect to the parameter of interest.
@@ -47,7 +47,7 @@ class Model {
 		double getDerivative(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
 			return m->getDerivative(focalDensity, focalGrowthRate, densities, competitionCoefficients);
 		};
-		Eigen::VectorXd getDerivatives(const Eigen::VectorXd &densities, const Eigen::VectorXd &growthRates, const Eigen::MatrixXd &competitionCoefficients) const {
+		Eigen::VectorXd getDerivatives(const Eigen::VectorXd &densities, const Eigen::VectorXd &growthRates, const Eigen::MatrixXdRowMajor &competitionCoefficients) const {
 			return m->getDerivatives(densities, growthRates, competitionCoefficients);
 		};
 		double getGrowthRateJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {

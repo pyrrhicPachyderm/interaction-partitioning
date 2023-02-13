@@ -68,7 +68,7 @@ namespace Datasets {
 			Eigen::VectorXd response;
 			
 			//The design density matrix, with numColSpecies columns and numObservations rows.
-			Eigen::MatrixXd design;
+			Eigen::MatrixXdRowMajor design;
 		private:
 			static size_t findNumFocals(std::vector<size_t> focals);
 			
@@ -78,7 +78,7 @@ namespace Datasets {
 			bool areFocalsFirst() const;
 		public:
 			IndividualResponse() = default;
-			IndividualResponse(const std::vector<size_t> &focal, const Eigen::VectorXd &response, const Eigen::MatrixXd &design):
+			IndividualResponse(const std::vector<size_t> &focal, const Eigen::VectorXd &response, const Eigen::MatrixXdRowMajor &design):
 				Base(findNumFocals(focal), design.cols(), design.rows()),
 				focal(focal),
 				response(response),
@@ -89,7 +89,7 @@ namespace Datasets {
 				assert(areFocalsFirst());
 			};
 		protected:
-			Eigen::MatrixXd getColGroupedDesign(const Grouping &grouping) const;
+			Eigen::MatrixXdRowMajor getColGroupedDesign(const Grouping &grouping) const;
 		public:
 			Eigen::VectorXd getObservations() const override {return response;};
 			Eigen::VectorXd getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const override;
@@ -121,7 +121,7 @@ namespace Datasets {
 			static size_t findNumExperiments(std::vector<size_t> ids);
 		public:
 			TimeSeries() = default;
-			TimeSeries(const std::vector<size_t> &id, const Eigen::VectorXd &time, const Eigen::MatrixXd &density);
+			TimeSeries(const std::vector<size_t> &id, const Eigen::VectorXd &time, const Eigen::MatrixXdRowMajor &density);
 		public:
 			Eigen::VectorXd getObservations() const override {return finalDensity.reshaped<Eigen::RowMajor>();}
 			Eigen::VectorXd getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const override;
