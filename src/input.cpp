@@ -3,7 +3,7 @@
 #include "utils/array.hpp"
 #include "input.hpp"
 
-#define NUM_MANDATORY_ARGS 4
+#define NUM_MANDATORY_ARGS 5
 #define NUM_UNAUGMENTED_PRIORS 2
 
 const static std::string DEFAULT_OPTS_STRING = "p";
@@ -11,19 +11,30 @@ const static std::string DEFAULT_OPTS_STRING = "p";
 //Prints the usage spiel to stderr.
 static void printUsage(int argc, const char **argv, bool needsPriors) {
 	//Making of use of concatenated string literals in the following:
-	fprintf(stderr, "Usage: %s [options] OUTPUT_FILE FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE%s\n\n"
-		"\tThe focal vector is an integer vector giving the index of the focal species for each observation, 0-indexed.\n"
-		"\tThe response vector is a numeric vector giving the growth, fecundity, or other response variable for each observation.\n"
-		"\tThe design matrix is a numeric matrix with one row per observation and one column per species, giving the design densities.\n"
+	fprintf(stderr, "Usage:\n"
+		"\t%s [options] OUTPUT_FILE indv FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE%s\n"
+		"\t%s [options] OUTPUT_FILE time ID_VECTOR_FILE TIME_VECTOR_FILE DENSITY_MATRIX_FILE%s\n"
+		"\n"
+		"\tThe argument 'indv' or 'time' distinguishes between individual response data and time series data.\n"
+		"\tAll vector and matrix files should be whitespace-separated tables.\n"
 		"\tVectors should be written as column vectors.\n"
 		"%s"
 		"\tA file may be given as -, to use stdin/stdout.\n"
+		"\tIndividual response data:\n"
+		"\t\tThe focal vector is an integer vector giving the index of the focal species for each observation, 0-indexed.\n"
+		"\t\tThe response vector is a numeric vector giving the growth, fecundity, or other response variable for each observation.\n"
+		"\t\tThe design matrix is a numeric matrix with one row per observation and one column per species, giving the design densities.\n"
+		"\tTime series data:\n"
+		"\t\tThe id vector is an integer vector, identifying which experiment each observation was a part of.\n"
+		"\t\tThe time vector is a numeric vector giving the time stamp at which densities were measured.\n"
+		"\t\tThe density matrix is a numeric matrix with one row per observation and one column per species, giving the measured densities.\n"
 		"\n"
 		"Options:\n"
-		
 		"\t-?\n"
 		"\t\tShow this help message and exit.\n"
 		,
+		argv[0],
+		!needsPriors ? "" : " PRIORS_FILE",
 		argv[0],
 		!needsPriors ? "" : " PRIORS_FILE",
 		!needsPriors ? "" :
@@ -63,17 +74,37 @@ Input::Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts
 		printUsage(argc, (const char**)argv, needsPriors);
 		exit(1);
 	}
-	outputFile = argv[optind];
-	std::vector<size_t> focal = readIndexVector(argv[optind+1]);
-	Eigen::VectorXd response = readDoubleVector(argv[optind+2]);
-	Eigen::MatrixXd design = readDoubleMatrix(argv[optind+3]);
-	if(needsPriors) priors = readDistributionList(argv[optind+4]);
 	
-	data = Data(new Datasets::IndividualResponse(
-		focal,
-		response,
-		design
-	));
+	outputFile = argv[optind];
+	
+	std::string dataType(argv[optind+1]);
+	if(dataType == "indv") {
+		std::vector<size_t> focal = readIndexVector(argv[optind+2]);
+		Eigen::VectorXd response = readDoubleVector(argv[optind+3]);
+		Eigen::MatrixXd design = readDoubleMatrix(argv[optind+4]);
+		data = Data(new Datasets::IndividualResponse(
+			focal,
+			response,
+			design
+		));
+	} else if(dataType == "time") {
+		std::vector<size_t> id = readIndexVector(argv[optind+2]);
+		Eigen::VectorXd time = readDoubleVector(argv[optind+3]);
+		Eigen::MatrixXd density = readDoubleMatrix(argv[optind+4]);
+		data = Data(new Datasets::TimeSeries(
+			id,
+			time,
+			density
+		));
+	} else {
+		fprintf(stderr, "Invalid data type\n");
+		printUsage(argc, (const char**)argv, needsPriors);
+		exit(1);
+	}
+	
+	if(needsPriors) {
+		priors = readDistributionList(argv[optind+5]);
+	}
 }
 
 std::string Input::getOptsString() {

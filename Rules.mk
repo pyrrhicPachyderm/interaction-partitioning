@@ -40,7 +40,7 @@ $(eval $(call process_data_template,test,indv,,,))
 #output_template takes the dataset abbreviation, the dataset type (indv or time), output file name, the program file name, and the flags.
 define output_template =
 $(from_root)/output/$(1)/$(3).data: $(from_root)/src/$(4).out $$(call processed_$(2)_data_files,$(1)) $$(if $$(findstring rjmcmc,$(4)),$$(call priors_file,$(1)))
-	./$$< $$@ $$(filter-out $$<,$$^) $(5)
+	./$$< $$@ $(2) $$(filter-out $$<,$$^) $(5)
 endef
 
 $(eval $(call output_template,test,indv,brute,brute,))
