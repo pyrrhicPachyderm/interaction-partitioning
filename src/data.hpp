@@ -53,7 +53,10 @@ namespace Datasets {
 			//Useful for initial values of iterative processes, or tolerances, but not much else.
 			//0 is a good guess for the values of competition coefficients,
 			//so there is a separate function for guessing the approximate maximum magnitude of them.
+			//The same *may* be true for the growth rates, depending on the data type (see time series),
+			//So that is also split.
 			virtual double guessGrowthRate() const = 0;
+			virtual double guessGrowthRateMagnitude() const = 0;
 			double guessCompetitionCoefficient() const {return 0.0;}
 			virtual double guessCompetitionCoefficientMagnitude() const = 0;
 			virtual double guessErrorVariance() const = 0;
@@ -97,6 +100,7 @@ namespace Datasets {
 			Jacobian getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const override;
 			
 			double guessGrowthRate() const override;
+			double guessGrowthRateMagnitude() const override;
 			double guessCompetitionCoefficientMagnitude() const override;
 			double guessErrorVariance() const override;
 	};
@@ -133,6 +137,7 @@ namespace Datasets {
 			}
 			
 			double guessGrowthRate() const override;
+			double guessGrowthRateMagnitude() const override;
 			double guessCompetitionCoefficientMagnitude() const override;
 			double guessErrorVariance() const override;
 	};
@@ -159,6 +164,7 @@ class Data {
 		Jacobian getResidualsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {return d->getResidualsJacobian(model, parameters, groupings);}
 		
 		double guessGrowthRate() const {return d->guessGrowthRate();}
+		double guessGrowthRateMagnitude() const {return d->guessGrowthRateMagnitude();}
 		double guessCompetitionCoefficient() const {return d->guessCompetitionCoefficient();}
 		double guessCompetitionCoefficientMagnitude() {return d->guessCompetitionCoefficientMagnitude();}
 		double guessErrorVariance() const {return d->guessErrorVariance();}

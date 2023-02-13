@@ -34,7 +34,7 @@ class ReversibleJumpSolver : public Solver {
 		
 		//Additional useful numbers.
 		double transModelJumpProbabilityMultiplier;
-		double growthRateApproximatePosteriorVariance = pow(data.guessGrowthRate(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
+		double growthRateApproximatePosteriorVariance = pow(data.guessGrowthRateMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		double competitionCoefficientApproximatePosteriorVariance = pow(data.guessCompetitionCoefficientMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		AdditionalParametersVector additionalParametersApproximatePosteriorVariance = {{data.guessErrorVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
 		double jumpVarianceMultiplier = 1.0;

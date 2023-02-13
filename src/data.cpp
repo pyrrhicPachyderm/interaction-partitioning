@@ -88,6 +88,10 @@ double Datasets::IndividualResponse::guessGrowthRate() const {
 	return response.mean();
 }
 
+double Datasets::IndividualResponse::guessGrowthRateMagnitude() const {
+	return guessGrowthRate();
+}
+
 double Datasets::IndividualResponse::guessCompetitionCoefficientMagnitude() const {
 	//We will assume that with all species present at average density, growth halts.
 	//This gives us 1, divided by the average density, divided by the number of species.
@@ -161,7 +165,15 @@ Eigen::VectorXd Datasets::TimeSeries::getPredictions(const Model &model, const P
 }
 
 double Datasets::TimeSeries::guessGrowthRate() const {
-	//Being time series data, the response is actual population growth, so 1 ought to be a decent guess for the growth rate.
+	//A positive growth rate (with initial gueses of 0 competition) leads to runaway exponential growth.
+	//This gives enormous initial residuals, and hence a likelihood that rounds to 0.
+	//This means likelihood ratios are always NaN.
+	//To curb this, choose 0 as the initial growth rate.
+	return 0.0;
+}
+
+double Datasets::TimeSeries::guessGrowthRateMagnitude() const {
+	//Being time series data, the response is actual population growth, so 1 ought to be a decent guess for the growth rate magnitude.
 	return 1.0;
 }
 
