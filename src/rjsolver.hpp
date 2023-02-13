@@ -82,7 +82,7 @@ class ReversibleJumpSolver : public Solver {
 		Distribution<double> getErrorDistribution(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const;
 		
 		double getLikelihoodRatio();
-		double getPriorDensity(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters, const GroupingSet &groupings) const;
+		double getPriorRatio() const;
 		
 		bool makeJump(bool canTransModelJump);
 		void burnIn(size_t numJumps, bool canTransModelJump);

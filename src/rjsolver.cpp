@@ -211,18 +211,16 @@ double ReversibleJumpSolver::getLikelihoodRatio() {
 	return likelihoodRatio;
 }
 
-double ReversibleJumpSolver::getPriorDensity(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters, const GroupingSet &groupings) const {
-	double hyperpriorDensity = hyperprior.getDensity(groupings);
-	double parametersPriorDensity = parametersPrior.getDensity(parameters);
-	return hyperpriorDensity * parametersPriorDensity;
+double ReversibleJumpSolver::getPriorRatio() const {
+	double hyperpriorRatio = hyperprior.getDensity(proposedGroupings) / hyperprior.getDensity(currentGroupings);
+	double parametersPriorRatio = parametersPrior.getDensity(proposedParameters) / parametersPrior.getDensity(currentParameters);
+	return hyperpriorRatio * parametersPriorRatio;
 }
 
 bool ReversibleJumpSolver::makeJump(bool canTransModelJump) {
 	double jumpingDensityRatio = canTransModelJump ? proposeJump() : proposeWithinModelJump();
 	
-	double sourcePrior = getPriorDensity(currentParameters, currentGroupings);
-	double destPrior = getPriorDensity(proposedParameters, proposedGroupings);
-	double priorRatio = destPrior / sourcePrior;
+	double priorRatio = getPriorRatio();
 	double likelihoodRatio = getLikelihoodRatio();
 	double acceptanceRatio = priorRatio * likelihoodRatio * jumpingDensityRatio;
 	
