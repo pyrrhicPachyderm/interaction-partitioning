@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <assert.h>
 #include <vector>
-#include <Eigen/Core>
+#include "types.hpp"
 #include "model.hpp"
 #include "grouping.hpp"
 
@@ -119,8 +119,8 @@ namespace Datasets {
 			
 			//The density of each species at the start and end of each experiment.
 			//Each experiment is a row, each species is a column.
-			Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> initialDensity;
-			Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> finalDensity;
+			Eigen::MatrixXdRowMajor initialDensity;
+			Eigen::MatrixXdRowMajor finalDensity;
 			
 			double maxStepSize = 1; //TODO: make this a command line option.
 			size_t getNumSteps(double timeSpan) const;

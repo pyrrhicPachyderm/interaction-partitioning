@@ -82,7 +82,7 @@ Eigen::MatrixXd readDoubleMatrix(std::string filename) {
 	std::vector<double> raw = readMatrix<double>(filename, &numCols);
 	
 	//Ensure the mapping is done row-major.
-	Eigen::MatrixXd result = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>::Map(&raw[0], raw.size() / numCols, numCols);
+	Eigen::MatrixXd result = Eigen::MatrixXdRowMajor::Map(&raw[0], raw.size() / numCols, numCols);
 	return result;
 }
 

@@ -148,7 +148,7 @@ size_t Datasets::TimeSeries::getNumSteps(double timeSpan) const {
 }
 
 Eigen::VectorXd Datasets::TimeSeries::getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
-	Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> predictions(initialDensity.rows(), initialDensity.cols());
+	Eigen::MatrixXdRowMajor predictions(initialDensity.rows(), initialDensity.cols());
 	
 	Parameters ungroupedParameters = Parameters(parameters, groupings);
 	IVPDerivativeFunc derivativeFunc = std::bind(&Model::getDerivatives, model, std::placeholders::_2, ungroupedParameters.getGrowthRates(), ungroupedParameters.getCompetitionCoefficients());

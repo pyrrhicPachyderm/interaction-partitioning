@@ -28,7 +28,7 @@ Eigen::VectorXd Parameters::getCompetitionCoefficientsRow(size_t rowIndex) const
 	return competitionCoefficients.row(rowIndex);
 }
 
-const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> &Parameters::getCompetitionCoefficients() const {
+const Eigen::MatrixXdRowMajor &Parameters::getCompetitionCoefficients() const {
 	return competitionCoefficients;
 }
 
@@ -71,7 +71,7 @@ Parameters::Parameters(Eigen::VectorXd parameters, GroupingSet groupings):
 	size_t numColGroups = groupings[COL].getNumGroups();
 	
 	growthRates = parameters.segment(0, numGrowthRates);
-	competitionCoefficients = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(&parameters[numGrowthRates], numRowGroups, numColGroups);
+	competitionCoefficients = Eigen::Map<Eigen::MatrixXdRowMajor>(&parameters[numGrowthRates], numRowGroups, numColGroups);
 }
 
 Parameters::Parameters(Parameters p, GroupingSet groupings):

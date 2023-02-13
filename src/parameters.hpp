@@ -13,7 +13,7 @@ class Parameters {
 		//The grouping sizes will be implicitly stored in the sizes of the growth rates vector and competition coefficients matrix.
 		//The matrix will be stored in row-major order.
 		Eigen::VectorXd growthRates;
-		Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> competitionCoefficients;
+		Eigen::MatrixXdRowMajor competitionCoefficients;
 	public:
 		double getNumRowSpecies() const;
 		double getNumColSpecies() const;
@@ -21,7 +21,7 @@ class Parameters {
 		const Eigen::VectorXd &getGrowthRates() const;
 		double getCompetitionCoefficient(size_t rowIndex, size_t colIndex) const;
 		Eigen::VectorXd getCompetitionCoefficientsRow(size_t rowIndex) const;
-		const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> &getCompetitionCoefficients() const;
+		const Eigen::MatrixXdRowMajor &getCompetitionCoefficients() const;
 		size_t getNumParameters() const;
 	public:
 		Parameters() = default;
