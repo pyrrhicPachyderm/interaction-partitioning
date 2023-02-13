@@ -44,7 +44,7 @@ namespace Datasets {
 			size_t getNumColSpecies() const {return numColSpecies;};
 			size_t getNumObservations() const {return numObservations;};
 			
-			virtual const Eigen::VectorXd &getObservations() const = 0;
+			virtual Eigen::VectorXd getObservations() const = 0;
 			virtual Eigen::VectorXd getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const = 0;
 			Eigen::VectorXd getResiduals(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
 				return getObservations() - getPredictions(model, parameters, groupings);
@@ -98,7 +98,7 @@ namespace Datasets {
 		protected:
 			Eigen::MatrixXd getColGroupedDesign(const Grouping &grouping) const;
 		public:
-			const Eigen::VectorXd &getObservations() const override {return response;};
+			Eigen::VectorXd getObservations() const override {return response;};
 			Eigen::VectorXd getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const override;
 			
 			Jacobian getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const override;
@@ -122,7 +122,7 @@ class Data {
 		size_t getNumColSpecies() const {return d->getNumColSpecies();};
 		size_t getNumObservations() const {return d->getNumObservations();};
 		
-		const Eigen::VectorXd &getObservations() const {return d->getObservations();}
+		Eigen::VectorXd getObservations() const {return d->getObservations();}
 		Eigen::VectorXd getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {return d->getPredictions(model, parameters, groupings);}
 		Eigen::VectorXd getResiduals(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {return d->getResiduals(model, parameters, groupings);}
 		
