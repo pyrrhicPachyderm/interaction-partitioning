@@ -107,6 +107,42 @@ namespace Datasets {
 			double guessCompetitionCoefficientMagnitude() const override;
 			double guessErrorVariance() const override;
 	};
+	
+	class TimeSeries : public Base {
+		protected:
+			//Time series data is loaded in with an arbitrary number of time points per experiment.
+			//But we will analyse it as one experiment per pair of consecutive time points.
+			size_t numExperiments = numObservations / numColSpecies;
+			
+			//The time span of each experiment.
+			std::vector<double> timeSpan;
+			
+			//The density of each species at the start and end of each experiment.
+			//Each experiment is a row, each species is a column.
+			Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> initialDensity;
+			Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> finalDensity;
+			
+			double maxStepSize = 1; //TODO: make this a command line option.
+			size_t getNumSteps(double timeSpan) const;
+		private:
+			static size_t findNumExperiments(std::vector<size_t> ids);
+		public:
+			TimeSeries() = default;
+			TimeSeries(const std::vector<size_t> &id, const Eigen::VectorXd &time, const Eigen::MatrixXd &density);
+		public:
+			Eigen::VectorXd getObservations() const override {return finalDensity.reshaped<Eigen::RowMajor>();}
+			Eigen::VectorXd getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const override;
+			
+			Jacobian getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const override {
+				//This Jacobian would have to be found numerically, not analytically.
+				//For now, that's too hard, so we won't be able to use a maximum likelihood solver with time series data.
+				assert(false);
+			}
+			
+			double guessGrowthRate() const override;
+			double guessCompetitionCoefficientMagnitude() const override;
+			double guessErrorVariance() const override;
+	};
 }
 
 class Data {
