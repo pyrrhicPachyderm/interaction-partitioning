@@ -11,7 +11,9 @@ namespace Models {
 			//The core function of a model: dN/dt or (N_{t+1} - N_t).
 			virtual double getDerivative(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const = 0;
 			
-			//TODO: Eigen::VectorXd getDerivatives(const Eigen::VectorXd &focalDensities, const Eigen::VectorXd &focalGrowthRates, const Eigen::VectorXd &densities, const Eigen::MatrixXd &competitionCoefficients) const;
+			//A wrapper around getDerivatives that handles a population.
+			//It takes one set of densities, treating each as focal (in turn) and as competitors.
+			Eigen::VectorXd getDerivatives(const Eigen::VectorXd &densities, const Eigen::VectorXd &growthRates, const Eigen::MatrixXd &competitionCoefficients) const;
 			
 			//These get single elements of the Jacobian matrix (an element for a single parameter and observation).
 			//They are the rate of change of dN/dt with respect to the parameter of interest.
@@ -44,6 +46,9 @@ class Model {
 		
 		double getDerivative(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
 			return m->getDerivative(focalDensity, focalGrowthRate, densities, competitionCoefficients);
+		};
+		Eigen::VectorXd getDerivatives(const Eigen::VectorXd &densities, const Eigen::VectorXd &growthRates, const Eigen::MatrixXd &competitionCoefficients) const {
+			return m->getDerivatives(densities, growthRates, competitionCoefficients);
 		};
 		double getGrowthRateJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
 			return m->getGrowthRateJacobian(focalDensity, focalGrowthRate, densities, competitionCoefficients);
