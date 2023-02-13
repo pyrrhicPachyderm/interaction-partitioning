@@ -193,10 +193,15 @@ Distribution<double> ReversibleJumpSolver::getErrorDistribution(const AugmentedP
 	return Distribution(new Distributions::Normal(0, errorVariance));
 }
 
-double ReversibleJumpSolver::getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, Distribution<double> sourceErrorDistribution,  Distribution<double> destErrorDistribution) {
+double ReversibleJumpSolver::getLikelihoodRatio() {
 	//Having a getLikelihood() function and calling it for source and destination
 	//just results in it returning 0 twice, as it multiplies several hundred small numbers together, and gets too small.
 	//So we must calculate the likelihood ratio, getting the ratio as we go.
+	Eigen::VectorXd sourceResiduals = getResiduals(currentParameters, currentGroupings);
+	Eigen::VectorXd destResiduals = getResiduals(proposedParameters, proposedGroupings);
+	Distribution<double> sourceErrorDistribution = getErrorDistribution(currentParameters);
+	Distribution<double> destErrorDistribution = getErrorDistribution(proposedParameters);
+	
 	double likelihoodRatio = 1.0;
 	for(size_t i = 0; i < (size_t)sourceResiduals.size(); i++) {
 		double sourceLikelihood = sourceErrorDistribution.getDensity(sourceResiduals[i]);
@@ -217,13 +222,8 @@ bool ReversibleJumpSolver::makeJump(bool canTransModelJump) {
 	
 	double sourcePrior = getPriorDensity(currentParameters, currentGroupings);
 	double destPrior = getPriorDensity(proposedParameters, proposedGroupings);
-	Eigen::VectorXd sourceResiduals = getResiduals(currentParameters, currentGroupings);
-	Eigen::VectorXd destResiduals = getResiduals(proposedParameters, proposedGroupings);
-	Distribution<double> sourceErrorDistribution = getErrorDistribution(currentParameters);
-	Distribution<double> destErrorDistribution = getErrorDistribution(proposedParameters);
-	
 	double priorRatio = destPrior / sourcePrior;
-	double likelihoodRatio = getLikelihoodRatio(sourceResiduals, destResiduals, sourceErrorDistribution, destErrorDistribution);
+	double likelihoodRatio = getLikelihoodRatio();
 	double acceptanceRatio = priorRatio * likelihoodRatio * jumpingDensityRatio;
 	
 	

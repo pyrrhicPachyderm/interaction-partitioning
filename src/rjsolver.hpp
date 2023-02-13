@@ -81,7 +81,7 @@ class ReversibleJumpSolver : public Solver {
 		
 		Distribution<double> getErrorDistribution(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const;
 		
-		double getLikelihoodRatio(Eigen::VectorXd sourceResiduals, Eigen::VectorXd destResiduals, Distribution<double> sourceErrorDistribution,  Distribution<double> destErrorDistribution);
+		double getLikelihoodRatio();
 		double getPriorDensity(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters, const GroupingSet &groupings) const;
 		
 		bool makeJump(bool canTransModelJump);
