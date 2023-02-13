@@ -11,13 +11,6 @@
 class Parameters;
 
 namespace Datasets {
-	//A Jacobian will be represented simply as a matrix.
-	//It has a number of rows equal to the number of observations, and
-	//a number of columns equal to the number of parameters.
-	//It treats parameters in the order given by Parameters::getAsVector().
-	//TODO: Do this more nicely.
-	typedef Eigen::MatrixXd Jacobian;
-	
 	class Base {
 		protected:
 			size_t numRowSpecies;
@@ -162,8 +155,8 @@ class Data {
 		Eigen::VectorXd getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {return d->getPredictions(model, parameters, groupings);}
 		Eigen::VectorXd getResiduals(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {return d->getResiduals(model, parameters, groupings);}
 		
-		Datasets::Jacobian getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {return d->getPredictionsJacobian(model, parameters, groupings);}
-		Datasets::Jacobian getResidualsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {return d->getResidualsJacobian(model, parameters, groupings);}
+		Jacobian getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {return d->getPredictionsJacobian(model, parameters, groupings);}
+		Jacobian getResidualsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {return d->getResidualsJacobian(model, parameters, groupings);}
 		
 		double guessGrowthRate() const {return d->guessGrowthRate();}
 		double guessCompetitionCoefficient() const {return d->guessCompetitionCoefficient();}

@@ -50,8 +50,8 @@ Eigen::VectorXd Datasets::IndividualResponse::getPredictions(const Model &model,
 	return predictions;
 }
 
-Datasets::Jacobian Datasets::IndividualResponse::getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
-	Datasets::Jacobian jacobian = Eigen::MatrixXd::Zero(numObservations, parameters.getNumParameters());
+Jacobian Datasets::IndividualResponse::getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
+	Jacobian jacobian = Jacobian::Zero(numObservations, parameters.getNumParameters());
 	
 	Eigen::MatrixXd colGroupedDesign = getColGroupedDesign(groupings[COL]);
 	

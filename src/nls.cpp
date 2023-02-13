@@ -11,7 +11,7 @@ static bool checkTolerances(const Eigen::VectorXd &oldParameters, const Eigen::V
 static Eigen::VectorXd gaussNewtonShift(ResidualsFunc residualsFunc, JacobianFunc jacobianFunc, const Eigen::VectorXd &parameters) {
 	//See https://eigen.tuxfamily.org/dox/group__LeastSquares.html for a comparison of methods.
 	Eigen::VectorXd residuals = residualsFunc(parameters);
-	Eigen::MatrixXd jacobian = jacobianFunc(parameters);
+	Jacobian jacobian = jacobianFunc(parameters);
 	return jacobian.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(residuals);
 }
 

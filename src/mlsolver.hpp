@@ -31,7 +31,7 @@ class MaximumLikelihoodSolver : public Solver {
 		const Grouping &getGrouping(GroupingType groupingType) const {return groupings[groupingType];}
 	protected:
 		Eigen::VectorXd getResidualsFromVector(const Eigen::VectorXd &parameterVector) const;
-		Datasets::Jacobian getResidualsJacobianFromVector(const Eigen::VectorXd &parameterVector) const;
+		Jacobian getResidualsJacobianFromVector(const Eigen::VectorXd &parameterVector) const;
 		
 		void calculateSolution();
 	public:

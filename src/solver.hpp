@@ -18,10 +18,10 @@ class Solver {
 		Eigen::VectorXd getResiduals(const Parameters &parameters, const GroupingSet &groupings) const {
 			return data.getResiduals(model, parameters, groupings);
 		}
-		Datasets::Jacobian getPredictionsJacobian(const Parameters &parameters, const GroupingSet &groupings) const {
+		Jacobian getPredictionsJacobian(const Parameters &parameters, const GroupingSet &groupings) const {
 			return data.getPredictionsJacobian(model, parameters, groupings);
 		}
-		Datasets::Jacobian getResidualsJacobian(const Parameters &parameters, const GroupingSet &groupings) const {
+		Jacobian getResidualsJacobian(const Parameters &parameters, const GroupingSet &groupings) const {
 			return data.getResidualsJacobian(model, parameters, groupings);
 		}
 };
