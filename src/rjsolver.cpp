@@ -212,9 +212,28 @@ double ReversibleJumpSolver::getLikelihoodRatio() {
 }
 
 double ReversibleJumpSolver::getPriorRatio() const {
-	double hyperpriorRatio = hyperprior.getDensity(proposedGroupings) / hyperprior.getDensity(currentGroupings);
-	double parametersPriorRatio = parametersPrior.getDensity(proposedParameters) / parametersPrior.getDensity(currentParameters);
-	return hyperpriorRatio * parametersPriorRatio;
+	double priorRatio = hyperprior.getDensity(proposedGroupings) / hyperprior.getDensity(currentGroupings);
+	
+	std::vector<double> currentPriors = parametersPrior.getDensities(currentParameters);
+	std::vector<double> proposedPriors = parametersPrior.getDensities(proposedParameters);
+	
+	//Similarly to the likelihood, we want to multiply one element at a time.
+	//However, there may be different numbers of parameter priors for current and proposed.
+	size_t minLen = std::min(proposedPriors.size(), currentPriors.size());
+	for(size_t i = 0; i < minLen; i++) {
+		priorRatio *= proposedPriors[i] / currentPriors[i];
+	}
+	if(proposedPriors.size() > minLen) {
+		for(size_t i = minLen; i < proposedPriors.size(); i++) {
+			priorRatio *= proposedPriors[i];
+		}
+	} else {
+		for(size_t i = minLen; i < currentPriors.size(); i++) {
+			priorRatio /= currentPriors[i];
+		}
+	}
+	
+	return priorRatio;
 }
 
 bool ReversibleJumpSolver::makeJump(bool canTransModelJump) {

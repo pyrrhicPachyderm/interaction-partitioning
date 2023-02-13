@@ -9,32 +9,32 @@ double Hyperprior::aicFunc(const GroupingSizeSet &groupingSizes) {
 	return exp(-1.0 * (double)numParameters);
 }
 
-double ParametersPrior::getDensity(Parameters parameters) const {
-	double density = 1.0;
+std::vector<double> ParametersPrior::getDensities(Parameters parameters) const {
+	std::vector<double> densities;
 	
 	Eigen::VectorXd growthRates = parameters.getGrowthRates();
 	for(size_t i = 0; i < (size_t)growthRates.size(); i++) {
-		density *= growthRatePrior.getDensity(growthRates(i));
+		densities.push_back(growthRatePrior.getDensity(growthRates(i)));
 	}
 	
 	Eigen::MatrixXdRowMajor competitionCoefficients = parameters.getCompetitionCoefficients();
 	for(size_t i = 0; i < (size_t)competitionCoefficients.rows(); i++) {
 		for(size_t j = 0; j < (size_t)competitionCoefficients.cols(); j++) {
-			density *= competitionCoefficientPrior.getDensity(competitionCoefficients(i,j));
+			densities.push_back(competitionCoefficientPrior.getDensity(competitionCoefficients(i,j)));
 		}
 	}
 	
-	return density;
+	return densities;
 }
 
-template<size_t nAug> double AugmentedParametersPrior<nAug>::getDensity(AugmentedParameters<nAug> parameters) const {
-	double density = ParametersPrior::getDensity((Parameters)parameters); //Call the parent class function.
+template<size_t nAug> std::vector<double> AugmentedParametersPrior<nAug>::getDensities(AugmentedParameters<nAug> parameters) const {
+	std::vector<double> densities = ParametersPrior::getDensities((Parameters)parameters); //Call the parent class function.
 	
 	for(size_t i = 0; i < nAug; i++) {
-		density *= additionalParameterPriors[i].getDensity(parameters.getAdditionalParameter(i));
+		densities.push_back(additionalParameterPriors[i].getDensity(parameters.getAdditionalParameter(i)));
 	}
 	
-	return density;
+	return densities;
 }
 
 //Explicitly instantiate.

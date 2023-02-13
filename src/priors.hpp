@@ -35,7 +35,7 @@ class ParametersPrior {
 		ParametersPrior(Distribution<double> growthRatePrior, Distribution<double> competitionCoefficientPrior):
 			growthRatePrior(growthRatePrior), competitionCoefficientPrior(competitionCoefficientPrior) {};
 		
-		double getDensity(Parameters parameters) const;
+		std::vector<double> getDensities(Parameters parameters) const;
 };
 
 template<size_t nAug> class AugmentedParametersPrior : public ParametersPrior {
@@ -45,7 +45,7 @@ template<size_t nAug> class AugmentedParametersPrior : public ParametersPrior {
 		AugmentedParametersPrior(Distribution<double> growthRatePrior, Distribution<double> competitionCoefficientPrior, std::array<Distribution<double>, nAug> additionalParameterPriors):
 			ParametersPrior(growthRatePrior, competitionCoefficientPrior), additionalParameterPriors(additionalParameterPriors) {};
 		
-		double getDensity(AugmentedParameters<nAug> parameters) const;
+		std::vector<double> getDensities(AugmentedParameters<nAug> parameters) const;
 };
 
 #endif
