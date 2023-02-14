@@ -1,4 +1,3 @@
-#include <math.h>
 #include <assert.h>
 #include <random>
 #include "distribution.hpp"
@@ -19,6 +18,11 @@ double Distributions::Uniform::getRandom() const {
 double Distributions::Normal::getDensity(double x) const {
 	double residual = x - mean;
 	return 1.0 / sqrt(2 * M_PI * variance) * exp(-0.5 * residual*residual / variance);
+}
+
+double Distributions::Normal::getLogDensity(double x) const {
+	double residual = x - mean;
+	return -0.5 * (log(variance) + log(2 * M_PI) + residual*residual / variance);
 }
 
 double Distributions::Normal::getRandom() const {

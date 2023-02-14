@@ -1,6 +1,7 @@
 #ifndef DISTRIBUTION_HPP
 #define DISTRIBUTION_HPP
 
+#include <math.h>
 #include <vector>
 #include <memory>
 
@@ -8,6 +9,7 @@ namespace Distributions {
 	template<typename DomainValue> class Base {
 		public:
 			virtual double getDensity(DomainValue x) const = 0;
+			virtual double getLogDensity(DomainValue x) const {return log(getDensity(x));}; //A base function that may be overwritten if there's a better way for a given distribution.
 			virtual DomainValue getRandom() const = 0;
 			
 			virtual ~Base() {};
@@ -34,6 +36,7 @@ namespace Distributions {
 				mean(mean), variance(variance) {};
 			
 			double getDensity(double x) const override;
+			double getLogDensity(double x) const override;
 			double getRandom() const override;
 	};
 	
@@ -59,6 +62,7 @@ template<typename DomainValue> class Distribution {
 			d(d) {}
 		
 		double getDensity(DomainValue x) const {return d->getDensity(x);};
+		double getLogDensity(DomainValue x) const {return d->getLogDensity(x);};
 		DomainValue getRandom() const {return d->getRandom();};
 };
 
