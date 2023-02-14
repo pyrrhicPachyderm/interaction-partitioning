@@ -12,7 +12,9 @@
 namespace Hyperpriors {
 	class Base {
 		public:
-			virtual double getDensity(const GroupingSizeSet &groupingSizes) const = 0;
+			virtual double getLogDensity(const GroupingSizeSet &groupingSizes) const = 0;
+			virtual double getDensity(const GroupingSizeSet &groupingSizes) const;
+			double getLogDensity(const GroupingSet &groupings) const {return getLogDensity(getGroupingSizeSet(groupings));}
 			double getDensity(const GroupingSet &groupings) const {return getDensity(getGroupingSizeSet(groupings));}
 			
 			//Virtual destructor, as this is an abstract class.
@@ -22,11 +24,12 @@ namespace Hyperpriors {
 	class Flat : public Base {
 		public:
 			double getDensity(const GroupingSizeSet &groupingSizes) const override;
+			double getLogDensity(const GroupingSizeSet &groupingSizes) const override;
 	};
 	
 	class AIC : public Base {
 		public:
-			double getDensity(const GroupingSizeSet &groupingSizes) const override;
+			double getLogDensity(const GroupingSizeSet &groupingSizes) const override;
 	};
 }
 
@@ -40,6 +43,8 @@ class Hyperprior {
 		
 		double getDensity(const GroupingSizeSet &groupingSizes) const {return p->getDensity(groupingSizes);}
 		double getDensity(const GroupingSet &groupings) const {return p->getDensity(groupings);}
+		double getLogDensity(const GroupingSizeSet &groupingSizes) const {return p->getLogDensity(groupingSizes);}
+		double getLogDensity(const GroupingSet &groupings) const {return p->getLogDensity(groupings);}
 };
 
 class ParametersPrior {

@@ -1,12 +1,21 @@
+#include <math.h>
 #include "priors.hpp"
+
+double Hyperpriors::Base::getDensity(const GroupingSizeSet &groupingSizes) const {
+	//A base function that may be overwritten if the subclass can do it better.
+	return exp(getLogDensity(groupingSizes));
+}
 
 double Hyperpriors::Flat::getDensity(const GroupingSizeSet &groupingSizes) const {
 	return 1.0;
 }
+double Hyperpriors::Flat::getLogDensity(const GroupingSizeSet &groupingSizes) const {
+	return 0.0;
+}
 
-double Hyperpriors::AIC::getDensity(const GroupingSizeSet &groupingSizes) const {
+double Hyperpriors::AIC::getLogDensity(const GroupingSizeSet &groupingSizes) const {
 	size_t numParameters = groupingSizes[GROWTH] + groupingSizes[ROW] * groupingSizes[COL];
-	return exp(-1.0 * (double)numParameters);
+	return -1.0 * (double)numParameters;
 }
 
 std::vector<double> ParametersPrior::getDensities(const Parameters &parameters) const {
