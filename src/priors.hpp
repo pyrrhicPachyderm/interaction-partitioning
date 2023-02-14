@@ -7,7 +7,7 @@
 //that hyperpriors may only depend on the number of groups in a grouping,
 //not the full structure of the grouping.
 //This is necessary to find the relevant constant in polynomial time.
-//This limitation enforced by only passing the relevant information to a a HyperpriorFunc.
+//This limitation enforced by only passing the relevant information to a HyperpriorFunc.
 
 class Hyperprior {
 	protected:
