@@ -9,7 +9,7 @@ double Hyperprior::aicFunc(const GroupingSizeSet &groupingSizes) {
 	return exp(-1.0 * (double)numParameters);
 }
 
-std::vector<double> ParametersPrior::getDensities(Parameters parameters) const {
+std::vector<double> ParametersPrior::getDensities(const Parameters &parameters) const {
 	std::vector<double> densities;
 	
 	Eigen::VectorXd growthRates = parameters.getGrowthRates();
@@ -27,7 +27,7 @@ std::vector<double> ParametersPrior::getDensities(Parameters parameters) const {
 	return densities;
 }
 
-template<size_t nAug> std::vector<double> AugmentedParametersPrior<nAug>::getDensities(AugmentedParameters<nAug> parameters) const {
+template<size_t nAug> std::vector<double> AugmentedParametersPrior<nAug>::getDensities(const AugmentedParameters<nAug> &parameters) const {
 	std::vector<double> densities = ParametersPrior::getDensities((Parameters)parameters); //Call the parent class function.
 	
 	for(size_t i = 0; i < nAug; i++) {
