@@ -7,24 +7,39 @@
 //that hyperpriors may only depend on the number of groups in a grouping,
 //not the full structure of the grouping.
 //This is necessary to find the relevant constant in polynomial time.
-//This limitation enforced by only passing the relevant information to a HyperpriorFunc.
+//This limitation enforced by only passing the relevant information to a Hyperprior subclass.
+
+namespace Hyperpriors {
+	class Base {
+		public:
+			virtual double getDensity(const GroupingSizeSet &groupingSizes) const = 0;
+			double getDensity(const GroupingSet &groupings) const {return getDensity(getGroupingSizeSet(groupings));}
+			
+			//Virtual destructor, as this is an abstract class.
+			virtual ~Base() {};
+	};
+	
+	class Flat : public Base {
+		public:
+			double getDensity(const GroupingSizeSet &groupingSizes) const override;
+	};
+	
+	class AIC : public Base {
+		public:
+			double getDensity(const GroupingSizeSet &groupingSizes) const override;
+	};
+}
 
 class Hyperprior {
 	protected:
-		typedef std::function<double(const GroupingSizeSet &groupingSizes)> HyperpriorFunc;
-		HyperpriorFunc hyperpriorFunc;
-		
-		Hyperprior(HyperpriorFunc hyperpriorFunc):
-			hyperpriorFunc(hyperpriorFunc) {};
-		
-		static double flatFunc(const GroupingSizeSet &groupingSizes);
-		static double aicFunc(const GroupingSizeSet &groupingSizes);
+		std::shared_ptr<const Hyperpriors::Base> p;
 	public:
-		static Hyperprior flat() {return Hyperprior(flatFunc);}
-		static Hyperprior aic() {return Hyperprior(aicFunc);}
+		Hyperprior() = default;
+		Hyperprior(const Hyperpriors::Base *p):
+			p(p) {}
 		
-		double getDensity(const GroupingSizeSet &groupingSizes) const {return hyperpriorFunc(groupingSizes);}
-		double getDensity(const GroupingSet &groupings) const {return getDensity(getGroupingSizeSet(groupings));}
+		double getDensity(const GroupingSizeSet &groupingSizes) const {return p->getDensity(groupingSizes);}
+		double getDensity(const GroupingSet &groupings) const {return p->getDensity(groupings);}
 };
 
 class ParametersPrior {

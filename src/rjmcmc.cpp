@@ -23,8 +23,8 @@ int main(int argc, char **argv) {
 	colGrouping.separate();
 	
 	Hyperprior hyperprior = input.getBoolOptResult('a') ?
-		Hyperprior::aic() :
-		Hyperprior::flat();
+		Hyperprior(new Hyperpriors::AIC()) :
+		Hyperprior(new Hyperpriors::Flat());
 	auto parametersPrior = input.getPriors<ReversibleJumpSolver::NUM_ADDITIONAL_PARAMETERS>();
 	
 	bool isGrowthVarying = input.getBoolOptResult('g');
