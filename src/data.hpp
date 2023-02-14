@@ -60,6 +60,9 @@ namespace Datasets {
 			double guessCompetitionCoefficient() const {return 0.0;}
 			virtual double guessCompetitionCoefficientMagnitude() const = 0;
 			virtual double guessErrorVariance() const = 0;
+			
+			//Virtual destructor, as this is an abstract class.
+			virtual ~Base() {};
 	};
 	
 	class IndividualResponse : public Base {
