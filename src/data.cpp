@@ -158,7 +158,7 @@ Eigen::VectorXd Datasets::TimeSeries::getPredictions(const Model &model, const P
 	IVPDerivativeFunc derivativeFunc = std::bind(&Model::getDerivatives, model, std::placeholders::_2, ungroupedParameters.getGrowthRates(), ungroupedParameters.getCompetitionCoefficients());
 	
 	for(size_t i = 0; i < numExperiments; i++) {
-		predictions.row(i) = solveIVP(derivativeFunc, initialDensity.row(i), 0.0, timeSpan[i], getNumSteps(timeSpan[i]), IVPStepFuncs::rungeKuttaFour);
+		predictions.row(i) = solveIVP(derivativeFunc, initialDensity.row(i), 0.0, timeSpan[i], getNumSteps(timeSpan[i]), IVPStepFuncs::forwardEuler);
 	}
 	
 	return predictions.reshaped<Eigen::RowMajor>();
