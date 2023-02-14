@@ -3,7 +3,7 @@
 
 #include "parameters.hpp"
 
-//It is a limitation of the fact the way RJSolver::getTransModelJumpProbabilityMultiplier() works
+//It is a limitation of the fact the way RJSolver::findTransModelJumpProbabilityMultiplier() works
 //that hyperpriors may only depend on the number of groups in a grouping,
 //not the full structure of the grouping.
 //This is necessary to find the relevant constant in polynomial time.

@@ -39,7 +39,7 @@ double ReversibleJumpSolver::getUnscaledTransModelJumpProbability(GroupingSizeSe
 	return getUnscaledTransModelJumpProbability(sourceGroupingSizes, groupingType, moveType, false);
 }
 
-double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes) const {
+double ReversibleJumpSolver::findUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes) const {
 	double result = 0.0;
 	for(size_t groupingType = 0; groupingType < NUM_GROUPING_TYPES; groupingType++) {
 		if(!isChangingGroupings[groupingType]) continue;
@@ -53,7 +53,7 @@ double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(GroupingSiz
 	return result;
 }
 
-double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes, size_t recursionLevel) const {
+double ReversibleJumpSolver::findUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes, size_t recursionLevel) const {
 	//We need to loop over each type of model that's changing; this is a NUM_GROUPING_TYPES-times nested loop.
 	//However, whether each loop exists is conditional on isChangingGroupings.
 	//So the neatest way to do this is recursion.
@@ -61,29 +61,29 @@ double ReversibleJumpSolver::getUnscaledMaxTransModelJumpProbability(GroupingSiz
 	//groupingSizes is only determined for indices below recursionLevel.
 	
 	if(recursionLevel == NUM_GROUPING_TYPES) {
-		return getUnscaledMaxTransModelJumpProbability(groupingSizes);
+		return findUnscaledMaxTransModelJumpProbability(groupingSizes);
 	}
 	
 	if(!isChangingGroupings[recursionLevel]) {
 		//We're not looping at this level; just set the actual grouping we're using at this level.
 		groupingSizes[recursionLevel] = getGrouping((GroupingType)recursionLevel).getNumGroups();
-		return getUnscaledMaxTransModelJumpProbability(groupingSizes, recursionLevel+1);
+		return findUnscaledMaxTransModelJumpProbability(groupingSizes, recursionLevel+1);
 	}
 	
 	double result = 0.0;
 	for(size_t i = 1; i <= data.getNumSpecies((GroupingType)recursionLevel); i++) {
 		groupingSizes[recursionLevel] = i;
-		result = std::max(result, getUnscaledMaxTransModelJumpProbability(groupingSizes, recursionLevel+1));
+		result = std::max(result, findUnscaledMaxTransModelJumpProbability(groupingSizes, recursionLevel+1));
 	}
 	return result;
 }
 
-double ReversibleJumpSolver::getTransModelJumpProbabilityMultiplier() const {
+double ReversibleJumpSolver::findTransModelJumpProbabilityMultiplier() const {
 	//This is the value of c used in trans-model jump probabilities, as used in section 4.3 of Green 1995.
 	
 	//The GroupingIndexSet to pass the recursive function doesn't matter.
 	//It's only determined for indices below recursionLevel, which is zero.
-	double unscaledMaxTransModelJumpProbability = getUnscaledMaxTransModelJumpProbability(GroupingSizeSet(), 0);
+	double unscaledMaxTransModelJumpProbability = findUnscaledMaxTransModelJumpProbability(GroupingSizeSet(), 0);
 	
 	return MAX_TRANS_MODEL_JUMP_PROBABILITY / unscaledMaxTransModelJumpProbability;
 }

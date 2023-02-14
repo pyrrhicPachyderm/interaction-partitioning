@@ -47,7 +47,7 @@ class ReversibleJumpSolver : public Solver {
 			initialParameters(AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {{data.guessErrorVariance()}})),
 			isChangingGroupings(isChangingGroupings)
 			{
-				transModelJumpProbabilityMultiplier = getTransModelJumpProbabilityMultiplier();
+				transModelJumpProbabilityMultiplier = findTransModelJumpProbabilityMultiplier();
 			};
 		
 		const GroupingSet &getGroupings() const {return currentGroupings;}
@@ -59,9 +59,9 @@ class ReversibleJumpSolver : public Solver {
 		size_t getNumTransModelJumps(GroupingType groupingType, MoveType moveType) const;
 		
 		//The function to get transModelJumpProbabilityMultiplier during initialisation, and some helper functions.
-		double getTransModelJumpProbabilityMultiplier() const;
-		double getUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes, size_t recursionLevel) const;
-		double getUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes) const;
+		double findTransModelJumpProbabilityMultiplier() const;
+		double findUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes, size_t recursionLevel) const;
+		double findUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes) const;
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType) const;
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType, bool reverse) const;
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const;
