@@ -30,33 +30,35 @@ static Eigen::VectorXd reverseEngineerRandomVariable(const Eigen::VectorXd &merg
 	return splitParameters.second - splitParameters.first;
 }
 
-static double getRandomVariableJumpingDensity(MoveType moveType, const Eigen::VectorXd &mergedParameters, const std::pair<Eigen::VectorXd, Eigen::VectorXd> &splitParameters, Distribution<double> randomVariableDistribution) {
+static double getLogRandomVariableJumpingDensity(MoveType moveType, const Eigen::VectorXd &mergedParameters, const std::pair<Eigen::VectorXd, Eigen::VectorXd> &splitParameters, Distribution<double> randomVariableDistribution) {
 	Eigen::VectorXd randomVariable = reverseEngineerRandomVariable(mergedParameters, splitParameters);
 	
-	double jumpingDensity = 1.0;
+	double logJumpingDensity = 0.0;
 	for(size_t i = 0; i < (size_t)randomVariable.size(); i++) {
-		jumpingDensity *= randomVariableDistribution.getDensity(randomVariable[i]);
+		logJumpingDensity += randomVariableDistribution.getLogDensity(randomVariable[i]);
 	}
 	
 	//If we are performing a split, this is on the denominator of the ratio.
-	if(moveType == SPLIT) jumpingDensity = 1 / jumpingDensity;
+	//So we take the inverse, which in log space is the negative.
+	if(moveType == SPLIT) logJumpingDensity *= -1.0;
 	
-	return jumpingDensity;
+	return logJumpingDensity;
 }
 
-static double getJacobianBlockDeterminant(MoveType moveType, double mergedParameter, double randomVariable, const std::pair<double, double> &splitParameters, const GroupingMove &groupingMove) {
+static double getLogJacobianBlockDeterminant(MoveType moveType, double mergedParameter, double randomVariable, const std::pair<double, double> &splitParameters, const GroupingMove &groupingMove) {
 	//See report for derivation.
-	return 1.0;
+	//Determinant is 1, and log(1) = 0.
+	return 0.0;
 }
 
-static double getJacobianDeterminant(MoveType moveType, const Eigen::VectorXd &mergedParameters, const std::pair<Eigen::VectorXd, Eigen::VectorXd> &splitParameters, const GroupingMove &groupingMove) {
+static double getLogJacobianDeterminant(MoveType moveType, const Eigen::VectorXd &mergedParameters, const std::pair<Eigen::VectorXd, Eigen::VectorXd> &splitParameters, const GroupingMove &groupingMove) {
 	Eigen::VectorXd randomVariable = reverseEngineerRandomVariable(mergedParameters, splitParameters);
 	
-	double determinant = 1.0;
+	double logDeterminant = 0.0;
 	for(size_t i = 0; i < (size_t)randomVariable.size(); i++) {
-		determinant *= getJacobianBlockDeterminant(moveType, mergedParameters[i], randomVariable[i], std::make_pair(splitParameters.first[i], splitParameters.second[i]), groupingMove);
+		logDeterminant += getLogJacobianBlockDeterminant(moveType, mergedParameters[i], randomVariable[i], std::make_pair(splitParameters.first[i], splitParameters.second[i]), groupingMove);
 	}
-	return determinant;
+	return logDeterminant;
 }
 
 double Parameters::moveModel(GroupingType groupingType, MoveType moveType, const GroupingMove &groupingMove, Distribution<double> randomVariableDistribution) {
@@ -171,8 +173,8 @@ double Parameters::moveModel(GroupingType groupingType, MoveType moveType, const
 	else __builtin_unreachable();
 	
 	//Calculate and return the acceptance ratio.
-	double acceptanceRatio =
-		getRandomVariableJumpingDensity(moveType, mergedParameters, splitParameters, randomVariableDistribution) *
-		getJacobianDeterminant(moveType, mergedParameters, splitParameters, groupingMove);
-	return acceptanceRatio;
+	double logAcceptanceRatio =
+		getLogRandomVariableJumpingDensity(moveType, mergedParameters, splitParameters, randomVariableDistribution) +
+		getLogJacobianDeterminant(moveType, mergedParameters, splitParameters, groupingMove);
+	return logAcceptanceRatio;
 }

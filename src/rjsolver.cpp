@@ -1,3 +1,4 @@
+#include <math.h>
 #include <numeric> //Gives std::accumulate.
 #include "utils/array.hpp"
 #include "rjsolver.hpp"
@@ -130,16 +131,16 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	Distribution<double> randomVariableDistribution = getTransModelJumpDistribution(groupingType);
 	
 	proposedParameters = currentParameters;
-	double acceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, randomVariableDistribution);
+	double logAcceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, randomVariableDistribution);
 	
-	acceptanceRatio *= getTransModelJumpProbability(groupingType, moveType, false)
-		/ getTransModelJumpProbability(groupingType, moveType, true);
+	logAcceptanceRatio += log(getTransModelJumpProbability(groupingType, moveType, false));
+	logAcceptanceRatio -= log(getTransModelJumpProbability(groupingType, moveType, true));
 	
 	if(moveType == MERGE) proposedJumpType = MERGE_JUMP;
 	else if(moveType == SPLIT) proposedJumpType = SPLIT_JUMP;
 	else __builtin_unreachable();
 	
-	return acceptanceRatio;
+	return logAcceptanceRatio;
 }
 
 double ReversibleJumpSolver::proposeWithinModelJump() {
@@ -193,56 +194,33 @@ Distribution<double> ReversibleJumpSolver::getErrorDistribution(const AugmentedP
 	return Distribution(new Distributions::Normal(0, errorVariance));
 }
 
-double ReversibleJumpSolver::getLikelihoodRatio() {
-	//Having a getLikelihood() function and calling it for source and destination
-	//just results in it returning 0 twice, as it multiplies several hundred small numbers together, and gets too small.
-	//So we must calculate the likelihood ratio, getting the ratio as we go.
+double ReversibleJumpSolver::getLogLikelihoodRatio() {
 	Eigen::VectorXd sourceResiduals = getResiduals(currentParameters, currentGroupings);
 	Eigen::VectorXd destResiduals = getResiduals(proposedParameters, proposedGroupings);
 	Distribution<double> sourceErrorDistribution = getErrorDistribution(currentParameters);
 	Distribution<double> destErrorDistribution = getErrorDistribution(proposedParameters);
 	
-	double likelihoodRatio = 1.0;
+	double logLikelihoodRatio = 0.0;
 	for(size_t i = 0; i < (size_t)sourceResiduals.size(); i++) {
-		double sourceLikelihood = sourceErrorDistribution.getDensity(sourceResiduals[i]);
-		double destLikelihood = destErrorDistribution.getDensity(destResiduals[i]);
-		likelihoodRatio *= destLikelihood / sourceLikelihood;
+		logLikelihoodRatio += destErrorDistribution.getLogDensity(destResiduals[i]);
+		logLikelihoodRatio -= sourceErrorDistribution.getLogDensity(sourceResiduals[i]);
 	}
-	return likelihoodRatio;
+	return logLikelihoodRatio;
 }
 
-double ReversibleJumpSolver::getPriorRatio() const {
-	double priorRatio = hyperprior.getDensity(proposedGroupings) / hyperprior.getDensity(currentGroupings);
-	
-	std::vector<double> currentPriors = parametersPrior.getDensities(currentParameters);
-	std::vector<double> proposedPriors = parametersPrior.getDensities(proposedParameters);
-	
-	//Similarly to the likelihood, we want to multiply one element at a time.
-	//However, there may be different numbers of parameter priors for current and proposed.
-	size_t minLen = std::min(proposedPriors.size(), currentPriors.size());
-	for(size_t i = 0; i < minLen; i++) {
-		priorRatio *= proposedPriors[i] / currentPriors[i];
-	}
-	if(proposedPriors.size() > minLen) {
-		for(size_t i = minLen; i < proposedPriors.size(); i++) {
-			priorRatio *= proposedPriors[i];
-		}
-	} else {
-		for(size_t i = minLen; i < currentPriors.size(); i++) {
-			priorRatio /= currentPriors[i];
-		}
-	}
-	
-	return priorRatio;
+double ReversibleJumpSolver::getLogPriorRatio() const {
+	double logHyperpriorRatio = hyperprior.getLogDensity(proposedGroupings) - hyperprior.getLogDensity(currentGroupings);
+	double logParametersPriorRatio = parametersPrior.getLogDensity(proposedParameters) - parametersPrior.getLogDensity(currentParameters);
+	return logHyperpriorRatio + logParametersPriorRatio;
 }
 
 bool ReversibleJumpSolver::makeJump(bool canTransModelJump) {
-	double jumpingDensityRatio = canTransModelJump ? proposeJump() : proposeWithinModelJump();
+	double logJumpingDensityRatio = canTransModelJump ? proposeJump() : proposeWithinModelJump();
 	
-	double priorRatio = getPriorRatio();
-	double likelihoodRatio = getLikelihoodRatio();
-	double acceptanceRatio = priorRatio * likelihoodRatio * jumpingDensityRatio;
-	
+	double logPriorRatio = getLogPriorRatio();
+	double logLikelihoodRatio = getLogLikelihoodRatio();
+	double logAcceptanceRatio = logPriorRatio + logLikelihoodRatio + logJumpingDensityRatio;
+	double acceptanceRatio = exp(logAcceptanceRatio);
 	
 	double selector = getRandomProbability();
 	if(selector < acceptanceRatio) {
