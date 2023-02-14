@@ -23,8 +23,8 @@ class Hyperprior {
 		static Hyperprior flat() {return Hyperprior(flatFunc);}
 		static Hyperprior aic() {return Hyperprior(aicFunc);}
 		
-		double getDensity(GroupingSizeSet groupingSizes) const {return hyperpriorFunc(groupingSizes);}
-		double getDensity(GroupingSet groupings) const {return getDensity(getGroupingSizeSet(groupings));}
+		double getDensity(const GroupingSizeSet &groupingSizes) const {return hyperpriorFunc(groupingSizes);}
+		double getDensity(const GroupingSet &groupings) const {return getDensity(getGroupingSizeSet(groupings));}
 };
 
 class ParametersPrior {
