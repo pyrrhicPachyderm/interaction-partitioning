@@ -320,9 +320,9 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 			adjustApproximatePosteriorVariance(additionalParametersApproximatePosteriorVariance[i], getAverageColumnwiseVariance(additionalParameters[i]));
 		}
 		
-		Eigen::Array<double, NUM_JUMP_TYPES, 1> acceptanceRates = numAccepts / numProposals;
+		double acceptanceRate = numAccepts.sum() / numProposals.sum();
 		
-		adjustJumpVarianceMultiplier(jumpVarianceMultiplier, acceptanceRates[WITHIN_JUMP]);
+		adjustJumpVarianceMultiplier(jumpVarianceMultiplier, acceptanceRate);
 	}
 }
 
