@@ -45,10 +45,10 @@ endef
 
 $(eval $(call output_template,test,indv,brute,brute,))
 $(eval $(call output_template,tcl,indv,brute,brute,))
-$(eval $(call output_template,tcl,indv,rjmcmc,rjmcmc,))
-$(eval $(call output_template,cxr,indv,rjmcmc,rjmcmc,))
-$(eval $(call output_template,goldberg,indv,rjmcmc,rjmcmc,))
-$(eval $(call output_template,carrara,time,rjmcmc,rjmcmc,))
+$(eval $(call output_template,tcl,indv,rjmcmc,rjmcmc,-g))
+$(eval $(call output_template,cxr,indv,rjmcmc,rjmcmc,-g))
+$(eval $(call output_template,goldberg,indv,rjmcmc,rjmcmc,-g))
+$(eval $(call output_template,carrara,time,rjmcmc,rjmcmc,-g))
 
 define article_analysis_template =
 $(from_root)/output/article-data-$(1).rda: $(from_root)/article-analysis-$(1) $(shell grep -oE '"/[^"]*\.((R)|(csv)|(data))"' $(from_root)/article-analysis-$(1) | sed 's/"\(.*\)"/$(from_root)\1/' | tr '\n' ' ')
