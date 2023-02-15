@@ -239,18 +239,15 @@ void ReversibleJumpSolver::burnIn(size_t numJumps, bool canTransModelJump) {
 	}
 }
 
-//A function to raise or lower a jump variance multiplier, to achieve DESIRED_ACCEPTANCE_RATE.
-//It enacts a maximum proportional change of MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE.
-//It enacts no change with discrepantProportion = 0, up to full change with discrepantProportion = 1.
-//It edits the jump variance in-place.
-static void adjustJumpVarianceMultiplier(double &multiplier, double acceptanceRate) {
-	if(acceptanceRate > DESIRED_ACCEPTANCE_RATE) {
-		double discrepantProportion = (acceptanceRate - DESIRED_ACCEPTANCE_RATE) / (1.0 - DESIRED_ACCEPTANCE_RATE);
-		multiplier *= 1.0 + discrepantProportion * (MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE - 1.0);
-	} else {
-		double discrepantProportion = (DESIRED_ACCEPTANCE_RATE - acceptanceRate) / DESIRED_ACCEPTANCE_RATE;
-		multiplier /= 1.0 + discrepantProportion * (MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE - 1.0);
-	}
+//A pair of functions to raise or lower a jump variance multiplier.
+//They enact a maximum proportional change of MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE.
+//They enact no change with discrepantProportion = 0, up to full change with discrepantProportion = 1.
+//These edit the jump variance in-place.
+static void raiseJumpVarianceMultiplier(double &multiplier, double discrepantProportion) {
+	multiplier *= 1.0 + discrepantProportion * (MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE - 1.0);
+}
+static void lowerJumpVarianceMultiplier(double &multiplier, double discrepantProportion) {
+	multiplier /= 1.0 + discrepantProportion * (MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE - 1.0);
 }
 
 //A function to adjust an approximatePosteriorVariance.
@@ -322,7 +319,14 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 		
 		double acceptanceRate = numAccepts.sum() / numProposals.sum();
 		
-		adjustJumpVarianceMultiplier(jumpVarianceMultiplier, acceptanceRate);
+		//If the acceptance rate is too high, we want to raise the withinModelJumpVarianceMultiplier, and vice versa.
+		if(acceptanceRate > DESIRED_ACCEPTANCE_RATE) {
+			double discrepantProportion = (acceptanceRate - DESIRED_ACCEPTANCE_RATE) / (1.0 - DESIRED_ACCEPTANCE_RATE);
+			raiseJumpVarianceMultiplier(jumpVarianceMultiplier, discrepantProportion);
+		} else {
+			double discrepantProportion = (DESIRED_ACCEPTANCE_RATE - acceptanceRate) / DESIRED_ACCEPTANCE_RATE;
+			lowerJumpVarianceMultiplier(jumpVarianceMultiplier, discrepantProportion);
+		}
 	}
 }
 
