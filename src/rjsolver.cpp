@@ -6,6 +6,7 @@
 #define MAX_TRANS_MODEL_JUMP_PROBABILITY 0.9
 #define DESIRED_ACCEPTANCE_RATE 0.23 //For within-model jumps.
 #define MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE 2.0 //Controls how quickly dialIn changes the jump variance multiplier.
+#define MAX_POSTERIOR_VARIANCE_CHANGE_FACTOR 100.0 //Controls how quickly dialIn changes the estimates of posterior variance.
 
 //The probability of any particular jump.
 double ReversibleJumpSolver::getTransModelJumpProbability(GroupingType groupingType, MoveType moveType) const {
@@ -249,6 +250,20 @@ static void lowerJumpVarianceMultiplier(double &multiplier, double discrepantPro
 	multiplier /= 1.0 + discrepantProportion * (MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE - 1.0);
 }
 
+//A function to adjust an approximatePosteriorVariance.
+//It sets currentVar equal to newVar,
+//unless doing so would be a proportional change greater than MAX_POSTERIOR_VARIANCE_CHANGE_FACTOR.
+//In which case it simply adjusts by MAX_POSTERIOR_VARIANCE_CHANGE_FACTOR.
+//This damps oscillation in approximate posterior variance, and prevents it reaching zero.
+//It edits the variable in-place.
+static void adjustApproximatePosteriorVariance(double &currVar, double newVar) {
+	if(newVar > currVar) {
+		currVar = std::min(newVar, currVar * MAX_POSTERIOR_VARIANCE_CHANGE_FACTOR);
+	} else {
+		currVar = std::max(newVar, currVar / MAX_POSTERIOR_VARIANCE_CHANGE_FACTOR);
+	}
+}
+
 //A function to calculate approximate posterior variances for dialing in.
 //It takes a matrix where each row is a draw from the posterior, and each column is one parameter (after ungrouping).
 static double getAverageColumnwiseVariance(Eigen::MatrixXd mat) {
@@ -296,10 +311,10 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 				additionalParameters[i][j] = ungroupedParameters.getAdditionalParameter(i);
 			}
 		}
-		growthRateApproximatePosteriorVariance = getAverageColumnwiseVariance(growthRates);
-		competitionCoefficientApproximatePosteriorVariance = getAverageColumnwiseVariance(competitionCoefficients);
+		adjustApproximatePosteriorVariance(growthRateApproximatePosteriorVariance, getAverageColumnwiseVariance(growthRates));
+		adjustApproximatePosteriorVariance(competitionCoefficientApproximatePosteriorVariance, getAverageColumnwiseVariance(competitionCoefficients));
 		for(size_t i = 0; i < NUM_ADDITIONAL_PARAMETERS; i++) {
-			additionalParametersApproximatePosteriorVariance[i] = getAverageColumnwiseVariance(additionalParameters[i]);
+			adjustApproximatePosteriorVariance(additionalParametersApproximatePosteriorVariance[i], getAverageColumnwiseVariance(additionalParameters[i]));
 		}
 		
 		Eigen::Array<double, NUM_JUMP_TYPES, 1> acceptanceRates = numAccepts / numProposals;
