@@ -37,7 +37,8 @@ class ReversibleJumpSolver : public Solver {
 		double growthRateApproximatePosteriorVariance = pow(data.guessGrowthRateMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		double competitionCoefficientApproximatePosteriorVariance = pow(data.guessCompetitionCoefficientMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		AdditionalParametersVector additionalParametersApproximatePosteriorVariance = {{data.guessErrorVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
-		double jumpVarianceMultiplier = 1.0;
+		double withinModelJumpVarianceMultiplier = 1.0;
+		double transModelJumpVarianceMultiplier = 1.0;
 	public:
 		ReversibleJumpSolver(Model model, Data data, Hyperprior hyperprior, AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
 			Solver(model, data),
@@ -66,10 +67,11 @@ class ReversibleJumpSolver : public Solver {
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType, bool reverse) const;
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const;
 		
-		Distribution<double> getGrowthRateJumpDistribution() const;
-		Distribution<double> getCompetitionCoefficientJumpDistribution() const;
-		std::array<Distribution<double>, NUM_ADDITIONAL_PARAMETERS> getAdditionalParametersJumpDistribution() const;
-		Distribution<double> getTransModelJumpDistribution(GroupingType groupingType) const;
+		double getJumpVarianceMultiplier(JumpType jumpType) const;
+		Distribution<double> getGrowthRateJumpDistribution(JumpType jumpType) const;
+		Distribution<double> getCompetitionCoefficientJumpDistribution(JumpType jumpType) const;
+		std::array<Distribution<double>, NUM_ADDITIONAL_PARAMETERS> getAdditionalParametersJumpDistribution(JumpType jumpType) const;
+		Distribution<double> getTransModelJumpDistribution(GroupingType groupingType, JumpType jumpType) const;
 		
 		//The "propose" functions return the jumping density component of the acceptance ratio (including the Jacobian determinant).
 		double proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t index);

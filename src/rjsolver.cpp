@@ -90,28 +90,36 @@ double ReversibleJumpSolver::findTransModelJumpProbabilityMultiplier() const {
 	return MAX_TRANS_MODEL_JUMP_PROBABILITY / unscaledMaxTransModelJumpProbability;
 }
 
-Distribution<double> ReversibleJumpSolver::getGrowthRateJumpDistribution() const {
-	return Distribution<double>(new Distributions::Normal(0.0, growthRateApproximatePosteriorVariance * jumpVarianceMultiplier));
+double ReversibleJumpSolver::getJumpVarianceMultiplier(JumpType jumpType) const {
+	if(jumpType == WITHIN_JUMP) {
+		return withinModelJumpVarianceMultiplier;
+	} else if(jumpType == MERGE_JUMP || jumpType == SPLIT_JUMP) {
+		return transModelJumpVarianceMultiplier;
+	} else __builtin_unreachable();
 }
 
-Distribution<double> ReversibleJumpSolver::getCompetitionCoefficientJumpDistribution() const {
-	return Distribution<double>(new Distributions::Normal(0.0, competitionCoefficientApproximatePosteriorVariance * jumpVarianceMultiplier));
+Distribution<double> ReversibleJumpSolver::getGrowthRateJumpDistribution(JumpType jumpType) const {
+	return Distribution<double>(new Distributions::Normal(0.0, growthRateApproximatePosteriorVariance * getJumpVarianceMultiplier(jumpType)));
 }
 
-std::array<Distribution<double>, ReversibleJumpSolver::NUM_ADDITIONAL_PARAMETERS> ReversibleJumpSolver::getAdditionalParametersJumpDistribution() const {
+Distribution<double> ReversibleJumpSolver::getCompetitionCoefficientJumpDistribution(JumpType jumpType) const {
+	return Distribution<double>(new Distributions::Normal(0.0, competitionCoefficientApproximatePosteriorVariance * getJumpVarianceMultiplier(jumpType)));
+}
+
+std::array<Distribution<double>, ReversibleJumpSolver::NUM_ADDITIONAL_PARAMETERS> ReversibleJumpSolver::getAdditionalParametersJumpDistribution(JumpType jumpType) const {
 	return array_map(
-		[this] (size_t index) -> Distribution<double> {
-			return Distribution<double>(new Distributions::Normal(0.0, additionalParametersApproximatePosteriorVariance[index] * jumpVarianceMultiplier));
+		[this, jumpType] (size_t index) -> Distribution<double> {
+			return Distribution<double>(new Distributions::Normal(0.0, additionalParametersApproximatePosteriorVariance[index] * getJumpVarianceMultiplier(jumpType)));
 		},
 		make_index_array<NUM_ADDITIONAL_PARAMETERS>()
 	);
 }
 
-Distribution<double> ReversibleJumpSolver::getTransModelJumpDistribution(GroupingType groupingType) const {
+Distribution<double> ReversibleJumpSolver::getTransModelJumpDistribution(GroupingType groupingType, JumpType jumpType) const {
 	if(groupingType == GROWTH) {
-		return getGrowthRateJumpDistribution();
+		return getGrowthRateJumpDistribution(jumpType);
 	} else if(groupingType == ROW || groupingType == COL) {
-		return getCompetitionCoefficientJumpDistribution();
+		return getCompetitionCoefficientJumpDistribution(jumpType);
 	} else __builtin_unreachable();
 }
 
@@ -121,6 +129,10 @@ static double getRandomProbability() {
 }
 
 double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t index) {
+	if(moveType == MERGE) proposedJumpType = MERGE_JUMP;
+	else if(moveType == SPLIT) proposedJumpType = SPLIT_JUMP;
+	else __builtin_unreachable();
+	
 	Grouping newGrouping = moveType == MERGE ?
 		currentGroupings[groupingType].getMerge(index) :
 		currentGroupings[groupingType].getSplit(index);
@@ -129,17 +141,13 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	proposedGroupings = currentGroupings;
 	proposedGroupings[groupingType] = newGrouping;
 	
-	Distribution<double> randomVariableDistribution = getTransModelJumpDistribution(groupingType);
+	Distribution<double> randomVariableDistribution = getTransModelJumpDistribution(groupingType, proposedJumpType);
 	
 	proposedParameters = currentParameters;
 	double logAcceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, randomVariableDistribution);
 	
 	logAcceptanceRatio += log(getTransModelJumpProbability(groupingType, moveType, false));
 	logAcceptanceRatio -= log(getTransModelJumpProbability(groupingType, moveType, true));
-	
-	if(moveType == MERGE) proposedJumpType = MERGE_JUMP;
-	else if(moveType == SPLIT) proposedJumpType = SPLIT_JUMP;
-	else __builtin_unreachable();
 	
 	return logAcceptanceRatio;
 }
@@ -148,9 +156,9 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	proposedGroupings = currentGroupings;
 	proposedParameters = currentParameters;
 	
-	proposedParameters.moveParameters(getGrowthRateJumpDistribution(), getCompetitionCoefficientJumpDistribution(), getAdditionalParametersJumpDistribution());
-	
 	proposedJumpType = WITHIN_JUMP;
+	
+	proposedParameters.moveParameters(getGrowthRateJumpDistribution(proposedJumpType), getCompetitionCoefficientJumpDistribution(proposedJumpType), getAdditionalParametersJumpDistribution(proposedJumpType));
 	
 	//TODO: If using a non-symmetric jumping density, the jumping density component of the acceptance ratio may not be 1.
 	return 1.0;
@@ -311,21 +319,31 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 				additionalParameters[i][j] = ungroupedParameters.getAdditionalParameter(i);
 			}
 		}
+		
 		adjustApproximatePosteriorVariance(growthRateApproximatePosteriorVariance, getAverageColumnwiseVariance(growthRates));
 		adjustApproximatePosteriorVariance(competitionCoefficientApproximatePosteriorVariance, getAverageColumnwiseVariance(competitionCoefficients));
 		for(size_t i = 0; i < NUM_ADDITIONAL_PARAMETERS; i++) {
 			adjustApproximatePosteriorVariance(additionalParametersApproximatePosteriorVariance[i], getAverageColumnwiseVariance(additionalParameters[i]));
 		}
 		
-		double acceptanceRate = numAccepts.sum() / numProposals.sum();
+		Eigen::Array<double, NUM_JUMP_TYPES, 1> acceptanceRates = numAccepts / numProposals;
 		
 		//If the acceptance rate is too high, we want to raise the withinModelJumpVarianceMultiplier, and vice versa.
-		if(acceptanceRate > DESIRED_ACCEPTANCE_RATE) {
-			double discrepantProportion = (acceptanceRate - DESIRED_ACCEPTANCE_RATE) / (1.0 - DESIRED_ACCEPTANCE_RATE);
-			raiseJumpVarianceMultiplier(jumpVarianceMultiplier, discrepantProportion);
+		if(acceptanceRates[WITHIN_JUMP] > DESIRED_ACCEPTANCE_RATE) {
+			double discrepantProportion = (acceptanceRates[WITHIN_JUMP] - DESIRED_ACCEPTANCE_RATE) / (1.0 - DESIRED_ACCEPTANCE_RATE);
+			raiseJumpVarianceMultiplier(withinModelJumpVarianceMultiplier, discrepantProportion);
 		} else {
-			double discrepantProportion = (DESIRED_ACCEPTANCE_RATE - acceptanceRate) / DESIRED_ACCEPTANCE_RATE;
-			lowerJumpVarianceMultiplier(jumpVarianceMultiplier, discrepantProportion);
+			double discrepantProportion = (DESIRED_ACCEPTANCE_RATE - acceptanceRates[WITHIN_JUMP]) / DESIRED_ACCEPTANCE_RATE;
+			lowerJumpVarianceMultiplier(withinModelJumpVarianceMultiplier, discrepantProportion);
+		}
+		
+		//If the merge acceptance rate is too low, the transModelJumpVarianceMultiplier is not large enough to allow disparate coefficients to merge.
+		if(acceptanceRates[MERGE_JUMP] < acceptanceRates[SPLIT_JUMP]) {
+			double discrepantProportion = acceptanceRates[SPLIT_JUMP] - acceptanceRates[MERGE_JUMP];
+			raiseJumpVarianceMultiplier(transModelJumpVarianceMultiplier, discrepantProportion);
+		} else {
+			double discrepantProportion = acceptanceRates[MERGE_JUMP] - acceptanceRates[SPLIT_JUMP];
+			lowerJumpVarianceMultiplier(transModelJumpVarianceMultiplier, discrepantProportion);
 		}
 	}
 }
