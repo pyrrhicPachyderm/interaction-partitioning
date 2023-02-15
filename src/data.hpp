@@ -112,25 +112,32 @@ namespace Datasets {
 		protected:
 			//Time series data is loaded in with an arbitrary number of time points per experiment.
 			//But we will analyse it as one experiment per pair of consecutive time points.
-			size_t numExperiments = numObservations / numColSpecies;
 			
 			//The time span of each experiment.
 			std::vector<double> timeSpan;
 			
 			//The density of each species at the start and end of each experiment.
-			//Each experiment is a row, each species is a column.
-			Eigen::MatrixXdRowMajor initialDensity;
-			Eigen::MatrixXdRowMajor finalDensity;
+			//Species with zero density at the start of an experiment are not included.
+			//To account for this, the indices of all the species included in each experiment are also stored.
+			std::vector<std::vector<size_t>> includedSpecies;
+			std::vector<Eigen::VectorXd> initialDensity;
+			std::vector<Eigen::VectorXd> finalDensity;
+			
+			//Simply finalDensity, but stored as a sinlge linear vector for convenient return.
+			Eigen::VectorXd observations;
 			
 			double maxStepSize = 1; //TODO: make this a command line option.
 			size_t getNumSteps(double timeSpan) const;
-		private:
-			static size_t findNumExperiments(std::vector<size_t> ids);
 		public:
 			TimeSeries() = default;
 			TimeSeries(const std::vector<size_t> &id, const Eigen::VectorXd &time, const Eigen::MatrixXdRowMajor &density);
+		protected:
+			//A pair of helper functions to get growth rate vectors and alpha matrices,
+			//ungrouped and subsetted for the included species of a particular experiment.
+			Eigen::VectorXd getGrowthRates(const Parameters &parameters, const GroupingSet &groupings, size_t experiment) const;
+			Eigen::MatrixXdRowMajor getCompetitionCoefficients(const Parameters &parameters, const GroupingSet &groupings, size_t experiment) const;
 		public:
-			Eigen::VectorXd getObservations() const override {return finalDensity.reshaped<Eigen::RowMajor>();}
+			Eigen::VectorXd getObservations() const override {return observations;};
 			Eigen::VectorXd getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const override;
 			
 			Jacobian getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const override {

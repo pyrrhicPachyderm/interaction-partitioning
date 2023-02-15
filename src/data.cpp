@@ -104,23 +104,13 @@ double Datasets::IndividualResponse::guessErrorVariance() const {
 	return residuals.dot(residuals) / (residuals.size() - 1);
 }
 
-size_t Datasets::TimeSeries::findNumExperiments(std::vector<size_t> id) {
-	//We have one experiment per pair of consecutive time points with the same id.
-	//That is, one experiment per row of the input, except for the first row with each id.
-	//That is, one per row of input, minus one per unique id.
-	size_t nRows = id.size();
-	std::sort(id.begin(), id.end());
-	size_t nIds = std::unique(id.begin(), id.end()) - id.begin();
-	return nRows - nIds;
-}
-
-Datasets::TimeSeries::TimeSeries(const std::vector<size_t> &id, const Eigen::VectorXd &time, const Eigen::MatrixXdRowMajor &density):
-	Datasets::Base(density.cols(), density.cols(), findNumExperiments(id) * density.cols()),
-	initialDensity(numExperiments, numColSpecies),
-	finalDensity(numExperiments, numColSpecies)
-{
+Datasets::TimeSeries::TimeSeries(const std::vector<size_t> &id, const Eigen::VectorXd &time, const Eigen::MatrixXdRowMajor &density) {
 	assert(id.size() == (size_t)time.size());
 	assert(id.size() == (size_t)density.rows());
+	
+	//Can't have non-focal species with time series data, so numRowSpecies = numColSpecies.
+	numRowSpecies = density.cols();
+	numColSpecies = density.cols();
 	
 	//First, we want to sort the rows, such that all entries with a given id are consecutive, and are sorted by time within ids.
 	//Sorting all three (id, time, density) in place is terribly hard, so we'll just create and index list and sort that.
@@ -132,18 +122,40 @@ Datasets::TimeSeries::TimeSeries(const std::vector<size_t> &id, const Eigen::Vec
 		else return id[i1] < id[i2];
 	});
 	
-	//Populate the timeSpan, initialDensity and finalDensity vectors.
+	//Populate timeSpan, includedSpecies, initialDensity and finalDensity.
+	//Calculate numObservations while we're at it.
 	//We're looking for consecutive pairs, so we'll inspect i and i-1, and start with i=1.
-	size_t resultI = 0;
-	for(size_t i = 1; i < indexVec.size(); i++) {
-		size_t prevI = indexVec[i-1];
-		size_t currI = indexVec[i];
-		if(id[prevI] != id[currI]) continue; //We're looking for pairs with the same id.
+	numObservations = 0;
+	for(size_t index = 1; index < indexVec.size(); index++) {
+		size_t prevIndex = indexVec[index-1];
+		size_t currIndex = indexVec[index];
+		if(id[prevIndex] != id[currIndex]) continue; //We're looking for pairs with the same id.
 		
-		timeSpan.push_back(time[currI] - time[prevI]);
-		initialDensity.row(resultI) = density.row(prevI);
-		finalDensity.row(resultI) = density.row(currI);
-		resultI++;
+		timeSpan.push_back(time[currIndex] - time[prevIndex]);
+		includedSpecies.push_back(std::vector<size_t>());
+		for(size_t i = 0; i < (size_t)density.cols(); i++) {
+			if(density(prevIndex, i) > 0.0) {
+				includedSpecies.back().push_back(i);
+				numObservations++;
+			}
+		}
+		
+		initialDensity.push_back(Eigen::VectorXd(includedSpecies.back().size()));
+		finalDensity.push_back(Eigen::VectorXd(includedSpecies.back().size()));
+		for(size_t i = 0; i < includedSpecies.back().size(); i++) {
+			size_t sp = includedSpecies.back()[i];
+			initialDensity.back()[i] = density(prevIndex, sp);
+			finalDensity.back()[i] = density(currIndex, sp);
+		}
+	}
+	
+	//Initialise the observations vector.
+	observations = Eigen::VectorXd(numObservations);
+	size_t obsIndex = 0;
+	for(size_t i = 0; i < finalDensity.size(); i++) {
+		for(size_t j = 0; j < (size_t)finalDensity[i].size(); j++) {
+			observations[obsIndex++] = finalDensity[i][j];
+		}
 	}
 }
 
@@ -151,17 +163,48 @@ size_t Datasets::TimeSeries::getNumSteps(double timeSpan) const {
 	return (size_t)ceil(timeSpan / maxStepSize);
 }
 
-Eigen::VectorXd Datasets::TimeSeries::getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
-	Eigen::MatrixXdRowMajor predictions(initialDensity.rows(), initialDensity.cols());
+Eigen::VectorXd Datasets::TimeSeries::getGrowthRates(const Parameters &parameters, const GroupingSet &groupings, size_t experiment) const {
+	const std::vector<size_t> &species = includedSpecies[experiment];
+	size_t numSpecies = species.size();
+	Eigen::VectorXd growthRates(numSpecies);
 	
-	Parameters ungroupedParameters = Parameters(parameters, groupings);
-	IVPDerivativeFunc derivativeFunc = std::bind(&Model::getDerivatives, model, std::placeholders::_2, ungroupedParameters.getGrowthRates(), ungroupedParameters.getCompetitionCoefficients());
-	
-	for(size_t i = 0; i < numExperiments; i++) {
-		predictions.row(i) = solveIVP(derivativeFunc, initialDensity.row(i), 0.0, timeSpan[i], getNumSteps(timeSpan[i]), IVPStepFuncs::forwardEuler);
+	for(size_t i = 0; i < numSpecies; i++) {
+		growthRates[i] = parameters.getGrowthRate(groupings[GROWTH].getGroup(species[i]));
 	}
 	
-	return predictions.reshaped<Eigen::RowMajor>();
+	return growthRates;
+}
+
+Eigen::MatrixXdRowMajor Datasets::TimeSeries::getCompetitionCoefficients(const Parameters &parameters, const GroupingSet &groupings, size_t experiment) const {
+	const std::vector<size_t> &species = includedSpecies[experiment];
+	size_t numSpecies = species.size();
+	Eigen::MatrixXdRowMajor competitionCoefficients(numSpecies, numSpecies);
+	
+	for(size_t i = 0; i < numSpecies; i++) {
+		for(size_t j = 0; j < numSpecies; j++) {
+			competitionCoefficients(i, j) = parameters.getCompetitionCoefficient(groupings[ROW].getGroup(species[i]), groupings[COL].getGroup(species[j]));
+		}
+	}
+	
+	return competitionCoefficients;
+}
+
+Eigen::VectorXd Datasets::TimeSeries::getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
+	Eigen::VectorXd predictions(observations.size());
+	
+	size_t resultIndex = 0;
+	for(size_t i = 0; i < includedSpecies.size(); i++) {
+		size_t numSpecies = includedSpecies[i].size();
+		Eigen::VectorXd growthRates = getGrowthRates(parameters, groupings, i);
+		Eigen::MatrixXdRowMajor competitionCoefficients = getCompetitionCoefficients(parameters, groupings, i);
+		IVPDerivativeFunc derivativeFunc = std::bind(&Model::getDerivatives, model, std::placeholders::_2, growthRates, competitionCoefficients);
+		
+		predictions.segment(resultIndex, numSpecies) = solveIVP(derivativeFunc, initialDensity[i], 0.0, timeSpan[i], getNumSteps(timeSpan[i]), IVPStepFuncs::forwardEuler);
+		
+		resultIndex += numSpecies;
+	}
+	
+	return predictions;
 }
 
 double Datasets::TimeSeries::guessGrowthRate() const {
@@ -179,12 +222,13 @@ double Datasets::TimeSeries::guessGrowthRateMagnitude() const {
 
 double Datasets::TimeSeries::guessCompetitionCoefficientMagnitude() const {
 	//We will assume that with all species present at average final density, growth halts.
-	//This gives us 1, divided by the average density, divided by the number of species.
-	return 1.0 / finalDensity.mean() / numColSpecies;
+	//This gives us 1, divided by the average final density, divided by the average number of species per experiment.
+	size_t averageNumSpecies = observations.size() / timeSpan.size();
+	return 1.0 / observations.mean() / averageNumSpecies;
 }
 
 double Datasets::TimeSeries::guessErrorVariance() const {
-	//Simply return the variance of the final density.
-	Eigen::VectorXd residuals = finalDensity.reshaped<Eigen::RowMajor>() - Eigen::VectorXd::Constant(finalDensity.size(), finalDensity.mean());
+	//Simply return the variance of the observations.
+	Eigen::VectorXd residuals = observations - Eigen::VectorXd::Constant(observations.size(), observations.mean());
 	return residuals.dot(residuals) / (residuals.size() - 1);
 }
