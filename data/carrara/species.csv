@@ -1,0 +1,12 @@
+name,paper_code,data_code,group
+"Chilomonas sp.","Chi","Chi","Small protist"
+"Colpidium sp.","Col","Col","Large protist"
+"Cyclidium sp.","Cyc","Cyc","Small protist"
+"Dexiostoma sp.","Dex","Dex","Small protist"
+"Euglena gracilis","Eug","Eug","Mixotroph"
+"Euplotes aediculatus","Eup","Eup","Mixotroph"
+"Paramecium aurelia","Pau","Pau","Large protist"
+"Paramecium bursaria","Pbu","Pbu","Mixotroph"
+"Cephalodella sp.","Cep","Rot","Large protist" #Cep in the paper, Rot (for rotifer) in the data.
+"Spirostomum sp.","Spi","Spi","Large protist"
+"Tetrahymena sp.","Tet","Tet","Small protist"
