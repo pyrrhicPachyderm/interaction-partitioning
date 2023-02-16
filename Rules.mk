@@ -45,9 +45,9 @@ endef
 
 $(eval $(call output_template,test,indv,brute,brute,))
 $(eval $(call output_template,tcl,indv,brute,brute,))
-$(eval $(call output_template,tcl,indv,rjmcmc,rjmcmc,-g))
-$(eval $(call output_template,cxr,indv,rjmcmc,rjmcmc,-g))
-$(eval $(call output_template,goldberg,indv,rjmcmc,rjmcmc,-g))
+$(eval $(call output_template,tcl,indv,rjmcmc,rjmcmc,-g -s1000000 -t10))
+$(eval $(call output_template,cxr,indv,rjmcmc,rjmcmc,-g -s10000000 -t100))
+$(eval $(call output_template,goldberg,indv,rjmcmc,rjmcmc,-g -s1000000 -t10))
 $(eval $(call output_template,carrara,time,rjmcmc,rjmcmc,-g -d15))
 
 define article_analysis_template =
