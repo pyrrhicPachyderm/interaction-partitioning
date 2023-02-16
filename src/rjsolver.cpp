@@ -123,9 +123,9 @@ Distribution<double> ReversibleJumpSolver::getTransModelJumpDistribution(Groupin
 	} else __builtin_unreachable();
 }
 
-static double getRandomProbability() {
+double ReversibleJumpSolver::getRandomProbability() {
 	//A random double in [0,1).
-	return Distributions::Uniform(0,1).getRandom();
+	return Distributions::Uniform(0,1).getRandom(randomGenerator);
 }
 
 double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t index) {
@@ -144,7 +144,7 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	Distribution<double> randomVariableDistribution = getTransModelJumpDistribution(groupingType, proposedJumpType);
 	
 	proposedParameters = currentParameters;
-	double logAcceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, randomVariableDistribution);
+	double logAcceptanceRatio = proposedParameters.moveModel(groupingType, moveType, groupingMove, randomVariableDistribution, randomGenerator);
 	
 	logAcceptanceRatio += log(getTransModelJumpProbability(groupingType, moveType, false));
 	logAcceptanceRatio -= log(getTransModelJumpProbability(groupingType, moveType, true));
@@ -158,7 +158,7 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	
 	proposedJumpType = WITHIN_JUMP;
 	
-	proposedParameters.moveParameters(getGrowthRateJumpDistribution(proposedJumpType), getCompetitionCoefficientJumpDistribution(proposedJumpType), getAdditionalParametersJumpDistribution(proposedJumpType));
+	proposedParameters.moveParameters(getGrowthRateJumpDistribution(proposedJumpType), getCompetitionCoefficientJumpDistribution(proposedJumpType), getAdditionalParametersJumpDistribution(proposedJumpType), randomGenerator);
 	
 	//TODO: If using a non-symmetric jumping density, the jumping density component of the acceptance ratio may not be 1.
 	return 1.0;

@@ -7,7 +7,7 @@ static Eigen::VectorXd mergeParameterVectors(const std::pair<Eigen::VectorXd, Ei
 	return (splitParameters.first * size1 + splitParameters.second * size2) / (size1 + size2);
 }
 
-static std::pair<Eigen::VectorXd, Eigen::VectorXd> splitParameterVectors(const Eigen::VectorXd &mergedParameters, const GroupingMove &groupingMove, Distribution<double> randomVariableDistribution) {
+static std::pair<Eigen::VectorXd, Eigen::VectorXd> splitParameterVectors(const Eigen::VectorXd &mergedParameters, const GroupingMove &groupingMove, Distribution<double> randomVariableDistribution, RandomGenerator &randomGenerator) {
 	size_t size1 = groupingMove.getSplitGroupSizes().first;
 	size_t size2 = groupingMove.getSplitGroupSizes().second;
 	double scaling1 = (double)size2 / (size1 + size2);
@@ -17,7 +17,7 @@ static std::pair<Eigen::VectorXd, Eigen::VectorXd> splitParameterVectors(const E
 	
 	Eigen::VectorXd randomVariable(mergedParameters.size());
 	for(size_t i = 0; i < (size_t)randomVariable.size(); i++) {
-		randomVariable[i] = randomVariableDistribution.getRandom();
+		randomVariable[i] = randomVariableDistribution.getRandom(randomGenerator);
 	}
 	
 	Eigen::VectorXd splitParameters1 = mergedParameters + randomVariable * scaling1; //Raise the first parameter.
@@ -61,7 +61,7 @@ static double getLogJacobianDeterminant(MoveType moveType, const Eigen::VectorXd
 	return logDeterminant;
 }
 
-double Parameters::moveModel(GroupingType groupingType, MoveType moveType, const GroupingMove &groupingMove, Distribution<double> randomVariableDistribution) {
+double Parameters::moveModel(GroupingType groupingType, MoveType moveType, const GroupingMove &groupingMove, Distribution<double> randomVariableDistribution, RandomGenerator &randomGenerator) {
 	size_t mergedGroup = groupingMove.getMergedGroup();
 	std::pair<size_t,size_t> splitGroups = groupingMove.getSplitGroups();
 	
@@ -118,7 +118,7 @@ double Parameters::moveModel(GroupingType groupingType, MoveType moveType, const
 	if(moveType == MERGE) {
 		mergedParameters = mergeParameterVectors(splitParameters, groupingMove);
 	} else if(moveType == SPLIT) {
-		splitParameters = splitParameterVectors(mergedParameters, groupingMove, randomVariableDistribution);
+		splitParameters = splitParameterVectors(mergedParameters, groupingMove, randomVariableDistribution, randomGenerator);
 	} else __builtin_unreachable();
 	
 	//Populate newGrowthRates or newCompetitionCoefficients, as appropriate.

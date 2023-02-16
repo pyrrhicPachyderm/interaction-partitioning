@@ -6,6 +6,7 @@
 #include "priors.hpp"
 
 #define INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER 0.01
+#define DEFAULT_RANDOM_SEED 42
 
 class ReversibleJumpSolver : public Solver {
 	public:
@@ -14,6 +15,8 @@ class ReversibleJumpSolver : public Solver {
 		enum JumpType {MERGE_JUMP, SPLIT_JUMP, WITHIN_JUMP, NUM_JUMP_TYPES};
 	protected:
 		typedef std::array<bool, NUM_GROUPING_TYPES> GroupingBooleanSet;
+		
+		RandomGenerator randomGenerator = RandomGenerator(DEFAULT_RANDOM_SEED);
 		
 		Hyperprior hyperprior;
 		AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior;
@@ -51,6 +54,8 @@ class ReversibleJumpSolver : public Solver {
 				transModelJumpProbabilityMultiplier = findTransModelJumpProbabilityMultiplier();
 			};
 		
+		void setSeed(size_t seed) {randomGenerator.seed(seed);};
+		
 		const GroupingSet &getGroupings() const {return currentGroupings;}
 		const Grouping &getGrouping(GroupingType groupingType) const {return currentGroupings[groupingType];}
 		const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &getParameters() const {return currentParameters;}
@@ -72,6 +77,8 @@ class ReversibleJumpSolver : public Solver {
 		Distribution<double> getCompetitionCoefficientJumpDistribution(JumpType jumpType) const;
 		std::array<Distribution<double>, NUM_ADDITIONAL_PARAMETERS> getAdditionalParametersJumpDistribution(JumpType jumpType) const;
 		Distribution<double> getTransModelJumpDistribution(GroupingType groupingType, JumpType jumpType) const;
+		
+		double getRandomProbability();
 		
 		//The "propose" functions return the jumping density component of the acceptance ratio (including the Jacobian determinant).
 		double proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t index);

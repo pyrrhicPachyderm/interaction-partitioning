@@ -2,15 +2,19 @@
 #define DISTRIBUTION_HPP
 
 #include <math.h>
+#include <random>
 #include <vector>
 #include <memory>
+
+//This sets the type of random engine that will be used throughout the program.
+typedef std::default_random_engine RandomGenerator;
 
 namespace Distributions {
 	template<typename DomainValue> class Base {
 		public:
 			virtual double getDensity(DomainValue x) const = 0;
 			virtual double getLogDensity(DomainValue x) const {return log(getDensity(x));}; //A base function that may be overwritten if there's a better way for a given distribution.
-			virtual DomainValue getRandom() const = 0;
+			virtual DomainValue getRandom(RandomGenerator &generator) const = 0;
 			
 			virtual ~Base() {};
 	};
@@ -24,7 +28,7 @@ namespace Distributions {
 				min(min), max(max) {};
 			
 			double getDensity(double x) const override;
-			double getRandom() const override;
+			double getRandom(RandomGenerator &generator) const override;
 	};
 	
 	class Normal : public Base<double> {
@@ -37,7 +41,7 @@ namespace Distributions {
 			
 			double getDensity(double x) const override;
 			double getLogDensity(double x) const override;
-			double getRandom() const override;
+			double getRandom(RandomGenerator &generator) const override;
 	};
 	
 	class InverseGamma : public Base<double> {
@@ -49,7 +53,7 @@ namespace Distributions {
 				shape(shape), scale(scale) {};
 			
 			double getDensity(double x) const override;
-			double getRandom() const override;
+			double getRandom(RandomGenerator &generator) const override;
 	};
 }
 
@@ -63,7 +67,7 @@ template<typename DomainValue> class Distribution {
 		
 		double getDensity(DomainValue x) const {return d->getDensity(x);};
 		double getLogDensity(DomainValue x) const {return d->getLogDensity(x);};
-		DomainValue getRandom() const {return d->getRandom();};
+		DomainValue getRandom(RandomGenerator &generator) const {return d->getRandom(generator);};
 };
 
 #endif
