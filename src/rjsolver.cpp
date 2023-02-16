@@ -336,15 +336,6 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 			double discrepantProportion = (DESIRED_ACCEPTANCE_RATE - acceptanceRates[WITHIN_JUMP]) / DESIRED_ACCEPTANCE_RATE;
 			lowerJumpVarianceMultiplier(withinModelJumpVarianceMultiplier, discrepantProportion);
 		}
-		
-		//If the merge acceptance rate is too low, the transModelJumpVarianceMultiplier is not large enough to allow disparate coefficients to merge.
-		if(acceptanceRates[MERGE_JUMP] < acceptanceRates[SPLIT_JUMP]) {
-			double discrepantProportion = (acceptanceRates[SPLIT_JUMP] - acceptanceRates[MERGE_JUMP]) / (acceptanceRates[MERGE_JUMP] + acceptanceRates[SPLIT_JUMP]);
-			raiseJumpVarianceMultiplier(transModelJumpVarianceMultiplier, discrepantProportion);
-		} else {
-			double discrepantProportion = (acceptanceRates[MERGE_JUMP] - acceptanceRates[SPLIT_JUMP]) / (acceptanceRates[MERGE_JUMP] + acceptanceRates[SPLIT_JUMP]);
-			lowerJumpVarianceMultiplier(transModelJumpVarianceMultiplier, discrepantProportion);
-		}
 	}
 }
 
