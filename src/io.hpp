@@ -38,10 +38,17 @@ template<typename T> class OutputColumn {
 		const std::string name;
 		std::vector<T> column;
 	public:
-		OutputColumn(std::string name): name(name) {};
+		OutputColumn(std::string name):
+			name(name) {};
+		OutputColumn(std::string name, size_t length, T defaultElement):
+			name(name), column(length, defaultElement) {};
 		
 		void insert(T element) {
 			column.push_back(element);
+		}
+		
+		void set(size_t index, T element) {
+			column[index] = element;
 		}
 		
 		size_t getLength() const {
