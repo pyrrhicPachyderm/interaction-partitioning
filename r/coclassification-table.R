@@ -10,10 +10,10 @@ strip_booktabs_rules <- function(tab) {
 	#This actually removes dependency on booktabs.
 	#But it's easier to remove booktab's rules than *all* the standard rules.
 	tab %>%
-		sub("\\\\toprule", "", .) %>%
-		sub("\\\\midrule", "", .) %>%
-		sub("\\\\addlinespace", "", .) %>%
-		sub("\\\\bottomrule", "", .)
+		gsub("\\\\toprule", "", .) %>%
+		gsub("\\\\midrule", "", .) %>%
+		gsub("\\\\addlinespace", "", .) %>%
+		gsub("\\\\bottomrule", "", .)
 }
 
 weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colour="lightgray", digits=3, array_stretch=1.5, has_colourbar=TRUE, has_names=TRUE) {
