@@ -7,6 +7,6 @@ name,paper_code,data_code,group
 "Euplotes aediculatus","Eup","Eup","Mixotroph"
 "Paramecium aurelia","Pau","Pau","Large protist"
 "Paramecium bursaria","Pbu","Pbu","Mixotroph"
-"Cephalodella sp.","Cep","Rot","Large protist" #Cep in the paper, Rot (for rotifer) in the data.
+"Cephalodella sp.","Cep","Rot","Large protist"#Cep in the paper, Rot (for rotifer) in the data.
 "Spirostomum sp.","Spi","Spi","Large protist"
 "Tetrahymena sp.","Tet","Tet","Small protist"
