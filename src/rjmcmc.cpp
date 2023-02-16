@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h> //Gives getopt
+#include <omp.h>
 #include "input.hpp"
 #include "rjsolver.hpp"
 
@@ -56,6 +57,7 @@ int main(int argc, char **argv) {
 	masterSolver.dialIn(jumpsPerDial, numDials);
 	masterSolver.resetChain();
 	
+	#pragma omp parallel for
 	for(size_t chain = 0; chain < numChains; chain++) {
 		ReversibleJumpSolver solver = masterSolver;
 		solver.setSeed(RANDOM_SEED + chain + 1); //+1 so that chain 0 doesn't use the same seed as dialing in.
