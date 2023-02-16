@@ -35,7 +35,7 @@ species_datas <- lapply(
 		carrara = "/data/carrara/species.csv"
 	),
 	function(file) {
-		read.csv(paste0(this_dir, file))
+		read.csv(paste0(this_dir, file), comment.char="#")
 	}
 )
 
