@@ -12,6 +12,9 @@ class Solver {
 	public:
 		Solver(Model model, Data data): model(model), data(data) {};
 	protected:
+		const Eigen::VectorXd &getObservations() {
+			return data.getObservations();
+		}
 		Eigen::VectorXd getPredictions(const Parameters &parameters, const GroupingSet &groupings) const {
 			return data.getPredictions(model, parameters, groupings);
 		}
