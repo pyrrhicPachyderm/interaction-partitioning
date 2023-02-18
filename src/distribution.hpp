@@ -11,9 +11,26 @@ typedef std::default_random_engine RandomGenerator;
 
 namespace Distributions {
 	template<typename DomainValue> class Base {
+		protected:
+			bool hasValidParameters = true;
+			virtual bool isInDomain(DomainValue x) const {return true;};
+			
+			virtual double calculateDensity(DomainValue x) const = 0;
+			virtual double calculateLogDensity(DomainValue x) const {return log(calculateDensity(x));}; //A base function that may be overwritten if there's a better way for a given distribution.
 		public:
-			virtual double getDensity(DomainValue x) const = 0;
-			virtual double getLogDensity(DomainValue x) const {return log(getDensity(x));}; //A base function that may be overwritten if there's a better way for a given distribution.
+			Base() = default;
+			Base(bool hasValidParameters):
+				hasValidParameters(hasValidParameters) {};
+			
+			double getDensity(DomainValue x) const {
+				if(!hasValidParameters || !isInDomain(x)) return 0.0;
+				return calculateDensity(x);
+			}
+			double getLogDensity(DomainValue x) const {
+				if(!hasValidParameters || !isInDomain(x)) return -INFINITY;
+				return calculateLogDensity(x);
+			}
+			//TODO: What to do about getRandom if !hasValidParameters?
 			virtual DomainValue getRandom(RandomGenerator &generator) const = 0;
 			
 			virtual ~Base() {};
@@ -27,8 +44,9 @@ namespace Distributions {
 			Uniform(double min, double max):
 				min(min), max(max) {};
 			
-			double getDensity(double x) const override;
 			double getRandom(RandomGenerator &generator) const override;
+		protected:
+			double calculateDensity(double x) const override;
 	};
 	
 	class Normal : public Base<double> {
@@ -37,37 +55,44 @@ namespace Distributions {
 			double variance;
 		public:
 			Normal(double mean, double variance):
-				mean(mean), variance(variance) {};
+				Base(variance > 0), mean(mean), variance(variance) {};
 			
-			double getDensity(double x) const override;
-			double getLogDensity(double x) const override;
 			double getRandom(RandomGenerator &generator) const override;
+		protected:
+			double calculateDensity(double x) const override;
+			double calculateLogDensity(double x) const override;
 	};
 	
 	class InverseGamma : public Base<double> {
 		protected:
 			double shape;
 			double scale;
+			
+			bool isInDomain(double x) const override {return x > 0.0;};
 		public:
 			InverseGamma(double shape, double scale):
-				shape(shape), scale(scale) {};
+				Base(shape > 0 && scale > 0), shape(shape), scale(scale) {};
 			
-			double getDensity(double x) const override;
-			double getLogDensity(double x) const override;
 			double getRandom(RandomGenerator &generator) const override;
+		protected:
+			double calculateDensity(double x) const override;
+			double calculateLogDensity(double x) const override;
 	};
 	
 	class Gamma : public Base<double> {
 		protected:
 			double shape;
 			double scale;
+			
+			bool isInDomain(double x) const override {return x > 0.0;};
 		public:
 			Gamma(double shape, double scale):
-				shape(shape), scale(scale) {};
+				Base(shape > 0 && scale > 0), shape(shape), scale(scale) {};
 			
-			double getDensity(double x) const override;
-			double getLogDensity(double x) const override;
 			double getRandom(RandomGenerator &generator) const override;
+		protected:
+			double calculateDensity(double x) const override;
+			double calculateLogDensity(double x) const override;
 	};
 	
 	class Gamma2 : public Gamma {
@@ -81,13 +106,16 @@ namespace Distributions {
 		protected:
 			double r;
 			double p;
+			
+			bool isInDomain(int x) const override {return x >= 0;};
 		public:
 			NegativeBinomial(double r, double p):
-				r(r), p(p) {};
+				Base(r > 0 && p >= 0 && p <= 1), r(r), p(p) {};
 			
-			double getDensity(int x) const override;
-			double getLogDensity(int x) const override;
 			int getRandom(RandomGenerator &generator) const override;
+		protected:
+			double calculateDensity(int x) const override;
+			double calculateLogDensity(int x) const override;
 	};
 	
 	class NegativeBinomial2 : public NegativeBinomial {
