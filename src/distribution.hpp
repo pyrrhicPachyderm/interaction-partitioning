@@ -11,6 +11,7 @@ typedef std::default_random_engine RandomGenerator;
 
 namespace Distributions {
 	template<typename DomainValue> class Base {
+		template<typename DistType> friend class DiscreteWrapper;
 		protected:
 			bool hasValidParameters = true;
 			virtual bool isInDomain(DomainValue x) const {return true;};
@@ -123,6 +124,31 @@ namespace Distributions {
 		public:
 			NegativeBinomial2(double mean, double dispersion):
 				NegativeBinomial(1 / dispersion, (1 / dispersion) / (mean + 1 / dispersion)) {};
+	};
+	
+	template<typename DistType> class DiscreteWrapper : public Base<double> {
+		//A class that wraps a Base<int> as a Base<double>.
+		//DistType must inherit from Base<int>.
+		//This is something of a kludge, to avoid having to template the entire Data and Solver
+		//classes on whether the response variable is continuous or discrete.
+		protected:
+			DistType d;
+			
+			//Only needs to check it's an integer, not that it's in the domain of d.
+			//Because calculateDensity() uses d.getDensity(), which in turn checks the actual domain of d.
+			bool isInDomain(double x) const override {return trunc(x) == x;}
+		public:
+			//Don't need to check hasValidParameters.
+			//Again because calculateDensity() uses d.getDensity(), which checks such.
+			DiscreteWrapper(DistType d):
+				d(d) {};
+			
+			double getRandom(RandomGenerator &generator) const {return (double)d.getRandom(generator);}
+		protected:
+			//Have to use d.getDensity() rather than d.calculateDensity() as the latter is protected.
+			//So we would have to be a friend of every class we might wrap.
+			double calculateDensity(double x) const {return d.getDensity((int)x);}
+			double calculateLogDensity(double x) const {return d.getLogDensity((int)x);}
 	};
 }
 
