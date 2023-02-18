@@ -50,7 +50,7 @@ class Parameters {
 //Note that this does not overwrite functions from Parameters, so getNumParameters(), getAsVector(), and the like all ignore the additional parameters.
 template<size_t nAug> class AugmentedParameters : public Parameters {
 	public:
-		typedef Eigen::Array<double, nAug, 1> AdditionalParametersVector;
+		typedef std::array<double, nAug> AdditionalParametersVector;
 	protected:
 		AdditionalParametersVector additionalParameters;
 	public:
