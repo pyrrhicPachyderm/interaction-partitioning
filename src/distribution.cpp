@@ -51,3 +51,16 @@ double Distributions::Gamma::getLogDensity(double x) const {
 double Distributions::Gamma::getRandom(RandomGenerator &generator) const {
 	return std::normal_distribution(shape, scale)(generator);
 }
+
+double Distributions::NegativeBinomial::getDensity(int x) const {
+	return tgamma(x + r) / tgamma((double)(x + 1)) / tgamma(r) * pow(1 - p, x) * pow(p, r);
+}
+
+double Distributions::NegativeBinomial::getLogDensity(int x) const {
+	return lgamma(x + r) - lgamma((double)(x + 1)) - lgamma(r) + log(1 - p) * x + log(p) * r;
+}
+
+int Distributions::NegativeBinomial::getRandom(RandomGenerator &generator) const {
+	//TODO: Ensure this handles non-integer r.
+	return std::negative_binomial_distribution<int>(r, p)(generator);
+}

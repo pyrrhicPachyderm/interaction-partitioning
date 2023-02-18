@@ -76,6 +76,19 @@ namespace Distributions {
 			Gamma2(double mean, double dispersion):
 				Gamma(1 / dispersion, mean * dispersion) {};
 	};
+	
+	class NegativeBinomial : public Base<int> {
+		protected:
+			double r;
+			double p;
+		public:
+			NegativeBinomial(double r, double p):
+				r(r), p(p) {};
+			
+			double getDensity(int x) const override;
+			double getLogDensity(int x) const override;
+			int getRandom(RandomGenerator &generator) const override;
+	};
 }
 
 //A wrapper class to deal with maintaining the pointer required for runtime polymorphism.
