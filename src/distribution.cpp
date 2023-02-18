@@ -1,6 +1,8 @@
 #include <assert.h>
 #include "distribution.hpp"
 
+//NB: gamma() is the log of the gamma function, while tgamma() is the gamma function.
+
 double Distributions::Uniform::getDensity(double x) const {
 	if(x >= min && x < max) return 1.0 / (max - min);
 	else return 0;
@@ -26,6 +28,10 @@ double Distributions::Normal::getRandom(RandomGenerator &generator) const {
 
 double Distributions::InverseGamma::getDensity(double x) const {
 	return pow(scale, shape) / tgamma(shape) * pow(1 / x, shape + 1) * exp(-scale / x);
+}
+
+double Distributions::InverseGamma::getLogDensity(double x) const {
+	return log(scale) * shape - gamma(shape) - log(x) * (shape + 1) - scale / x;
 }
 
 double Distributions::InverseGamma::getRandom(RandomGenerator &generator) const {

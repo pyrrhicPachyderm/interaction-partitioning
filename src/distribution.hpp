@@ -53,6 +53,7 @@ namespace Distributions {
 				shape(shape), scale(scale) {};
 			
 			double getDensity(double x) const override;
+			double getLogDensity(double x) const override;
 			double getRandom(RandomGenerator &generator) const override;
 	};
 }
