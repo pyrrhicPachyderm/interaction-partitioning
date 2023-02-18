@@ -56,6 +56,19 @@ namespace Distributions {
 			double getLogDensity(double x) const override;
 			double getRandom(RandomGenerator &generator) const override;
 	};
+	
+	class Gamma : public Base<double> {
+		protected:
+			double shape;
+			double scale;
+		public:
+			Gamma(double shape, double scale):
+				shape(shape), scale(scale) {};
+			
+			double getDensity(double x) const override;
+			double getLogDensity(double x) const override;
+			double getRandom(RandomGenerator &generator) const override;
+	};
 }
 
 //A wrapper class to deal with maintaining the pointer required for runtime polymorphism.

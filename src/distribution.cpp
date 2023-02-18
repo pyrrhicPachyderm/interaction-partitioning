@@ -38,3 +38,15 @@ double Distributions::InverseGamma::getRandom(RandomGenerator &generator) const 
 	//TODO: Implement.
 	assert(false);
 }
+
+double Distributions::Gamma::getDensity(double x) const {
+	return 1 / (tgamma(shape) * pow(scale, shape)) * pow(x, shape - 1) * exp(-x / scale);
+}
+
+double Distributions::Gamma::getLogDensity(double x) const {
+	return - gamma(shape) - log(scale) * shape + log(x) * (shape - 1) - x / scale;
+}
+
+double Distributions::Gamma::getRandom(RandomGenerator &generator) const {
+	return std::normal_distribution(shape, scale)(generator);
+}
