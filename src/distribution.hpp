@@ -89,6 +89,13 @@ namespace Distributions {
 			double getLogDensity(int x) const override;
 			int getRandom(RandomGenerator &generator) const override;
 	};
+	
+	class NegativeBinomial2 : public NegativeBinomial {
+		//Parameterised by a mean and dispersion parameter.
+		public:
+			NegativeBinomial2(double mean, double dispersion):
+				NegativeBinomial(1 / dispersion, (1 / dispersion) / (mean + 1 / dispersion)) {};
+	};
 }
 
 //A wrapper class to deal with maintaining the pointer required for runtime polymorphism.
