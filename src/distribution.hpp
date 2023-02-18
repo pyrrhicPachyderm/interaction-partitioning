@@ -69,6 +69,13 @@ namespace Distributions {
 			double getLogDensity(double x) const override;
 			double getRandom(RandomGenerator &generator) const override;
 	};
+	
+	class Gamma2 : public Gamma {
+		//Parameterised by a mean and dispersion parameter.
+		public:
+			Gamma2(double mean, double dispersion):
+				Gamma(1 / dispersion, mean * dispersion) {};
+	};
 }
 
 //A wrapper class to deal with maintaining the pointer required for runtime polymorphism.
