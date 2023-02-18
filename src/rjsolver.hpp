@@ -88,8 +88,7 @@ class ReversibleJumpSolver : public Solver {
 		void acceptJump();
 		void rejectJump();
 		
-		Distribution<double> getErrorDistribution(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const;
-		
+		double getLogLikelihood(double observation, double prediction, const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const;
 		double getLogLikelihoodRatio();
 		double getLogPriorRatio() const;
 		

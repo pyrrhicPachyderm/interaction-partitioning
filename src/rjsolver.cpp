@@ -197,22 +197,21 @@ void ReversibleJumpSolver::rejectJump() {
 	return;
 }
 
-Distribution<double> ReversibleJumpSolver::getErrorDistribution(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const {
+double ReversibleJumpSolver::getLogLikelihood(double observation, double prediction, const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const {
 	//This uses the additional parameter, and is used in calculating the likelihood.
 	double errorVariance = parameters.getAdditionalParameter(0);
-	return Distribution(new Distributions::Normal(0, errorVariance));
+	return Distributions::Normal(prediction, errorVariance).getLogDensity(observation);
 }
 
 double ReversibleJumpSolver::getLogLikelihoodRatio() {
-	Eigen::VectorXd sourceResiduals = getResiduals(currentParameters, currentGroupings);
-	Eigen::VectorXd destResiduals = getResiduals(proposedParameters, proposedGroupings);
-	Distribution<double> sourceErrorDistribution = getErrorDistribution(currentParameters);
-	Distribution<double> destErrorDistribution = getErrorDistribution(proposedParameters);
+	const Eigen::VectorXd &observations = getObservations();
+	Eigen::VectorXd currentPredictions = getPredictions(currentParameters, currentGroupings);
+	Eigen::VectorXd proposedPredictions = getPredictions(proposedParameters, proposedGroupings);
 	
 	double logLikelihoodRatio = 0.0;
-	for(size_t i = 0; i < (size_t)sourceResiduals.size(); i++) {
-		logLikelihoodRatio += destErrorDistribution.getLogDensity(destResiduals[i]);
-		logLikelihoodRatio -= sourceErrorDistribution.getLogDensity(sourceResiduals[i]);
+	for(size_t i = 0; i < (size_t)observations.size(); i++) {
+		logLikelihoodRatio += getLogLikelihood(observations[i], proposedPredictions[i], proposedParameters);
+		logLikelihoodRatio -= getLogLikelihood(observations[i], currentPredictions[i], currentParameters);
 	}
 	return logLikelihoodRatio;
 }
