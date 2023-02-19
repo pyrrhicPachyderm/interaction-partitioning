@@ -64,6 +64,21 @@ namespace Distributions {
 			double calculateLogDensity(double x) const override;
 	};
 	
+	class HalfNormal : public Base<double> {
+		protected:
+			double scale;
+			
+			bool isInDomain(double x) const override {return x >= 0.0;};
+		public:
+			HalfNormal(double scale):
+				Base(scale > 0), scale(scale) {};
+			
+			double getRandom(RandomGenerator &generator) const override;
+		protected:
+			double calculateDensity(double x) const override;
+			double calculateLogDensity(double x) const override;
+	};
+	
 	class InverseGamma : public Base<double> {
 		protected:
 			double shape;

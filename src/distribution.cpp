@@ -27,6 +27,18 @@ double Distributions::Normal::getRandom(RandomGenerator &generator) const {
 	return std::normal_distribution(mean, sqrt(variance))(generator);
 }
 
+double Distributions::HalfNormal::calculateDensity(double x) const {
+	return 2.0 / sqrt(2 * M_PI * scale) * exp(-0.5 * x*x / scale);
+}
+
+double Distributions::HalfNormal::calculateLogDensity(double x) const {
+	return log(2) - 0.5 * (log(scale) + log(2 * M_PI) + x*x / scale);
+}
+
+double Distributions::HalfNormal::getRandom(RandomGenerator &generator) const {
+	return fabs(std::normal_distribution(0.0, sqrt(scale))(generator));
+}
+
 double Distributions::InverseGamma::calculateDensity(double x) const {
 	return pow(scale, shape) / tgamma(shape) * pow(1 / x, shape + 1) * exp(-scale / x);
 }
