@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 	Hyperprior hyperprior = input.getBoolOptResult('a') ?
 		Hyperprior(new Hyperpriors::AIC()) :
 		Hyperprior(new Hyperpriors::Flat());
-	auto parametersPrior = input.getPriors<ReversibleJumpSolver::NUM_ADDITIONAL_PARAMETERS>();
+	auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::Normal>::NUM_ADDITIONAL_PARAMETERS>();
 	
 	bool isGrowthVarying = input.getBoolOptResult('g');
 	
@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 	size_t numOutputs = numOutputsPerChain * numChains;
 	
 	Model model = Model(new Models::LotkaVolterra());
-	ReversibleJumpSolver masterSolver(model, input.getData(), hyperprior, parametersPrior, {rowGrouping, rowGrouping, colGrouping}, {isGrowthVarying, true, true});
+	ReversibleJumpSolver<Distributions::Normal> masterSolver(model, input.getData(), hyperprior, parametersPrior, {rowGrouping, rowGrouping, colGrouping}, {isGrowthVarying, true, true});
 	
 	//Only groupings need actual default values; the rest have default constructors.
 	OutputColumn<Grouping> outputGrowthGroupings("growth_group", numOutputs, masterSolver.getGrouping(GROWTH));

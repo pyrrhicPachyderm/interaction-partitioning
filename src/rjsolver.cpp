@@ -10,27 +10,27 @@
 #define MAX_POSTERIOR_VARIANCE_CHANGE_FACTOR 100.0 //Controls how quickly dialIn changes the estimates of posterior variance.
 
 //The probability of any particular jump.
-double ReversibleJumpSolver::getTransModelJumpProbability(GroupingType groupingType, MoveType moveType) const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getTransModelJumpProbability(GroupingType groupingType, MoveType moveType) const {
 	return getTransModelJumpProbability(groupingType, moveType, false);
 }
 
-double ReversibleJumpSolver::getTransModelJumpProbability(GroupingType groupingType, MoveType moveType, bool reverse) const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getTransModelJumpProbability(GroupingType groupingType, MoveType moveType, bool reverse) const {
 	GroupingSizeSet sourceGroupingSizes = getGroupingSizeSet(currentGroupings);
 	return transModelJumpProbabilityMultiplier * getUnscaledTransModelJumpProbability(sourceGroupingSizes, groupingType, moveType, reverse);
 }
 
 //The number of possible moves of a specified type.
-size_t ReversibleJumpSolver::getNumTransModelJumps(GroupingType groupingType, MoveType moveType) const {
+template<typename ErrDistT> size_t ReversibleJumpSolver<ErrDistT>::getNumTransModelJumps(GroupingType groupingType, MoveType moveType) const {
 	return moveType == MERGE ? currentGroupings[groupingType].getNumMerges() : currentGroupings[groupingType].getNumSplits();
 }
 
-double ReversibleJumpSolver::getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const {
 	double sourceHyperprior = hyperprior.getDensity(sourceGroupingSizes);
 	double destHyperprior = hyperprior.getDensity(destGroupingSizes);
 	return std::min(1.0, destHyperprior/sourceHyperprior);
 }
 
-double ReversibleJumpSolver::getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType, bool reverse) const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType, bool reverse) const {
 	GroupingSizeSet destGroupingSizes = sourceGroupingSizes;
 	destGroupingSizes[groupingType] += moveType == MERGE ? -1 : 1;
 	return reverse ?
@@ -38,11 +38,11 @@ double ReversibleJumpSolver::getUnscaledTransModelJumpProbability(GroupingSizeSe
 		getUnscaledTransModelJumpProbability(sourceGroupingSizes, destGroupingSizes);
 }
 
-double ReversibleJumpSolver::getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType) const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType) const {
 	return getUnscaledTransModelJumpProbability(sourceGroupingSizes, groupingType, moveType, false);
 }
 
-double ReversibleJumpSolver::findUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes) const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::findUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes) const {
 	double result = 0.0;
 	for(size_t groupingType = 0; groupingType < NUM_GROUPING_TYPES; groupingType++) {
 		if(!isChangingGroupings[groupingType]) continue;
@@ -56,7 +56,7 @@ double ReversibleJumpSolver::findUnscaledMaxTransModelJumpProbability(GroupingSi
 	return result;
 }
 
-double ReversibleJumpSolver::findUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes, size_t recursionLevel) const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::findUnscaledMaxTransModelJumpProbability(GroupingSizeSet groupingSizes, size_t recursionLevel) const {
 	//We need to loop over each type of model that's changing; this is a NUM_GROUPING_TYPES-times nested loop.
 	//However, whether each loop exists is conditional on isChangingGroupings.
 	//So the neatest way to do this is recursion.
@@ -81,7 +81,7 @@ double ReversibleJumpSolver::findUnscaledMaxTransModelJumpProbability(GroupingSi
 	return result;
 }
 
-double ReversibleJumpSolver::findTransModelJumpProbabilityMultiplier() const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::findTransModelJumpProbabilityMultiplier() const {
 	//This is the value of c used in trans-model jump probabilities, as used in section 4.3 of Green 1995.
 	
 	//The GroupingIndexSet to pass the recursive function doesn't matter.
@@ -91,23 +91,23 @@ double ReversibleJumpSolver::findTransModelJumpProbabilityMultiplier() const {
 	return MAX_TRANS_MODEL_JUMP_PROBABILITY / unscaledMaxTransModelJumpProbability;
 }
 
-ReversibleJumpSolver::AdditionalParametersVector ReversibleJumpSolver::guessInitialAdditionalParameters() const {
+template<> ReversibleJumpSolver<Distributions::Normal>::AdditionalParametersVector ReversibleJumpSolver<Distributions::Normal>::guessInitialAdditionalParameters() const {
 	return {{data.guessErrorVariance()}};
 }
 
-double ReversibleJumpSolver::guessInitialGrowthRateApproximatePosteriorVariance() const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::guessInitialGrowthRateApproximatePosteriorVariance() const {
 	return pow(data.guessGrowthRateMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 }
 
-double ReversibleJumpSolver::guessInitialCompetitionCoefficientApproximatePosteriorVariance() const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::guessInitialCompetitionCoefficientApproximatePosteriorVariance() const {
 	return pow(data.guessCompetitionCoefficientMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 }
 
-ReversibleJumpSolver::AdditionalParametersVector ReversibleJumpSolver::guessInitialAdditionalParametersApproximatePosteriorVariance() const {
+template<> ReversibleJumpSolver<Distributions::Normal>::AdditionalParametersVector ReversibleJumpSolver<Distributions::Normal>::guessInitialAdditionalParametersApproximatePosteriorVariance() const {
 	return {{data.guessErrorVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
 }
 
-double ReversibleJumpSolver::getJumpVarianceMultiplier(JumpType jumpType) const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getJumpVarianceMultiplier(JumpType jumpType) const {
 	if(jumpType == WITHIN_JUMP) {
 		return withinModelJumpVarianceMultiplier;
 	} else if(jumpType == MERGE_JUMP || jumpType == SPLIT_JUMP) {
@@ -115,15 +115,15 @@ double ReversibleJumpSolver::getJumpVarianceMultiplier(JumpType jumpType) const 
 	} else __builtin_unreachable();
 }
 
-Distribution<double> ReversibleJumpSolver::getGrowthRateJumpDistribution(JumpType jumpType) const {
+template<typename ErrDistT> Distribution<double> ReversibleJumpSolver<ErrDistT>::getGrowthRateJumpDistribution(JumpType jumpType) const {
 	return Distribution<double>(new Distributions::Normal(0.0, growthRateApproximatePosteriorVariance * getJumpVarianceMultiplier(jumpType)));
 }
 
-Distribution<double> ReversibleJumpSolver::getCompetitionCoefficientJumpDistribution(JumpType jumpType) const {
+template<typename ErrDistT> Distribution<double> ReversibleJumpSolver<ErrDistT>::getCompetitionCoefficientJumpDistribution(JumpType jumpType) const {
 	return Distribution<double>(new Distributions::Normal(0.0, competitionCoefficientApproximatePosteriorVariance * getJumpVarianceMultiplier(jumpType)));
 }
 
-std::array<Distribution<double>, ReversibleJumpSolver::NUM_ADDITIONAL_PARAMETERS> ReversibleJumpSolver::getAdditionalParametersJumpDistribution(JumpType jumpType) const {
+template<typename ErrDistT> std::array<Distribution<double>, ReversibleJumpSolver<ErrDistT>::NUM_ADDITIONAL_PARAMETERS> ReversibleJumpSolver<ErrDistT>::getAdditionalParametersJumpDistribution(JumpType jumpType) const {
 	return array_map(
 		[this, jumpType] (size_t index) -> Distribution<double> {
 			return Distribution<double>(new Distributions::Normal(0.0, additionalParametersApproximatePosteriorVariance[index] * getJumpVarianceMultiplier(jumpType)));
@@ -132,7 +132,7 @@ std::array<Distribution<double>, ReversibleJumpSolver::NUM_ADDITIONAL_PARAMETERS
 	);
 }
 
-Distribution<double> ReversibleJumpSolver::getTransModelJumpDistribution(GroupingType groupingType, JumpType jumpType) const {
+template<typename ErrDistT> Distribution<double> ReversibleJumpSolver<ErrDistT>::getTransModelJumpDistribution(GroupingType groupingType, JumpType jumpType) const {
 	if(groupingType == GROWTH) {
 		return getGrowthRateJumpDistribution(jumpType);
 	} else if(groupingType == ROW || groupingType == COL) {
@@ -140,12 +140,12 @@ Distribution<double> ReversibleJumpSolver::getTransModelJumpDistribution(Groupin
 	} else __builtin_unreachable();
 }
 
-double ReversibleJumpSolver::getRandomProbability() {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getRandomProbability() {
 	//A random double in [0,1).
 	return Distributions::Uniform(0,1).getRandom(randomGenerator);
 }
 
-double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t index) {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::proposeTransModelJump(GroupingType groupingType, MoveType moveType, size_t index) {
 	if(moveType == MERGE) proposedJumpType = MERGE_JUMP;
 	else if(moveType == SPLIT) proposedJumpType = SPLIT_JUMP;
 	else __builtin_unreachable();
@@ -169,7 +169,7 @@ double ReversibleJumpSolver::proposeTransModelJump(GroupingType groupingType, Mo
 	return logAcceptanceRatio;
 }
 
-double ReversibleJumpSolver::proposeWithinModelJump() {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::proposeWithinModelJump() {
 	proposedGroupings = currentGroupings;
 	proposedParameters = currentParameters;
 	
@@ -181,7 +181,7 @@ double ReversibleJumpSolver::proposeWithinModelJump() {
 	return 1.0;
 }
 
-double ReversibleJumpSolver::proposeJump() {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::proposeJump() {
 	double selector = getRandomProbability();
 	
 	//Iterate over each type of trans-model jump, and see if we do it.
@@ -205,22 +205,20 @@ double ReversibleJumpSolver::proposeJump() {
 	return proposeWithinModelJump();
 }
 
-void ReversibleJumpSolver::acceptJump() {
+template<typename ErrDistT> void ReversibleJumpSolver<ErrDistT>::acceptJump() {
 	currentGroupings = proposedGroupings;
 	currentParameters = proposedParameters;
 }
 
-void ReversibleJumpSolver::rejectJump() {
+template<typename ErrDistT> void ReversibleJumpSolver<ErrDistT>::rejectJump() {
 	return;
 }
 
-double ReversibleJumpSolver::getLogLikelihood(double observation, double prediction, const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const {
-	//This uses the additional parameter, and is used in calculating the likelihood.
-	double errorVariance = parameters.getAdditionalParameter(0);
-	return Distributions::Normal(prediction, errorVariance).getLogDensity(observation);
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogLikelihood(double observation, double prediction, const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const {
+	return std::make_from_tuple<ErrDistT>(std::tuple_cat(std::tuple(prediction), parameters.getAdditionalParameters())).getLogDensity(observation);
 }
 
-double ReversibleJumpSolver::getLogLikelihoodRatio() {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogLikelihoodRatio() {
 	const Eigen::VectorXd &observations = getObservations();
 	Eigen::VectorXd currentPredictions = getPredictions(currentParameters, currentGroupings);
 	Eigen::VectorXd proposedPredictions = getPredictions(proposedParameters, proposedGroupings);
@@ -233,13 +231,13 @@ double ReversibleJumpSolver::getLogLikelihoodRatio() {
 	return logLikelihoodRatio;
 }
 
-double ReversibleJumpSolver::getLogPriorRatio() const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogPriorRatio() const {
 	double logHyperpriorRatio = hyperprior.getLogDensity(proposedGroupings) - hyperprior.getLogDensity(currentGroupings);
 	double logParametersPriorRatio = parametersPrior.getLogDensity(proposedParameters) - parametersPrior.getLogDensity(currentParameters);
 	return logHyperpriorRatio + logParametersPriorRatio;
 }
 
-bool ReversibleJumpSolver::makeJump(bool canTransModelJump) {
+template<typename ErrDistT> bool ReversibleJumpSolver<ErrDistT>::makeJump(bool canTransModelJump) {
 	double logJumpingDensityRatio = canTransModelJump ? proposeJump() : proposeWithinModelJump();
 	
 	double logPriorRatio = getLogPriorRatio();
@@ -257,7 +255,7 @@ bool ReversibleJumpSolver::makeJump(bool canTransModelJump) {
 	}
 }
 
-void ReversibleJumpSolver::burnIn(size_t numJumps, bool canTransModelJump) {
+template<typename ErrDistT> void ReversibleJumpSolver<ErrDistT>::burnIn(size_t numJumps, bool canTransModelJump) {
 	for(size_t i = 0; i < numJumps; i++) {
 		makeJump(canTransModelJump);
 	}
@@ -300,7 +298,7 @@ static double getAverageColumnwiseVariance(Eigen::MatrixXd mat) {
 	return sum / mat.cols();
 }
 
-void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
+template<typename ErrDistT> void ReversibleJumpSolver<ErrDistT>::dialIn(size_t jumpsPerDial, size_t numDials) {
 	//Dials in the jumping variances.
 	//Combining two different dialling in methods here.
 	//The first to balance the sizes of jumps in different variables against one another.
@@ -355,7 +353,10 @@ void ReversibleJumpSolver::dialIn(size_t jumpsPerDial, size_t numDials) {
 	}
 }
 
-void ReversibleJumpSolver::resetChain() {
+template<typename ErrDistT> void ReversibleJumpSolver<ErrDistT>::resetChain() {
 	currentGroupings = initialGroupings;
 	currentParameters = initialParameters;
 }
+
+//Explicitly instantiate.
+template class ReversibleJumpSolver<Distributions::Normal>;

@@ -4,12 +4,17 @@
 #include "groupingmove.hpp"
 #include "solver.hpp"
 #include "priors.hpp"
+#include "utils/refl.hpp"
 
 #define DEFAULT_RANDOM_SEED 42
 
-class ReversibleJumpSolver : public Solver {
+template<typename ErrDistT> class ReversibleJumpSolver : public Solver {
+	//ReversibleJumpSolver is templated on the type of error distribution, which must inherit from Distributions::Base<double>.
+	//The first parameter in the constructor of the given distribution *must* be the mean (e.g. use Gamma2 instead of Gamma).
+	//Every other parameter will be estimated, and is stored in the additionalParameters of an AugmentedParameters object.
+	static_assert(std::is_base_of_v<Distributions::Base<double>, ErrDistT>);
 	public:
-		const static size_t NUM_ADDITIONAL_PARAMETERS = 1;
+		constexpr static size_t NUM_ADDITIONAL_PARAMETERS = std::tuple_size<refl::ctor_as_tuple<ErrDistT>>{} - 1;
 		typedef AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>::AdditionalParametersVector AdditionalParametersVector;
 		enum JumpType {MERGE_JUMP, SPLIT_JUMP, WITHIN_JUMP, NUM_JUMP_TYPES};
 	protected:
