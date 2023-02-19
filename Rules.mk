@@ -31,6 +31,7 @@ $$(call processed_$(2)_data_files,$(1)) $(4) &: $(from_root)/scripts/process-$(1
 endef
 
 $(eval $(call process_data_template,tcl,indv,$(tcl_raw_data),))
+$(eval $(call process_data_template,tcl,pop,$(tcl_raw_data),))
 $(eval $(call process_data_template,cxr,indv,,$(cxr_additional_output)))
 $(eval $(call process_data_template,goldberg,indv,$(goldberg_raw_data),))
 $(eval $(call process_data_template,carrara,time,$(carrara_raw_data),))
