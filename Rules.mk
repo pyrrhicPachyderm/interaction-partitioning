@@ -35,16 +35,16 @@ $(eval $(call process_data_template,goldberg,indv,$(goldberg_raw_data),))
 $(eval $(call process_data_template,carrara,time,$(carrara_raw_data),))
 $(eval $(call process_data_template,test,indv,,))
 
-#priors_template takes the dataset abbreviation, the dataset type (indv or time), and options to the prior guessing script.
+#priors_template takes the dataset abbreviation, the dataset type (indv or time), the error distribution, and options to the prior guessing script.
 define priors_template =
 $$(call priors_file,$(1)): $(from_root)/scripts/guess-priors $$(call processed_$(2)_data_files,$(1))
-	./$$< $$@ $(2) $$(call processed_$(2)_data_files,$(1)) $(3)
+	./$$< $$@ $(3) $(2) $$(call processed_$(2)_data_files,$(1)) $(4)
 endef
 
-$(eval $(call priors_template,tcl,indv,))
-$(eval $(call priors_template,cxr,indv,-r $(cxr_r_guess)))
-$(eval $(call priors_template,goldberg,indv,-r $(goldberg_r_guess)))
-$(eval $(call priors_template,carrara,time,))
+$(eval $(call priors_template,tcl,indv,normal,))
+$(eval $(call priors_template,cxr,indv,normal,-r $(cxr_r_guess)))
+$(eval $(call priors_template,goldberg,indv,normal,-r $(goldberg_r_guess)))
+$(eval $(call priors_template,carrara,time,normal,))
 
 #output_template takes the dataset abbreviation, the dataset type (indv or time), output file name, the program file name, the model, the error distribution, and the flags.
 define output_template =

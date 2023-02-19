@@ -6,9 +6,9 @@ suppressPackageStartupMessages(library(magrittr))
 #Argument parsing.
 ##################
 
-usage = "%prog [options] OUTPUT_FILE indv FOCAL_INPUT_FILE RESPONSE_INPUT_FILE DESIGN_INPUT_FILE
-%prog [options] OUTPUT_FILE time ID_INPUT_FILE TIME_INPUT_FILE DENSITY_INPUT_FILE"
-description = "Takes the files desired by the C++ code (as appropriate to individual response data (indv) or time series data (time),
+usage = "%prog [options] OUTPUT_FILE ERROR_DISTRIBUTION indv FOCAL_INPUT_FILE RESPONSE_INPUT_FILE DESIGN_INPUT_FILE
+%prog [options] OUTPUT_FILE ERROR_DISTRIBUTION time ID_INPUT_FILE TIME_INPUT_FILE DENSITY_INPUT_FILE"
+description = "Takes the files an other parameters desired by the C++ code (as appropriate to individual response data (indv) or time series data (time),
 and guesses appropriate priors for Bayesian analysis.
 The file of priors is produced in the format expected by the C++ code: growth rate, competition coefficient, then error variance."
 option_list <- list(
@@ -18,11 +18,12 @@ option_list <- list(
 	)
 )
 parser <- OptionParser(usage = usage, description = description, option_list = option_list)
-arguments <- parse_args(parser, positional_arguments = 5)
+arguments <- parse_args(parser, positional_arguments = 6)
 
 outfile <- arguments$args[1]
-data_type <- arguments$args[2]
-infiles <- arguments$args[3:5]
+error_distribution <- tolower(arguments$args[2])
+data_type <- arguments$args[3]
+infiles <- arguments$args[4:6]
 
 attach(arguments$options)
 
@@ -31,18 +32,20 @@ attach(arguments$options)
 ####################
 
 #Some of the values are common among all data types.
+#We'll specify a distribution for all parameters, then cut out the ones inappropriate to the error distribution.
 #The growth rate could only reasonably be estimated from the results, which it's incorrect to do for the prior.
 #So that is specified manually on the command line, with -r.
 #We take that estimate to be the mean and standard deviation of the prior for growth rate.
 #The mean for the competition coefficient is zero, but the variance will need calculating.
 #An inverse gamma distribution is nice for error variance.
 #We will leave a shape of 1, but scale will need calculating.
+#A half normal distribution works for the dispersion parameter, with scale 1.
 
 priors <- data.frame(
-	row.names = c("growth_rate", "competition_coefficient", "error_variance"),
-	type = c("Normal", "Normal", "InverseGamma"),
-	p1 = c(growth_rate_magnitude, 0, 1),
-	p2 = c(growth_rate_magnitude^2, NA, NA)
+	row.names = c("growth_rate", "competition_coefficient", "error_variance", "overdispersion"),
+	type = c("Normal", "Normal", "InverseGamma", "HalfNormal"),
+	p1 = c(growth_rate_magnitude, 0, 1, 1),
+	p2 = c(growth_rate_magnitude^2, NA, NA, NA)
 )
 
 ####################
@@ -120,12 +123,26 @@ if(data_type == "indv") {
 	stop("Invalid data type")
 }
 
+#########################################################
+#Select appropriate parameters to give distributions for.
+#########################################################
+
+if(error_distribution == "normal") {
+	desired_additional_parameters <- "error_variance"
+} else if (error_distribution == "gamma" || error_distribution == "negativebinomial") {
+	desired_additional_parameters <- "overdispersion"
+} else {
+	stop("Invalid error distribution")
+}
+
+priors <- priors[c("growth_rate", "competition_coefficient", desired_additional_parameters),]
+
 ###########
 #Write out.
 ###########
 
 print_table <- function(table, outfile) {
-	write.table(table, outfile, row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t")
+	write.table(table, outfile, row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t", na="")
 }
 
 print_table(priors, outfile)
