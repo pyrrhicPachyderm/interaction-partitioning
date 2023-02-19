@@ -176,7 +176,7 @@ class Data {
 		double guessGrowthRate() const {return d->guessGrowthRate();}
 		double guessGrowthRateMagnitude() const {return d->guessGrowthRateMagnitude();}
 		double guessCompetitionCoefficient() const {return d->guessCompetitionCoefficient();}
-		double guessCompetitionCoefficientMagnitude() {return d->guessCompetitionCoefficientMagnitude();}
+		double guessCompetitionCoefficientMagnitude() const {return d->guessCompetitionCoefficientMagnitude();}
 		double guessErrorVariance() const {return d->guessErrorVariance();}
 };
 
