@@ -44,7 +44,7 @@ Eigen::VectorXd Datasets::IndividualResponse::getPredictions(const Model &model,
 		Eigen::VectorXd densities = colGroupedDesign.row(obs);
 		Eigen::VectorXd competitionCoefficients = parameters.getCompetitionCoefficientsRow(focalRowGroup);
 		
-		predictions[obs] = model.getDerivative(focalDensity, focalGrowthRate, densities, competitionCoefficients);
+		predictions[obs] = model.getResponse(focalDensity, focalGrowthRate, densities, competitionCoefficients);
 	}
 	
 	return predictions;
@@ -197,7 +197,7 @@ Eigen::VectorXd Datasets::TimeSeries::getPredictions(const Model &model, const P
 		size_t numSpecies = includedSpecies[i].size();
 		Eigen::VectorXd growthRates = getGrowthRates(parameters, groupings, i);
 		Eigen::MatrixXdRowMajor competitionCoefficients = getCompetitionCoefficients(parameters, groupings, i);
-		IVPDerivativeFunc derivativeFunc = std::bind(&Model::getDerivatives, model, std::placeholders::_2, growthRates, competitionCoefficients);
+		IVPDerivativeFunc derivativeFunc = std::bind(&Model::getResponses, model, std::placeholders::_2, growthRates, competitionCoefficients);
 		
 		predictions.segment(resultIndex, numSpecies) = solveIVP(derivativeFunc, initialDensity[i], 0.0, timeSpan[i], getNumSteps(timeSpan[i]), IVPStepFuncs::forwardEuler);
 		
