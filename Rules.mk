@@ -8,8 +8,9 @@ $(from_root)-clean:
 	@for i in $(from_root)/output/*; do if [ -f "$$i" ]; then $(RM) "$$i"; fi; done
 .PHONY: $(from_root)-clean
 
-#'indv' for individual response, or 'time' for time series.
+#'indv' for individual response, 'pop' for population size response, or 'time' for time series.
 processed_indv_data_files = $(patsubst %,$(from_root)/output/$(1)/%,indv-focal-vector.data indv-response-vector.data indv-design-matrix.data)
+processed_pop_data_files = $(patsubst %,$(from_root)/output/$(1)/%,pop-focal-vector.data pop-response-vector.data pop-design-matrix.data)
 processed_time_data_files = $(patsubst %,$(from_root)/output/$(1)/%,time-id-vector.data time-time-vector.data time-density-matrix.data)
 priors_file = $(from_root)/output/$(1)/priors.data
 
@@ -23,7 +24,7 @@ cxr_additional_output := $(from_root)/output/cxr/species.csv
 cxr_r_guess := 1000 #The response is per capita seed production. Some of the species involved could produce thousands of seeds, so 1000 is a reasonable guess.
 goldberg_r_guess := 100 #The response is final mass in milligrams. The largest of the species could grow to about 130 mg, so 100 is a reasonable guess.
 
-#process_data_template takes the dataset abbreviation, the dataset type (indv or time), the raw data file(s), additional output files for the processing script.
+#process_data_template takes the dataset abbreviation, the dataset type (e.g. indv, time), the raw data file(s), additional output files for the processing script.
 define process_data_template =
 $$(call processed_$(2)_data_files,$(1)) $(4) &: $(from_root)/scripts/process-$(1) $(3)
 	./$$< $(3) $(2) $$(call processed_$(2)_data_files,$(1)) $(4)
@@ -35,7 +36,7 @@ $(eval $(call process_data_template,goldberg,indv,$(goldberg_raw_data),))
 $(eval $(call process_data_template,carrara,time,$(carrara_raw_data),))
 $(eval $(call process_data_template,test,indv,,))
 
-#priors_template takes the dataset abbreviation, the dataset type (indv or time), the error distribution, and options to the prior guessing script.
+#priors_template takes the dataset abbreviation, the dataset type (e.g. indv, time), the error distribution, and options to the prior guessing script.
 define priors_template =
 $$(call priors_file,$(1)): $(from_root)/scripts/guess-priors $$(call processed_$(2)_data_files,$(1))
 	./$$< $$@ $(3) $(2) $$(call processed_$(2)_data_files,$(1)) $(4)
@@ -46,7 +47,7 @@ $(eval $(call priors_template,cxr,indv,normal,-r $(cxr_r_guess)))
 $(eval $(call priors_template,goldberg,indv,normal,-r $(goldberg_r_guess)))
 $(eval $(call priors_template,carrara,time,normal,))
 
-#output_template takes the dataset abbreviation, the dataset type (indv or time), output file name, the program file name, the model, the error distribution, and the flags.
+#output_template takes the dataset abbreviation, the dataset type (e.g. indv, time), output file name, the program file name, the model, the error distribution, and the flags.
 define output_template =
 $(from_root)/output/$(1)/$(3).data: $(from_root)/src/$(4).out $$(call processed_$(2)_data_files,$(1)) $$(if $$(findstring rjmcmc,$(4)),$$(call priors_file,$(1)))
 	./$$< $$@ $(5) $(6) $(2) $$(filter-out $$<,$$^) $(7)
