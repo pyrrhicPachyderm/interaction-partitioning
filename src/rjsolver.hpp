@@ -8,7 +8,26 @@
 
 #define DEFAULT_RANDOM_SEED 42
 
-template<typename ErrDistT> class ReversibleJumpSolver : public Solver {
+class ReversibleJumpSolverBase : public Solver {
+	public:
+		using Solver::Solver;
+		
+		//Virtual destructor, as this is an abstract class.
+		virtual ~ReversibleJumpSolverBase() {};
+		
+		virtual void setSeed(size_t seed) = 0;
+		virtual bool makeJump() = 0;
+		virtual void burnIn(size_t numJumps) = 0;
+		virtual void dialIn(size_t jumpsPerDial, size_t numDials) = 0;
+		virtual void resetChain() = 0;
+		
+		virtual const GroupingSet &getGroupings() const = 0;
+		virtual const Grouping &getGrouping(GroupingType groupingType) const = 0;
+		virtual Parameters getParameters() const = 0;
+		virtual double getAdditionalParameter(size_t i) const  = 0;
+};
+
+template<typename ErrDistT> class ReversibleJumpSolver : public ReversibleJumpSolverBase {
 	//ReversibleJumpSolver is templated on the type of error distribution, which must inherit from Distributions::Base<double>.
 	//The first parameter in the constructor of the given distribution *must* be the mean (e.g. use Gamma2 instead of Gamma).
 	//Every other parameter will be estimated, and is stored in the additionalParameters of an AugmentedParameters object.
@@ -51,19 +70,19 @@ template<typename ErrDistT> class ReversibleJumpSolver : public Solver {
 		double transModelJumpVarianceMultiplier = 1.0;
 	public:
 		ReversibleJumpSolver(Model model, Data data, Hyperprior hyperprior, AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
-			Solver(model, data),
+			ReversibleJumpSolverBase(model, data),
 			hyperprior(hyperprior),
 			parametersPrior(parametersPrior),
 			initialGroupings(groupings),
 			isChangingGroupings(isChangingGroupings)
 			{};
 		
-		void setSeed(size_t seed) {randomGenerator.seed(seed);};
+		void setSeed(size_t seed) override {randomGenerator.seed(seed);};
 		
-		const GroupingSet &getGroupings() const {return currentGroupings;}
-		const Grouping &getGrouping(GroupingType groupingType) const {return currentGroupings[groupingType];}
-		Parameters getParameters() const {return (Parameters)currentParameters;}
-		double getAdditionalParameter(size_t i) const {return currentParameters.getAdditionalParameter(i);}
+		const GroupingSet &getGroupings() const override {return currentGroupings;}
+		const Grouping &getGrouping(GroupingType groupingType) const override {return currentGroupings[groupingType];}
+		Parameters getParameters() const override {return (Parameters)currentParameters;}
+		double getAdditionalParameter(size_t i) const override {return currentParameters.getAdditionalParameter(i);}
 	protected:
 		double getTransModelJumpProbability(GroupingType groupingType, MoveType moveType) const;
 		double getTransModelJumpProbability(GroupingType groupingType, MoveType moveType, bool reverse) const;
@@ -106,17 +125,17 @@ template<typename ErrDistT> class ReversibleJumpSolver : public Solver {
 		bool makeJump(bool canTransModelJump);
 		void burnIn(size_t numJumps, bool canTransModelJump);
 	public:
-		bool makeJump() {
+		bool makeJump() override {
 			return makeJump(true);
 		};
 		
-		void burnIn(size_t numJumps) {
+		void burnIn(size_t numJumps) override {
 			burnIn(numJumps, true);
 		};
 		
-		void dialIn(size_t jumpsPerDial, size_t numDials);
+		void dialIn(size_t jumpsPerDial, size_t numDials) override;
 		
-		void resetChain();
+		void resetChain() override;
 };
 
 #endif
