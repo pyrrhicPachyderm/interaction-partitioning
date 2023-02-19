@@ -5,7 +5,6 @@
 #include "solver.hpp"
 #include "priors.hpp"
 
-#define INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER 0.01
 #define DEFAULT_RANDOM_SEED 42
 
 class ReversibleJumpSolver : public Solver {
@@ -37,9 +36,9 @@ class ReversibleJumpSolver : public Solver {
 		
 		//Additional useful numbers.
 		double transModelJumpProbabilityMultiplier;
-		double growthRateApproximatePosteriorVariance = pow(data.guessGrowthRateMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
-		double competitionCoefficientApproximatePosteriorVariance = pow(data.guessCompetitionCoefficientMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
-		AdditionalParametersVector additionalParametersApproximatePosteriorVariance = {{data.guessErrorVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
+		double growthRateApproximatePosteriorVariance = guessInitialGrowthRateApproximatePosteriorVariance();
+		double competitionCoefficientApproximatePosteriorVariance = guessInitialCompetitionCoefficientApproximatePosteriorVariance();
+		AdditionalParametersVector additionalParametersApproximatePosteriorVariance = guessInitialAdditionalParametersApproximatePosteriorVariance();
 		double withinModelJumpVarianceMultiplier = 1.0;
 		double transModelJumpVarianceMultiplier = 1.0;
 	public:
@@ -71,6 +70,10 @@ class ReversibleJumpSolver : public Solver {
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType) const;
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType, bool reverse) const;
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const;
+		
+		double guessInitialGrowthRateApproximatePosteriorVariance() const;
+		double guessInitialCompetitionCoefficientApproximatePosteriorVariance() const;
+		AdditionalParametersVector guessInitialAdditionalParametersApproximatePosteriorVariance() const;
 		
 		double getJumpVarianceMultiplier(JumpType jumpType) const;
 		Distribution<double> getGrowthRateJumpDistribution(JumpType jumpType) const;

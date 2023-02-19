@@ -4,6 +4,7 @@
 #include "rjsolver.hpp"
 
 #define MAX_TRANS_MODEL_JUMP_PROBABILITY 0.9
+#define INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER 0.01
 #define DESIRED_ACCEPTANCE_RATE 0.23 //For within-model jumps.
 #define MAX_JUMP_VARIANCE_MULTIPLIER_CHANGE 2.0 //Controls how quickly dialIn changes the jump variance multiplier.
 #define MAX_POSTERIOR_VARIANCE_CHANGE_FACTOR 100.0 //Controls how quickly dialIn changes the estimates of posterior variance.
@@ -88,6 +89,18 @@ double ReversibleJumpSolver::findTransModelJumpProbabilityMultiplier() const {
 	double unscaledMaxTransModelJumpProbability = findUnscaledMaxTransModelJumpProbability(GroupingSizeSet(), 0);
 	
 	return MAX_TRANS_MODEL_JUMP_PROBABILITY / unscaledMaxTransModelJumpProbability;
+}
+
+double ReversibleJumpSolver::guessInitialGrowthRateApproximatePosteriorVariance() const {
+	return pow(data.guessGrowthRateMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
+}
+
+double ReversibleJumpSolver::guessInitialCompetitionCoefficientApproximatePosteriorVariance() const {
+	return pow(data.guessCompetitionCoefficientMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
+}
+
+ReversibleJumpSolver::AdditionalParametersVector ReversibleJumpSolver::guessInitialAdditionalParametersApproximatePosteriorVariance() const {
+	return {{data.guessErrorVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
 }
 
 double ReversibleJumpSolver::getJumpVarianceMultiplier(JumpType jumpType) const {
