@@ -25,12 +25,32 @@ int main(int argc, char **argv) {
 	rowGrouping.separate();
 	colGrouping.separate();
 	
+	GroupingSet groupings = {rowGrouping, rowGrouping, colGrouping};
+	
+	bool isGroupingGrowth = input.getBoolOptResult('g');
+	std::array<bool, NUM_GROUPING_TYPES> isGrouping = {isGroupingGrowth, true, true};
+	
 	Hyperprior hyperprior = input.getBoolOptResult('a') ?
 		Hyperprior(new Hyperpriors::AIC()) :
 		Hyperprior(new Hyperpriors::Flat());
-	auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::Normal>::NUM_ADDITIONAL_PARAMETERS>();
 	
-	bool isGrowthVarying = input.getBoolOptResult('g');
+	Model model = Model(new Models::LotkaVolterra());
+	std::string errorDistribution = input.getErrorDistribution();
+	
+	ReversibleJumpSolverBase *masterSolver = NULL;
+	if(errorDistribution == "normal") {
+		auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::Normal>::NUM_ADDITIONAL_PARAMETERS>();
+		masterSolver = new ReversibleJumpSolver<Distributions::Normal>(model, input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
+	} else if(errorDistribution == "gamma") {
+		auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::Gamma2>::NUM_ADDITIONAL_PARAMETERS>();
+		masterSolver = new ReversibleJumpSolver<Distributions::Gamma2>(model, input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
+	} else if(errorDistribution == "negativebinomial") {
+		auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>::NUM_ADDITIONAL_PARAMETERS>();
+		masterSolver = new ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>(model, input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
+	} else {
+		fprintf(stderr, "Unrecognised error distribution.\n");
+		exit(1);
+	}
 	
 	size_t jumpsPerDial = input.getIntOptResult('j');
 	size_t numDials = input.getIntOptResult('d');
@@ -42,42 +62,42 @@ int main(int argc, char **argv) {
 	size_t numOutputsPerChain = numSteps / thinningFactor;
 	size_t numOutputs = numOutputsPerChain * numChains;
 	
-	Model model = Model(new Models::LotkaVolterra());
-	ReversibleJumpSolver<Distributions::Normal> masterSolver(model, input.getData(), hyperprior, parametersPrior, {rowGrouping, rowGrouping, colGrouping}, {isGrowthVarying, true, true});
-	
 	//Only groupings need actual default values; the rest have default constructors.
-	OutputColumn<Grouping> outputGrowthGroupings("growth_group", numOutputs, masterSolver.getGrouping(GROWTH));
-	OutputColumn<Grouping> outputRowGroupings("row_group", numOutputs, masterSolver.getGrouping(ROW));
-	OutputColumn<Grouping> outputColGroupings("col_group", numOutputs, masterSolver.getGrouping(COL));
+	OutputColumn<Grouping> outputGrowthGroupings("growth_group", numOutputs, masterSolver->getGrouping(GROWTH));
+	OutputColumn<Grouping> outputRowGroupings("row_group", numOutputs, masterSolver->getGrouping(ROW));
+	OutputColumn<Grouping> outputColGroupings("col_group", numOutputs, masterSolver->getGrouping(COL));
 	OutputColumn<Parameters> outputParameters("parameters", numOutputs, Parameters());
 	OutputColumn<double> outputErrorVariance("parameters_error_variance", numOutputs, 0.0);
 	OutputColumn<size_t> outputChainID("chain_id", numOutputs, 0);
 	
-	masterSolver.setSeed(RANDOM_SEED);
-	masterSolver.dialIn(jumpsPerDial, numDials);
-	masterSolver.resetChain();
+	masterSolver->setSeed(RANDOM_SEED);
+	masterSolver->dialIn(jumpsPerDial, numDials);
+	masterSolver->resetChain();
 	
 	#pragma omp parallel for
 	for(size_t chain = 0; chain < numChains; chain++) {
-		ReversibleJumpSolver solver = masterSolver;
-		solver.setSeed(RANDOM_SEED + chain + 1); //+1 so that chain 0 doesn't use the same seed as dialing in.
-		solver.burnIn(burnIn);
+		ReversibleJumpSolverBase *solver = masterSolver->getCopy();
+		solver->setSeed(RANDOM_SEED + chain + 1); //+1 so that chain 0 doesn't use the same seed as dialing in.
+		solver->burnIn(burnIn);
 		
 		size_t outputIndex = numOutputsPerChain * chain;
 		for(size_t i = 0; i < numSteps; i++) {
-			solver.makeJump();
+			solver->makeJump();
 			if(i%thinningFactor == 0) {
-				outputGrowthGroupings.set(outputIndex, solver.getGrouping(GROWTH));
-				outputRowGroupings.set(outputIndex, solver.getGrouping(ROW));
-				outputColGroupings.set(outputIndex, solver.getGrouping(COL));
-				outputParameters.set(outputIndex, Parameters(solver.getParameters(), solver.getGroupings()));
-				outputErrorVariance.set(outputIndex, solver.getAdditionalParameter(0));
+				outputGrowthGroupings.set(outputIndex, solver->getGrouping(GROWTH));
+				outputRowGroupings.set(outputIndex, solver->getGrouping(ROW));
+				outputColGroupings.set(outputIndex, solver->getGrouping(COL));
+				outputParameters.set(outputIndex, Parameters(solver->getParameters(), solver->getGroupings()));
+				outputErrorVariance.set(outputIndex, solver->getAdditionalParameter(0));
 				outputChainID.set(outputIndex, chain);
 				
 				outputIndex++;
 			}
 		}
+		delete solver;
 	}
+	
+	delete masterSolver;
 	
 	outputTable(input.getOutputFile(), outputGrowthGroupings, outputRowGroupings, outputColGroupings, outputParameters, outputErrorVariance, outputChainID);
 	

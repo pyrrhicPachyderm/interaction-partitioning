@@ -4,6 +4,11 @@
 int main(int argc, char **argv) {
 	Input input(argc, argv, false);
 	
+	if(input.getErrorDistribution() != "normal") {
+		fprintf(stderr, "Maximum likelihood solver does not support non-normal error distributions.\n");
+		exit(1);
+	}
+	
 	Model model = Model(new Models::LotkaVolterra());
 	MaximumLikelihoodSolver solver = MaximumLikelihoodSolver(model, input.getData());
 	solver.updateGrouping(GROWTH, &Grouping::separate);
