@@ -35,17 +35,21 @@ int main(int argc, char **argv) {
 		Hyperprior(new Hyperpriors::Flat());
 	
 	std::string errorDistribution = input.getErrorDistribution();
+	std::string additionalParameterName;
 	
 	ReversibleJumpSolverBase *masterSolver = NULL;
 	if(errorDistribution == "normal") {
 		auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::Normal>::NUM_ADDITIONAL_PARAMETERS>();
 		masterSolver = new ReversibleJumpSolver<Distributions::Normal>(input.getModel(), input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
+		additionalParameterName = "error_variance";
 	} else if(errorDistribution == "gamma") {
 		auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::Gamma2>::NUM_ADDITIONAL_PARAMETERS>();
 		masterSolver = new ReversibleJumpSolver<Distributions::Gamma2>(input.getModel(), input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
+		additionalParameterName = "dispersion";
 	} else if(errorDistribution == "negativebinomial") {
 		auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>::NUM_ADDITIONAL_PARAMETERS>();
 		masterSolver = new ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>(input.getModel(), input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
+		additionalParameterName = "dispersion";
 	} else {
 		fprintf(stderr, "Unrecognised error distribution.\n");
 		exit(1);
@@ -66,7 +70,7 @@ int main(int argc, char **argv) {
 	OutputColumn<Grouping> outputRowGroupings("row_group", numOutputs, masterSolver->getGrouping(ROW));
 	OutputColumn<Grouping> outputColGroupings("col_group", numOutputs, masterSolver->getGrouping(COL));
 	OutputColumn<Parameters> outputParameters("parameters", numOutputs, Parameters());
-	OutputColumn<double> outputErrorVariance("parameters_error_variance", numOutputs, 0.0);
+	OutputColumn<double> outputAdditionalParameter("parameters_" + additionalParameterName, numOutputs, 0.0);
 	OutputColumn<size_t> outputChainID("chain_id", numOutputs, 0);
 	
 	masterSolver->setSeed(RANDOM_SEED);
@@ -87,7 +91,7 @@ int main(int argc, char **argv) {
 				outputRowGroupings.set(outputIndex, solver->getGrouping(ROW));
 				outputColGroupings.set(outputIndex, solver->getGrouping(COL));
 				outputParameters.set(outputIndex, Parameters(solver->getParameters(), solver->getGroupings()));
-				outputErrorVariance.set(outputIndex, solver->getAdditionalParameter(0));
+				outputAdditionalParameter.set(outputIndex, solver->getAdditionalParameter(0));
 				outputChainID.set(outputIndex, chain);
 				
 				outputIndex++;
@@ -98,7 +102,7 @@ int main(int argc, char **argv) {
 	
 	delete masterSolver;
 	
-	outputTable(input.getOutputFile(), outputGrowthGroupings, outputRowGroupings, outputColGroupings, outputParameters, outputErrorVariance, outputChainID);
+	outputTable(input.getOutputFile(), outputGrowthGroupings, outputRowGroupings, outputColGroupings, outputParameters, outputAdditionalParameter, outputChainID);
 	
 	return 0;
 }
