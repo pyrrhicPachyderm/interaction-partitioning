@@ -11,7 +11,7 @@ namespace Models {
 			//The core function of a model: dN/dt or (N_{t+1} - N_t).
 			virtual double getDerivative(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const = 0;
 			
-			//A wrapper around getDerivatives that handles a population.
+			//A wrapper around getDerivative that handles a population.
 			//It takes one set of densities, treating each as focal (in turn) and as competitors.
 			Eigen::VectorXd getDerivatives(const Eigen::VectorXd &densities, const Eigen::VectorXd &growthRates, const Eigen::MatrixXdRowMajor &competitionCoefficients) const;
 			
