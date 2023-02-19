@@ -8,9 +8,9 @@ $(from_root)-clean:
 	@for i in $(from_root)/output/*; do if [ -f "$$i" ]; then $(RM) "$$i"; fi; done
 .PHONY: $(from_root)-clean
 
-#'indv' for individual response or 'time' for time series.
-processed_indv_data_files = $(patsubst %,$(from_root)/output/$(1)/%,focal-vector.data response-vector.data design-matrix.data)
-processed_time_data_files = $(patsubst %,$(from_root)/output/$(1)/%,id-vector.data time-vector.data density-matrix.data)
+#'indv' for individual response, or 'time' for time series.
+processed_indv_data_files = $(patsubst %,$(from_root)/output/$(1)/%,indv-focal-vector.data indv-response-vector.data indv-design-matrix.data)
+processed_time_data_files = $(patsubst %,$(from_root)/output/$(1)/%,time-id-vector.data time-time-vector.data time-density-matrix.data)
 priors_file = $(from_root)/output/$(1)/priors.data
 
 tcl_raw_data := $(from_root)/TCL_DrosMCT/Data/d_both.csv
