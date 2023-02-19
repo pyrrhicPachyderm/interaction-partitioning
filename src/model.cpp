@@ -31,3 +31,15 @@ double Models::BevertonHolt::getGrowthRateJacobian(double focalDensity, double f
 double Models::BevertonHolt::getCompetitionCoefficientJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients, size_t index) const {
 	return - focalDensity * focalGrowthRate * densities[index] / pow(1.0 + densities.dot(competitionCoefficients), 2);
 }
+
+double Models::Ricker::getResponse(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
+	return focalDensity * focalGrowthRate * exp(- densities.dot(competitionCoefficients));
+}
+
+double Models::Ricker::getGrowthRateJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
+	return focalDensity * exp(- densities.dot(competitionCoefficients));
+}
+
+double Models::Ricker::getCompetitionCoefficientJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients, size_t index) const {
+	return - focalDensity * focalGrowthRate * densities[index] * exp(- densities.dot(competitionCoefficients));
+}

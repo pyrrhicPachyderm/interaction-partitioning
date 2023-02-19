@@ -52,6 +52,8 @@ static Model matchModelString(std::string modelString) {
 		return Model(new Models::LotkaVolterra());
 	} else if (modelString == "bevertonholt") {
 		return Model(new Models::BevertonHolt());
+	} else if (modelString == "ricker") {
+		return Model(new Models::Ricker());
 	} else {
 		fprintf(stderr, "Unrecognised model.\n");
 		exit(1);
