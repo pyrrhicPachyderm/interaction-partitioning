@@ -91,6 +91,10 @@ double ReversibleJumpSolver::findTransModelJumpProbabilityMultiplier() const {
 	return MAX_TRANS_MODEL_JUMP_PROBABILITY / unscaledMaxTransModelJumpProbability;
 }
 
+ReversibleJumpSolver::AdditionalParametersVector ReversibleJumpSolver::guessInitialAdditionalParameters() const {
+	return {{data.guessErrorVariance()}};
+}
+
 double ReversibleJumpSolver::guessInitialGrowthRateApproximatePosteriorVariance() const {
 	return pow(data.guessGrowthRateMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 }

@@ -21,7 +21,7 @@ class ReversibleJumpSolver : public Solver {
 		AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior;
 		
 		GroupingSet initialGroupings; //For resetting to when starting a new chain.
-		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> initialParameters = AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, initialGroupings, {{data.guessErrorVariance()}});
+		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> initialParameters = AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, initialGroupings, guessInitialAdditionalParameters());
 		
 		GroupingSet currentGroupings = initialGroupings;
 		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> currentParameters = initialParameters;
@@ -67,6 +67,8 @@ class ReversibleJumpSolver : public Solver {
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType) const;
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType, bool reverse) const;
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const;
+		
+		AdditionalParametersVector guessInitialAdditionalParameters() const;
 		
 		double guessInitialGrowthRateApproximatePosteriorVariance() const;
 		double guessInitialCompetitionCoefficientApproximatePosteriorVariance() const;
