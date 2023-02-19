@@ -57,7 +57,7 @@ endef
 $(eval $(call output_template,test,indv,brute,brute,lotkavolterra,normal,))
 $(eval $(call output_template,tcl,indv,brute,brute,lotkavolterra,normal,))
 $(eval $(call output_template,tcl,pop,rjmcmc,rjmcmc,bevertonholt,negativebinomial,-g -s1000000 -t10))
-$(eval $(call output_template,cxr,indv,rjmcmc,rjmcmc,bevertonholt,negativebinomial,-g -s100000000 -t1000))
+$(eval $(call output_template,cxr,indv,rjmcmc,rjmcmc,bevertonholt,negativebinomial,-g -d15 -s100000000 -t1000))
 $(eval $(call output_template,goldberg,indv,rjmcmc,rjmcmc,bevertonholt,gamma,-g -s1000000 -t10))
 $(eval $(call output_template,carrara,time,rjmcmc,rjmcmc,lotkavolterra,normal,-g -d15))
 
