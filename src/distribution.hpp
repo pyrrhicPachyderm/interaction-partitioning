@@ -140,8 +140,8 @@ namespace Distributions {
 		public:
 			//Don't need to check hasValidParameters.
 			//Again because calculateDensity() uses d.getDensity(), which checks such.
-			DiscreteWrapper(DistType d):
-				d(d) {};
+			template <typename... Ts> DiscreteWrapper(Ts... args):
+				d(DistType(args...)) {}
 			
 			double getRandom(RandomGenerator &generator) const {return (double)d.getRandom(generator);}
 		protected:
