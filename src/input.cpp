@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <unistd.h> //Gives getopt
+#include "utils/string.hpp"
 #include "utils/array.hpp"
 #include "input.hpp"
 
-#define NUM_MANDATORY_ARGS 5
+#define NUM_MANDATORY_ARGS 6
 #define NUM_UNAUGMENTED_PRIORS 2
 
 const static std::string DEFAULT_OPTS_STRING = "p";
@@ -12,9 +13,10 @@ const static std::string DEFAULT_OPTS_STRING = "p";
 static void printUsage(int argc, const char **argv, bool needsPriors) {
 	//Making of use of concatenated string literals in the following:
 	fprintf(stderr, "Usage:\n"
-		"\t%s [options] OUTPUT_FILE indv FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE%s\n"
-		"\t%s [options] OUTPUT_FILE time ID_VECTOR_FILE TIME_VECTOR_FILE DENSITY_MATRIX_FILE%s\n"
+		"\t%s [options] OUTPUT_FILE ERROR_DISTRIBUTION indv FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE%s\n"
+		"\t%s [options] OUTPUT_FILE ERROR_DISTRIBUTION time ID_VECTOR_FILE TIME_VECTOR_FILE DENSITY_MATRIX_FILE%s\n"
 		"\n"
+		"\tThe error distribution should be, e.g. Normal, Gamma. Case insensitive. Maximum Likelihood methods only support Normal.\n"
 		"\tThe argument 'indv' or 'time' distinguishes between individual response data and time series data.\n"
 		"\tAll vector and matrix files should be whitespace-separated tables.\n"
 		"\tVectors should be written as column vectors.\n"
@@ -76,6 +78,8 @@ Input::Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts
 	}
 	
 	outputFile = argv[optind++];
+	errorDistribution = argv[optind++];
+	strToLowerCase(errorDistribution);
 	
 	std::string dataType(argv[optind++]);
 	if(dataType == "indv") {

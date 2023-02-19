@@ -14,6 +14,7 @@ class Input {
 		
 		Data data;
 		std::string outputFile;
+		std::string errorDistribution;
 		std::vector<Distribution<double>> priors;
 		
 		std::string getOptsString();
@@ -25,6 +26,7 @@ class Input {
 		
 		const Data &getData() const {return data;};
 		const std::string &getOutputFile() const {return outputFile;};
+		const std::string &getErrorDistribution() const {return errorDistribution;};
 		template<size_t nAug> AugmentedParametersPrior<nAug> getPriors() const;
 		
 		bool getBoolOptResult(char opt) const;
