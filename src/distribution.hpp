@@ -131,6 +131,7 @@ namespace Distributions {
 		//DistType must inherit from Base<int>.
 		//This is something of a kludge, to avoid having to template the entire Data and Solver
 		//classes on whether the response variable is continuous or discrete.
+		static_assert(std::is_base_of_v<Base<int>, DistType>);
 		protected:
 			DistType d;
 			
