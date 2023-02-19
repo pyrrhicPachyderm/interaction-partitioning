@@ -12,7 +12,7 @@ usage = "%prog [options] INPUT_FILE DATA_TYPE FOCAL_OUTPUT_FILE RESPONSE_OUTPUT_
 description = "Takes the TCL_DrosMCT full data frame, and reshapes it into the three files desired by the C++ code.
 Namely, the 0-indexed numerical focal species vector, the response variable vector, and the species density design matrix.
 All are output as tab-separated matrices, without column headers, with vectors in the form column vectors.
-DATA_TYPE must be 'indv', for individual response data (change in population size per capita)."
+DATA_TYPE may be 'indv', for individual response data (change in population size per capita), or 'pop', for final population size."
 option_list <- list()
 parser <- OptionParser(usage = usage, description=description, option_list=option_list)
 arguments <- parse_args(parser, positional_arguments = 5)
@@ -25,7 +25,7 @@ design_outfile <- arguments$args[5]
 
 attach(arguments$options)
 
-if(data_type != "indv") {
+if(data_type != "indv" && data_type != "pop") {
 	stop("Invalid data type requested.")
 }
 
@@ -55,7 +55,11 @@ focal_output <- data[["FocalSpecies"]] %>%
 	match(species_names)
 focal_output <- focal_output - 1 #Make it 0-indexed.
 
-response_output <- (data[["ObsCount_Pairs"]] * 2 - data[["FocalSpeciesStartDens"]] * 2) / (data[["FocalSpeciesStartDens"]] * 2) #Times 2 from pairs to individuals.
+if(data_type == "indv") {
+	response_output <- (data[["ObsCount_Pairs"]] * 2 - data[["FocalSpeciesStartDens"]] * 2) / (data[["FocalSpeciesStartDens"]] * 2) #Times 2 from pairs to individuals.
+} else if(data_type == "pop") {
+	response_output <- data[["ObsCount_Pairs"]] * 2 #Times 2 from pairs to individuals.
+}
 
 design_output <- data %>%
 	select(ends_with("_0")) * 2 #Times 2 from pairs to individuals.
