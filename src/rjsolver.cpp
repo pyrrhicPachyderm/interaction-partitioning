@@ -92,7 +92,16 @@ template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::findTransMode
 }
 
 template<> ReversibleJumpSolver<Distributions::Normal>::AdditionalParametersVector ReversibleJumpSolver<Distributions::Normal>::guessInitialAdditionalParameters() const {
+	//Normal error variance.
 	return {{data.guessErrorVariance()}};
+}
+template<> ReversibleJumpSolver<Distributions::Gamma2>::AdditionalParametersVector ReversibleJumpSolver<Distributions::Gamma2>::guessInitialAdditionalParameters() const {
+	//Gamma2 dispersion parameter.
+	return {{1.0}};
+}
+template<> ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>::AdditionalParametersVector ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>::guessInitialAdditionalParameters() const {
+	//NegativeBinomial2 dispersion parameter.
+	return {{1.0}};
 }
 
 template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::guessInitialGrowthRateApproximatePosteriorVariance() const {
@@ -104,7 +113,16 @@ template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::guessInitialC
 }
 
 template<> ReversibleJumpSolver<Distributions::Normal>::AdditionalParametersVector ReversibleJumpSolver<Distributions::Normal>::guessInitialAdditionalParametersApproximatePosteriorVariance() const {
+	//Normal error variance.
 	return {{data.guessErrorVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
+}
+template<> ReversibleJumpSolver<Distributions::Gamma2>::AdditionalParametersVector ReversibleJumpSolver<Distributions::Gamma2>::guessInitialAdditionalParametersApproximatePosteriorVariance() const {
+	//Gamma2 dispersion parameter.
+	return {{1.0 * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
+}
+template<> ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>::AdditionalParametersVector ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>::guessInitialAdditionalParametersApproximatePosteriorVariance() const {
+	//NegativeBinomial2 dispersion parameter.
+	return {{1.0 * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
 }
 
 template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getJumpVarianceMultiplier(JumpType jumpType) const {
@@ -360,3 +378,5 @@ template<typename ErrDistT> void ReversibleJumpSolver<ErrDistT>::resetChain() {
 
 //Explicitly instantiate.
 template class ReversibleJumpSolver<Distributions::Normal>;
+template class ReversibleJumpSolver<Distributions::Gamma2>;
+template class ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>;

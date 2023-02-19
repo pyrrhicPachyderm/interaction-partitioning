@@ -14,7 +14,10 @@ template<typename ErrDistT> class ReversibleJumpSolver : public Solver {
 	//Every other parameter will be estimated, and is stored in the additionalParameters of an AugmentedParameters object.
 	static_assert(std::is_base_of_v<Distributions::Base<double>, ErrDistT>);
 	public:
-		constexpr static size_t NUM_ADDITIONAL_PARAMETERS = std::tuple_size<refl::ctor_as_tuple<ErrDistT>>{} - 1;
+		//TODO: Use std::tuple_size<refl::ctor_as_tuple<ErrDistT>>{} - 1 for NUM_ADDITIONAL_PARAMETERS.
+		//This works for Normal and Gamma2, but not DiscreteWrapper<NegativeBinomial>.
+		//I'm not sure why; refl is terribly complicated, after all.
+		constexpr static size_t NUM_ADDITIONAL_PARAMETERS = 1;
 		typedef AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>::AdditionalParametersVector AdditionalParametersVector;
 		enum JumpType {MERGE_JUMP, SPLIT_JUMP, WITHIN_JUMP, NUM_JUMP_TYPES};
 	protected:
