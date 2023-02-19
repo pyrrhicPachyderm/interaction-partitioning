@@ -13,12 +13,12 @@ const static std::string DEFAULT_OPTS_STRING = "p";
 static void printUsage(int argc, const char **argv, bool needsPriors) {
 	//Making of use of concatenated string literals in the following:
 	fprintf(stderr, "Usage:\n"
-		"\t%s [options] OUTPUT_FILE MODEL ERROR_DISTRIBUTION indv FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE%s\n"
+		"\t%s [options] OUTPUT_FILE MODEL ERROR_DISTRIBUTION indv|pop FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE%s\n"
 		"\t%s [options] OUTPUT_FILE MODEL ERROR_DISTRIBUTION time ID_VECTOR_FILE TIME_VECTOR_FILE DENSITY_MATRIX_FILE%s\n"
 		"\n"
 		"\tThe model should be, e.g. LotkaVolterra, BevertonHolt. Case insensitive.\n"
 		"\tThe error distribution should be, e.g. Normal, Gamma. Case insensitive. Maximum Likelihood methods only support Normal.\n"
-		"\tThe argument 'indv' or 'time' distinguishes between individual response data and time series data.\n"
+		"\tThe argument 'indv', 'pop' or 'time' distinguishes between individual response data, pop size response data, and time series data.\n"
 		"\tAll vector and matrix files should be whitespace-separated tables.\n"
 		"\tVectors should be written as column vectors.\n"
 		"%s"
@@ -27,6 +27,8 @@ static void printUsage(int argc, const char **argv, bool needsPriors) {
 		"\t\tThe focal vector is an integer vector giving the index of the focal species for each observation, 0-indexed.\n"
 		"\t\tThe response vector is a numeric vector giving the growth, fecundity, or other response variable for each observation.\n"
 		"\t\tThe design matrix is a numeric matrix with one row per observation and one column per species, giving the design densities.\n"
+		"\tPopulation size response data:\n"
+		"\t\tAs individual response data, except the response vector gives the total final population size of the focal species.\n"
 		"\tTime series data:\n"
 		"\t\tThe id vector is an integer vector, identifying which experiment each observation was a part of.\n"
 		"\t\tThe time vector is a numeric vector giving the time stamp at which densities were measured.\n"
@@ -102,6 +104,15 @@ Input::Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts
 		Eigen::VectorXd response = readDoubleVector(argv[optind++]);
 		Eigen::MatrixXdRowMajor design = readDoubleMatrix(argv[optind++]);
 		data = Data(new Datasets::IndividualResponse(
+			focal,
+			response,
+			design
+		));
+	} else if(dataType == "pop") {
+		std::vector<size_t> focal = readIndexVector(argv[optind++]);
+		Eigen::VectorXd response = readDoubleVector(argv[optind++]);
+		Eigen::MatrixXdRowMajor design = readDoubleMatrix(argv[optind++]);
+		data = Data(new Datasets::PopSizeResponse(
 			focal,
 			response,
 			design

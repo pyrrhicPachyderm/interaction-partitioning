@@ -5,7 +5,7 @@
 #include "ivp.hpp"
 #include "data.hpp"
 
-size_t Datasets::IndividualResponse::findNumFocals(std::vector<size_t> focals) {
+size_t Datasets::FocalResponse::findNumFocals(std::vector<size_t> focals) {
 	//We want the number of unique focals.
 	//We sort and remove duplicates, then take the length.
 	std::sort(focals.begin(), focals.end());
@@ -13,12 +13,12 @@ size_t Datasets::IndividualResponse::findNumFocals(std::vector<size_t> focals) {
 	return last - focals.begin();
 }
 
-bool Datasets::IndividualResponse::areFocalsFirst() const {
+bool Datasets::FocalResponse::areFocalsFirst() const {
 	//Check whether the maximum numbered focal is lower than the number of focals.
 	return *std::max_element(focal.begin(), focal.end()) < numRowSpecies;
 }
 
-Eigen::MatrixXdRowMajor Datasets::IndividualResponse::getColGroupedDesign(const Grouping &grouping) const {
+Eigen::MatrixXdRowMajor Datasets::FocalResponse::getColGroupedDesign(const Grouping &grouping) const {
 	Eigen::MatrixXdRowMajor colGroupedDesign = Eigen::MatrixXdRowMajor::Zero(design.rows(), grouping.getNumGroups());
 	
 	for(size_t obs = 0; obs < (size_t)design.rows(); obs++) {
@@ -30,7 +30,7 @@ Eigen::MatrixXdRowMajor Datasets::IndividualResponse::getColGroupedDesign(const 
 	return colGroupedDesign;
 }
 
-Eigen::VectorXd Datasets::IndividualResponse::getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
+Eigen::VectorXd Datasets::FocalResponse::getPredictions(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
 	Eigen::VectorXd predictions = Eigen::VectorXd::Zero(response.size());
 	
 	Eigen::MatrixXdRowMajor colGroupedDesign = getColGroupedDesign(groupings[COL]);
@@ -39,7 +39,7 @@ Eigen::VectorXd Datasets::IndividualResponse::getPredictions(const Model &model,
 		size_t focalGrowthGroup = groupings[GROWTH].getGroup(focal[obs]);
 		size_t focalRowGroup = groupings[ROW].getGroup(focal[obs]);
 		
-		double focalDensity = 1.0;
+		double focalDensity = isPerCapita ? 1.0 : design(obs, focal[obs]);
 		double focalGrowthRate = parameters.getGrowthRate(focalGrowthGroup);
 		Eigen::VectorXd densities = colGroupedDesign.row(obs);
 		Eigen::VectorXd competitionCoefficients = parameters.getCompetitionCoefficientsRow(focalRowGroup);
@@ -50,7 +50,7 @@ Eigen::VectorXd Datasets::IndividualResponse::getPredictions(const Model &model,
 	return predictions;
 }
 
-Jacobian Datasets::IndividualResponse::getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
+Jacobian Datasets::FocalResponse::getPredictionsJacobian(const Model &model, const Parameters &parameters, const GroupingSet &groupings) const {
 	Jacobian jacobian = Jacobian::Zero(numObservations, parameters.getNumParameters());
 	
 	Eigen::MatrixXdRowMajor colGroupedDesign = getColGroupedDesign(groupings[COL]);
@@ -61,7 +61,7 @@ Jacobian Datasets::IndividualResponse::getPredictionsJacobian(const Model &model
 		size_t focalGrowthGroup = groupings[GROWTH].getGroup(focal[obs]);
 		size_t focalRowGroup = groupings[ROW].getGroup(focal[obs]);
 		
-		double focalDensity = 1.0;
+		double focalDensity = isPerCapita ? 1.0 : design(obs, focal[obs]);
 		double focalGrowthRate = parameters.getGrowthRate(focalGrowthGroup);
 		Eigen::VectorXd densities = colGroupedDesign.row(obs);
 		Eigen::VectorXd competitionCoefficients = parameters.getCompetitionCoefficientsRow(focalRowGroup);
@@ -82,23 +82,23 @@ Jacobian Datasets::IndividualResponse::getPredictionsJacobian(const Model &model
 	return jacobian;
 }
 
-double Datasets::IndividualResponse::guessGrowthRate() const {
+double Datasets::FocalResponse::guessGrowthRate() const {
 	//We might assume that all the species are in one group, and that all competition coefficients are zero.
 	//This gives us the average observed response.
 	return response.mean();
 }
 
-double Datasets::IndividualResponse::guessGrowthRateMagnitude() const {
+double Datasets::FocalResponse::guessGrowthRateMagnitude() const {
 	return guessGrowthRate();
 }
 
-double Datasets::IndividualResponse::guessCompetitionCoefficientMagnitude() const {
+double Datasets::FocalResponse::guessCompetitionCoefficientMagnitude() const {
 	//We will assume that with all species present at average density, growth halts.
 	//This gives us 1, divided by the average density, divided by the number of species.
 	return 1.0 / design.mean() / numColSpecies;
 }
 
-double Datasets::IndividualResponse::guessErrorVariance() const {
+double Datasets::FocalResponse::guessErrorVariance() const {
 	//Simply return the variance of the response variable.
 	Eigen::VectorXd residuals = response - Eigen::VectorXd::Constant(response.size(), response.mean());
 	return residuals.dot(residuals) / (residuals.size() - 1);

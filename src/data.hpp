@@ -65,8 +65,10 @@ namespace Datasets {
 			virtual ~Base() {};
 	};
 	
-	class IndividualResponse : public Base {
+	class FocalResponse : public Base {
 		protected:
+			const bool isPerCapita;
+			
 			//The index of the species used as the focal in each observation.
 			std::vector<size_t> focal;
 			
@@ -83,9 +85,10 @@ namespace Datasets {
 			//This is checked by areFocalsFirst().
 			bool areFocalsFirst() const;
 		public:
-			IndividualResponse() = default;
-			IndividualResponse(const std::vector<size_t> &focal, const Eigen::VectorXd &response, const Eigen::MatrixXdRowMajor &design):
+			FocalResponse(bool isPerCapita): isPerCapita(isPerCapita) {};
+			FocalResponse(bool isPerCapita, const std::vector<size_t> &focal, const Eigen::VectorXd &response, const Eigen::MatrixXdRowMajor &design):
 				Base(findNumFocals(focal), design.cols(), design.rows()),
+				isPerCapita(isPerCapita),
 				focal(focal),
 				response(response),
 				design(design)
@@ -106,6 +109,20 @@ namespace Datasets {
 			double guessGrowthRateMagnitude() const override;
 			double guessCompetitionCoefficientMagnitude() const override;
 			double guessErrorVariance() const override;
+	};
+	
+	class IndividualResponse : public FocalResponse {
+		public:
+			IndividualResponse(): FocalResponse(true) {};
+			IndividualResponse(const std::vector<size_t> &focal, const Eigen::VectorXd &response, const Eigen::MatrixXdRowMajor &design):
+				FocalResponse(true, focal, response, design) {};
+	};
+	
+	class PopSizeResponse : public FocalResponse {
+		public:
+			PopSizeResponse(): FocalResponse(false) {};
+			PopSizeResponse(const std::vector<size_t> &focal, const Eigen::VectorXd &response, const Eigen::MatrixXdRowMajor &design):
+				FocalResponse(false, focal, response, design) {};
 	};
 	
 	class TimeSeries : public Base {
