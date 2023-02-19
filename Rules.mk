@@ -23,19 +23,28 @@ cxr_additional_output := $(from_root)/output/cxr/species.csv
 cxr_r_guess := 1000 #The response is per capita seed production. Some of the species involved could produce thousands of seeds, so 1000 is a reasonable guess.
 goldberg_r_guess := 100 #The response is final mass in milligrams. The largest of the species could grow to about 130 mg, so 100 is a reasonable guess.
 
-#process_data_template takes the dataset abbreviation, the dataset type (indv or time), the raw data file(s), additional output files for the processing script, and options to the prior guessing script.
+#process_data_template takes the dataset abbreviation, the dataset type (indv or time), the raw data file(s), additional output files for the processing script.
 define process_data_template =
 $$(call processed_$(2)_data_files,$(1)) $(4) &: $(from_root)/scripts/process-$(1) $(3)
 	./$$< $(3) $$(call processed_$(2)_data_files,$(1)) $(4)
-$$(call priors_file,$(1)): $(from_root)/scripts/guess-priors $$(call processed_$(2)_data_files,$(1))
-	./$$< $$@ $(2) $$(call processed_$(2)_data_files,$(1)) $(5)
 endef
 
-$(eval $(call process_data_template,tcl,indv,$(tcl_raw_data),,))
-$(eval $(call process_data_template,cxr,indv,,$(cxr_additional_output),-r $(cxr_r_guess)))
-$(eval $(call process_data_template,goldberg,indv,$(goldberg_raw_data),,-r $(goldberg_r_guess)))
-$(eval $(call process_data_template,carrara,time,$(carrara_raw_data),,))
-$(eval $(call process_data_template,test,indv,,,))
+$(eval $(call process_data_template,tcl,indv,$(tcl_raw_data),))
+$(eval $(call process_data_template,cxr,indv,,$(cxr_additional_output)))
+$(eval $(call process_data_template,goldberg,indv,$(goldberg_raw_data),))
+$(eval $(call process_data_template,carrara,time,$(carrara_raw_data),))
+$(eval $(call process_data_template,test,indv,,))
+
+#priors_template takes the dataset abbreviation, the dataset type (indv or time), and options to the prior guessing script.
+define priors_template =
+$$(call priors_file,$(1)): $(from_root)/scripts/guess-priors $$(call processed_$(2)_data_files,$(1))
+	./$$< $$@ $(2) $$(call processed_$(2)_data_files,$(1)) $(3)
+endef
+
+$(eval $(call priors_template,tcl,indv,))
+$(eval $(call priors_template,cxr,indv,-r $(cxr_r_guess)))
+$(eval $(call priors_template,goldberg,indv,-r $(goldberg_r_guess)))
+$(eval $(call priors_template,carrara,time,))
 
 #output_template takes the dataset abbreviation, the dataset type (indv or time), output file name, the program file name, the model, the error distribution, and the flags.
 define output_template =
