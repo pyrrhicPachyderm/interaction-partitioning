@@ -62,7 +62,8 @@ template<typename ErrDistT> class ReversibleJumpSolver : public Solver {
 		
 		const GroupingSet &getGroupings() const {return currentGroupings;}
 		const Grouping &getGrouping(GroupingType groupingType) const {return currentGroupings[groupingType];}
-		const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &getParameters() const {return currentParameters;}
+		Parameters getParameters() const {return (Parameters)currentParameters;}
+		double getAdditionalParameter(size_t i) const {return currentParameters.getAdditionalParameter(i);}
 	protected:
 		double getTransModelJumpProbability(GroupingType groupingType, MoveType moveType) const;
 		double getTransModelJumpProbability(GroupingType groupingType, MoveType moveType, bool reverse) const;

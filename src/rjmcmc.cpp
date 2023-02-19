@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 				outputRowGroupings.set(outputIndex, solver.getGrouping(ROW));
 				outputColGroupings.set(outputIndex, solver.getGrouping(COL));
 				outputParameters.set(outputIndex, Parameters(solver.getParameters(), solver.getGroupings()));
-				outputErrorVariance.set(outputIndex, solver.getParameters().getAdditionalParameter(0));
+				outputErrorVariance.set(outputIndex, solver.getAdditionalParameter(0));
 				outputChainID.set(outputIndex, chain);
 				
 				outputIndex++;
