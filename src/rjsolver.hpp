@@ -21,7 +21,7 @@ class ReversibleJumpSolver : public Solver {
 		AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior;
 		
 		GroupingSet initialGroupings; //For resetting to when starting a new chain.
-		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> initialParameters;
+		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> initialParameters = AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, initialGroupings, {{data.guessErrorVariance()}});
 		
 		GroupingSet currentGroupings = initialGroupings;
 		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> currentParameters = initialParameters;
@@ -35,7 +35,7 @@ class ReversibleJumpSolver : public Solver {
 		JumpType proposedJumpType;
 		
 		//Additional useful numbers.
-		double transModelJumpProbabilityMultiplier;
+		double transModelJumpProbabilityMultiplier = findTransModelJumpProbabilityMultiplier();
 		double growthRateApproximatePosteriorVariance = guessInitialGrowthRateApproximatePosteriorVariance();
 		double competitionCoefficientApproximatePosteriorVariance = guessInitialCompetitionCoefficientApproximatePosteriorVariance();
 		AdditionalParametersVector additionalParametersApproximatePosteriorVariance = guessInitialAdditionalParametersApproximatePosteriorVariance();
@@ -47,11 +47,8 @@ class ReversibleJumpSolver : public Solver {
 			hyperprior(hyperprior),
 			parametersPrior(parametersPrior),
 			initialGroupings(groupings),
-			initialParameters(AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, groupings, {{data.guessErrorVariance()}})),
 			isChangingGroupings(isChangingGroupings)
-			{
-				transModelJumpProbabilityMultiplier = findTransModelJumpProbabilityMultiplier();
-			};
+			{};
 		
 		void setSeed(size_t seed) {randomGenerator.seed(seed);};
 		
