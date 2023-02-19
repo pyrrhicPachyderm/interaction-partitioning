@@ -115,6 +115,10 @@ static Distribution<double> readDistributionLine(std::istream &stream) {
 		return readDistribution<Distributions::Uniform>(stream);
 	} else if(distribution == "normal") {
 		return readDistribution<Distributions::Normal>(stream);
+	} else if(distribution == "halfnormal") {
+		return readDistribution<Distributions::HalfNormal>(stream);
+	} else if(distribution == "gamma") {
+		return readDistribution<Distributions::Gamma>(stream);
 	} else if(distribution == "inversegamma") {
 		return readDistribution<Distributions::InverseGamma>(stream);
 	} else {
