@@ -121,6 +121,14 @@ namespace Distributions {
 	
 	class NegativeBinomial2 : public NegativeBinomial {
 		//Parameterised by a mean and dispersion parameter.
+		//NB: This is NOT the same parameterisation as Stan's neg_binomial_2.
+		//https://mc-stan.org/docs/2_20/functions-reference/nbalt.html
+		//Their dispersion parameter is the inverse of ours.
+		//That is, their variance decreases as their dispersion parameter increases.
+		//While our variance increases as their dispersion parameter increases.
+		//Our parameterisation is more amenable to standard priors like the half-normal, see:
+		//https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations#story-when-the-generic-prior-fails-the-case-of-the-negative-binomial
+		//Our dispersion parameter here is similar in meaning to the dispersion parameter for our Gamma2.
 		public:
 			NegativeBinomial2(double mean, double dispersion):
 				NegativeBinomial(1 / dispersion, (1 / dispersion) / (mean + 1 / dispersion)) {};
