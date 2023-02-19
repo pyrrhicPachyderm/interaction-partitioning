@@ -26,7 +26,7 @@ goldberg_r_guess := 100 #The response is final mass in milligrams. The largest o
 #process_data_template takes the dataset abbreviation, the dataset type (indv or time), the raw data file(s), additional output files for the processing script.
 define process_data_template =
 $$(call processed_$(2)_data_files,$(1)) $(4) &: $(from_root)/scripts/process-$(1) $(3)
-	./$$< $(3) $$(call processed_$(2)_data_files,$(1)) $(4)
+	./$$< $(3) $(2) $$(call processed_$(2)_data_files,$(1)) $(4)
 endef
 
 $(eval $(call process_data_template,tcl,indv,$(tcl_raw_data),))

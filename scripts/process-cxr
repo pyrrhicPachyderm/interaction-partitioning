@@ -6,10 +6,11 @@ suppressPackageStartupMessages(library(magrittr))
 #Argument parsing.
 ##################
 
-usage = "%prog SPECIES_DATA_INPUT_FILE FOCAL_OUTPUT_FILE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE SPECIES_DATA_OUTPUT_FILE"
+usage = "%prog SPECIES_DATA_INPUT_FILE FOCAL_OUTPUT_FILE DATA_TYPE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE SPECIES_DATA_OUTPUT_FILE"
 description = "Takes the neigh_list data from the csr package, and reshapes it into the three files desired by the C++ code.
 Namely, the 0-indexed numerical focal species vector, the response variable vector, and the species density design matrix.
-All are output as tab-separated matrices, without column headers, with vectors in the form column vectors."
+All are output as tab-separated matrices, without column headers, with vectors in the form column vectors.
+DATA_TYPE must be 'indv', for individual response data."
 option_list <- list(
 	make_option(
 		c("-m", "--minobs"), dest = "bare_min_obs", type = "integer", default = 2,
@@ -17,14 +18,19 @@ option_list <- list(
 	)
 )
 parser <- OptionParser(usage = usage, description=description, option_list=option_list)
-arguments <- parse_args(parser, positional_arguments = 4)
+arguments <- parse_args(parser, positional_arguments = 5)
 
-focal_outfile <- arguments$args[1]
-response_outfile <- arguments$args[2]
-design_outfile <- arguments$args[3]
-species_data_outfile <- arguments$args[4]
+data_type <- arguments$args[1]
+focal_outfile <- arguments$args[2]
+response_outfile <- arguments$args[3]
+design_outfile <- arguments$args[4]
+species_data_outfile <- arguments$args[5]
 
 attach(arguments$options)
+
+if(data_type != "indv") {
+	stop("Invalid data type requested.")
+}
 
 ###############
 #Load the data.

@@ -6,20 +6,26 @@ suppressPackageStartupMessages(library(magrittr))
 #Parse arguments.
 #################
 
-usage = "%prog [options] INPUT_FILE ID_OUTPUT_FILE TIME_OUTPUT_FILE DENSITY_OUTPUT_FILE"
+usage = "%prog [options] INPUT_FILE DATA_TYPE ID_OUTPUT_FILE TIME_OUTPUT_FILE DENSITY_OUTPUT_FILE"
 description = "Takes the data file provided by Florian, and reshapes it into the three files desired by the C++ code.
 Namely, the experiment ID vector, the time vector, and the species density matrix.
-All are output as tab-separated matrices, without column headers, with vectors in the form column vectors."
+All are output as tab-separated matrices, without column headers, with vectors in the form column vectors.
+DATA_TYPE must be 'time', for time series data."
 option_list <- list()
 parser <- OptionParser(usage = usage, description=description, option_list=option_list)
-arguments <- parse_args(parser, positional_arguments = 4)
+arguments <- parse_args(parser, positional_arguments = 5)
 
 infile <- arguments$args[1]
-id_outfile <- arguments$args[2]
-time_outfile <- arguments$args[3]
-density_outfile <- arguments$args[4]
+data_type <- arguments$args[2]
+id_outfile <- arguments$args[3]
+time_outfile <- arguments$args[4]
+density_outfile <- arguments$args[5]
 
 attach(arguments$options)
+
+if(data_type != "time") {
+	stop("Invalid data type requested.")
+}
 
 #########
 #Read in.

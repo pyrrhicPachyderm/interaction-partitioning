@@ -6,19 +6,25 @@ suppressPackageStartupMessages(library(magrittr))
 #Argument parsing.
 ##################
 
-usage = "%prog FOCAL_OUTPUT_FILE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE"
+usage = "%prog DATA_TYPE FOCAL_OUTPUT_FILE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE"
 description = "Generates test data with known parameters, and outputs it in the three files desired by the C++ code.
 Namely, the 0-indexed numerical focal species vector, the response variable vector, and the species density design matrix.
-All are output as tab-separated matrices, without column headers, with vectors in the form column vectors."
+All are output as tab-separated matrices, without column headers, with vectors in the form column vectors.
+DATA_TYPE must be 'indv', for individual response data."
 option_list <- list()
 parser <- OptionParser(usage = usage, description=description, option_list=option_list)
-arguments <- parse_args(parser, positional_arguments = 3)
+arguments <- parse_args(parser, positional_arguments = 4)
 
-focal_outfile <- arguments$args[1]
-response_outfile <- arguments$args[2]
-design_outfile <- arguments$args[3]
+data_type <- arguments$args[1]
+focal_outfile <- arguments$args[2]
+response_outfile <- arguments$args[3]
+design_outfile <- arguments$args[4]
 
 attach(arguments$options)
+
+if(data_type != "indv") {
+	stop("Invalid data type requested.")
+}
 
 ################################
 #Setting known parameter values.
