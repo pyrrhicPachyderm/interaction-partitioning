@@ -75,22 +75,22 @@ Input::Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts
 		exit(1);
 	}
 	
-	outputFile = argv[optind];
+	outputFile = argv[optind++];
 	
-	std::string dataType(argv[optind+1]);
+	std::string dataType(argv[optind++]);
 	if(dataType == "indv") {
-		std::vector<size_t> focal = readIndexVector(argv[optind+2]);
-		Eigen::VectorXd response = readDoubleVector(argv[optind+3]);
-		Eigen::MatrixXdRowMajor design = readDoubleMatrix(argv[optind+4]);
+		std::vector<size_t> focal = readIndexVector(argv[optind++]);
+		Eigen::VectorXd response = readDoubleVector(argv[optind++]);
+		Eigen::MatrixXdRowMajor design = readDoubleMatrix(argv[optind++]);
 		data = Data(new Datasets::IndividualResponse(
 			focal,
 			response,
 			design
 		));
 	} else if(dataType == "time") {
-		std::vector<size_t> id = readIndexVector(argv[optind+2]);
-		Eigen::VectorXd time = readDoubleVector(argv[optind+3]);
-		Eigen::MatrixXdRowMajor density = readDoubleMatrix(argv[optind+4]);
+		std::vector<size_t> id = readIndexVector(argv[optind++]);
+		Eigen::VectorXd time = readDoubleVector(argv[optind++]);
+		Eigen::MatrixXdRowMajor density = readDoubleMatrix(argv[optind++]);
 		data = Data(new Datasets::TimeSeries(
 			id,
 			time,
@@ -103,7 +103,7 @@ Input::Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts
 	}
 	
 	if(needsPriors) {
-		priors = readDistributionList(argv[optind+5]);
+		priors = readDistributionList(argv[optind++]);
 	}
 }
 
