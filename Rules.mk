@@ -43,9 +43,9 @@ $$(call priors_file,$(1)): $(from_root)/scripts/guess-priors $$(call processed_$
 	./$$< $$@ $(3) $(2) $$(call processed_$(2)_data_files,$(1)) $(4)
 endef
 
-$(eval $(call priors_template,tcl,indv,normal,))
-$(eval $(call priors_template,cxr,indv,normal,-r $(cxr_r_guess)))
-$(eval $(call priors_template,goldberg,indv,normal,-r $(goldberg_r_guess)))
+$(eval $(call priors_template,tcl,pop,negativebinomial,))
+$(eval $(call priors_template,cxr,indv,negativebinomial,-r $(cxr_r_guess)))
+$(eval $(call priors_template,goldberg,indv,gamma,-r $(goldberg_r_guess)))
 $(eval $(call priors_template,carrara,time,normal,))
 
 #output_template takes the dataset abbreviation, the dataset type (e.g. indv, time), output file name, the program file name, the model, the error distribution, and the flags.
@@ -56,9 +56,9 @@ endef
 
 $(eval $(call output_template,test,indv,brute,brute,lotkavolterra,normal,))
 $(eval $(call output_template,tcl,indv,brute,brute,lotkavolterra,normal,))
-$(eval $(call output_template,tcl,indv,rjmcmc,rjmcmc,lotkavolterra,normal,-g -s1000000 -t10))
-$(eval $(call output_template,cxr,indv,rjmcmc,rjmcmc,lotkavolterra,normal,-g -s100000000 -t1000))
-$(eval $(call output_template,goldberg,indv,rjmcmc,rjmcmc,lotkavolterra,normal,-g -s1000000 -t10))
+$(eval $(call output_template,tcl,pop,rjmcmc,rjmcmc,bevertonholt,negativebinomial,-g -s1000000 -t10))
+$(eval $(call output_template,cxr,indv,rjmcmc,rjmcmc,bevertonholt,negativebinomial,-g -s100000000 -t1000))
+$(eval $(call output_template,goldberg,indv,rjmcmc,rjmcmc,bevertonholt,gamma,-g -s1000000 -t10))
 $(eval $(call output_template,carrara,time,rjmcmc,rjmcmc,lotkavolterra,normal,-g -d15))
 
 define article_analysis_template =
