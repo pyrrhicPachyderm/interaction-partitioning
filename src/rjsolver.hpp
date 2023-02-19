@@ -25,6 +25,10 @@ class ReversibleJumpSolverBase : public Solver {
 		virtual const Grouping &getGrouping(GroupingType groupingType) const = 0;
 		virtual Parameters getParameters() const = 0;
 		virtual double getAdditionalParameter(size_t i) const  = 0;
+		
+		//For parallelisation purposes, we sometimes need copies of the entire solver.
+		//We need this as a virtual function, so it can correctly copy each specialisation of the solver.
+		virtual ReversibleJumpSolverBase *getCopy() const = 0;
 };
 
 template<typename ErrDistT> class ReversibleJumpSolver : public ReversibleJumpSolverBase {
@@ -136,6 +140,8 @@ template<typename ErrDistT> class ReversibleJumpSolver : public ReversibleJumpSo
 		void dialIn(size_t jumpsPerDial, size_t numDials) override;
 		
 		void resetChain() override;
+		
+		ReversibleJumpSolverBase *getCopy() const {return new ReversibleJumpSolver<ErrDistT>(*this);};
 };
 
 #endif
