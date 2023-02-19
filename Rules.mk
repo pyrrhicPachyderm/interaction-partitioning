@@ -37,18 +37,18 @@ $(eval $(call process_data_template,goldberg,indv,$(goldberg_raw_data),,-r $(gol
 $(eval $(call process_data_template,carrara,time,$(carrara_raw_data),,))
 $(eval $(call process_data_template,test,indv,,,))
 
-#output_template takes the dataset abbreviation, the dataset type (indv or time), output file name, the program file name, the error distribution, and the flags.
+#output_template takes the dataset abbreviation, the dataset type (indv or time), output file name, the program file name, the model, the error distribution, and the flags.
 define output_template =
 $(from_root)/output/$(1)/$(3).data: $(from_root)/src/$(4).out $$(call processed_$(2)_data_files,$(1)) $$(if $$(findstring rjmcmc,$(4)),$$(call priors_file,$(1)))
-	./$$< $$@ $(5) $(2) $$(filter-out $$<,$$^) $(6)
+	./$$< $$@ $(5) $(6) $(2) $$(filter-out $$<,$$^) $(7)
 endef
 
-$(eval $(call output_template,test,indv,brute,brute,normal,))
-$(eval $(call output_template,tcl,indv,brute,brute,normal,))
-$(eval $(call output_template,tcl,indv,rjmcmc,rjmcmc,normal,-g -s1000000 -t10))
-$(eval $(call output_template,cxr,indv,rjmcmc,rjmcmc,normal,-g -s100000000 -t1000))
-$(eval $(call output_template,goldberg,indv,rjmcmc,rjmcmc,normal,-g -s1000000 -t10))
-$(eval $(call output_template,carrara,time,rjmcmc,rjmcmc,normal,-g -d15))
+$(eval $(call output_template,test,indv,brute,brute,lotkavolterra,normal,))
+$(eval $(call output_template,tcl,indv,brute,brute,lotkavolterra,normal,))
+$(eval $(call output_template,tcl,indv,rjmcmc,rjmcmc,lotkavolterra,normal,-g -s1000000 -t10))
+$(eval $(call output_template,cxr,indv,rjmcmc,rjmcmc,lotkavolterra,normal,-g -s100000000 -t1000))
+$(eval $(call output_template,goldberg,indv,rjmcmc,rjmcmc,lotkavolterra,normal,-g -s1000000 -t10))
+$(eval $(call output_template,carrara,time,rjmcmc,rjmcmc,lotkavolterra,normal,-g -d15))
 
 define article_analysis_template =
 $(from_root)/output/article-data-$(1).rda: $(from_root)/article-analysis-$(1) $(shell grep -oE '"/[^"]*\.((R)|(csv)|(data))"' $(from_root)/article-analysis-$(1) | sed 's/"\(.*\)"/$(from_root)\1/' | tr '\n' ' ')

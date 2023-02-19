@@ -4,7 +4,7 @@
 #include "utils/array.hpp"
 #include "input.hpp"
 
-#define NUM_MANDATORY_ARGS 6
+#define NUM_MANDATORY_ARGS 7
 #define NUM_UNAUGMENTED_PRIORS 2
 
 const static std::string DEFAULT_OPTS_STRING = "p";
@@ -13,9 +13,10 @@ const static std::string DEFAULT_OPTS_STRING = "p";
 static void printUsage(int argc, const char **argv, bool needsPriors) {
 	//Making of use of concatenated string literals in the following:
 	fprintf(stderr, "Usage:\n"
-		"\t%s [options] OUTPUT_FILE ERROR_DISTRIBUTION indv FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE%s\n"
-		"\t%s [options] OUTPUT_FILE ERROR_DISTRIBUTION time ID_VECTOR_FILE TIME_VECTOR_FILE DENSITY_MATRIX_FILE%s\n"
+		"\t%s [options] OUTPUT_FILE MODEL ERROR_DISTRIBUTION indv FOCAL_VECTOR_FILE RESPONSE_VECTOR_FILE DESIGN_MATRIX_FILE%s\n"
+		"\t%s [options] OUTPUT_FILE MODEL ERROR_DISTRIBUTION time ID_VECTOR_FILE TIME_VECTOR_FILE DENSITY_MATRIX_FILE%s\n"
 		"\n"
+		"\tThe model should be, e.g. LotkaVolterra, BevertonHolt. Case insensitive.\n"
 		"\tThe error distribution should be, e.g. Normal, Gamma. Case insensitive. Maximum Likelihood methods only support Normal.\n"
 		"\tThe argument 'indv' or 'time' distinguishes between individual response data and time series data.\n"
 		"\tAll vector and matrix files should be whitespace-separated tables.\n"
@@ -44,6 +45,17 @@ static void printUsage(int argc, const char **argv, bool needsPriors) {
 			"\tEach line begins with the name of a distribution (case-insensitive, without spaces), then has a whitespace separated list of parameters.\n"
 	);
 	//TODO: Take boolOpts and some sort of boolOptsHelpStrings as an argument, and include those as well.
+}
+
+static Model matchModelString(std::string modelString) {
+	if(modelString == "lotkavolterra") {
+		return Model(new Models::LotkaVolterra());
+	} else if (modelString == "bevertonholt") {
+		return Model(new Models::BevertonHolt());
+	} else {
+		fprintf(stderr, "Unrecognised model.\n");
+		exit(1);
+	}
 }
 
 Input::Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults):
@@ -78,6 +90,7 @@ Input::Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts
 	}
 	
 	outputFile = argv[optind++];
+	model = matchModelString(argv[optind++]);
 	errorDistribution = argv[optind++];
 	strToLowerCase(errorDistribution);
 	

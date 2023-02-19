@@ -9,8 +9,7 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 	
-	Model model = Model(new Models::LotkaVolterra());
-	MaximumLikelihoodSolver solver = MaximumLikelihoodSolver(model, input.getData());
+	MaximumLikelihoodSolver solver = MaximumLikelihoodSolver(input.getModel(), input.getData());
 	solver.updateGrouping(GROWTH, &Grouping::separate);
 	
 	OutputColumn<Grouping> outputRowGroupings("row_group");

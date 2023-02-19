@@ -34,19 +34,18 @@ int main(int argc, char **argv) {
 		Hyperprior(new Hyperpriors::AIC()) :
 		Hyperprior(new Hyperpriors::Flat());
 	
-	Model model = Model(new Models::LotkaVolterra());
 	std::string errorDistribution = input.getErrorDistribution();
 	
 	ReversibleJumpSolverBase *masterSolver = NULL;
 	if(errorDistribution == "normal") {
 		auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::Normal>::NUM_ADDITIONAL_PARAMETERS>();
-		masterSolver = new ReversibleJumpSolver<Distributions::Normal>(model, input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
+		masterSolver = new ReversibleJumpSolver<Distributions::Normal>(input.getModel(), input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
 	} else if(errorDistribution == "gamma") {
 		auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::Gamma2>::NUM_ADDITIONAL_PARAMETERS>();
-		masterSolver = new ReversibleJumpSolver<Distributions::Gamma2>(model, input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
+		masterSolver = new ReversibleJumpSolver<Distributions::Gamma2>(input.getModel(), input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
 	} else if(errorDistribution == "negativebinomial") {
 		auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>::NUM_ADDITIONAL_PARAMETERS>();
-		masterSolver = new ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>(model, input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
+		masterSolver = new ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>(input.getModel(), input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
 	} else {
 		fprintf(stderr, "Unrecognised error distribution.\n");
 		exit(1);

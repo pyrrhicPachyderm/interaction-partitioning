@@ -13,6 +13,7 @@ class Input {
 		std::vector<size_t> intOptResults;
 		
 		Data data;
+		Model model = Model(NULL); //Is set in the body of the constructor, so it needs a default until then.
 		std::string outputFile;
 		std::string errorDistribution;
 		std::vector<Distribution<double>> priors;
@@ -25,6 +26,7 @@ class Input {
 		Input(int argc, char** argv, bool needsPriors): Input(argc, argv, needsPriors, {}) {};
 		
 		const Data &getData() const {return data;};
+		const Model &getModel() const {return model;};
 		const std::string &getOutputFile() const {return outputFile;};
 		const std::string &getErrorDistribution() const {return errorDistribution;};
 		template<size_t nAug> AugmentedParametersPrior<nAug> getPriors() const;
