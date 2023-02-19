@@ -6,6 +6,7 @@
 #include "grouping.hpp"
 #include "parameters.hpp"
 #include "distribution.hpp"
+#include "utils/string.hpp"
 #include "utils/refl.hpp"
 #include "io.hpp"
 
@@ -108,8 +109,7 @@ static Distribution<double> readDistributionLine(std::istream &stream) {
 	std::string distribution;
 	stream >> distribution;
 	
-	//Convert the distribution to lowercase.
-	std::transform(distribution.begin(), distribution.end(), distribution.begin(), [](unsigned char c){return std::tolower(c);});
+	strToLowerCase(distribution);
 	
 	if(distribution == "uniform") {
 		return readDistribution<Distributions::Uniform>(stream);
