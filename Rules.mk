@@ -8,6 +8,9 @@ $(from_root)-clean:
 	@for i in $(from_root)/output/*; do if [ -f "$$i" ]; then $(RM) "$$i"; fi; done
 .PHONY: $(from_root)-clean
 
+#Note that this if for GNU time (/usr/bin/time) not bash built-in time.
+time_format := "real\t%e\nuser\t%U\nsys\t%S"
+
 #'indv' for individual response, 'pop' for population size response, or 'time' for time series.
 processed_indv_data_files = $(patsubst %,$(from_root)/output/$(1)/%,indv-focal-vector.data indv-response-vector.data indv-design-matrix.data)
 processed_pop_data_files = $(patsubst %,$(from_root)/output/$(1)/%,pop-focal-vector.data pop-response-vector.data pop-design-matrix.data)
@@ -50,8 +53,8 @@ $(eval $(call priors_template,carrara,time,normal,))
 
 #output_template takes the dataset abbreviation, the dataset type (e.g. indv, time), output file name, the program file name, the model, the error distribution, and the flags.
 define output_template =
-$(from_root)/output/$(1)/$(3).data: $(from_root)/src/$(4).out $$(call processed_$(2)_data_files,$(1)) $$(if $$(findstring rjmcmc,$(4)),$$(call priors_file,$(1)))
-	./$$< $$@ $(5) $(6) $(2) $$(filter-out $$<,$$^) $(7)
+$(from_root)/output/$(1)/$(3).data $(from_root)/output/$(1)/$(3)-runtime.data &: $(from_root)/src/$(4).out $$(call processed_$(2)_data_files,$(1)) $$(if $$(findstring rjmcmc,$(4)),$$(call priors_file,$(1)))
+	$(TIME) -f $(time_format) -o $(from_root)/output/$(1)/$(3)-runtime.data ./$$< $(from_root)/output/$(1)/$(3).data $(5) $(6) $(2) $$(filter-out $$<,$$^) $(7)
 endef
 
 $(eval $(call output_template,test,indv,brute,brute,lotkavolterra,normal,))
