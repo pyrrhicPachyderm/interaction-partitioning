@@ -7,7 +7,7 @@ suppressPackageStartupMessages(library(magrittr))
 ##################
 
 usage = "%prog SPECIES_DATA_INPUT_FILE FOCAL_OUTPUT_FILE DATA_TYPE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE SPECIES_DATA_OUTPUT_FILE"
-description = "Takes the neigh_list data from the csr package, and reshapes it into the three files desired by the C++ code.
+description = "Takes the neigh_list data from the cxr package, and reshapes it into the three files desired by the C++ code.
 Namely, the 0-indexed numerical focal species vector, the response variable vector, and the species density design matrix.
 All are output as tab-separated matrices, without column headers, with vectors in the form column vectors.
 DATA_TYPE must be 'indv', for individual response data."
