@@ -21,7 +21,7 @@ tcl_raw_data := $(from_root)/TCL_DrosMCT/Data/d_both.csv
 goldberg_raw_data := $(from_root)/data/goldberg/species.csv $(from_root)/data/goldberg/figure2
 carrara_raw_data := $(from_root)/data/carrara/data.xls
 
-cxr_additional_output := $(from_root)/output/cxr/species.csv
+cxr_additional_output := $(from_root)/output/cxr/species.csv $(from_root)/output/cxr/min-obs.data
 
 #tcl, test, and carrara use standard per capita fecundity response or time series data, so the default 1 (doubling each generation/day) is a reasonable guess.
 cxr_r_guess := 1000 #The response is per capita seed production. Some of the species involved could produce thousands of seeds, so 1000 is a reasonable guess.

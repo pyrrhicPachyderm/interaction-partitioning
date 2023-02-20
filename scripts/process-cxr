@@ -6,7 +6,7 @@ suppressPackageStartupMessages(library(magrittr))
 #Argument parsing.
 ##################
 
-usage = "%prog SPECIES_DATA_INPUT_FILE FOCAL_OUTPUT_FILE DATA_TYPE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE SPECIES_DATA_OUTPUT_FILE"
+usage = "%prog SPECIES_DATA_INPUT_FILE FOCAL_OUTPUT_FILE DATA_TYPE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE SPECIES_DATA_OUTPUT_FILE MIN_OBS_OUTPUT_FILE"
 description = "Takes the neigh_list data from the cxr package, and reshapes it into the three files desired by the C++ code.
 Namely, the 0-indexed numerical focal species vector, the response variable vector, and the species density design matrix.
 All are output as tab-separated matrices, without column headers, with vectors in the form column vectors.
@@ -18,13 +18,14 @@ option_list <- list(
 	)
 )
 parser <- OptionParser(usage = usage, description=description, option_list=option_list)
-arguments <- parse_args(parser, positional_arguments = 5)
+arguments <- parse_args(parser, positional_arguments = 6)
 
 data_type <- arguments$args[1]
 focal_outfile <- arguments$args[2]
 response_outfile <- arguments$args[3]
 design_outfile <- arguments$args[4]
 species_data_outfile <- arguments$args[5]
+min_obs_outfile <- arguments$args[6]
 
 attach(arguments$options)
 
@@ -140,3 +141,4 @@ print_table(response_output, response_outfile)
 print_table(design_output, design_outfile)
 
 write.csv(species_data, species_data_outfile, row.names = FALSE)
+print_table(data.frame(min_obs), min_obs_outfile) #Outputs the single number to a file by itself.

@@ -70,6 +70,8 @@ output_orders <- list(
 	goldberg = c(1,5,3,6,7,2,4)
 )
 
+cxr_min_obs <- read.table(paste0(this_dir, "/output/cxr/min-obs.data"))[[1]]
+
 #########
 #Figures.
 #########
