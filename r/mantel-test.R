@@ -1,4 +1,4 @@
-#ape's implementation of the Mantel test doesn't give the correlation; it gies an unnormalised test statistic.
+#ape's implementation of the Mantel test doesn't give the correlation; it gives an unnormalised test statistic.
 #vegan's implementation doesn't give a p value; it gives a significance value with no control over the tail of the test.
 #So here I've rolled my own implementation.
 
