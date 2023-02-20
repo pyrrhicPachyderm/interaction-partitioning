@@ -32,8 +32,7 @@ species_datas <- lapply(
 	list(
 		tcl = "/data/tcl/species.csv",
 		cxr = "/output/cxr/species.csv",
-		goldberg = "/data/goldberg/species.csv",
-		carrara = "/data/carrara/species.csv"
+		goldberg = "/data/goldberg/species.csv"
 	),
 	function(file) {
 		read.csv(paste0(this_dir, file), comment.char="#")
@@ -47,8 +46,7 @@ datas <- mapply(
 	list(
 		tcl = "/output/tcl/rjmcmc.data",
 		cxr = "/output/cxr/rjmcmc.data",
-		goldberg = "/output/goldberg/rjmcmc.data",
-		carrara = "/output/carrara/rjmcmc.data"
+		goldberg = "/output/goldberg/rjmcmc.data"
 	),
 	species_datas
 )
@@ -56,8 +54,7 @@ datas <- mapply(
 output_orders <- list(
 	tcl = c(4,3,1,2,6,5),
 	cxr = c(8,7,1,2,3,6,5,4,9),
-	goldberg = c(1,5,3,6,7,2,4),
-	carrara = 1:11 #TODO
+	goldberg = c(1,5,3,6,7,2,4)
 )
 
 #########
