@@ -51,6 +51,19 @@ datas <- mapply(
 	species_datas
 )
 
+input_datas <- lapply(
+	list(
+		tcl = c("/output/tcl/pop-focal-vector.data", "/output/tcl/pop-response-vector.data", "/output/tcl/pop-design-matrix.data"),
+		cxr = c("/output/cxr/indv-focal-vector.data", "/output/cxr/indv-response-vector.data", "/output/cxr/indv-design-matrix.data"),
+		goldberg = c("/output/goldberg/indv-focal-vector.data", "/output/goldberg/indv-response-vector.data", "/output/goldberg/indv-design-matrix.data")
+	),
+	function(files) {
+		data_type <- sub("^([^-]+)-.*", "\\1", basename(files[1]))
+		files <- paste0(this_dir, files)
+		InputData$new(data_type, files[1], files[2], files[3])
+	}
+)
+
 output_orders <- list(
 	tcl = c(4,3,1,2,6,5),
 	cxr = c(8,7,1,2,3,6,5,4,9),
