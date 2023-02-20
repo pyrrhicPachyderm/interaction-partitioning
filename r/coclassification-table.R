@@ -1,6 +1,7 @@
 #A function for printing a coclassification matrix as a coloured table using knitr.
 #Expects a coclassification matrix (with numeric entries in [0,1]), with row and column names.
 #Uses a pgfplots colour map and xcolor colour name for the diagonal.
+#Depends on strings.R.
 
 library(magrittr)
 
@@ -102,13 +103,14 @@ weighted_coclassification_kable <- function(mat, colourmap="hot", diagonal_colou
 	})
 	
 	if(has_names) {
+		#LaTeXify the names.
+		row_species_names <- as_binomial_name(rownames(mat))
+		col_species_names <- as_binomial_name(colnames(mat))
 		#\rotatebox makes things wider, so we enclose in a fixed width \makebox.
-		colnames(string_mat) <- paste0("\\makebox[1em][l]{\\rotatebox{",header_angle,"}{\\emph{",colnames(mat),"}}}")
+		colnames(string_mat) <- paste0("\\makebox[1em][l]{\\rotatebox{",header_angle,"}{",col_species_names,"}}")
 		#We don't set row names for mat, because we want the species labels on the right instead of the left.
 		#We cbind instead.
-		string_mat <- cbind(string_mat, matrix(
-			paste0("\\emph{",rownames(mat),"}"),
-		ncol=1))
+		string_mat <- cbind(string_mat, matrix(row_species_names, ncol=1))
 	}
 	
 	align <- if(has_names) c(rep("c",ncol(mat)),"l") else rep("c",ncol(mat))
