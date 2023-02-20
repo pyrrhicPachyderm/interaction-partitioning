@@ -27,6 +27,8 @@ Data <- R6::R6Class("Data",
 		num_row_species = NULL,
 		num_col_species = NULL,
 		species_names = NULL,
+		row_species_names = NULL,
+		col_species_names = NULL,
 		growth_groupings = NULL, #A data frame of growth groupings, named by the species names.
 		row_groupings = NULL, #As above, for row groupings.
 		col_groupings = NULL, #As above, for col groupings.
@@ -46,9 +48,11 @@ Data <- R6::R6Class("Data",
 			self$col_groupings <- data_table[grep("col_group", names(data_table))] + 1
 			self$num_row_species <- ncol(self$row_groupings)
 			self$num_col_species <- ncol(self$col_groupings)
-			if(ncol(self$growth_groupings) > 0) names(self$growth_groupings) <- species_names[1:self$num_row_species]
-			names(self$row_groupings) <- species_names[1:self$num_row_species]
-			names(self$col_groupings) <- species_names[1:self$num_col_species]
+			self$row_species_names <- species_names[1:self$num_row_species]
+			self$col_species_names <- species_names[1:self$num_col_species]
+			if(ncol(self$growth_groupings) > 0) names(self$growth_groupings) <- self$row_species_names
+			names(self$row_groupings) <- self$row_species_names
+			names(self$col_groupings) <- self$col_species_names
 			self$parameters <- data_table[grep("parameters", names(data_table))]
 			names(self$parameters) <- sub("parameters_", "", names(self$parameters))
 			self$statistics <- data_table[grep("_[0-9]*$|parameters|chain_id", names(data_table), invert=TRUE)]
