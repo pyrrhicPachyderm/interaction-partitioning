@@ -56,7 +56,7 @@ RJMCMCData <- R6::R6Class("RJMCMCData",
 		},
 		
 		rhats = function() {
-			lapply(self$parameters, get_rhat, self$chain_id)
+			sapply(self$parameters, get_rhat, self$chain_id)
 		}
 	)
 )
