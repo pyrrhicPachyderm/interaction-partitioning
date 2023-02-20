@@ -3,6 +3,7 @@
 suppressPackageStartupMessages(library(optparse))
 
 this_dir <- dirname(this.path::this.path())
+source(paste0(this_dir, "/r/strings.R"))
 source(paste0(this_dir, "/r/parameters.R"))
 source(paste0(this_dir, "/r/input-data.R"))
 source(paste0(this_dir, "/r/post-process.R"))
