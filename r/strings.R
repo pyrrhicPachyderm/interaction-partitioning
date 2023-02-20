@@ -17,3 +17,29 @@ as_binomial_name <- function(names) {
 	names <- sub("^([^\\\\ ]+ [^\\\\ ]+)$", paste0(italics_command, "{\\1}"), names)
 	return(names)
 }
+
+#Converts a vector of strings to a single string.
+#Concatenates the strings, separating them with a comma and space,
+#except the last two, which are separated with "and".
+#If end_punct is set, it is appended to the end, unless the final character is already equal to end_punct.
+#This is useful if the list might end with "sp.", say.
+#Terminating "}" characters will be ignored when deciding whether to append end_punct.
+as_english_list <- function(strings, end_punct = "", oxford_comma = TRUE) {
+	if(length(strings) == 1) { #Handle the degenerate edge case.
+		result <- strings
+	} else {
+		result <- paste0(
+			paste(strings[1:(length(strings)-1)], collapse = ", "),
+			ifelse(oxford_comma, ",", ""),
+			" and ",
+			strings[length(strings)]
+		)
+	}
+	#We can't directly use grep for end_punct, as it'll probably be ".", which is a special character for grep.
+	#Instead, we sub() any terminating "}" from the end, then cut a substring of the correct length, and check for equality.
+	trimmed_result <- sub("}*$", "", result)
+	if(substr(trimmed_result, nchar(trimmed_result) - nchar(end_punct) + 1, nchar(trimmed_result)) != end_punct) {
+		result <- paste0(result, end_punct)
+	}
+	return(result)
+}
