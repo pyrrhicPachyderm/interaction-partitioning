@@ -24,9 +24,9 @@ outfile <- arguments$args[1]
 
 attach(arguments$options)
 
-##########
-#Analysis.
-##########
+#########
+#Read in.
+#########
 
 species_datas <- lapply(
 	list(
