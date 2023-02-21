@@ -45,7 +45,7 @@ priors <- data.frame(
 	row.names = c("growth_rate", "competition_coefficient", "error_variance", "overdispersion"),
 	type = c("Normal", "Normal", "InverseGamma", "HalfNormal"),
 	p1 = c(growth_rate_magnitude, 0, 1, 1),
-	p2 = c(growth_rate_magnitude^2, NA, NA, NA)
+	p2 = c(growth_rate_magnitude^2, 1, NA, NA)
 )
 
 ####################
@@ -60,15 +60,6 @@ if(data_type == "indv" || data_type == "pop") {
 	focal <- read.table(infiles[1])[[1]]
 	#Do not read the response; we're not allowed to use this for the priors.
 	design <- read.table(infiles[3])
-	
-	#########################
-	#Competition coefficient.
-	#########################
-	
-	#To find the approximate magnitude of the competition coefficients, we will assume that with all species present at average density, growth halts.
-	#This gives us 1, divided by the average density, divided by the number of species.
-	#We square this to give us the variance.
-	priors["competition_coefficient","p2"] <- (1 / mean(as.matrix(design)) / ncol(design))^2
 	
 	################
 	#Error variance.
@@ -108,13 +99,6 @@ if(data_type == "indv" || data_type == "pop") {
 	id <- id[!drop]
 	time <- time[!drop]
 	density <- density[!drop,]
-	
-	#########################
-	#Competition coefficient.
-	#########################
-	
-	#As for individual response data.
-	priors["competition_coefficient","p2"] <- (1 / mean(as.matrix(density)) / ncol(density))^2
 	
 	################
 	#Error variance.
