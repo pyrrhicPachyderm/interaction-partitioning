@@ -6,6 +6,7 @@ this_dir <- dirname(this.path::this.path())
 source(paste0(this_dir, "/r/strings.R"))
 source(paste0(this_dir, "/r/parameters.R"))
 source(paste0(this_dir, "/r/input-data.R"))
+source(paste0(this_dir, "/r/priors.R"))
 source(paste0(this_dir, "/r/post-process.R"))
 source(paste0(this_dir, "/r/rjmcmc-post-process.R"))
 source(paste0(this_dir, "/r/coclassification-table.R"))
@@ -66,6 +67,17 @@ input_datas <- lapply(
 		data_type <- sub("^([^-]+)-.*", "\\1", basename(files[1]))
 		files <- paste0(this_dir, files)
 		InputData$new(data_type, files[1], files[2], files[3])
+	}
+)
+
+priors <- lapply(
+	list(
+		tcl = "/output/tcl/priors.data",
+		cxr = "/output/cxr/priors.data",
+		goldberg = "/output/goldberg/priors.data"
+	),
+	function(file) {
+		Priors$new(paste0(this_dir, file))
 	}
 )
 
