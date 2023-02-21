@@ -73,11 +73,6 @@ endef
 $(eval $(call HERE_article_analysis_template,1))
 $(eval $(call HERE_article_analysis_template,2))
 
-#Test data analysis.
-
-brutetest: $(from_root)/output/test/brute.data
-.PHONY: brutetest
-
 #Submodules
 $(from_root)/TCL_DrosMCT/%:
 	git -C "$(from_root)" submodule update --init
