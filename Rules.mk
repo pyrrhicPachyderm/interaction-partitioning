@@ -66,7 +66,7 @@ $(eval $(call HERE_output_template,goldberg,indv,rjmcmc,rjmcmc,bevertonholt,gamm
 $(eval $(call HERE_output_template,carrara,time,rjmcmc,rjmcmc,lotkavolterra,normal,-g -d15))
 
 define HERE_article_analysis_template =
-$(from_root)/output/article-data-$(1).rda: $(from_root)/article-analysis-$(1) $(shell grep -oE '"/[^"]*\.((R)|(csv)|(data))"' $(from_root)/article-analysis-$(1) | sed 's/"\(.*\)"/$(from_root)\1/' | tr '\n' ' ')
+$(from_root)/output/article-data-$(1).rda: $(from_root)/article-analysis-$(1) $(shell grep -oE '"/[^"]*\.((R)|(csv)|(data))"' $(from_root)/article-analysis-$(1) | sed 's@"\(.*\)"@$(from_root)\1@' | tr '\n' ' ')
 	./$$< $$@
 endef
 
