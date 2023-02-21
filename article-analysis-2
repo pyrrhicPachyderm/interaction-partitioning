@@ -73,6 +73,19 @@ output_orders <- list(
 #The minimum number of times we required a selected species to be observed as the focal in competition with each other selected species.
 cxr_min_obs <- read.table(paste0(this_dir, "/output/cxr/min-obs.data"))[[1]]
 
+########################
+#Collect assorted stats.
+########################
+
+#Get the number of chains for each model, and the number of iterations we thinned to.
+#Ensure this is the same for all models, as we'll mention it in the paper as though it were.
+num_chains <- sapply(datas, function(data){length(data$chain_lengths)})
+chain_length <- unlist(lapply(datas, function(data){data$chain_lengths}))
+stopifnot(all(num_chains == num_chains[1]))
+stopifnot(all(chain_length == chain_length[1]))
+num_chains <- num_chains[1]
+chain_length <- chain_length[1]
+
 #########
 #Figures.
 #########
