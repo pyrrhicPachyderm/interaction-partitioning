@@ -92,7 +92,7 @@ $(from_root)/TCL_DrosMCT/%:
 CC := g++
 CEXT := cpp
 CFLAGS += -std=c++20 -Wall -Wpedantic -Wextra -Wno-unused-parameter -Wno-non-template-friend -O3 -fopenmp -I/usr/include/eigen3
-CLIBS := -lm
+CLIBS += -lm
 
 #These two should work for most projects, but keep an eye on them.
 CDIRS := $(shell find '$(from_root)' -name '.git' -prune -o -name '*.$(CEXT)' -printf '%h\n' | sort -u) #All directories containing .c/cpp files, not searching .git
