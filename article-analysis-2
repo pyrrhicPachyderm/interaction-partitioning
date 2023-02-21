@@ -16,7 +16,12 @@ source(paste0(this_dir, "/r/coclassification-table.R"))
 
 usage = "%prog [options] OUTPUT_FILE"
 description = "Performs all the heavy analysis for the article and supplementary rnw files, and saves it as a .rda file."
-option_list <- list()
+option_list <- list(
+	make_option(
+		c("-r", "--max-rhat"), dest = "max_rhat", type = "double", default = 1.1,
+		help = "The maximum allowed Gelman-Rubin statistic (rhat) of any parameter in any analysis; this script will intentionally fail if any exceed it [default %default]."
+	)
+)
 parser <- OptionParser(usage = usage, description=description, option_list=option_list)
 arguments <- parse_args(parser, positional_arguments = 1)
 
@@ -80,6 +85,11 @@ cxr_min_obs <- read.table(paste0(this_dir, "/output/cxr/min-obs.data"))[[1]]
 #A list of assumptions, and whether they're met.
 #The article using this data should call stopifnot(meets_assumptions).
 meets_assumptions <- c()
+
+#Check that all Gelman-Rubin statastics are low enough.
+meets_assumptions <- c(meets_assumptions, rhats_below_threshold =
+	all(unlist(lapply(datas, function(data){data$rhats})) < max_rhat)
+)
 
 #Get the number of chains for each model, and the number of iterations we thinned to.
 #Ensure this is the same for all models, as we'll mention it in the paper as though it were.
