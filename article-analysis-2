@@ -70,6 +70,7 @@ output_orders <- list(
 	goldberg = c(1,5,3,6,7,2,4)
 )
 
+#The minimum number of times we required a selected species to be observed as the focal in competition with each other selected species.
 cxr_min_obs <- read.table(paste0(this_dir, "/output/cxr/min-obs.data"))[[1]]
 
 #########
