@@ -28,7 +28,7 @@ arguments <- parse_args(parser, positional_arguments = 1)
 
 outfile <- arguments$args[1]
 
-attach(arguments$options)
+max_rhat <- arguments$options$max_rhat
 
 #########
 #Read in.
