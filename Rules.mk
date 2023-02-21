@@ -6,7 +6,8 @@ $(from_root)-clean:
 	)
 	@$(RM) $(from_root)/output/*/*
 	@for i in $(from_root)/output/*; do if [ -f "$$i" ]; then $(RM) "$$i"; fi; done
-.PHONY: $(from_root)-clean
+clean: $(from_root)-clean
+.PHONY: clean $(from_root)-clean
 
 #Note that this if for GNU time (/usr/bin/time) not bash built-in time.
 time_format := "real\t%e\nuser\t%U\nsys\t%S"
