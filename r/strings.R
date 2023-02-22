@@ -20,18 +20,18 @@ as_binomial_name <- function(names) {
 
 #Converts a vector of strings to a single string.
 #Concatenates the strings, separating them with a comma and space,
-#except the last two, which are separated with "and".
+#except the last two, which are separated with "and" (or a different conjunction, such as "or").
 #If end_punct is set, it is appended to the end, unless the final character is already equal to end_punct.
 #This is useful if the list might end with "sp.", say.
 #Terminating "}" characters will be ignored when deciding whether to append end_punct.
-as_english_list <- function(strings, end_punct = "", oxford_comma = TRUE) {
+as_english_list <- function(strings, conjunction = "and", end_punct = "", oxford_comma = TRUE) {
 	if(length(strings) == 1) { #Handle the degenerate edge case.
 		result <- strings
 	} else {
 		result <- paste0(
 			paste(strings[1:(length(strings)-1)], collapse = ", "),
 			ifelse(oxford_comma, ",", ""),
-			" and ",
+			" ", conjunction, " ",
 			strings[length(strings)]
 		)
 	}
