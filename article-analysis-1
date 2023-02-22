@@ -32,7 +32,7 @@ outfile <- arguments$args[1]
 species_dat <- read.csv(paste0(this_dir, "/data/tcl/species.csv"))
 species_output_order <- c(4,3,1,2,6,5)
 
-input_data <- InputData$new("indv", paste0(this_dir, "/output/tcl/focal-vector.data"), paste0(this_dir, "/output/tcl/response-vector.data"), paste0(this_dir, "/output/tcl/design-matrix.data"))
+input_data <- InputData$new("indv", paste0(this_dir, "/output/tcl/indv-focal-vector.data"), paste0(this_dir, "/output/tcl/indv-response-vector.data"), paste0(this_dir, "/output/tcl/indv-design-matrix.data"))
 
 num_species <- input_data$num_species
 num_obs <- input_data$num_obs
