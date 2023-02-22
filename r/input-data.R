@@ -12,8 +12,8 @@ InputData <- R6::R6Class("InputData",
 		num_obs = NULL,
 		
 		initialize = function(data_type, focal_vector_file_name, response_vector_file_name, design_matrix_file_name) {
-			if(data_type == "indv") is_per_capita = TRUE
-			else if(data_type == "pop") is_per_capita = FALSE
+			if(data_type == "indv") self$is_per_capita = TRUE
+			else if(data_type == "pop") self$is_per_capita = FALSE
 			else stop("Unrecognised input data type.")
 			
 			self$focal_vector <- read.table(focal_vector_file_name)[[1]] + 1 #Add one to make it 1-indexed, as R prefers.
@@ -26,7 +26,7 @@ InputData <- R6::R6Class("InputData",
 		
 		get_fitted_values = function(parameters) {
 			focal_growth_rate <- parameters$growth_rates[self$focal_vector]
-			if(!is_per_capita) {
+			if(!self$is_per_capita) {
 				focal_density <- mapply(
 					function(obs,focal){self$design_matrix[obs,focal]},
 					1:num_obs, self$focal_vector
