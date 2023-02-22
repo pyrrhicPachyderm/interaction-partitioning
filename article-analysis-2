@@ -100,7 +100,7 @@ cxr_min_obs <- read.table(paste0(this_dir, "/output/cxr/min-obs.data"))[[1]]
 #The article using this data should call stopifnot(meets_assumptions).
 meets_assumptions <- c()
 
-#Check that all Gelman-Rubin statastics are low enough.
+#Check that all Gelman-Rubin statistics are low enough.
 meets_assumptions <- c(meets_assumptions, rhats_below_threshold =
 	all(unlist(lapply(datas, function(data){data$rhats})) < max_rhat)
 )
