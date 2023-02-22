@@ -1,8 +1,8 @@
-name,max_biomass
-"Lolium perenne",130
-"Trifolium pratense",36
-"Trifolium repens",39
-"Rumex crispus",24
-"Chenopodum album",21
-"Amaranthus retroflexus",30
-"Phleum pratense",27
+name,growth_form,max_biomass
+"Lolium perenne","erect grass",130
+"Trifolium pratense","low-growing dicot",36
+"Trifolium repens","low-growing dicot",39
+"Rumex crispus","low-growing dicot",24
+"Chenopodum album","erect dicot",21
+"Amaranthus retroflexus","erect dicot",30
+"Phleum pratense","erect grass",27
