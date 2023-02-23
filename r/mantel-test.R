@@ -19,8 +19,9 @@ mantel_p <- function(m1, m2, nperm = 4999, alternative = c("two.sided", "less", 
 	
 	num_less <- sum(perm_cors <= obs_cor)
 	num_greater <- sum(perm_cors >= obs_cor)
+	num_more_extreme <- sum(perm_cors <= -abs(obs_cor)) + sum(perm_cors >= abs(obs_cor))
 	num_counted <- switch(alternative,
-		two.sided = 2*min(num_less, num_greater),
+		two.sided = num_more_extreme,
 		less = num_less,
 		greater = num_greater
 	)
