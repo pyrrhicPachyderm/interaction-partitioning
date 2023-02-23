@@ -13,7 +13,7 @@ mantel_cor <- function(m1, m2) {
 }
 
 mantel_p <- function(m1, m2, nperm = 999, alternative = c("two.sided", "less", "greater")) {
-	alternative <- match.arg(alternative, c("two.sided", "less", "greater"))
+	alternative <- match.arg(alternative)
 	obs_cor <- mantel_cor(m1, m2)
 	perm_cors <- replicate(nperm, mantel_cor(m1, permute_matrix(m2)))
 	
