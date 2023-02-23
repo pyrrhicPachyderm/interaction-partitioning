@@ -161,9 +161,9 @@ mantel_sigs <- mapply(function(ps, alpha) {
 	return(alpha)
 }, mantel_ps, mantel_alphas)
 
-#########
-#Figures.
-#########
+####################
+#Figures and tables.
+####################
 
 coclassification_colourmap <- "coclassification"
 coclassification_diagonal_colour <- "coclassification diagonal"
@@ -185,6 +185,38 @@ get_coclassification_figures <- function(matrices, output_order) {
 }
 
 coclassification_figures <- mapply(get_coclassification_figures, coclassification_matrices, output_orders, SIMPLIFY = FALSE)
+
+#Tables of Mantel test results will be built as threeparttables, but only with the tablenotes, not the caption.
+get_mantel_table <- function(cors, ps, alpha, note_char = "*", diagonal_entry = "---") {
+	entries <- matrix(
+		paste0(as.character(cors), ifelse(ps < alpha, paste0("\\tnote{", note_char, "}"), "")),
+		ncol = ncol(cors), nrow = nrow(cors)
+	)
+	diag(entries) <- paste0("{", diagonal_entry, "}")
+	entries[lower.tri(entries)] <- ""
+	
+	names <- rownames(cors)
+	names <- sub("^col$", "column", names)
+	names <- sub("^growth$", "fecundity", names)
+	names <- paste0("{", stringr::str_to_sentence(gsub("_", " ", names)), "}") #Names need wrapping in {} for siunitx columns.
+	rownames(entries) <- names
+	colnames(entries) <- names
+	
+	align <- rep("S[round-mode=places,round-precision=3]", ncol(entries))
+	
+	tabular <- knitr::kable(entries, align = align, format = "latex", booktabs = TRUE, escape = FALSE)
+	
+	return(paste0(
+		"\\begin{threeparttable}",
+		tabular,
+		"\\begin{tablenotes}",
+		"\\item [", note_char, "] $p < \\num[round-mode=places,round-precision=3,round-pad=false]{", alpha, "}$",
+		"\\end{tablenotes}",
+		"\\end{threeparttable}"
+	))
+}
+
+mantel_tables <- mapply(get_mantel_table, mantel_cors, mantel_ps, mantel_alphas, SIMPLIFY = FALSE)
 
 #############
 #Save output.
