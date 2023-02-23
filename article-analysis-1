@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 
+set.seed(42)
+
 suppressPackageStartupMessages(library(optparse))
 
 this_dir <- dirname(this.path::this.path())
