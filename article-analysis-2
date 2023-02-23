@@ -12,6 +12,8 @@ source(paste0(this_dir, "/r/priors.R"))
 source(paste0(this_dir, "/r/post-process.R"))
 source(paste0(this_dir, "/r/rjmcmc-post-process.R"))
 source(paste0(this_dir, "/r/coclassification-table.R"))
+source(paste0(this_dir, "/r/mantel-test.R"))
+source(paste0(this_dir, "/r/dist-matrix.R"))
 
 ##################
 #Argument parsing.
@@ -23,6 +25,10 @@ option_list <- list(
 	make_option(
 		c("-r", "--max-rhat"), dest = "max_rhat", type = "double", default = 1.1,
 		help = "The maximum allowed Gelman-Rubin statistic (rhat) of any parameter in any analysis; this script will intentionally fail if any exceed it [default %default]."
+	),
+	make_option(
+		c("-a", "--alpha"), dest = "alpha_value", type = "double", default = 0.05,
+		help = "The alpha value for significance testing [default %default]."
 	)
 )
 parser <- OptionParser(usage = usage, description=description, option_list=option_list)
@@ -31,6 +37,7 @@ arguments <- parse_args(parser, positional_arguments = 1)
 outfile <- arguments$args[1]
 
 max_rhat <- arguments$options$max_rhat
+alpha_value <- arguments$options$alpha_value
 
 #########
 #Read in.
@@ -127,6 +134,32 @@ get_coclassification_matrices <- function(data) {
 }
 
 coclassification_matrices <- lapply(datas, get_coclassification_matrices)
+
+mantel_matrices <- coclassification_matrices
+mantel_matrices$tcl$body_weight <- build_dist_matrix(species_datas$tcl$name, species_datas$tcl$body_weight, function(w1,w2){abs(w1-w2)})
+mantel_matrices$goldberg$growth_form <- build_dist_matrix(species_datas$goldberg$name, species_datas$goldberg$growth_form, function(g1,g2){g1==g2})
+#In some cases, column coclassification matrices are larger than row coclassification matrices, due to non-focal competitors.
+#A Mantel test requires two matrices of the same size, so we need to trim all matrices for a given dataset to the same size.
+mantel_matrices <- lapply(mantel_matrices, function(matrices) {
+	min_dim <- min(sapply(matrices, dim))
+	lapply(matrices, function(mat) {
+		mat[1:min_dim, 1:min_dim]
+	})
+})
+
+#For each dataset, a symmetric matrix of p/cor values for Mantel tests between each pair of matrices.
+mantel_cors <- lapply(mantel_matrices, function(matrices) {
+	build_dist_matrix(names(matrices), matrices, mantel_cor, force_symmetric = TRUE)
+})
+mantel_ps <- lapply(mantel_matrices, function(matrices) {
+	build_dist_matrix(names(matrices), matrices, mantel_p, force_symmetric = TRUE)
+})
+mantel_alphas <- lapply(mantel_ps, function(ps) {
+	alpha_value / sum(upper.tri(ps))
+})
+mantel_sigs <- mapply(function(ps, alpha) {
+	return(alpha)
+}, mantel_ps, mantel_alphas)
 
 #########
 #Figures.
