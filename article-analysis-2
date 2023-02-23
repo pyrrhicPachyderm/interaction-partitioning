@@ -136,7 +136,7 @@ get_coclassification_matrices <- function(data) {
 coclassification_matrices <- lapply(datas, get_coclassification_matrices)
 
 mantel_matrices <- coclassification_matrices
-mantel_matrices$tcl$body_weight <- build_dist_matrix(species_datas$tcl$name, species_datas$tcl$body_weight, function(w1,w2){abs(w1-w2)})
+mantel_matrices$tcl$body_weight <- 1 - build_dist_matrix(species_datas$tcl$name, species_datas$tcl$body_weight, function(w1,w2){abs(w1-w2)})
 mantel_matrices$goldberg$growth_form <- build_dist_matrix(species_datas$goldberg$name, species_datas$goldberg$growth_form, function(g1,g2){g1==g2})
 #In some cases, column coclassification matrices are larger than row coclassification matrices, due to non-focal competitors.
 #A Mantel test requires two matrices of the same size, so we need to trim all matrices for a given dataset to the same size.
