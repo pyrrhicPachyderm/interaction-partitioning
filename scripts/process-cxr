@@ -33,6 +33,9 @@ if(data_type != "indv") {
 	stop("Invalid data type requested.")
 }
 
+other_name <- "other"
+other_code <- "OTHR"
+
 ###############
 #Load the data.
 ###############
@@ -82,10 +85,10 @@ for(sp in included_species) {
 }
 
 #Collapse all excluded species into an "other" column.
-data$other <- rowSums(data[,excluded_species])
+data[[other_code]] <- rowSums(data[,excluded_species])
 data <- data[,!names(data) %in% excluded_species]
 
-species_codes <- c(included_species, "other")
+species_codes <- c(included_species, other_code)
 
 #################################
 #Extract the relevant components.
@@ -122,8 +125,8 @@ species_data$name <- sub("([[:alpha:]])([[:alpha:]]+)_([[:alpha:]]*)", "\\U\\1\\
 
 species_data <- species_data[species_data$code %in% included_species,]
 species_data <- rbind(species_data, list(
-	name = "other",
-	code = "OTHR",
+	name = other_name,
+	code = other_code,
 	germination_rate = NA,
 	seed_survival = NA
 ))
