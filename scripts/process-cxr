@@ -33,7 +33,7 @@ if(data_type != "indv") {
 	stop("Invalid data type requested.")
 }
 
-other_name <- "other"
+other_name <- "Other"
 other_code <- "OTHR"
 
 ###############
