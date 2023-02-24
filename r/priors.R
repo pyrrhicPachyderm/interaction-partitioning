@@ -10,7 +10,14 @@ Priors <- R6::R6Class("Priors",
 		},
 		
 		#Intended for use in math mode.
-		get_as_latex = function(row) {
+		#allow_empty, if true, will silently the empty string if row is out of bounds.
+		#This can be helpful if different datasets have different numbers of priors.
+		get_as_latex = function(row, allow_empty = FALSE) {
+			if(row > nrow(self$priors_table)) {
+				stopifnot(allow_empty)
+				return("") #Silently return the empty string.
+			}
+			
 			name <- self$priors_table[row,1]
 			parameters <- self$priors_table[row,-1]
 			parameters <- parameters[!is.na(parameters)]
