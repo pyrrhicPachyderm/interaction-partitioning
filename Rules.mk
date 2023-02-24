@@ -25,7 +25,8 @@ HERE_carrara_raw_data := HERE/data/carrara/data.xls
 
 HERE_cxr_additional_output := HERE/output/cxr/species.csv HERE/output/cxr/min-obs.data
 
-#tcl, test, and carrara use standard per capita fecundity response or time series data, so the default 1 (doubling each generation/day) is a reasonable guess.
+#test and carrara use standard per capita fecundity response or time series data, so the default 1 (doubling each generation/day) is a reasonable guess.
+HERE_tcl_r_guess := 10 #From Terry et al. 2021.
 HERE_cxr_r_guess := 1000 #The response is per capita seed production. Some of the species involved could produce thousands of seeds, so 1000 is a reasonable guess.
 HERE_goldberg_r_guess := 100 #The response is final mass in milligrams. The largest of the species could grow to about 130 mg, so 100 is a reasonable guess.
 
@@ -48,7 +49,7 @@ $$(call HERE_priors_file,$(1)): HERE/scripts/guess-priors $$(call HERE_processed
 	./$$< $$@ $(3) $(2) $$(call HERE_processed_$(2)_data_files,$(1)) $(4)
 endef
 
-$(eval $(call HERE_priors_template,tcl,pop,negativebinomial,))
+$(eval $(call HERE_priors_template,tcl,pop,negativebinomial,-r $(HERE_tcl_r_guess)))
 $(eval $(call HERE_priors_template,cxr,indv,negativebinomial,-r $(HERE_cxr_r_guess)))
 $(eval $(call HERE_priors_template,goldberg,indv,gamma,-r $(HERE_goldberg_r_guess)))
 $(eval $(call HERE_priors_template,carrara,time,normal,))
