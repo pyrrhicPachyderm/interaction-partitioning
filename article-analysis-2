@@ -180,6 +180,26 @@ get_coclassification_figures <- function(matrices, output_order) {
 
 coclassification_figures <- mapply(get_coclassification_figures, coclassification_matrices, output_orders, SIMPLIFY = FALSE)
 
+#Table of priors.
+get_priors_table <- function(priors, col_names) {
+	num_cols <- length(col_names)
+	priors_table <- matrix(unlist(lapply(priors, function(priors_obj) {
+		sapply(1:num_cols, function(i) {
+			paste0("$", priors_obj$get_as_latex(i), "$")
+		})
+	})), ncol = num_cols, nrow = length(priors), byrow = TRUE)
+	
+	#kable can't handle giving the column of row names a column header, so we can't use row names.
+	#We have to stitch the row names onto the front of the matrix.
+	row_names <- paste0("{\\", names(priors), "}")
+	priors_table <- cbind(row_names, priors_table)
+	colnames(priors_table) <- c("Dataset", col_names)
+	
+	knitr::kable(priors_table, format = "latex", booktabs = TRUE, escape = FALSE)
+}
+
+priors_table <- get_priors_table(priors, c("$\\lambda_i$", "$\\alpha_{ij}$", "$\\phi$"))
+
 #Tables of Mantel test results will be built as threeparttables, but only with the tablenotes, not the caption.
 get_mantel_table <- function(cors, ps, note_char = "*", diagonal_entry = "---") {
 	entries <- matrix(
