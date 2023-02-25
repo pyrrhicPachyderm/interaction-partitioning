@@ -38,7 +38,7 @@ endef
 
 $(eval $(call HERE_process_data_template,tcl,indv,$(HERE_tcl_raw_data),,))
 $(eval $(call HERE_process_data_template,tcl,pop,$(HERE_tcl_raw_data),,))
-$(eval $(call HERE_process_data_template,cxr,indv,,$(HERE_cxr_additional_output),))
+$(eval $(call HERE_process_data_template,cxr,indv,,$(HERE_cxr_additional_output),-m 4))
 $(eval $(call HERE_process_data_template,goldberg,indv,$(HERE_goldberg_raw_data),,))
 $(eval $(call HERE_process_data_template,carrara,time,$(HERE_carrara_raw_data),,))
 $(eval $(call HERE_process_data_template,test,indv,,))
@@ -63,7 +63,7 @@ endef
 $(eval $(call HERE_output_template,test,indv,brute,brute,lotkavolterra,normal,))
 $(eval $(call HERE_output_template,tcl,indv,brute,brute,lotkavolterra,normal,))
 $(eval $(call HERE_output_template,tcl,pop,rjmcmc,rjmcmc,bevertonholt,negativebinomial,-g -s1000000 -t10))
-$(eval $(call HERE_output_template,cxr,indv,rjmcmc,rjmcmc,bevertonholt,negativebinomial,-g -d15 -s50000000 -t500))
+$(eval $(call HERE_output_template,cxr,indv,rjmcmc,rjmcmc,bevertonholt,negativebinomial,-g -d15 -s10000000 -t100))
 $(eval $(call HERE_output_template,goldberg,indv,rjmcmc,rjmcmc,bevertonholt,gamma,-g -s10000000 -t100))
 $(eval $(call HERE_output_template,carrara,time,rjmcmc,rjmcmc,lotkavolterra,normal,-g -d15))
 

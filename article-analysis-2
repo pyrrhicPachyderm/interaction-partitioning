@@ -92,7 +92,7 @@ priors <- lapply(
 
 output_orders <- list(
 	tcl = c(4,3,1,2,6,5),
-	cxr = c(8,7,1,2,3,6,5,4,9),
+	cxr = c(1,2,6,5,3,4,7),
 	goldberg = c(1,5,3,6,7,2,4)
 )
 
