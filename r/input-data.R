@@ -5,16 +5,21 @@
 InputData <- R6::R6Class("InputData",
 	public = list(
 		is_per_capita = NULL,
+		model = NULL,
 		focal_vector = NULL,
 		response_vector = NULL,
 		design_matrix = NULL,
 		num_species = NULL,
 		num_obs = NULL,
 		
-		initialize = function(data_type, focal_vector_file_name, response_vector_file_name, design_matrix_file_name) {
+		initialize = function(data_type, model, focal_vector_file_name, response_vector_file_name, design_matrix_file_name) {
 			if(data_type == "indv") self$is_per_capita <- TRUE
 			else if(data_type == "pop") self$is_per_capita <- FALSE
 			else stop("Unrecognised input data type.")
+			
+			if(model == "lotkavolterra") self$model <- private$lotka_volterra
+			else if(model == "bevertonholt") self$model <- private$beverton_holt
+			else stop("Unrecognised model type.")
 			
 			self$focal_vector <- read.table(focal_vector_file_name)[[1]] + 1 #Add one to make it 1-indexed, as R prefers.
 			self$response_vector <- read.table(response_vector_file_name)[[1]]
@@ -38,7 +43,7 @@ InputData <- R6::R6Class("InputData",
 			
 			intrinsic_growth <- focal_growth_rate
 			total_competition <- rowSums(alpha_values_on_focal * self$design_matrix)
-			fitted_values <- intrinsic_growth * focal_density * (1 - total_competition)
+			fitted_values <- self$model(intrinsic_growth,  focal_density, total_competition)
 			
 			return(fitted_values)
 		},
@@ -58,6 +63,15 @@ InputData <- R6::R6Class("InputData",
 		get_partial_residuals_x = function(row_index, col_index) {
 			#The numbers to go on the x axis of a partial residuals plot.
 			self$design_matrix[self$focal_vector == row_index, col_index]
+		}
+	),
+	
+	private = list(
+		lotka_volterra = function(intrinsic_growth, focal_density, total_competition) {
+			intrinsic_growth * focal_density * (1 - total_competition)
+		},
+		beverton_holt = function(intrinsic_growth, focal_density, total_competition) {
+			intrinsic_growth * focal_density / (1 + total_competition)
 		}
 	)
 )

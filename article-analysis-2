@@ -75,7 +75,7 @@ input_datas <- lapply(
 	function(files) {
 		data_type <- sub("^([^-]+)-.*", "\\1", basename(files[1]))
 		files <- paste0(this_dir, files)
-		InputData$new(data_type, files[1], files[2], files[3])
+		InputData$new(data_type, "bevertonholt", files[1], files[2], files[3])
 	}
 )
 
