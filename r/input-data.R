@@ -29,10 +29,10 @@ InputData <- R6::R6Class("InputData",
 			if(!self$is_per_capita) {
 				focal_density <- mapply(
 					function(obs,focal){self$design_matrix[obs,focal]},
-					1:num_obs, self$focal_vector
+					1:self$num_obs, self$focal_vector
 				)
 			} else {
-				focal_density <- rep(1, num_obs)
+				focal_density <- rep(1, self$num_obs)
 			}
 			alpha_values_on_focal <- parameters$alpha_values[self$focal_vector,]
 			
