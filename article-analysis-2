@@ -92,8 +92,8 @@ priors <- lapply(
 
 output_orders <- list(
 	tcl = c(4,3,1,2,6,5),
-	cxr = c(1,2,6,5,3,4,7),
-	goldberg = c(1,5,3,6,7,2,4)
+	cxr = c(1,4,3,5,6,2,7),
+	goldberg = c(2,3,5,6,7,4,1)
 )
 
 response_variable_strings <- list(
