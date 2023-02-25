@@ -158,7 +158,7 @@ mantel_cors <- lapply(mantel_matrices, function(matrices) {
 	build_dist_matrix(names(matrices), matrices, mantel_cor, force_symmetric = TRUE)
 })
 mantel_ps <- lapply(mantel_matrices, function(matrices) {
-	build_dist_matrix(names(matrices), matrices, mantel_p, force_symmetric = TRUE)
+	build_dist_matrix(names(matrices), matrices, function(x,y){mantel_p(x,y,alternative="greater")}, force_symmetric = TRUE)
 })
 
 ####################
