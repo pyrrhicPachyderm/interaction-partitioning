@@ -96,6 +96,12 @@ output_orders <- list(
 	goldberg = c(1,5,3,6,7,2,4)
 )
 
+response_variable_strings <- list(
+	tcl = "population size",
+	cxr = "fecundity",
+	goldberg = "fecundity"
+)
+
 #The minimum number of times we required a selected species to be observed as the focal in competition with each other selected species.
 cxr_min_obs <- read.table(paste0(this_dir, "/output/cxr/min-obs.data"))[[1]]
 
@@ -231,6 +237,44 @@ get_mantel_table <- function(cors, ps, note_char = "*", diagonal_entry = "---") 
 }
 
 mantel_tables <- mapply(get_mantel_table, mantel_cors, mantel_ps, SIMPLIFY = FALSE)
+
+#Model fit plots.
+order_species <- function(vec, names, order) {
+	#Takes a vector of species names and redefines them as a factor with correctly ordered levels.
+	#This forces ggplot to use them in the correct order for a facet plot.
+	factor(vec, levels = names[order])
+}
+
+get_average_model_fit_plot <- function(data, input_data, species_data, output_order, response_string = "response", scales = "fixed") {
+	#scales is the argument to ggplot2::facet_wrap. "free" or "fixed"; need each facet be on the same scale.
+	average_parameters <- data$average_parameters
+	plot_df <- data.frame(
+		observed = input_data$response_vector,
+		fitted = input_data$get_fitted_values(average_parameters),
+		focal = species_data$name[input_data$focal_vector]
+	)
+	
+	plot_df$focal <- order_species(plot_df$focal, species_data$name, output_order)
+	
+	plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = observed, y = fitted)) +
+		ggplot2::geom_point() +
+		ggplot2::geom_smooth(method = lm, formula = y~x) +
+		ggplot2::geom_abline(slope = 1, intercept = 0) +
+		ggplot2::facet_wrap(.~focal, scales = scales) +
+		ggplot2::expand_limits(x = 0, y = 0) +
+		ggplot2::labs(x = paste("Observed", response_string), y = paste("Predicted", response_string))
+	return(plot)
+}
+
+model_fit_plots <- mapply(get_average_model_fit_plot,
+	datas,
+	input_datas,
+	species_datas,
+	output_orders,
+	response_variable_strings,
+	scales = c("fixed", "free", "free"),
+	SIMPLIFY = FALSE
+)
 
 #############
 #Save output.
