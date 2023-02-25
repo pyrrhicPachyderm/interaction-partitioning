@@ -45,6 +45,13 @@ RJMCMCData <- R6::R6Class("RJMCMCData",
 	),
 	
 	active = list(
+		average_parameters = function() {
+			Parameters$new(lapply(
+				self$parameters,
+				mean
+			))
+		},
+		
 		weighted_growth_coclassification_matrix = function() {
 			return(private$annotate_matrix(private$get_average_coclassification_matrix(self$growth_groupings)))
 		},
