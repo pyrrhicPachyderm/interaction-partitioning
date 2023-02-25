@@ -30,17 +30,17 @@ HERE_tcl_r_guess := 10 #From Terry et al. 2021.
 HERE_cxr_r_guess := 1000 #The response is per capita seed production. Some of the species involved could produce thousands of seeds, so 1000 is a reasonable guess.
 HERE_goldberg_r_guess := 100 #The response is final mass in milligrams. The largest of the species could grow to about 130 mg, so 100 is a reasonable guess.
 
-#process_data_template takes the dataset abbreviation, the dataset type (e.g. indv, time), the raw data file(s), additional output files for the processing script.
+#process_data_template takes the dataset abbreviation, the dataset type (e.g. indv, time), the raw data file(s), additional output files for the processing script, and the options.
 define HERE_process_data_template =
 $$(call HERE_processed_$(2)_data_files,$(1)) $(4) &: HERE/scripts/process-$(1) $(3)
-	./$$< $(3) $(2) $$(call HERE_processed_$(2)_data_files,$(1)) $(4)
+	./$$< $(3) $(2) $$(call HERE_processed_$(2)_data_files,$(1)) $(4) $(5)
 endef
 
-$(eval $(call HERE_process_data_template,tcl,indv,$(HERE_tcl_raw_data),))
-$(eval $(call HERE_process_data_template,tcl,pop,$(HERE_tcl_raw_data),))
-$(eval $(call HERE_process_data_template,cxr,indv,,$(HERE_cxr_additional_output)))
-$(eval $(call HERE_process_data_template,goldberg,indv,$(HERE_goldberg_raw_data),))
-$(eval $(call HERE_process_data_template,carrara,time,$(HERE_carrara_raw_data),))
+$(eval $(call HERE_process_data_template,tcl,indv,$(HERE_tcl_raw_data),,))
+$(eval $(call HERE_process_data_template,tcl,pop,$(HERE_tcl_raw_data),,))
+$(eval $(call HERE_process_data_template,cxr,indv,,$(HERE_cxr_additional_output),))
+$(eval $(call HERE_process_data_template,goldberg,indv,$(HERE_goldberg_raw_data),,))
+$(eval $(call HERE_process_data_template,carrara,time,$(HERE_carrara_raw_data),,))
 $(eval $(call HERE_process_data_template,test,indv,,))
 
 #priors_template takes the dataset abbreviation, the dataset type (e.g. indv, time), the error distribution, and options to the prior guessing script.
