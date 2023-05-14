@@ -232,7 +232,10 @@ template<typename ErrDistT> void ReversibleJumpSolver<ErrDistT>::rejectJump() {
 	return;
 }
 
-template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogLikelihood(const Eigen::VectorXd &observations, const Eigen::VectorXd &predictions, const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogLikelihood(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters, const GroupingSet &groupings) const {
+	const Eigen::VectorXd &observations = getObservations();
+	Eigen::VectorXd predictions = getPredictions(parameters, groupings);
+	
 	double result = 0.0;
 	for(size_t i = 0; i < (size_t)observations.size(); i++) {
 		result += std::make_from_tuple<ErrDistT>(std::tuple_cat(std::tuple(predictions[i]), parameters.getAdditionalParameters())).getLogDensity(observations[i]);
@@ -241,11 +244,7 @@ template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogLikelih
 }
 
 template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogLikelihoodRatio() const {
-	const Eigen::VectorXd &observations = getObservations();
-	Eigen::VectorXd currentPredictions = getPredictions(currentParameters, currentGroupings);
-	Eigen::VectorXd proposedPredictions = getPredictions(proposedParameters, proposedGroupings);
-	
-	return getLogLikelihood(observations, proposedPredictions, proposedParameters) - getLogLikelihood(observations, currentPredictions, currentParameters);
+	return getLogLikelihood(proposedParameters, proposedGroupings) - getLogLikelihood(currentParameters, currentGroupings);
 }
 
 template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogPriorRatio() const {
