@@ -121,7 +121,7 @@ template<typename ErrDistT> class ReversibleJumpSolver : public Solver, public R
 		void rejectJump();
 		
 		double getLogLikelihood(const Eigen::VectorXd &observations, const Eigen::VectorXd &predictions, const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters) const;
-		double getLogLikelihoodRatio();
+		double getLogLikelihoodRatio() const;
 		double getLogPriorRatio() const;
 		
 		bool makeJump(bool canTransModelJump);

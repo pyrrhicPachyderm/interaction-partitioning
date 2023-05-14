@@ -240,7 +240,7 @@ template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogLikelih
 	return result;
 }
 
-template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogLikelihoodRatio() {
+template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogLikelihoodRatio() const {
 	const Eigen::VectorXd &observations = getObservations();
 	Eigen::VectorXd currentPredictions = getPredictions(currentParameters, currentGroupings);
 	Eigen::VectorXd proposedPredictions = getPredictions(proposedParameters, proposedGroupings);
