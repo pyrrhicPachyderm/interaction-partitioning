@@ -29,4 +29,30 @@ class Solver {
 		}
 };
 
+template<typename ErrDistT> class GeneralisedSolver : public Solver {
+	//GeneralisedSolver is templated on the type of error distribution, which must inherit from Distributions::Base<double>.
+	//The first parameter in the constructor of the given distribution MUST be the mean (e.g. use Gamma2 instead of Gamma).
+	//Every other parameter will be estimated, and is stored in the additionalParameters of an AugmentedParameters object.
+	static_assert(std::is_base_of_v<Distributions::Base<double>, ErrDistT>);
+	public:
+		//TODO: Use std::tuple_size<refl::ctor_as_tuple<ErrDistT>>{} - 1 for NUM_ADDITIONAL_PARAMETERS.
+		//This works for Normal and Gamma2, but not DiscreteWrapper<NegativeBinomial>.
+		//I'm not sure why; refl is terribly complicated, after all.
+		constexpr static size_t NUM_ADDITIONAL_PARAMETERS = 1;
+		typedef AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>::AdditionalParametersVector AdditionalParametersVector;
+		
+		using Solver::Solver;
+	protected:
+		double getLogLikelihood(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters, const GroupingSet &groupings) const {
+			const Eigen::VectorXd &observations = getObservations();
+			Eigen::VectorXd predictions = getPredictions(parameters, groupings);
+			
+			double result = 0.0;
+			for(size_t i = 0; i < (size_t)observations.size(); i++) {
+				result += std::make_from_tuple<ErrDistT>(std::tuple_cat(std::tuple(predictions[i]), parameters.getAdditionalParameters())).getLogDensity(observations[i]);
+			}
+			return result;
+		};
+};
+
 #endif

@@ -49,7 +49,7 @@ template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::findUnscaledM
 		for(size_t moveType = 0; moveType < NUM_MOVE_TYPES; moveType++) {
 			size_t maxNumMoves = moveType == MERGE ?
 				Grouping::getNumMerges(groupingSizes[groupingType]) :
-				Grouping::getMaxNumSplits(data.getNumSpecies((GroupingType)groupingType), groupingSizes[groupingType]);
+				Grouping::getMaxNumSplits(this->data.getNumSpecies((GroupingType)groupingType), groupingSizes[groupingType]);
 			result += maxNumMoves * getUnscaledTransModelJumpProbability(groupingSizes, (GroupingType)groupingType, (MoveType)moveType);
 		}
 	}
@@ -74,7 +74,7 @@ template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::findUnscaledM
 	}
 	
 	double result = 0.0;
-	for(size_t i = 1; i <= data.getNumSpecies((GroupingType)recursionLevel); i++) {
+	for(size_t i = 1; i <= this->data.getNumSpecies((GroupingType)recursionLevel); i++) {
 		groupingSizes[recursionLevel] = i;
 		result = std::max(result, findUnscaledMaxTransModelJumpProbability(groupingSizes, recursionLevel+1));
 	}
@@ -105,11 +105,11 @@ template<> ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::Ne
 }
 
 template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::guessInitialGrowthRateApproximatePosteriorVariance() const {
-	return pow(data.guessGrowthRateMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
+	return pow(this->data.guessGrowthRateMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 }
 
 template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::guessInitialCompetitionCoefficientApproximatePosteriorVariance() const {
-	return pow(data.guessCompetitionCoefficientMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
+	return pow(this->data.guessCompetitionCoefficientMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 }
 
 template<> ReversibleJumpSolver<Distributions::Normal>::AdditionalParametersVector ReversibleJumpSolver<Distributions::Normal>::guessInitialAdditionalParametersApproximatePosteriorVariance() const {
@@ -232,19 +232,8 @@ template<typename ErrDistT> void ReversibleJumpSolver<ErrDistT>::rejectJump() {
 	return;
 }
 
-template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogLikelihood(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters, const GroupingSet &groupings) const {
-	const Eigen::VectorXd &observations = getObservations();
-	Eigen::VectorXd predictions = getPredictions(parameters, groupings);
-	
-	double result = 0.0;
-	for(size_t i = 0; i < (size_t)observations.size(); i++) {
-		result += std::make_from_tuple<ErrDistT>(std::tuple_cat(std::tuple(predictions[i]), parameters.getAdditionalParameters())).getLogDensity(observations[i]);
-	}
-	return result;
-}
-
 template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogLikelihoodRatio() const {
-	return getLogLikelihood(proposedParameters, proposedGroupings) - getLogLikelihood(currentParameters, currentGroupings);
+	return this->getLogLikelihood(proposedParameters, proposedGroupings) - this->getLogLikelihood(currentParameters, currentGroupings);
 }
 
 template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getLogPriorRatio() const {
@@ -326,8 +315,8 @@ template<typename ErrDistT> void ReversibleJumpSolver<ErrDistT>::dialIn(size_t j
 		//For the first method.
 		//We want to track the variance of each growth rate/competition coefficient (after ungrouping) separately.
 		//So we build matrices for them.
-		Eigen::MatrixXd growthRates = Eigen::MatrixXd(jumpsPerDial, data.getNumRowSpecies());
-		Eigen::MatrixXd competitionCoefficients = Eigen::MatrixXd(jumpsPerDial, data.getNumRowSpecies() * data.getNumColSpecies());
+		Eigen::MatrixXd growthRates = Eigen::MatrixXd(jumpsPerDial, this->data.getNumRowSpecies());
+		Eigen::MatrixXd competitionCoefficients = Eigen::MatrixXd(jumpsPerDial, this->data.getNumRowSpecies() * this->data.getNumColSpecies());
 		std::array<Eigen::VectorXd, NUM_ADDITIONAL_PARAMETERS> additionalParameters;
 		additionalParameters.fill(Eigen::VectorXd(jumpsPerDial));
 		

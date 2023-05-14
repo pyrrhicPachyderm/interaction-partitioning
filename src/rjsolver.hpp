@@ -29,17 +29,10 @@ class ReversibleJumpSolverInterface {
 		virtual ReversibleJumpSolverInterface *getCopy() const = 0;
 };
 
-template<typename ErrDistT> class ReversibleJumpSolver : public Solver, public ReversibleJumpSolverInterface {
-	//ReversibleJumpSolver is templated on the type of error distribution, which must inherit from Distributions::Base<double>.
-	//The first parameter in the constructor of the given distribution *must* be the mean (e.g. use Gamma2 instead of Gamma).
-	//Every other parameter will be estimated, and is stored in the additionalParameters of an AugmentedParameters object.
-	static_assert(std::is_base_of_v<Distributions::Base<double>, ErrDistT>);
+template<typename ErrDistT> class ReversibleJumpSolver : public GeneralisedSolver<ErrDistT>, public ReversibleJumpSolverInterface {
 	public:
-		//TODO: Use std::tuple_size<refl::ctor_as_tuple<ErrDistT>>{} - 1 for NUM_ADDITIONAL_PARAMETERS.
-		//This works for Normal and Gamma2, but not DiscreteWrapper<NegativeBinomial>.
-		//I'm not sure why; refl is terribly complicated, after all.
-		constexpr static size_t NUM_ADDITIONAL_PARAMETERS = 1;
-		typedef AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>::AdditionalParametersVector AdditionalParametersVector;
+		using GeneralisedSolver<ErrDistT>::NUM_ADDITIONAL_PARAMETERS;
+		typedef GeneralisedSolver<ErrDistT>::AdditionalParametersVector AdditionalParametersVector;
 		enum JumpType {MERGE_JUMP, SPLIT_JUMP, WITHIN_JUMP, NUM_JUMP_TYPES};
 	protected:
 		typedef std::array<bool, NUM_GROUPING_TYPES> GroupingBooleanSet;
@@ -50,7 +43,7 @@ template<typename ErrDistT> class ReversibleJumpSolver : public Solver, public R
 		AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior;
 		
 		GroupingSet initialGroupings; //For resetting to when starting a new chain.
-		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> initialParameters = AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(data, initialGroupings, guessInitialAdditionalParameters());
+		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> initialParameters = AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(this->data, initialGroupings, guessInitialAdditionalParameters());
 		
 		GroupingSet currentGroupings = initialGroupings;
 		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> currentParameters = initialParameters;
@@ -72,7 +65,7 @@ template<typename ErrDistT> class ReversibleJumpSolver : public Solver, public R
 		double transModelJumpVarianceMultiplier = 1.0;
 	public:
 		ReversibleJumpSolver(Model model, Data data, Hyperprior hyperprior, AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
-			Solver(model, data),
+			GeneralisedSolver<ErrDistT>(model, data),
 			hyperprior(hyperprior),
 			parametersPrior(parametersPrior),
 			initialGroupings(groupings),
@@ -120,7 +113,6 @@ template<typename ErrDistT> class ReversibleJumpSolver : public Solver, public R
 		void acceptJump();
 		void rejectJump();
 		
-		double getLogLikelihood(const AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> &parameters, const GroupingSet &groupings) const;
 		double getLogLikelihoodRatio() const;
 		double getLogPriorRatio() const;
 		
