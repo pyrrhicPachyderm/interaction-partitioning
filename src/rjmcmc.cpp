@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
 	std::string errorDistribution = input.getErrorDistribution();
 	std::string additionalParameterName;
 	
-	ReversibleJumpSolverBase *masterSolver = NULL;
+	ReversibleJumpSolverInterface *masterSolver = NULL;
 	if(errorDistribution == "normal") {
 		auto parametersPrior = input.getPriors<ReversibleJumpSolver<Distributions::Normal>::NUM_ADDITIONAL_PARAMETERS>();
 		masterSolver = new ReversibleJumpSolver<Distributions::Normal>(input.getModel(), input.getData(), hyperprior, parametersPrior, groupings, isGrouping);
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 	
 	#pragma omp parallel for
 	for(size_t chain = 0; chain < numChains; chain++) {
-		ReversibleJumpSolverBase *solver = masterSolver->getCopy();
+		ReversibleJumpSolverInterface *solver = masterSolver->getCopy();
 		solver->setSeed(RANDOM_SEED + chain + 1); //+1 so that chain 0 doesn't use the same seed as dialing in.
 		solver->burnIn(burnIn);
 		

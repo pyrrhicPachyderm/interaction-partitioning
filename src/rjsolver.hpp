@@ -8,12 +8,10 @@
 
 #define DEFAULT_RANDOM_SEED 42
 
-class ReversibleJumpSolverBase : public Solver {
+class ReversibleJumpSolverInterface {
 	public:
-		using Solver::Solver;
-		
 		//Virtual destructor, as this is an abstract class.
-		virtual ~ReversibleJumpSolverBase() {};
+		virtual ~ReversibleJumpSolverInterface() {};
 		
 		virtual void setSeed(size_t seed) = 0;
 		virtual bool makeJump() = 0;
@@ -28,10 +26,10 @@ class ReversibleJumpSolverBase : public Solver {
 		
 		//For parallelisation purposes, we sometimes need copies of the entire solver.
 		//We need this as a virtual function, so it can correctly copy each specialisation of the solver.
-		virtual ReversibleJumpSolverBase *getCopy() const = 0;
+		virtual ReversibleJumpSolverInterface *getCopy() const = 0;
 };
 
-template<typename ErrDistT> class ReversibleJumpSolver : public ReversibleJumpSolverBase {
+template<typename ErrDistT> class ReversibleJumpSolver : public Solver, public ReversibleJumpSolverInterface {
 	//ReversibleJumpSolver is templated on the type of error distribution, which must inherit from Distributions::Base<double>.
 	//The first parameter in the constructor of the given distribution *must* be the mean (e.g. use Gamma2 instead of Gamma).
 	//Every other parameter will be estimated, and is stored in the additionalParameters of an AugmentedParameters object.
@@ -74,7 +72,7 @@ template<typename ErrDistT> class ReversibleJumpSolver : public ReversibleJumpSo
 		double transModelJumpVarianceMultiplier = 1.0;
 	public:
 		ReversibleJumpSolver(Model model, Data data, Hyperprior hyperprior, AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior, GroupingSet groupings, GroupingBooleanSet isChangingGroupings):
-			ReversibleJumpSolverBase(model, data),
+			Solver(model, data),
 			hyperprior(hyperprior),
 			parametersPrior(parametersPrior),
 			initialGroupings(groupings),
@@ -141,7 +139,7 @@ template<typename ErrDistT> class ReversibleJumpSolver : public ReversibleJumpSo
 		
 		void resetChain() override;
 		
-		ReversibleJumpSolverBase *getCopy() const {return new ReversibleJumpSolver<ErrDistT>(*this);};
+		ReversibleJumpSolverInterface *getCopy() const {return new ReversibleJumpSolver<ErrDistT>(*this);};
 };
 
 #endif
