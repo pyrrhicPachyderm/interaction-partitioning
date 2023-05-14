@@ -22,7 +22,7 @@ class ReversibleJumpSolverInterface {
 		virtual const GroupingSet &getGroupings() const = 0;
 		virtual const Grouping &getGrouping(GroupingType groupingType) const = 0;
 		virtual Parameters getParameters() const = 0;
-		virtual double getAdditionalParameter(size_t i) const  = 0;
+		virtual double getAdditionalParameter(size_t i) const = 0;
 		
 		//For parallelisation purposes, we sometimes need copies of the entire solver.
 		//We need this as a virtual function, so it can correctly copy each specialisation of the solver.
