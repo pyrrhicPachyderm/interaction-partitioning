@@ -1,17 +1,33 @@
 #include "nls.hpp"
 #include "mlsolver.hpp"
 
-Eigen::VectorXd MaximumLikelihoodSolver::getResidualsFromVector(const Eigen::VectorXd &parameterVector) const {
+template<typename SolverT> Parameters MaximumLikelihoodSolver<SolverT>::getSolutionParameters() {
+	if(isDirtySolution) calculateSolution();
+	return solution;
+}
+
+template<> double MaximumLikelihoodSolver<Solver>::getSolutionAdditionalParameter(size_t i) {
+	assert(false);
+}
+
+template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getSolutionAdditionalParameter(size_t i) {
+	//This will only work is SolverT is a type of GeneralisedSolver (the standard Solver case is handled above).
+	//But alas, you can't partially specialise methods.
+	if(isDirtySolution) calculateSolution();
+	return solution.getAdditionalParameter(i);
+}
+
+Eigen::VectorXd GaussNewtonSolver::getResidualsFromVector(const Eigen::VectorXd &parameterVector) const {
 	return getResiduals(Parameters(parameterVector, groupings), groupings);
 }
 
-Jacobian MaximumLikelihoodSolver::getResidualsJacobianFromVector(const Eigen::VectorXd &parameterVector) const {
+Jacobian GaussNewtonSolver::getResidualsJacobianFromVector(const Eigen::VectorXd &parameterVector) const {
 	return getResidualsJacobian(Parameters(parameterVector, groupings), groupings);
 }
 
-void MaximumLikelihoodSolver::calculateSolution() {
-	ResidualsFunc residualsFunc = std::bind(&MaximumLikelihoodSolver::getResidualsFromVector, this, std::placeholders::_1);
-	JacobianFunc jacobianFunc = std::bind(&MaximumLikelihoodSolver::getResidualsJacobianFromVector, this, std::placeholders::_1);
+void GaussNewtonSolver::calculateSolution() {
+	ResidualsFunc residualsFunc = std::bind(&GaussNewtonSolver::getResidualsFromVector, this, std::placeholders::_1);
+	JacobianFunc jacobianFunc = std::bind(&GaussNewtonSolver::getResidualsJacobianFromVector, this, std::placeholders::_1);
 	
 	Eigen::VectorXd initialParameterVector = Parameters(data, groupings).getAsVector();
 	Eigen::VectorXd parameterTolerances = Parameters::getTolerances(data, groupings);
@@ -21,25 +37,42 @@ void MaximumLikelihoodSolver::calculateSolution() {
 	isDirtySolution = false;
 }
 
-Parameters MaximumLikelihoodSolver::getSolution() {
-	if(isDirtySolution) calculateSolution();
-	return solution;
+template<typename SolverT> Eigen::VectorXd MaximumLikelihoodSolver<SolverT>::getSolutionPredictions() {
+	return this->getPredictions(getSolutionParameters(), groupings);
 }
 
-Eigen::VectorXd MaximumLikelihoodSolver::getSolutionPredictions() {
-	//TODO: Memoise.
-	return getPredictions(getSolution(), groupings);
+template<typename SolverT> Eigen::VectorXd MaximumLikelihoodSolver<SolverT>::getSolutionResiduals() {
+	return this->getResiduals(getSolutionParameters(), groupings);
 }
 
-Eigen::VectorXd MaximumLikelihoodSolver::getSolutionResiduals() {
-	//TODO: Memoise.
-	return getResiduals(getSolution(), groupings);
+template<typename SolverT> size_t MaximumLikelihoodSolver<SolverT>::getNumParameters() {
+	Parameters parameters = getSolutionParameters();
+	return parameters.getNumParameters() + SolverT::NUM_ADDITIONAL_PARAMETERS;
 }
 
-double MaximumLikelihoodSolver::getDeviance() {
+template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getAIC() {
+	double p = getNumParameters();
+	double deviance = getDeviance();
+	
+	double aic = 2 * p + deviance;
+	
+	return aic;
+}
+
+template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getAICc() {
+	double n = this->data.getNumObservations();
+	double p = getNumParameters();
+	
+	double aic = getAIC();
+	double aicc = aic + (double)(2 * p * p + 2 * p) / (n - p - 1);
+	
+	return aicc;
+}
+
+double GaussNewtonSolver::getDeviance() {
 	//Returns the deviance.
 	//That is, the negative of twice the log likelihood.
-	Parameters parameters = getSolution();
+	Parameters parameters = getSolutionParameters();
 	Eigen::VectorXd residuals = getSolutionResiduals();
 	double sumOfSquares = residuals.dot(residuals);
 	
@@ -62,27 +95,7 @@ double MaximumLikelihoodSolver::getDeviance() {
 	return deviance;
 }
 
-double MaximumLikelihoodSolver::getAIC() {
-	Parameters parameters = getSolution();
-	double deviance = getDeviance();
-	
-	double aic = 2 * parameters.getNumParameters() + deviance;
-	
-	return aic;
-}
-
-double MaximumLikelihoodSolver::getAICc() {
-	Parameters parameters = getSolution();
-	double n = data.getNumObservations();
-	double p = parameters.getNumParameters();
-	
-	double aic = getAIC();
-	double aicc = aic + (double)(2 * p * p + 2 * p) / (n - p - 1);
-	
-	return aicc;
-}
-
-double MaximumLikelihoodSolver::getR2() {
+double GaussNewtonSolver::getR2() {
 	//Returns R^2, the coefficient of determination.
 	
 	Eigen::VectorXd response = getObservations();

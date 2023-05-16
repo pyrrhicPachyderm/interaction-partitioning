@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 	
-	MaximumLikelihoodSolver solver = MaximumLikelihoodSolver(input.getModel(), input.getData());
+	GaussNewtonSolver solver = GaussNewtonSolver(input.getModel(), input.getData());
 	solver.updateGrouping(GROWTH, &Grouping::separate);
 	
 	OutputColumn<Grouping> outputRowGroupings("row_group");
@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 			outputAICs.insert(solver.getAIC());
 			outputAICcs.insert(solver.getAICc());
 			outputR2s.insert(solver.getR2());
-			outputParameters.insert(Parameters(solver.getSolution(), solver.getGroupings()));
+			outputParameters.insert(Parameters(solver.getSolutionParameters(), solver.getGroupings()));
 		} while(solver.updateGrouping(ROW, &Grouping::advance));
 	} while(solver.updateGrouping(COL, &Grouping::advance));
 	
