@@ -32,7 +32,7 @@ class ReversibleJumpSolverInterface {
 template<typename ErrDistT> class ReversibleJumpSolver : public GeneralisedSolver<ErrDistT>, public ReversibleJumpSolverInterface {
 	public:
 		using GeneralisedSolver<ErrDistT>::NUM_ADDITIONAL_PARAMETERS;
-		typedef GeneralisedSolver<ErrDistT>::AdditionalParametersVector AdditionalParametersVector;
+		typedef GeneralisedSolver<ErrDistT>::ParametersT::AdditionalParametersVector AdditionalParametersVector;
 		enum JumpType {MERGE_JUMP, SPLIT_JUMP, WITHIN_JUMP, NUM_JUMP_TYPES};
 	protected:
 		typedef std::array<bool, NUM_GROUPING_TYPES> GroupingBooleanSet;

@@ -10,6 +10,9 @@ class Solver {
 		Model model;
 		Data data;
 	public:
+		constexpr static size_t NUM_ADDITIONAL_PARAMETERS = 0;
+		typedef Parameters ParametersT;
+		
 		Solver(Model model, Data data): model(model), data(data) {};
 	protected:
 		const Eigen::VectorXd &getObservations() const {
@@ -39,7 +42,7 @@ template<typename ErrDistT> class GeneralisedSolver : public Solver {
 		//This works for Normal and Gamma2, but not DiscreteWrapper<NegativeBinomial>.
 		//I'm not sure why; refl is terribly complicated, after all.
 		constexpr static size_t NUM_ADDITIONAL_PARAMETERS = 1;
-		typedef AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>::AdditionalParametersVector AdditionalParametersVector;
+		typedef AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> ParametersT;
 		
 		using Solver::Solver;
 	protected:
