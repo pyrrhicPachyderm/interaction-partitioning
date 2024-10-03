@@ -11,7 +11,7 @@ template<> double MaximumLikelihoodSolver<Solver>::getSolutionAdditionalParamete
 }
 
 template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getSolutionAdditionalParameter(size_t i) {
-	//This will only work is SolverT is a type of GeneralisedSolver (the standard Solver case is handled above).
+	//This will only work if SolverT is a type of GeneralisedSolver (the standard Solver case is handled above).
 	//But alas, you can't partially specialise methods.
 	if(isDirtySolution) calculateSolution();
 	return solution.getAdditionalParameter(i);
