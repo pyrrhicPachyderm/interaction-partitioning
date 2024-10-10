@@ -43,7 +43,7 @@ template<typename ErrDistT> class ReversibleJumpSolver : public GeneralisedSolve
 		AugmentedParametersPrior<NUM_ADDITIONAL_PARAMETERS> parametersPrior;
 		
 		GroupingSet initialGroupings; //For resetting to when starting a new chain.
-		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> initialParameters = AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(this->data, initialGroupings, guessInitialAdditionalParameters());
+		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> initialParameters = AugmentedParameters<NUM_ADDITIONAL_PARAMETERS>(this->data, initialGroupings, this->guessInitialAdditionalParameters());
 		
 		GroupingSet currentGroupings = initialGroupings;
 		AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> currentParameters = initialParameters;
@@ -90,8 +90,6 @@ template<typename ErrDistT> class ReversibleJumpSolver : public GeneralisedSolve
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType) const;
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingType groupingType, MoveType moveType, bool reverse) const;
 		double getUnscaledTransModelJumpProbability(GroupingSizeSet sourceGroupingSizes, GroupingSizeSet destGroupingSizes) const;
-		
-		AdditionalParametersVector guessInitialAdditionalParameters() const;
 		
 		double guessInitialGrowthRateApproximatePosteriorVariance() const;
 		double guessInitialCompetitionCoefficientApproximatePosteriorVariance() const;

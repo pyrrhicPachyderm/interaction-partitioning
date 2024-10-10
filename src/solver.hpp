@@ -57,6 +57,8 @@ template<typename ErrDistT> class GeneralisedSolver : public Solver {
 			}
 			return result;
 		};
+		
+		AdditionalParametersVector guessInitialAdditionalParameters() const;
 };
 
 #endif

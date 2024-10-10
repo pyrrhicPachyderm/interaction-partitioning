@@ -91,19 +91,6 @@ template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::findTransMode
 	return MAX_TRANS_MODEL_JUMP_PROBABILITY / unscaledMaxTransModelJumpProbability;
 }
 
-template<> ReversibleJumpSolver<Distributions::Normal>::AdditionalParametersVector ReversibleJumpSolver<Distributions::Normal>::guessInitialAdditionalParameters() const {
-	//Normal error variance.
-	return {{data.guessErrorVariance()}};
-}
-template<> ReversibleJumpSolver<Distributions::Gamma2>::AdditionalParametersVector ReversibleJumpSolver<Distributions::Gamma2>::guessInitialAdditionalParameters() const {
-	//Gamma2 dispersion parameter.
-	return {{1.0}};
-}
-template<> ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>::AdditionalParametersVector ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>::guessInitialAdditionalParameters() const {
-	//NegativeBinomial2 dispersion parameter.
-	return {{1.0}};
-}
-
 template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::guessInitialGrowthRateApproximatePosteriorVariance() const {
 	return pow(this->data.guessGrowthRateMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 }
@@ -118,7 +105,7 @@ template<typename ErrDistT> ReversibleJumpSolver<ErrDistT>::AdditionalParameters
 		[] (double i) -> double {
 			return i * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 		},
-		guessInitialAdditionalParameters()
+		this->guessInitialAdditionalParameters()
 	);
 }
 
