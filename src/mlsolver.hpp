@@ -59,7 +59,7 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 		size_t getNumParameters() override;
 		double getAIC() override;
 		double getAICc() override;
-		virtual double getR2() = 0;
+		double getR2() override; //TODO: Check whether this needs to be different with a non-normal error distribution.
 };
 
 class GaussNewtonSolver : public MaximumLikelihoodSolver<Solver> {
@@ -72,7 +72,6 @@ class GaussNewtonSolver : public MaximumLikelihoodSolver<Solver> {
 		void calculateSolution() override;
 	public:
 		double getDeviance() override;
-		double getR2() override;
 };
 
 #endif

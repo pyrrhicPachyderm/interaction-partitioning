@@ -69,6 +69,19 @@ template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getAICc() {
 	return aicc;
 }
 
+template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getR2() {
+	//Returns R^2, the coefficient of determination.
+	
+	Eigen::VectorXd response = this->getObservations();
+	Eigen::VectorXd normalisedResponse = response - Eigen::VectorXd::Constant(response.size(), response.mean());
+	double totalSS = normalisedResponse.dot(normalisedResponse);
+	
+	Eigen::VectorXd residuals = getSolutionResiduals();
+	double residualSS = residuals.dot(residuals);
+	
+	return 1.0 - (residualSS / totalSS);
+}
+
 double GaussNewtonSolver::getDeviance() {
 	//Returns the deviance.
 	//That is, the negative of twice the log likelihood.
@@ -93,17 +106,4 @@ double GaussNewtonSolver::getDeviance() {
 	double deviance = residuals.size() * log(2 * M_PI * variance) + sumOfSquares / variance;
 	
 	return deviance;
-}
-
-double GaussNewtonSolver::getR2() {
-	//Returns R^2, the coefficient of determination.
-	
-	Eigen::VectorXd response = getObservations();
-	Eigen::VectorXd normalisedResponse = response - Eigen::VectorXd::Constant(response.size(), response.mean());
-	double totalSS = normalisedResponse.dot(normalisedResponse);
-	
-	Eigen::VectorXd residuals = getSolutionResiduals();
-	double residualSS = residuals.dot(residuals);
-	
-	return 1.0 - (residualSS / totalSS);
 }
