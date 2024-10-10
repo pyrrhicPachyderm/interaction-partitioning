@@ -112,17 +112,14 @@ template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::guessInitialC
 	return pow(this->data.guessCompetitionCoefficientMagnitude(), 2) * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
 }
 
-template<> ReversibleJumpSolver<Distributions::Normal>::AdditionalParametersVector ReversibleJumpSolver<Distributions::Normal>::guessInitialAdditionalParametersApproximatePosteriorVariance() const {
-	//Normal error variance.
-	return {{data.guessErrorVariance() * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
-}
-template<> ReversibleJumpSolver<Distributions::Gamma2>::AdditionalParametersVector ReversibleJumpSolver<Distributions::Gamma2>::guessInitialAdditionalParametersApproximatePosteriorVariance() const {
-	//Gamma2 dispersion parameter.
-	return {{1.0 * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
-}
-template<> ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>::AdditionalParametersVector ReversibleJumpSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>::guessInitialAdditionalParametersApproximatePosteriorVariance() const {
-	//NegativeBinomial2 dispersion parameter.
-	return {{1.0 * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER}};
+template<typename ErrDistT> ReversibleJumpSolver<ErrDistT>::AdditionalParametersVector ReversibleJumpSolver<ErrDistT>::guessInitialAdditionalParametersApproximatePosteriorVariance() const {
+	//Multiply guessInitialAdditionalParameters by INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
+	return array_map(
+		[] (double i) -> double {
+			return i * INITIAL_APPROXIMATE_POSTERIOR_VARIANCE_MULTIPLIER;
+		},
+		guessInitialAdditionalParameters()
+	);
 }
 
 template<typename ErrDistT> double ReversibleJumpSolver<ErrDistT>::getJumpVarianceMultiplier(JumpType jumpType) const {
