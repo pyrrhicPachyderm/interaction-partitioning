@@ -59,6 +59,7 @@ template<size_t nAug> class AugmentedParameters : public Parameters {
 			Parameters(data, groupings), additionalParameters(additionalParameters) {};
 		AugmentedParameters(AugmentedParameters p, GroupingSet groupings): //Undoes the grouping, giving a full set of parameters for every species.
 			Parameters((Parameters)p, groupings), additionalParameters(p.additionalParameters) {};
+		
 		const double &getAdditionalParameter(size_t index) const {
 			return additionalParameters[index];
 		}
