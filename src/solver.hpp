@@ -43,6 +43,7 @@ template<typename ErrDistT> class GeneralisedSolver : public Solver {
 		//I'm not sure why; refl is terribly complicated, after all.
 		constexpr static size_t NUM_ADDITIONAL_PARAMETERS = 1;
 		typedef AugmentedParameters<NUM_ADDITIONAL_PARAMETERS> ParametersT;
+		typedef ParametersT::AdditionalParametersVector AdditionalParametersVector;
 		
 		using Solver::Solver;
 	protected:
