@@ -91,7 +91,7 @@ Parameters::Parameters(Parameters p, GroupingSet groupings):
 }
 
 Eigen::VectorXd Parameters::getAsVector() const {
-	return (Eigen::VectorXd(growthRates.size() + competitionCoefficients.size()) <<
+	return (Eigen::VectorXd(getNumParameters()) <<
 		growthRates,
 		Eigen::Map<const Eigen::VectorXd>(competitionCoefficients.data(), competitionCoefficients.size())
 	).finished();
