@@ -48,6 +48,7 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 		const Grouping &getGrouping(GroupingType groupingType) const {return groupings[groupingType];}
 	protected:
 		virtual void calculateSolution() = 0;
+		SolverT::ParametersT getSolution();
 	public:
 		Parameters getSolutionParameters() override;
 		double getSolutionAdditionalParameter(size_t i) override;
