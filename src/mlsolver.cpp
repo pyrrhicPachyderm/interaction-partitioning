@@ -60,7 +60,7 @@ template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateSolution() {
 	
 	nlopt::opt optimiser = nlopt::opt(nlopt::LN_SBPLX, parametersVector.size());
 	optimiser.set_max_objective(NLoptSolver<ErrDistT>::optimisationFunc, (void*)this);
-	optimiser.set_xtol_rel(NLOPT_RELATIVE_TOLERANCE);
+	optimiser.set_ftol_rel(NLOPT_RELATIVE_TOLERANCE);
 	
 	double finalLogLikelihood;
 	optimiser.optimize(parametersVector, finalLogLikelihood);
