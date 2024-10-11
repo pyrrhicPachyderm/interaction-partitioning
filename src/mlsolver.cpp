@@ -59,7 +59,7 @@ template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateSolution() {
 	std::vector<double> parametersVector = std::vector<double>(parametersVectorEigen.data(), parametersVectorEigen.data() + parametersVectorEigen.size()); //Take a copy as a std::vector.
 	
 	nlopt::opt optimiser = nlopt::opt(nlopt::LN_SBPLX, parametersVector.size());
-	optimiser.set_min_objective(NLoptSolver<ErrDistT>::optimisationFunc, (void*)this);
+	optimiser.set_max_objective(NLoptSolver<ErrDistT>::optimisationFunc, (void*)this);
 	optimiser.set_xtol_rel(NLOPT_RELATIVE_TOLERANCE);
 	
 	double finalLogLikelihood;
