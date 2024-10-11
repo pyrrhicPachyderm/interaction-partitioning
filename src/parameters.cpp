@@ -36,6 +36,10 @@ size_t Parameters::getNumParameters() const {
 	return growthRates.size() + competitionCoefficients.size();
 }
 
+template<size_t nAug> size_t AugmentedParameters<nAug>::getNumParameters() const {
+	return Parameters::getNumParameters() + nAug;
+}
+
 Parameters::Parameters(Data data, GroupingSet groupings):
 	numRowSpecies(data.getNumRowSpecies()), numColSpecies(data.getNumColSpecies())
 {
@@ -74,6 +78,15 @@ Parameters::Parameters(Eigen::VectorXd parameters, GroupingSet groupings):
 	competitionCoefficients = Eigen::Map<Eigen::MatrixXdRowMajor>(&parameters[numGrowthRates], numRowGroups, numColGroups);
 }
 
+template<size_t nAug> AugmentedParameters<nAug>::AugmentedParameters(Eigen::VectorXd parameters, GroupingSet groupings):
+	Parameters(parameters, groupings)
+{
+	size_t numBaseParameters = Parameters::getNumParameters();
+	for(size_t i = 0; i < nAug; i++) {
+		additionalParameters[i] = parameters[numBaseParameters + i];
+	}
+}
+
 Parameters::Parameters(Parameters p, GroupingSet groupings):
 	numRowSpecies(groupings[ROW].numSpecies), numColSpecies(groupings[COL].numSpecies)
 {
@@ -94,6 +107,13 @@ Eigen::VectorXd Parameters::getAsVector() const {
 	return (Eigen::VectorXd(getNumParameters()) <<
 		growthRates,
 		Eigen::Map<const Eigen::VectorXd>(competitionCoefficients.data(), competitionCoefficients.size())
+	).finished();
+}
+
+template<size_t nAug> Eigen::VectorXd AugmentedParameters<nAug>::getAsVector() const {
+	return (Eigen::VectorXd(getNumParameters()) <<
+		Parameters::getAsVector(),
+		Eigen::Map<const Eigen::VectorXd>(additionalParameters.data(), additionalParameters.size())
 	).finished();
 }
 

@@ -51,8 +51,8 @@ template<typename SolverT> Eigen::VectorXd MaximumLikelihoodSolver<SolverT>::get
 }
 
 template<typename SolverT> size_t MaximumLikelihoodSolver<SolverT>::getNumParameters() {
-	Parameters parameters = getSolutionParameters();
-	return parameters.getNumParameters() + SolverT::NUM_ADDITIONAL_PARAMETERS;
+	ParametersT parameters = getSolution();
+	return parameters.getNumParameters();
 }
 
 template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getAIC() {

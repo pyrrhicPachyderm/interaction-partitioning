@@ -22,7 +22,7 @@ class Parameters {
 		double getCompetitionCoefficient(size_t rowIndex, size_t colIndex) const;
 		Eigen::VectorXd getCompetitionCoefficientsRow(size_t rowIndex) const;
 		const Eigen::MatrixXdRowMajor &getCompetitionCoefficients() const;
-		size_t getNumParameters() const;
+		virtual size_t getNumParameters() const;
 	public:
 		Parameters() = default;
 		Parameters(Data data, GroupingSet groupings);
@@ -30,7 +30,7 @@ class Parameters {
 		
 		//Some functions to allow converting back and forth as a pure vector, for systems (such as the NLS module) that need it that way.
 		Parameters(Eigen::VectorXd parameters, GroupingSet groupings);
-		Eigen::VectorXd getAsVector() const;
+		virtual Eigen::VectorXd getAsVector() const;
 		size_t getAsVectorGrowthRateIndex(size_t index) const;
 		size_t getAsVectorCompetitionCoefficientIndex(size_t rowIndex, size_t colIndex) const;
 		
@@ -47,7 +47,7 @@ class Parameters {
 };
 
 //Augmented parameters, e.g. parameters plus a normal distribution variance parameter.
-//Note that this does not overwrite functions from Parameters, so getNumParameters(), getAsVector(), and the like all ignore the additional parameters.
+//Overrides getNumParameters() and getAsVector() from Parameters the additional parameters.
 template<size_t nAug> class AugmentedParameters : public Parameters {
 	public:
 		typedef std::array<double, nAug> AdditionalParametersVector;
@@ -58,6 +58,12 @@ template<size_t nAug> class AugmentedParameters : public Parameters {
 			Parameters(data, groupings), additionalParameters(additionalParameters) {};
 		AugmentedParameters(AugmentedParameters p, GroupingSet groupings): //Undoes the grouping, giving a full set of parameters for every species.
 			Parameters((Parameters)p, groupings), additionalParameters(p.additionalParameters) {};
+		
+		size_t getNumParameters() const override;
+		
+		//Some functions to allow converting back and forth as a pure vector, for systems (such as NLopt) that need it that way.
+		AugmentedParameters(Eigen::VectorXd parameters, GroupingSet groupings);
+		Eigen::VectorXd getAsVector() const override;
 		
 		const double &getAdditionalParameter(size_t index) const {
 			return additionalParameters[index];
