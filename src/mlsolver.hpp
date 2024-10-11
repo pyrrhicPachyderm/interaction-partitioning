@@ -41,7 +41,7 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 	public:
 		//Functions to update groupings.
 		//Can use reset(), separate(), or advance().
-		template<typename T> T updateGrouping(GroupingType groupingType, T (Grouping::*updateFunc)()) {
+		bool updateGrouping(GroupingType groupingType, bool (Grouping::*updateFunc)()) {
 			isDirtySolution = true;
 			return (groupings[groupingType].*updateFunc)();
 		}
