@@ -15,10 +15,12 @@ class Grouping {
 		std::vector<size_t> groups;
 	public:
 		//Resets to the lexigraphically first grouping.
-		void reset();
+		//Always returns true.
+		bool reset();
 		
 		//Resets to the lexigraphically last grouping.
-		void separate();
+		//Always returns true.
+		bool separate();
 		
 		//Advances to the next grouping, per lexigraphic order.
 		//Wraps back to the lexigraphically first grouping once it has been through them all.

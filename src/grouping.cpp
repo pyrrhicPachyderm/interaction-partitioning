@@ -4,14 +4,16 @@
 #include "utils/array.hpp"
 #include "grouping.hpp"
 
-void Grouping::reset() {
+bool Grouping::reset() {
 	groups = std::vector<size_t>(numSpecies, 0);
+	return true;
 }
 
-void Grouping::separate() {
+bool Grouping::separate() {
 	for(size_t i = 0; i < numSpecies; i++) {
 		groups[i] = i;
 	}
+	return true;
 }
 
 bool Grouping::advance() {
