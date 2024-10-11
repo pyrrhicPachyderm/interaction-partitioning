@@ -5,6 +5,10 @@
 
 class MaximumLikelihoodSolverInterface {
 	public:
+		virtual bool updateGrouping(GroupingType groupingType, bool (Grouping::*updateFunc)()) = 0;
+		virtual const GroupingSet &getGroupings() const = 0;
+		virtual const Grouping &getGrouping(GroupingType groupingType) const = 0;
+		
 		virtual Parameters getSolutionParameters() = 0;
 		virtual double getSolutionAdditionalParameter(size_t i) = 0;
 		
@@ -39,15 +43,15 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 		SolverT::ParametersT solution;
 		bool isDirtySolution = true;
 	public:
-		//Functions to update groupings.
+		//A function to update groupings.
 		//Can use reset(), separate(), or advance().
-		bool updateGrouping(GroupingType groupingType, bool (Grouping::*updateFunc)()) {
+		bool updateGrouping(GroupingType groupingType, bool (Grouping::*updateFunc)()) override {
 			isDirtySolution = true;
 			return (groupings[groupingType].*updateFunc)();
 		}
 		
-		const GroupingSet &getGroupings() const {return groupings;}
-		const Grouping &getGrouping(GroupingType groupingType) const {return groupings[groupingType];}
+		const GroupingSet &getGroupings() const override {return groupings;}
+		const Grouping &getGrouping(GroupingType groupingType) const override {return groupings[groupingType];}
 	protected:
 		virtual void calculateSolution() = 0;
 		SolverT::ParametersT getSolution();
