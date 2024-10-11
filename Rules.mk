@@ -89,7 +89,7 @@ HERE/TCL_DrosMCT/%:
 HERE_cc := g++
 HERE_cext := cpp
 HERE_cflags := $(CFLAGS) -std=c++20 -Wall -Wpedantic -Wextra -Wno-unused-parameter -Wno-non-template-friend -O3 -fopenmp -I/usr/include/eigen3
-HERE_clibs := $(CLIBS) -lm
+HERE_clibs := $(CLIBS) -lm -lnlopt
 
 #These two should work for most projects, but keep an eye on them.
 HERE_cdirs := $(shell find 'HERE' -name '.git' -prune -o -name '*.$(HERE_cext)' -printf '%h\n' | sort -u) #All directories containing .c/cpp files, not searching .git

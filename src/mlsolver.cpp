@@ -1,5 +1,8 @@
+#include <nlopt.hpp>
 #include "nls.hpp"
 #include "mlsolver.hpp"
+
+#define NLOPT_RELATIVE_TOLERANCE 1e-6
 
 template<typename SolverT> SolverT::ParametersT MaximumLikelihoodSolver<SolverT>::getSolution() {
 	//Returns Parameters or AugmentedParameters as appropriate.
@@ -40,6 +43,30 @@ void GaussNewtonSolver::calculateSolution() {
 	Eigen::VectorXd solutionVector = gaussNewtonNLS(residualsFunc, jacobianFunc, initialParameterVector, parameterTolerances);
 	solution = Parameters(solutionVector, groupings);
 	isDirtySolution = false;
+}
+
+template<typename ErrDistT> double NLoptSolver<ErrDistT>::getLogLikelihoodFromVector(const std::vector<double> &parametersVector) {
+	return this->getLogLikelihood(ParametersT(Eigen::Map<const Eigen::VectorXd>(parametersVector.data(), parametersVector.size()), this->groupings), this->groupings);
+}
+
+template<typename ErrDistT> double NLoptSolver<ErrDistT>::optimisationFunc(const std::vector<double>& parametersVector, std::vector<double>& grad, void* solver) {
+	//We ignore grad. We'll need to fix this if we ever use non-derivative-free optimisation.
+	return ((NLoptSolver<ErrDistT>*)solver)->getLogLikelihoodFromVector(parametersVector);
+}
+
+template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateSolution() {
+	Eigen::VectorXd parametersVectorEigen = ParametersT(this->data, this->groupings, this->guessInitialAdditionalParameters()).getAsVector();
+	std::vector<double> parametersVector = std::vector<double>(parametersVectorEigen.data(), parametersVectorEigen.data() + parametersVectorEigen.size()); //Take a copy as a std::vector.
+	
+	nlopt::opt optimiser = nlopt::opt(nlopt::LN_SBPLX, parametersVector.size());
+	optimiser.set_min_objective(NLoptSolver<ErrDistT>::optimisationFunc, (void*)this);
+	optimiser.set_xtol_rel(NLOPT_RELATIVE_TOLERANCE);
+	
+	double finalLogLikelihood;
+	optimiser.optimize(parametersVector, finalLogLikelihood);
+	
+	this->solution = ParametersT(Eigen::Map<const Eigen::VectorXd>(parametersVector.data(), parametersVector.size()), this->groupings);
+	this->isDirtySolution = false;
 }
 
 template<typename SolverT> Eigen::VectorXd MaximumLikelihoodSolver<SolverT>::getSolutionPredictions() {
@@ -112,3 +139,13 @@ double GaussNewtonSolver::getDeviance() {
 	
 	return deviance;
 }
+
+template<typename ErrDistT> double NLoptSolver<ErrDistT>::getDeviance() {
+	//Returns the deviance.
+	//That is, the negative of twice the log likelihood.
+	return -2 * this->getLogLikelihood(this->getSolution(), this->groupings);
+}
+
+//Explicitly instantiate.
+template class NLoptSolver<Distributions::Gamma2>;
+template class NLoptSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>;

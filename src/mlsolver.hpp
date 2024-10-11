@@ -77,4 +77,21 @@ class GaussNewtonSolver : public MaximumLikelihoodSolver<Solver> {
 		double getDeviance() override;
 };
 
+template<typename ErrDistT> class NLoptSolver : public MaximumLikelihoodSolver<GeneralisedSolver<ErrDistT>> {
+	public:
+		using MaximumLikelihoodSolver<GeneralisedSolver<ErrDistT>>::MaximumLikelihoodSolver;
+		
+		typedef MaximumLikelihoodSolver<GeneralisedSolver<ErrDistT>>::ParametersT ParametersT;
+	protected:
+		//NLopt requires a function pointer, not the std::function produced by std::bind.
+		//A std::function cannot be converted to a function pointer; function pointers must be to free functions, not to methods.
+		//So we define a static (free) function as a wrapper, which takes this object as a void pointer.
+		double getLogLikelihoodFromVector(const std::vector<double> &parametersVector);
+		static double optimisationFunc(const std::vector<double>& parametersVector, std::vector<double>& grad, void* solver);
+		
+		void calculateSolution() override;
+	public:
+		double getDeviance() override;
+};
+
 #endif
