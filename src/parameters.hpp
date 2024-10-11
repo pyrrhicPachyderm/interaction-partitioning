@@ -54,6 +54,7 @@ template<size_t nAug> class AugmentedParameters : public Parameters {
 	protected:
 		AdditionalParametersVector additionalParameters;
 	public:
+		AugmentedParameters() = default;
 		AugmentedParameters(Data data, GroupingSet groupings, AdditionalParametersVector additionalParameters):
 			Parameters(data, groupings), additionalParameters(additionalParameters) {};
 		AugmentedParameters(AugmentedParameters p, GroupingSet groupings): //Undoes the grouping, giving a full set of parameters for every species.
