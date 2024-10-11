@@ -23,6 +23,8 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 	protected:
 		GroupingSet groupings;
 	public:
+		typedef SolverT::ParametersT ParametersT;
+		
 		MaximumLikelihoodSolver(Model model, Data data):
 			SolverT(model, data), groupings({Grouping(data.getNumRowSpecies()), Grouping(data.getNumRowSpecies()), Grouping(data.getNumColSpecies())}) {};
 		MaximumLikelihoodSolver(Model model, Data data, GroupingSet groupings):
