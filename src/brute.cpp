@@ -7,40 +7,53 @@ int main(int argc, char **argv) {
 	std::string errorDistribution = input.getErrorDistribution();
 	std::string additionalParameterName;
 	
-	MaximumLikelihoodSolverInterface *solver = NULL;
+	MaximumLikelihoodSolverInterface *masterSolver = NULL;
 	if(errorDistribution == "normal") {
-		solver = new GaussNewtonSolver(input.getModel(), input.getData());
+		masterSolver = new GaussNewtonSolver(input.getModel(), input.getData());
 	} else if(errorDistribution == "gamma") {
-		solver = new NLoptSolver<Distributions::Gamma2>(input.getModel(), input.getData());
+		masterSolver = new NLoptSolver<Distributions::Gamma2>(input.getModel(), input.getData());
 	} else if(errorDistribution == "negativebinomial") {
-		solver = new NLoptSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>(input.getModel(), input.getData());
+		masterSolver = new NLoptSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>(input.getModel(), input.getData());
 	} else {
 		fprintf(stderr, "Unrecognised error distribution.\n");
 		exit(1);
 	}
 	
-	solver->updateGrouping(GROWTH, &Grouping::separate);
-	
-	OutputColumn<Grouping> outputRowGroupings("row_group");
-	OutputColumn<Grouping> outputColGroupings("col_group");
-	OutputColumn<double> outputAICs("aic");
-	OutputColumn<double> outputAICcs("aicc");
-	OutputColumn<double> outputR2s("R2");
-	OutputColumn<Parameters> outputParameters("parameters");
-	//TODO: Output additional parameters for generalised models.
-	
+	//Build a vector of all the GroupingSets to evaluate.
+	GroupingSet groupingSet = masterSolver->getGroupings();
+	groupingSet[GROWTH].separate();
+	std::vector<GroupingSet> groupingSets;
 	do {
 		do {
-			outputRowGroupings.insert(solver->getGrouping(ROW));
-			outputColGroupings.insert(solver->getGrouping(COL));
-			outputAICs.insert(solver->getAIC());
-			outputAICcs.insert(solver->getAICc());
-			outputR2s.insert(solver->getR2());
-			outputParameters.insert(Parameters(solver->getSolutionParameters(), solver->getGroupings()));
-		} while(solver->updateGrouping(ROW, &Grouping::advance));
-	} while(solver->updateGrouping(COL, &Grouping::advance));
+			groupingSets.push_back(groupingSet);
+		} while(groupingSet[ROW].advance());
+	} while(groupingSet[COL].advance());
 	
-	delete solver;
+	//Only groupings need actual default values; the rest have default constructors.
+	OutputColumn<Grouping> outputRowGroupings("row_group", groupingSets.size(), masterSolver->getGrouping(ROW));
+	OutputColumn<Grouping> outputColGroupings("col_group", groupingSets.size(), masterSolver->getGrouping(COL));
+	OutputColumn<double> outputAICs("aic", groupingSets.size(), 0.0);
+	OutputColumn<double> outputAICcs("aicc", groupingSets.size(), 0.0);
+	OutputColumn<double> outputR2s("R2", groupingSets.size(), 0.0);
+	OutputColumn<Parameters> outputParameters("parameters", groupingSets.size(), Parameters());
+	//TODO: Output additional parameters for generalised models.
+	
+	#pragma omp parallel for
+	for(size_t i = 0; i < groupingSets.size(); i++) {
+		MaximumLikelihoodSolverInterface *solver = masterSolver->getCopy(); //TODO
+		solver->setGroupings(groupingSets[i]);
+		
+		outputRowGroupings.set(i, solver->getGrouping(ROW));
+		outputColGroupings.set(i, solver->getGrouping(COL));
+		outputAICs.set(i, solver->getAIC());
+		outputAICcs.set(i, solver->getAICc());
+		outputR2s.set(i, solver->getR2());
+		outputParameters.set(i, Parameters(solver->getSolutionParameters(), solver->getGroupings()));
+		
+		delete solver;
+	}
+	
+	delete masterSolver;
 	
 	outputTable(input.getOutputFile(), outputRowGroupings, outputColGroupings, outputParameters, outputAICs, outputAICcs, outputR2s);
 	
