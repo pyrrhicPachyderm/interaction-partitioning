@@ -5,6 +5,9 @@
 
 class MaximumLikelihoodSolverInterface {
 	public:
+		//Virtual destructor, as this is an abstract class.
+		virtual ~MaximumLikelihoodSolverInterface() {};
+		
 		virtual bool updateGrouping(GroupingType groupingType, bool (Grouping::*updateFunc)()) = 0;
 		virtual void setGroupings(const GroupingSet &groupings) = 0;
 		virtual void setGrouping(GroupingType groupingType, const Grouping &grouping) = 0;
