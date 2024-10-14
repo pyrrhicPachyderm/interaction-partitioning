@@ -6,6 +6,8 @@
 class MaximumLikelihoodSolverInterface {
 	public:
 		virtual bool updateGrouping(GroupingType groupingType, bool (Grouping::*updateFunc)()) = 0;
+		virtual void setGroupings(const GroupingSet &groupings) = 0;
+		virtual void setGrouping(GroupingType groupingType, const Grouping &grouping) = 0;
 		virtual const GroupingSet &getGroupings() const = 0;
 		virtual const Grouping &getGrouping(GroupingType groupingType) const = 0;
 		
@@ -48,6 +50,14 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 		bool updateGrouping(GroupingType groupingType, bool (Grouping::*updateFunc)()) override {
 			isDirtySolution = true;
 			return (groupings[groupingType].*updateFunc)();
+		}
+		void setGroupings(const GroupingSet &gs) override {
+			isDirtySolution = true;
+			groupings = gs;
+		}
+		void setGrouping(GroupingType groupingType, const Grouping &g) override {
+			isDirtySolution = true;
+			groupings[groupingType] = g;
 		}
 		
 		const GroupingSet &getGroupings() const override {return groupings;}
