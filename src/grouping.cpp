@@ -130,7 +130,7 @@ Grouping Grouping::getMerge(size_t index) const {
 	//Or, using integer square root and integer division:
 	size_t secondGroup = (isqrt(8 * index + 1) + 1) / 2;
 	//It is not possible to find the indexth pair within the first m,
-	//so one of the groups to merge must fall outside, m itsel when adjusting for 0-indexing.
+	//so one of the groups to merge must fall outside, m itself when adjusting for 0-indexing.
 	//The index of the other can be found by subtracting (m choose 2) from index.
 	size_t firstGroup = index - secondGroup * (secondGroup - 1) / 2;
 	

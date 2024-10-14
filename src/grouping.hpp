@@ -65,7 +65,7 @@ class Grouping {
 		
 		//Gets the indexth merge/split.
 		//The order is arbitrary, but consistent.
-		//index must be at less than getNumMerges()/getNumSplits().
+		//index must be less than getNumMerges()/getNumSplits().
 		Grouping getMerge(size_t index) const;
 		Grouping getSplit(size_t index) const;
 		
