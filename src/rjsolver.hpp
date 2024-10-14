@@ -129,7 +129,7 @@ template<typename ErrDistT> class ReversibleJumpSolver : public GeneralisedSolve
 		
 		void resetChain() override;
 		
-		ReversibleJumpSolverInterface *getCopy() const {return new ReversibleJumpSolver<ErrDistT>(*this);};
+		ReversibleJumpSolverInterface *getCopy() const override {return new ReversibleJumpSolver<ErrDistT>(*this);};
 };
 
 #endif
