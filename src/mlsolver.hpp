@@ -25,6 +25,10 @@ class MaximumLikelihoodSolverInterface {
 		virtual double getAIC() = 0;
 		virtual double getAICc() = 0;
 		virtual double getR2() = 0;
+		
+		//For parallelisation purposes, we sometimes need copies of the entire solver.
+		//We need this as a virtual function, so it can correctly copy each specialisation of the solver.
+		virtual MaximumLikelihoodSolverInterface *getCopy() const = 0;
 };
 
 template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, public MaximumLikelihoodSolverInterface {
@@ -80,6 +84,8 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 		double getAIC() override;
 		double getAICc() override;
 		double getR2() override; //TODO: Check whether this needs to be different with a non-normal error distribution.
+		
+		virtual MaximumLikelihoodSolverInterface *getCopy() const = 0;
 };
 
 class GaussNewtonSolver : public MaximumLikelihoodSolver<Solver> {
@@ -92,6 +98,8 @@ class GaussNewtonSolver : public MaximumLikelihoodSolver<Solver> {
 		void calculateSolution() override;
 	public:
 		double getDeviance() override;
+		
+		MaximumLikelihoodSolverInterface *getCopy() const override {return new GaussNewtonSolver(*this);};
 };
 
 template<typename ErrDistT> class NLoptSolver : public MaximumLikelihoodSolver<GeneralisedSolver<ErrDistT>> {
@@ -109,6 +117,8 @@ template<typename ErrDistT> class NLoptSolver : public MaximumLikelihoodSolver<G
 		void calculateSolution() override;
 	public:
 		double getDeviance() override;
+		
+		MaximumLikelihoodSolverInterface *getCopy() const override {return new NLoptSolver<ErrDistT>(*this);};
 };
 
 #endif
