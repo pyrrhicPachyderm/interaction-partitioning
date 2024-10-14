@@ -40,6 +40,8 @@ int main(int argc, char **argv) {
 		} while(solver->updateGrouping(ROW, &Grouping::advance));
 	} while(solver->updateGrouping(COL, &Grouping::advance));
 	
+	delete solver;
+	
 	outputTable(input.getOutputFile(), outputRowGroupings, outputColGroupings, outputParameters, outputAICs, outputAICcs, outputR2s);
 	
 	return 0;
