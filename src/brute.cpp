@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 	OutputColumn<Parameters> outputParameters("parameters", groupingSets.size(), Parameters());
 	//TODO: Output additional parameters for generalised models.
 	
-	#pragma omp parallel for
+	#pragma omp parallel for schedule(dynamic)
 	for(size_t i = 0; i < groupingSets.size(); i++) {
 		MaximumLikelihoodSolverInterface *solver = masterSolver->getCopy(); //TODO
 		solver->setGroupings(groupingSets[i]);
