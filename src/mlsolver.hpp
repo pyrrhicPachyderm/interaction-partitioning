@@ -49,7 +49,7 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 			}
 		};
 	protected:
-		SolverT::ParametersT solution;
+		ParametersT solution;
 		bool isDirtySolution = true;
 	public:
 		//A function to update groupings.
@@ -71,7 +71,7 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 		const Grouping &getGrouping(GroupingType groupingType) const override {return groupings[groupingType];}
 	protected:
 		virtual void calculateSolution() = 0;
-		SolverT::ParametersT getSolution();
+		ParametersT getSolution();
 	public:
 		Parameters getSolutionParameters() override;
 		double getSolutionAdditionalParameter(size_t i) override;
