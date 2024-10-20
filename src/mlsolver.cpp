@@ -25,28 +25,36 @@ template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getSolutionA
 	return getSolution().getAdditionalParameter(i);
 }
 
+template<typename SolverT> Eigen::VectorXd MaximumLikelihoodSolver<SolverT>::parametersToVector(const SolverT::ParametersT &parameters) const {
+	return parameters.getAsVector();
+}
+
+template<typename SolverT> SolverT::ParametersT MaximumLikelihoodSolver<SolverT>::vectorToParameters(const Eigen::VectorXd &vector) const {
+	return ParametersT(vector, this->groupings);
+}
+
 Eigen::VectorXd GaussNewtonSolver::getResidualsFromVector(const Eigen::VectorXd &parameterVector) const {
-	return getResiduals(Parameters(parameterVector, groupings), groupings);
+	return getResiduals(vectorToParameters(parameterVector), groupings);
 }
 
 Jacobian GaussNewtonSolver::getResidualsJacobianFromVector(const Eigen::VectorXd &parameterVector) const {
-	return getResidualsJacobian(Parameters(parameterVector, groupings), groupings);
+	return getResidualsJacobian(vectorToParameters(parameterVector), groupings);
 }
 
 void GaussNewtonSolver::calculateSolution() {
 	ResidualsFunc residualsFunc = std::bind(&GaussNewtonSolver::getResidualsFromVector, this, std::placeholders::_1);
 	JacobianFunc jacobianFunc = std::bind(&GaussNewtonSolver::getResidualsJacobianFromVector, this, std::placeholders::_1);
 	
-	Eigen::VectorXd initialParameterVector = Parameters(data, groupings).getAsVector();
+	Eigen::VectorXd initialParameterVector = parametersToVector(Parameters(data, groupings));
 	Eigen::VectorXd parameterTolerances = Parameters::getTolerances(data, groupings);
 	
 	Eigen::VectorXd solutionVector = gaussNewtonNLS(residualsFunc, jacobianFunc, initialParameterVector, parameterTolerances);
-	solution = Parameters(solutionVector, groupings);
+	solution = vectorToParameters(solutionVector);
 	isDirtySolution = false;
 }
 
 template<typename ErrDistT> double NLoptSolver<ErrDistT>::getLogLikelihoodFromVector(const std::vector<double> &parametersVector) {
-	return this->getLogLikelihood(ParametersT(Eigen::Map<const Eigen::VectorXd>(parametersVector.data(), parametersVector.size()), this->groupings), this->groupings);
+	return this->getLogLikelihood(this->vectorToParameters(Eigen::Map<const Eigen::VectorXd>(parametersVector.data(), parametersVector.size())), this->groupings);
 }
 
 template<typename ErrDistT> double NLoptSolver<ErrDistT>::optimisationFunc(const std::vector<double>& parametersVector, std::vector<double>& grad, void* solver) {
@@ -55,7 +63,7 @@ template<typename ErrDistT> double NLoptSolver<ErrDistT>::optimisationFunc(const
 }
 
 template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateSolution() {
-	Eigen::VectorXd parametersVectorEigen = ParametersT(this->data, this->groupings, this->guessInitialAdditionalParameters()).getAsVector();
+	Eigen::VectorXd parametersVectorEigen = this->parametersToVector(ParametersT(this->data, this->groupings, this->guessInitialAdditionalParameters()));
 	std::vector<double> parametersVector = std::vector<double>(parametersVectorEigen.data(), parametersVectorEigen.data() + parametersVectorEigen.size()); //Take a copy as a std::vector.
 	
 	nlopt::opt optimiser = nlopt::opt(nlopt::LN_SBPLX, parametersVector.size());
@@ -65,7 +73,7 @@ template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateSolution() {
 	double finalLogLikelihood;
 	optimiser.optimize(parametersVector, finalLogLikelihood);
 	
-	this->solution = ParametersT(Eigen::Map<const Eigen::VectorXd>(parametersVector.data(), parametersVector.size()), this->groupings);
+	this->solution = this->vectorToParameters(Eigen::Map<const Eigen::VectorXd>(parametersVector.data(), parametersVector.size()));
 	this->isDirtySolution = false;
 }
 

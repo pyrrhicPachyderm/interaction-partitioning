@@ -72,6 +72,9 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 	protected:
 		virtual void calculateSolution() = 0;
 		ParametersT getSolution();
+		
+		Eigen::VectorXd parametersToVector(const ParametersT &parameters) const;
+		ParametersT vectorToParameters(const Eigen::VectorXd &vector) const;
 	public:
 		Parameters getSolutionParameters() override;
 		double getSolutionAdditionalParameter(size_t i) override;
