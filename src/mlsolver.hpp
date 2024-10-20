@@ -57,17 +57,17 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 		//Can use reset(), separate(), or advance().
 		bool updateGrouping(GroupingType groupingType, bool (Grouping::*updateFunc)()) override {
 			isDirtySolution = true;
-			if(groupingType == GROWTH) {isDirtyNullSolution = true;}
+			isDirtyNullSolution = true;
 			return (groupings[groupingType].*updateFunc)();
 		}
 		void setGroupings(const GroupingSet &gs) override {
 			isDirtySolution = true;
-			if(gs[GROWTH] != groupings[GROWTH]) {isDirtyNullSolution = true;}
+			isDirtyNullSolution = true;
 			groupings = gs;
 		}
 		void setGrouping(GroupingType groupingType, const Grouping &g) override {
 			isDirtySolution = true;
-			if(groupingType == GROWTH) {isDirtyNullSolution = true;}
+			isDirtyNullSolution = true;
 			groupings[groupingType] = g;
 		}
 		
