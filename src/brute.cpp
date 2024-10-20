@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 	
 	#pragma omp parallel for schedule(dynamic)
 	for(size_t i = 0; i < groupingSets.size(); i++) {
-		MaximumLikelihoodSolverInterface *solver = masterSolver->getCopy(); //TODO
+		MaximumLikelihoodSolverInterface *solver = masterSolver->getCopy();
 		solver->setGroupings(groupingSets[i]);
 		
 		outputRowGroupings.set(i, solver->getGrouping(ROW));
