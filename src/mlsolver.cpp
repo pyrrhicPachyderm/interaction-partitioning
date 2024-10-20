@@ -62,19 +62,44 @@ template<typename ErrDistT> double NLoptSolver<ErrDistT>::optimisationFunc(const
 	return ((NLoptSolver<ErrDistT>*)solver)->getLogLikelihoodFromVector(parametersVector);
 }
 
-template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateSolution() {
-	Eigen::VectorXd parametersVectorEigen = this->parametersToVector(ParametersT(this->data, this->groupings, this->guessInitialAdditionalParameters()));
+template<typename ErrDistT> NLoptSolver<ErrDistT>::ParametersT NLoptSolver<ErrDistT>::solve(bool isNull) const {
+	ParametersT parameters = ParametersT(this->data, this->groupings, this->guessInitialAdditionalParameters());
+	Eigen::VectorXd parametersVectorEigen = this->parametersToVector(parameters);
 	std::vector<double> parametersVector = std::vector<double>(parametersVectorEigen.data(), parametersVectorEigen.data() + parametersVectorEigen.size()); //Take a copy as a std::vector.
 	
 	nlopt::opt optimiser = nlopt::opt(nlopt::LN_SBPLX, parametersVector.size());
 	optimiser.set_max_objective(NLoptSolver<ErrDistT>::optimisationFunc, (void*)this);
 	optimiser.set_xtol_rel(NLOPT_RELATIVE_TOLERANCE);
 	
+	if(isNull) {
+		//Force all competition coefficients to be zero.
+		std::vector<double> lowerBounds = optimiser.get_lower_bounds();
+		std::vector<double> upperBounds = optimiser.get_upper_bounds();
+		for(size_t i = 0; i < this->groupings[ROW].getNumGroups(); i++) {
+			for(size_t j = 0; j < this->groupings[COL].getNumGroups(); j++) {
+				size_t index = parameters.getAsVectorCompetitionCoefficientIndex(i, j);
+				lowerBounds[index] = 0.0;
+				upperBounds[index] = 0.0;
+			}
+		}
+		optimiser.set_lower_bounds(lowerBounds);
+		optimiser.set_upper_bounds(upperBounds);
+	}
+	
 	double finalLogLikelihood;
 	optimiser.optimize(parametersVector, finalLogLikelihood);
 	
-	this->solution = this->vectorToParameters(Eigen::Map<const Eigen::VectorXd>(parametersVector.data(), parametersVector.size()));
+	return this->vectorToParameters(Eigen::Map<const Eigen::VectorXd>(parametersVector.data(), parametersVector.size()));
+}
+
+template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateSolution() {
+	this->solution = solve(false);
 	this->isDirtySolution = false;
+}
+
+template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateNullSolution() {
+	this->nullSolution = solve(true);
+	this->isDirtyNullSolution = false;
 }
 
 template<typename SolverT> Eigen::VectorXd MaximumLikelihoodSolver<SolverT>::getSolutionPredictions() {
