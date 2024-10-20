@@ -134,10 +134,10 @@ template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getAICc() {
 	return aicc;
 }
 
-template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getR2() {
+double GaussNewtonSolver::getR2() {
 	//Returns R^2, the coefficient of determination.
 	
-	Eigen::VectorXd response = this->getObservations();
+	Eigen::VectorXd response = getObservations();
 	Eigen::VectorXd normalisedResponse = response - Eigen::VectorXd::Constant(response.size(), response.mean());
 	double totalSS = normalisedResponse.dot(normalisedResponse);
 	
@@ -176,6 +176,15 @@ double GaussNewtonSolver::getDeviance() {
 template<typename ErrDistT> NLoptSolver<ErrDistT>::ParametersT NLoptSolver<ErrDistT>::getNullSolution() {
 	if(this->isDirtyNullSolution) calculateNullSolution();
 	return nullSolution;
+}
+
+template<typename ErrDistT> double NLoptSolver<ErrDistT>::getR2() {
+	//Returns McFadden's pseudo-R^2.
+	
+	double logLikelihood = this->getLogLikelihood(this->getSolution(), this->groupings);
+	double nullLogLikelihood = this->getLogLikelihood(this->getNullSolution(), this->groupings);
+	
+	return 1.0 - (logLikelihood / nullLogLikelihood);
 }
 
 template<typename ErrDistT> double NLoptSolver<ErrDistT>::getDeviance() {

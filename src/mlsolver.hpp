@@ -90,7 +90,7 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 		size_t getNumParameters() override;
 		double getAIC() override;
 		double getAICc() override;
-		double getR2() override; //TODO: Check whether this needs to be different with a non-normal error distribution.
+		virtual double getR2() = 0;
 		
 		virtual MaximumLikelihoodSolverInterface *getCopy() const = 0;
 };
@@ -104,6 +104,7 @@ class GaussNewtonSolver : public MaximumLikelihoodSolver<Solver> {
 		
 		void calculateSolution() override;
 	public:
+		double getR2() override;
 		double getDeviance() override;
 		
 		MaximumLikelihoodSolverInterface *getCopy() const override {return new GaussNewtonSolver(*this);};
@@ -128,6 +129,7 @@ template<typename ErrDistT> class NLoptSolver : public MaximumLikelihoodSolver<G
 		void calculateNullSolution();
 		ParametersT getNullSolution();
 	public:
+		double getR2() override;
 		double getDeviance() override;
 		
 		MaximumLikelihoodSolverInterface *getCopy() const override {return new NLoptSolver<ErrDistT>(*this);};
