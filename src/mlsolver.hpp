@@ -51,19 +51,23 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 	protected:
 		ParametersT solution;
 		bool isDirtySolution = true;
+		bool isDirtyNullSolution = true; //Not all specailisations of this class use this, but it must be maintained here nonetheless.
 	public:
 		//A function to update groupings.
 		//Can use reset(), separate(), or advance().
 		bool updateGrouping(GroupingType groupingType, bool (Grouping::*updateFunc)()) override {
 			isDirtySolution = true;
+			if(groupingType == GROWTH) {isDirtyNullSolution = true;}
 			return (groupings[groupingType].*updateFunc)();
 		}
 		void setGroupings(const GroupingSet &gs) override {
 			isDirtySolution = true;
+			if(gs[GROWTH] != groupings[GROWTH]) {isDirtyNullSolution = true;}
 			groupings = gs;
 		}
 		void setGrouping(GroupingType groupingType, const Grouping &g) override {
 			isDirtySolution = true;
+			if(groupingType == GROWTH) {isDirtyNullSolution = true;}
 			groupings[groupingType] = g;
 		}
 		
