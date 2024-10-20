@@ -126,6 +126,7 @@ template<typename ErrDistT> class NLoptSolver : public MaximumLikelihoodSolver<G
 		ParametersT solve(bool isNull) const;
 		void calculateSolution() override;
 		void calculateNullSolution();
+		ParametersT getNullSolution();
 	public:
 		double getDeviance() override;
 		

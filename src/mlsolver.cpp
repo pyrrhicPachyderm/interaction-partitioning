@@ -173,6 +173,11 @@ double GaussNewtonSolver::getDeviance() {
 	return deviance;
 }
 
+template<typename ErrDistT> NLoptSolver<ErrDistT>::ParametersT NLoptSolver<ErrDistT>::getNullSolution() {
+	if(this->isDirtyNullSolution) calculateNullSolution();
+	return nullSolution;
+}
+
 template<typename ErrDistT> double NLoptSolver<ErrDistT>::getDeviance() {
 	//Returns the deviance.
 	//That is, the negative of twice the log likelihood.
