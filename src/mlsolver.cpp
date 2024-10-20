@@ -2,7 +2,7 @@
 #include "nls.hpp"
 #include "mlsolver.hpp"
 
-#define NLOPT_RELATIVE_TOLERANCE 2e-3
+#define NLOPT_RELATIVE_TOLERANCE 1e-3
 
 template<typename SolverT> SolverT::ParametersT MaximumLikelihoodSolver<SolverT>::getSolution() {
 	//Returns Parameters or AugmentedParameters as appropriate.
