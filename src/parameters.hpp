@@ -22,7 +22,10 @@ class Parameters {
 		double getCompetitionCoefficient(size_t rowIndex, size_t colIndex) const;
 		Eigen::VectorXd getCompetitionCoefficientsRow(size_t rowIndex) const;
 		const Eigen::MatrixXdRowMajor &getCompetitionCoefficients() const;
-		virtual size_t getNumParameters() const;
+		
+		size_t getNumGrowthRates() const {return growthRates.size();};
+		size_t getNumCompetitionCoefficients() const {return competitionCoefficients.size();};
+		virtual size_t getNumParameters() const {return getNumGrowthRates() + getNumCompetitionCoefficients();};
 	public:
 		Parameters() = default;
 		Parameters(Data data, GroupingSet groupings);
@@ -60,7 +63,7 @@ template<size_t nAug> class AugmentedParameters : public Parameters {
 		AugmentedParameters(AugmentedParameters p, GroupingSet groupings): //Undoes the grouping, giving a full set of parameters for every species.
 			Parameters((Parameters)p, groupings), additionalParameters(p.additionalParameters) {};
 		
-		size_t getNumParameters() const override;
+		size_t getNumParameters() const override {return Parameters::getNumParameters() + nAug;};
 		
 		//Some functions to allow converting back and forth as a pure vector, for systems (such as NLopt) that need it that way.
 		AugmentedParameters(Eigen::VectorXd parameters, GroupingSet groupings);

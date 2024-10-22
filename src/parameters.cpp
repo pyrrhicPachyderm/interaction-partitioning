@@ -32,14 +32,6 @@ const Eigen::MatrixXdRowMajor &Parameters::getCompetitionCoefficients() const {
 	return competitionCoefficients;
 }
 
-size_t Parameters::getNumParameters() const {
-	return growthRates.size() + competitionCoefficients.size();
-}
-
-template<size_t nAug> size_t AugmentedParameters<nAug>::getNumParameters() const {
-	return Parameters::getNumParameters() + nAug;
-}
-
 Parameters::Parameters(Data data, GroupingSet groupings):
 	numRowSpecies(data.getNumRowSpecies()), numColSpecies(data.getNumColSpecies())
 {
