@@ -24,7 +24,8 @@ class MaximumLikelihoodSolverInterface {
 		virtual size_t getNumParameters(bool isNull) = 0;
 		virtual double getAIC(bool isNull) = 0;
 		virtual double getAICc(bool isNull) = 0;
-		virtual double getR2() = 0;
+		virtual double getR2(bool isNull) = 0;
+		virtual double getMcFaddenR2() = 0;
 		
 		//For parallelisation purposes, we sometimes need copies of the entire solver.
 		//We need this as a virtual function, so it can correctly copy each specialisation of the solver.
@@ -91,7 +92,8 @@ template<typename SolverT> class MaximumLikelihoodSolver : public SolverT, publi
 		size_t getNumParameters(bool isNull) override;
 		double getAIC(bool isNull) override;
 		double getAICc(bool isNull) override;
-		virtual double getR2() = 0;
+		double getR2(bool isNull) override;
+		double getMcFaddenR2() override;
 		
 		virtual MaximumLikelihoodSolverInterface *getCopy() const = 0;
 };
@@ -106,7 +108,6 @@ class GaussNewtonSolver : public MaximumLikelihoodSolver<Solver> {
 		void calculateSolution(bool isNull) override;
 	public:
 		double getDeviance(bool isNull) override;
-		double getR2() override;
 		
 		MaximumLikelihoodSolverInterface *getCopy() const override {return new GaussNewtonSolver(*this);};
 };
@@ -127,7 +128,6 @@ template<typename ErrDistT> class NLoptSolver : public MaximumLikelihoodSolver<G
 		void calculateSolution(bool isNull) override;
 	public:
 		double getDeviance(bool isNull) override;
-		double getR2() override;
 		
 		MaximumLikelihoodSolverInterface *getCopy() const override {return new NLoptSolver<ErrDistT>(*this);};
 };

@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 		outputColGroupings.set(i, solver->getGrouping(COL));
 		outputAICs.set(i, solver->getAIC(false));
 		outputAICcs.set(i, solver->getAICc(false));
-		outputR2s.set(i, solver->getR2());
+		outputR2s.set(i, solver->getR2(false));
 		outputParameters.set(i, Parameters(solver->getSolutionParameters(false), solver->getGroupings()));
 		
 		delete solver;
