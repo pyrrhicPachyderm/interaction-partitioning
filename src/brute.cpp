@@ -2,8 +2,9 @@
 #include "mlsolver.hpp"
 
 int main(int argc, char **argv) {
-	Input input(argc, argv, false);
+	Input input(argc, argv, false, {'n'});
 	
+	bool isNull = input.getBoolOptResult('n');
 	std::string errorDistribution = input.getErrorDistribution();
 	std::string additionalParameterName;
 	
@@ -23,11 +24,15 @@ int main(int argc, char **argv) {
 	GroupingSet groupingSet = masterSolver->getGroupings();
 	groupingSet[GROWTH].separate();
 	std::vector<GroupingSet> groupingSets;
-	do {
+	if(isNull) {
+		groupingSets.push_back(groupingSet);
+	} else {
 		do {
-			groupingSets.push_back(groupingSet);
-		} while(groupingSet[ROW].advance());
-	} while(groupingSet[COL].advance());
+			do {
+				groupingSets.push_back(groupingSet);
+			} while(groupingSet[ROW].advance());
+		} while(groupingSet[COL].advance());
+	}
 	
 	//Only groupings need actual default values; the rest have default constructors.
 	OutputColumn<Grouping> outputRowGroupings("row_group", groupingSets.size(), masterSolver->getGrouping(ROW));
@@ -45,10 +50,10 @@ int main(int argc, char **argv) {
 		
 		outputRowGroupings.set(i, solver->getGrouping(ROW));
 		outputColGroupings.set(i, solver->getGrouping(COL));
-		outputAICs.set(i, solver->getAIC(false));
-		outputAICcs.set(i, solver->getAICc(false));
-		outputR2s.set(i, solver->getR2(false));
-		outputParameters.set(i, Parameters(solver->getSolutionParameters(false), solver->getGroupings()));
+		outputAICs.set(i, solver->getAIC(isNull));
+		outputAICcs.set(i, solver->getAICc(isNull));
+		outputR2s.set(i, solver->getR2(isNull));
+		outputParameters.set(i, Parameters(solver->getSolutionParameters(isNull), solver->getGroupings()));
 		
 		delete solver;
 	}
