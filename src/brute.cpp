@@ -45,10 +45,10 @@ int main(int argc, char **argv) {
 		
 		outputRowGroupings.set(i, solver->getGrouping(ROW));
 		outputColGroupings.set(i, solver->getGrouping(COL));
-		outputAICs.set(i, solver->getAIC());
-		outputAICcs.set(i, solver->getAICc());
+		outputAICs.set(i, solver->getAIC(false));
+		outputAICcs.set(i, solver->getAICc(false));
 		outputR2s.set(i, solver->getR2());
-		outputParameters.set(i, Parameters(solver->getSolutionParameters(), solver->getGroupings()));
+		outputParameters.set(i, Parameters(solver->getSolutionParameters(false), solver->getGroupings()));
 		
 		delete solver;
 	}

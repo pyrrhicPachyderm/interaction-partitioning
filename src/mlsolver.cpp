@@ -4,25 +4,30 @@
 
 #define NLOPT_RELATIVE_TOLERANCE 1e-3
 
-template<typename SolverT> SolverT::ParametersT MaximumLikelihoodSolver<SolverT>::getSolution() {
+template<typename SolverT> SolverT::ParametersT MaximumLikelihoodSolver<SolverT>::getSolution(bool isNull) {
 	//Returns Parameters or AugmentedParameters as appropriate.
-	if(isDirtySolution) calculateSolution();
-	return solution;
+	if(isNull) {
+		if(isDirtyNullSolution) calculateSolution(isNull);
+		return nullSolution;
+	} else {
+		if(isDirtySolution) calculateSolution(isNull);
+		return solution;
+	}
 }
 
-template<typename SolverT> Parameters MaximumLikelihoodSolver<SolverT>::getSolutionParameters() {
+template<typename SolverT> Parameters MaximumLikelihoodSolver<SolverT>::getSolutionParameters(bool isNull) {
 	//Coerces to Parameters (not AugmentedParameters).
-	return (Parameters)getSolution();
+	return (Parameters)getSolution(isNull);
 }
 
-template<> double MaximumLikelihoodSolver<Solver>::getSolutionAdditionalParameter(size_t i) {
+template<> double MaximumLikelihoodSolver<Solver>::getSolutionAdditionalParameter(bool isNull, size_t i) {
 	assert(false);
 }
 
-template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getSolutionAdditionalParameter(size_t i) {
+template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getSolutionAdditionalParameter(bool isNull, size_t i) {
 	//This will only work if SolverT is a type of GeneralisedSolver (the standard Solver case is handled above).
 	//But alas, you can't partially specialise methods.
-	return getSolution().getAdditionalParameter(i);
+	return getSolution(isNull).getAdditionalParameter(i);
 }
 
 template<typename SolverT> Eigen::VectorXd MaximumLikelihoodSolver<SolverT>::parametersToVector(const SolverT::ParametersT &parameters) const {
@@ -41,7 +46,9 @@ Jacobian GaussNewtonSolver::getResidualsJacobianFromVector(const Eigen::VectorXd
 	return getResidualsJacobian(vectorToParameters(parameterVector), groupings);
 }
 
-void GaussNewtonSolver::calculateSolution() {
+void GaussNewtonSolver::calculateSolution(bool isNull) {
+	assert(!isNull); //TODO: Make this work if isNull.
+	
 	ResidualsFunc residualsFunc = std::bind(&GaussNewtonSolver::getResidualsFromVector, this, std::placeholders::_1);
 	JacobianFunc jacobianFunc = std::bind(&GaussNewtonSolver::getResidualsJacobianFromVector, this, std::placeholders::_1);
 	
@@ -62,7 +69,7 @@ template<typename ErrDistT> double NLoptSolver<ErrDistT>::optimisationFunc(const
 	return ((NLoptSolver<ErrDistT>*)solver)->getLogLikelihoodFromVector(parametersVector);
 }
 
-template<typename ErrDistT> NLoptSolver<ErrDistT>::ParametersT NLoptSolver<ErrDistT>::solve(bool isNull) const {
+template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateSolution(bool isNull) {
 	ParametersT parameters = ParametersT(this->data, this->groupings, this->guessInitialAdditionalParameters());
 	Eigen::VectorXd parametersVectorEigen = this->parametersToVector(parameters);
 	std::vector<double> parametersVector = std::vector<double>(parametersVectorEigen.data(), parametersVectorEigen.data() + parametersVectorEigen.size()); //Take a copy as a std::vector.
@@ -89,46 +96,48 @@ template<typename ErrDistT> NLoptSolver<ErrDistT>::ParametersT NLoptSolver<ErrDi
 	double finalLogLikelihood;
 	optimiser.optimize(parametersVector, finalLogLikelihood);
 	
-	return this->vectorToParameters(Eigen::Map<const Eigen::VectorXd>(parametersVector.data(), parametersVector.size()));
+	ParametersT result = this->vectorToParameters(Eigen::Map<const Eigen::VectorXd>(parametersVector.data(), parametersVector.size()));
+	
+	if(isNull) {
+		this->nullSolution = result;
+		this->isDirtyNullSolution = false;
+	} else {
+		this->solution = result;
+		this->isDirtySolution = false;
+	}
 }
 
-template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateSolution() {
-	this->solution = solve(false);
-	this->isDirtySolution = false;
+template<typename SolverT> Eigen::VectorXd MaximumLikelihoodSolver<SolverT>::getSolutionPredictions(bool isNull) {
+	return this->getPredictions(getSolutionParameters(isNull), groupings);
 }
 
-template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateNullSolution() {
-	this->nullSolution = solve(true);
-	this->isDirtyNullSolution = false;
+template<typename SolverT> Eigen::VectorXd MaximumLikelihoodSolver<SolverT>::getSolutionResiduals(bool isNull) {
+	return this->getResiduals(getSolutionParameters(isNull), groupings);
 }
 
-template<typename SolverT> Eigen::VectorXd MaximumLikelihoodSolver<SolverT>::getSolutionPredictions() {
-	return this->getPredictions(getSolutionParameters(), groupings);
+template<typename SolverT> size_t MaximumLikelihoodSolver<SolverT>::getNumParameters(bool isNull) {
+	ParametersT parameters = getSolution(isNull);
+	if(isNull) {
+		return parameters.getNumParameters() - parameters.getNumCompetitionCoefficients();
+	} else {
+		return parameters.getNumParameters();
+	}
 }
 
-template<typename SolverT> Eigen::VectorXd MaximumLikelihoodSolver<SolverT>::getSolutionResiduals() {
-	return this->getResiduals(getSolutionParameters(), groupings);
-}
-
-template<typename SolverT> size_t MaximumLikelihoodSolver<SolverT>::getNumParameters() {
-	ParametersT parameters = getSolution();
-	return parameters.getNumParameters();
-}
-
-template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getAIC() {
-	double p = getNumParameters();
-	double deviance = getDeviance();
+template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getAIC(bool isNull) {
+	double p = getNumParameters(isNull);
+	double deviance = getDeviance(isNull);
 	
 	double aic = 2 * p + deviance;
 	
 	return aic;
 }
 
-template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getAICc() {
+template<typename SolverT> double MaximumLikelihoodSolver<SolverT>::getAICc(bool isNull) {
 	double n = this->data.getNumObservations();
-	double p = getNumParameters();
+	double p = getNumParameters(isNull);
 	
-	double aic = getAIC();
+	double aic = getAIC(isNull);
 	double aicc = aic + (double)(2 * p * p + 2 * p) / (n - p - 1);
 	
 	return aicc;
@@ -141,17 +150,17 @@ double GaussNewtonSolver::getR2() {
 	Eigen::VectorXd normalisedResponse = response - Eigen::VectorXd::Constant(response.size(), response.mean());
 	double totalSS = normalisedResponse.dot(normalisedResponse);
 	
-	Eigen::VectorXd residuals = getSolutionResiduals();
+	Eigen::VectorXd residuals = getSolutionResiduals(false);
 	double residualSS = residuals.dot(residuals);
 	
 	return 1.0 - (residualSS / totalSS);
 }
 
-double GaussNewtonSolver::getDeviance() {
+double GaussNewtonSolver::getDeviance(bool isNull) {
 	//Returns the deviance.
 	//That is, the negative of twice the log likelihood.
-	Parameters parameters = getSolutionParameters();
-	Eigen::VectorXd residuals = getSolutionResiduals();
+	Parameters parameters = getSolutionParameters(isNull);
+	Eigen::VectorXd residuals = getSolutionResiduals(isNull);
 	double sumOfSquares = residuals.dot(residuals);
 	
 	//First, we must estimate the variance of the residuals.
@@ -173,24 +182,15 @@ double GaussNewtonSolver::getDeviance() {
 	return deviance;
 }
 
-template<typename ErrDistT> NLoptSolver<ErrDistT>::ParametersT NLoptSolver<ErrDistT>::getNullSolution() {
-	if(this->isDirtyNullSolution) calculateNullSolution();
-	return nullSolution;
-}
-
 template<typename ErrDistT> double NLoptSolver<ErrDistT>::getR2() {
 	//Returns McFadden's pseudo-R^2.
-	
-	double logLikelihood = this->getLogLikelihood(this->getSolution(), this->groupings);
-	double nullLogLikelihood = this->getLogLikelihood(this->getNullSolution(), this->groupings);
-	
-	return 1.0 - (logLikelihood / nullLogLikelihood);
+	return 1.0 - (this->getDeviance(false) / this->getDeviance(true));
 }
 
-template<typename ErrDistT> double NLoptSolver<ErrDistT>::getDeviance() {
+template<typename ErrDistT> double NLoptSolver<ErrDistT>::getDeviance(bool isNull) {
 	//Returns the deviance.
 	//That is, the negative of twice the log likelihood.
-	return -2 * this->getLogLikelihood(this->getSolution(), this->groupings);
+	return -2 * this->getLogLikelihood(this->getSolution(isNull), this->groupings);
 }
 
 //Explicitly instantiate.
