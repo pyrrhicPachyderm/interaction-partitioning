@@ -44,6 +44,7 @@ ic_weight <- sprintf("%s_weight", ic)
 ic_name <- list(aic="AIC", aicc="AICc")[[ic]]
 
 brute_data <- BruteData$new(paste0(this_dir, "/output/tcl/brute.data"), species_dat$name, ic_weight)
+brute_null_data <- BruteData$new(paste0(this_dir, "/output/tcl/brute-null.data"), species_dat$name, ic_weight)
 
 #Precalculate the coclassification matrices, as these are active bindings and the slowest part of compilation.
 weighted_col_coclassification_matrix <- brute_data$weighted_col_coclassification_matrix
