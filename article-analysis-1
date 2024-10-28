@@ -164,7 +164,6 @@ model_fit_plot <- function(parameters, species_output_order) {
 	
 	plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = observed, y = fitted)) +
 		ggplot2::geom_point() +
-		ggplot2::geom_smooth(method = lm, formula = y~x) +
 		ggplot2::geom_abline(slope = 1, intercept = 0) +
 		ggplot2::facet_wrap(.~focal) +
 		ggplot2::labs(x = "Observed growth rate (per capita)", y = "Predicted growth rate (per capita)")
@@ -193,7 +192,6 @@ partial_residual_plot <- function(parameters, species_output_order) {
 	
 	plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = x, y = y)) +
 		ggplot2::geom_point() +
-		ggplot2::geom_smooth(method = lm, formula = y~x) +
 		ggplot2::geom_abline(ggplot2::aes(slope = alpha, intercept = 0)) +
 		ggplot2::facet_grid(row_species~col_species) +
 		ggplot2::labs(x = "Number of individuals of competing species", y = "Partial residual growth rate of focal species (per capita)") +
