@@ -46,6 +46,11 @@ ic_name <- list(aic="AIC", aicc="AICc")[[ic]]
 brute_data <- BruteData$new(paste0(this_dir, "/output/tcl/brute.data"), species_dat$name, ic_weight)
 brute_null_data <- BruteData$new(paste0(this_dir, "/output/tcl/brute-null.data"), species_dat$name, ic_weight)
 
+#Precalculate average alpha values for rows and columns.
+#TODO: Would this be better done by taking, e.g. the row-separated column-grouped model, rather than column-averaged fully separated model?
+col_average_alpha_values <- apply(brute_data$fully_separated_parameters$alpha_values, 2, mean)
+row_average_alpha_values <- apply(brute_data$fully_separated_parameters$alpha_values, 1, mean)
+
 #Precalculate the coclassification matrices, as these are active bindings and the slowest part of compilation.
 weighted_col_coclassification_matrix <- brute_data$weighted_col_coclassification_matrix
 weighted_row_coclassification_matrix <- brute_data$weighted_row_coclassification_matrix
