@@ -99,15 +99,6 @@ Data <- R6::R6Class("Data",
 			return(which(rowwise_match))
 		},
 		
-		#TODO: A version of the below that includes growth_grouping.
-		get_statistics_row = function(row_grouping, col_grouping) {
-			#row_grouping and col_grouping should be vectors representing the groupings.
-			#Extracts those rows of statistics matching those groupings.
-			row_matches <- private$match_grouping(row_grouping, self$row_groupings)
-			col_matches <- private$match_grouping(col_grouping, self$col_groupings)
-			return(self$statistics[intersect(row_matches, col_matches),])
-		},
-		
 		match_groupings = function(grouping_table_1, grouping_table_2) {
 			#Returns the indices at which the rows of the two grouping tables are equivalent.
 			elementwise_match <- lapply(1:ncol(grouping_table_1), function(i) {
@@ -117,6 +108,15 @@ Data <- R6::R6Class("Data",
 			rowwise_match <- Reduce("&", elementwise_match)
 			
 			return(which(rowwise_match))
+		},
+		
+		#TODO: A version of the below that includes growth_grouping.
+		get_groupings_index = function(row_grouping, col_grouping) {
+			#row_grouping and col_grouping should be vectors representing the groupings.
+			#Returns the indicies of rows matching those groupings.
+			row_matches <- private$match_grouping(row_grouping, self$row_groupings)
+			col_matches <- private$match_grouping(col_grouping, self$col_groupings)
+			return(intersect(row_matches, col_matches))
 		},
 		
 		annotate_matrix = function(mat) {
@@ -144,20 +144,27 @@ Data <- R6::R6Class("Data",
 	),
 	
 	active = list(
-		#TODO: Versions of the below three functions that include growth_groupings.
+		#TODO: Versions of the below functions that include growth_groupings.
+		fully_grouped_index = function() {
+			row_grouping <- rep(1, self$num_row_species)
+			col_grouping <- rep(1, self$num_col_species)
+			return(private$get_groupings_index(row_grouping, col_grouping))
+		},
+		fully_separated_index = function() {
+			row_grouping <- 1:self$num_row_species
+			col_grouping <- 1:self$num_col_species
+			return(private$get_groupings_index(row_grouping, col_grouping))
+		},
+		
 		equivalently_grouped_statistics = function() {
 			#Where the row grouping is the same as the column grouping.
 			return(self$statistics[private$match_groupings(self$row_groupings,self$col_groupings),])
 		},
 		fully_grouped_statistics = function() {
-			row_grouping <- rep(1, self$num_row_species)
-			col_grouping <- rep(1, self$num_col_species)
-			return(private$get_statistics_row(row_grouping, col_grouping))
+			return(self$statistics[self$fully_grouped_index,])
 		},
 		fully_separated_statistics = function() {
-			row_grouping <- 1:self$num_row_species
-			col_grouping <- 1:self$num_col_species
-			return(private$get_statistics_row(row_grouping, col_grouping))
+			return(self$statistics[self$fully_separated_index,])
 		},
 		
 		fully_grouped_coclassification_matrix = function(num_species) {
