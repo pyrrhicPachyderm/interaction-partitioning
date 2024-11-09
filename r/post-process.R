@@ -167,6 +167,13 @@ Data <- R6::R6Class("Data",
 			return(self$statistics[self$fully_separated_index,])
 		},
 		
+		fully_grouped_parameters = function() {
+			return(self$get_parameters(self$fully_grouped_index))
+		},
+		fully_separated_parameters = function() {
+			return(self$get_parameters(self$fully_separated_index))
+		},
+		
 		fully_grouped_coclassification_matrix = function(num_species) {
 			return(matrix(1, num_species, num_species))
 		},
