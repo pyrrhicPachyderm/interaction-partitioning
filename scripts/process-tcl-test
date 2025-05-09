@@ -1,0 +1,123 @@
+#!/usr/bin/env Rscript
+suppressPackageStartupMessages(library(optparse))
+suppressPackageStartupMessages(library(magrittr))
+
+set.seed(42)
+
+##################
+#Argument parsing.
+##################
+
+usage = "%prog DATA_TYPE FOCAL_OUTPUT_FILE RESPONSE_OUTPUT_FILE DESIGN_OUTPUT_FILE"
+description = "Generates test data with known parameters, and outputs it in the three files desired by the C++ code.
+Namely, the 0-indexed numerical focal species vector, the response variable vector, and the species density design matrix.
+All are output as tab-separated matrices, without column headers, with vectors in the form column vectors.
+DATA_TYPE must be 'pop', for individual response data."
+option_list <- list(
+	make_option(
+		c("-r", "--rowdiff"), dest = "row_diff", type = "double", default = 0,
+		help = "The difference between the mean alpha values of the rows, as a proportion of the total alpha value."
+	),
+	make_option(
+		c("-c", "--coldiff"), dest = "col_diff", type = "double", default = 0,
+		help = "The difference between the mean alpha values of the columns, as a proportion of the total alpha value."
+	)
+)
+parser <- OptionParser(usage = usage, description = description, option_list = option_list)
+arguments <- parse_args(parser, positional_arguments = 4)
+
+data_type <- arguments$args[1]
+focal_outfile <- arguments$args[2]
+response_outfile <- arguments$args[3]
+design_outfile <- arguments$args[4]
+
+attach(arguments$options)
+
+if(data_type != "pop") {
+	stop("Invalid data type requested.")
+}
+
+############################
+#Set known parameter values.
+############################
+
+#TODO: Obtain these programmatically from the TCL results.
+growth_rate <- 6.102122 #The mean growth rate for all species in all models in tcl/brute.data
+mean_alpha <- 0.0290139 #The alpha for the fully grouped model in tcl/brute.data
+dispersion <- 0.2669737 #The mean dispersion parameter in tcl/rjmcmc.data
+
+num_species <- 2
+n <- 3 #Number of replicates of each experiment
+
+growth_rates <- rep(growth_rate, num_species)
+
+competition_coefficients <- mean_alpha * matrix(c(
+	1 - row_diff / 2 - col_diff / 2, 1 - row_diff / 2 + col_diff / 2,
+	1 + row_diff / 2 - col_diff / 2, 1 + row_diff / 2 + col_diff / 2
+), nrow = num_species, ncol = num_species, byrow = TRUE)
+
+#############################################
+#Generate the design matrix and focal vector.
+#############################################
+
+design_matrix <- matrix(c(
+	6, 6,
+	6, 12,
+	6, 18,
+	6, 24,
+	12, 6,
+	18, 6,
+	24, 6
+), ncol = 2, byrow = TRUE)
+design_matrix <- design_matrix[rep(1:nrow(design_matrix), each = n),] #Replicate the rows of the design matrix.
+
+focal_vector <- rep(1:2, times = nrow(design_matrix))
+
+design_matrix <- design_matrix[rep(1:nrow(design_matrix), each = 2),] #Duplicate each row in the design matrix, once for each focal.
+
+##############################
+#Generate the response vector.
+##############################
+
+get_predicted_reponse <- function(obs) {
+	focal <- focal_vector[obs]
+	
+	focal_growth_rate <- growth_rates[focal]
+	focal_density <- design_matrix[obs, focal]
+	
+	focal_competition_coefficients <- as.vector(competition_coefficients[focal,])
+	competitor_densities <- as.vector(design_matrix[obs,])
+	
+	predicted_response <- focal_growth_rate * focal_density / (1 + sum(focal_competition_coefficients * competitor_densities))
+	return(predicted_response)
+}
+
+rnbinom2 <- function(n, mean, dispersion) {
+	#Using the negative binomial parameterisation from the C code.
+	rnbinom(n, size = 1 / dispersion, prob = (1 / dispersion) / (mean + 1 / dispersion))
+}
+
+predicted_response_vector <- sapply(1:nrow(design_matrix), get_predicted_reponse)
+
+response_vector <- rnbinom2(length(predicted_response_vector), predicted_response_vector, dispersion)
+
+##############################################
+#Turn the outputs into matrices, and finalise.
+##############################################
+
+focal_vector <- focal_vector - 1 #Make it 0-indexed.
+
+focal_vector %<>% matrix(ncol=1)
+response_vector %<>% matrix(ncol=1)
+
+###################
+#Print the outputs.
+###################
+
+print_table <- function(table, outfile) {
+	write.table(table, outfile, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "\t")
+}
+
+print_table(focal_vector, focal_outfile)
+print_table(response_vector, response_outfile)
+print_table(design_matrix, design_outfile)
