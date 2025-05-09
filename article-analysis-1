@@ -55,7 +55,7 @@ row_average_alpha_values <- apply(brute_data$fully_separated_parameters$alpha_va
 weighted_col_coclassification_matrix <- brute_data$weighted_col_coclassification_matrix
 weighted_row_coclassification_matrix <- brute_data$weighted_row_coclassification_matrix
 
-#Precalculate distances matrices as well.
+#Precalculate distance matrices as well.
 col_distance_matrix <- 1 - weighted_col_coclassification_matrix
 row_distance_matrix <- 1 - weighted_row_coclassification_matrix
 body_weight_distance_matrix <- build_dist_matrix(species_dat$name, species_dat$body_weight, function(w1,w2){abs(w1-w2)})
