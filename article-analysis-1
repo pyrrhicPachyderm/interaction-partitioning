@@ -212,6 +212,12 @@ average_model_fit_plot <- model_fit_plot(average_parameters, species_output_orde
 best_partial_residual_plot <- partial_residual_plot(best_parameters, species_output_order)
 average_partial_residual_plot <- partial_residual_plot(average_parameters, species_output_order)
 
+###############
+#Test analysis.
+###############
+
+test_data <- BruteData$new(paste0(this_dir, "/output/tcl-test/brute.data"), 1:2, ic_weight)
+
 #############
 #Save output.
 #############
