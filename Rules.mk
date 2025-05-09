@@ -43,6 +43,13 @@ $(eval $(call HERE_process_data_template,goldberg,indv,$(HERE_goldberg_raw_data)
 $(eval $(call HERE_process_data_template,carrara,time,$(HERE_carrara_raw_data),,))
 $(eval $(call HERE_process_data_template,test,indv,,))
 
+#process_tcl_test_template takes the row difference and the column difference.
+define HERE_process_tcl_test_template =
+$$(eval $$(call HERE_process_data_template,tcl-test,pop,,,-r $(1) -c $(2)))
+endef
+
+$(eval $(call HERE_process_tcl_test_template,0,0))
+
 #priors_template takes the dataset abbreviation, the dataset type (e.g. indv, time), the error distribution, and options to the prior guessing script.
 define HERE_priors_template =
 $$(call HERE_priors_file,$(1)): HERE/scripts/guess-priors $$(call HERE_processed_$(2)_data_files,$(1))
