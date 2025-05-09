@@ -75,6 +75,8 @@ $(eval $(call HERE_output_template,cxr,indv,rjmcmc,rjmcmc,bevertonholt,negativeb
 $(eval $(call HERE_output_template,goldberg,indv,rjmcmc,rjmcmc,bevertonholt,gamma,-g -s10000000 -t100))
 $(eval $(call HERE_output_template,carrara,time,rjmcmc,rjmcmc,lotkavolterra,normal,-g -d15))
 
+$(eval $(call HERE_output_template,tcl-test,pop,brute,brute,bevertonholt,negativebinomial,))
+
 define HERE_article_analysis_template =
 HERE/output/article-data-$(1).rda: HERE/article-analysis-$(1) $(shell grep -oE '"/[^"]*\.((R)|(csv)|(data))"' HERE/article-analysis-$(1) | sed 's@"\(.*\)"@HERE\1@' | tr '\n' ' ')
 	./$$< $$@
