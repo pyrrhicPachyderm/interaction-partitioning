@@ -2,8 +2,6 @@
 suppressPackageStartupMessages(library(optparse))
 suppressPackageStartupMessages(library(magrittr))
 
-set.seed(42)
-
 ##################
 #Argument parsing.
 ##################
@@ -14,6 +12,14 @@ Namely, the 0-indexed numerical focal species vector, the response variable vect
 All are output as tab-separated matrices, without column headers, with vectors in the form column vectors.
 DATA_TYPE must be 'pop', for individual response data."
 option_list <- list(
+	make_option(
+		c("-n", "--n"), dest = "n", type = "integer", default = 3,
+		help = "The number of replicates of each experiment to run."
+	),
+	make_option(
+		c("-s", "--seed"), dest = "seed", type = "integer", default = 0,
+		help = "The seed for the random number generator."
+	),
 	make_option(
 		c("-r", "--rowdiff"), dest = "row_diff", type = "double", default = 0,
 		help = "The difference between the mean alpha values of the rows, as a proportion of the total alpha value."
@@ -37,6 +43,8 @@ if(data_type != "pop") {
 	stop("Invalid data type requested.")
 }
 
+set.seed(seed)
+
 ############################
 #Set known parameter values.
 ############################
@@ -47,7 +55,6 @@ mean_alpha <- 0.0290139 #The alpha for the fully grouped model in tcl/brute.data
 dispersion <- 0.2669737 #The mean dispersion parameter in tcl/rjmcmc.data
 
 num_species <- 2
-n <- 3 #Number of replicates of each experiment
 
 growth_rates <- rep(growth_rate, num_species)
 
