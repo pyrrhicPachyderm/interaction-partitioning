@@ -62,6 +62,19 @@ body_weight_distance_matrix <- build_dist_matrix(species_dat$name, species_dat$b
 
 best_model_index <- which.max(brute_data$statistics[[ic_weight]])
 
+################################
+#Group resolution test analysis.
+################################
+
+group_resolution_data <- as.data.frame(do.call(rbind, lapply(list.files(paste0(this_dir, "/output/tcl-test/"), pattern = "brute.data", recursive = TRUE, full.name = TRUE), function(filename) {
+	test_data <- BruteData$new(filename, 1:2, ic_weight)
+	col_coclassification <- test_data$weighted_col_coclassification_matrix[1, 2]
+	row_coclassification <- test_data$weighted_row_coclassification_matrix[1, 2]
+	return(c(filename = filename, col_coclassification = col_coclassification, row_coclassification = row_coclassification))
+}))) |>
+	tidyr::separate_wider_regex(filename, patterns = c(".*/r", row_diff = ".*", "-c", col_diff = ".*", "/s", seed = ".*", "/.*")) |>
+	dplyr::mutate_all(as.numeric)
+
 #########
 #Figures.
 #########
@@ -211,12 +224,6 @@ best_model_fit_plot <- model_fit_plot(best_parameters, species_output_order)
 average_model_fit_plot <- model_fit_plot(average_parameters, species_output_order)
 best_partial_residual_plot <- partial_residual_plot(best_parameters, species_output_order)
 average_partial_residual_plot <- partial_residual_plot(average_parameters, species_output_order)
-
-###############
-#Test analysis.
-###############
-
-test_data <- BruteData$new(paste0(this_dir, "/output/tcl-test/brute.data"), 1:2, ic_weight)
 
 #############
 #Save output.
