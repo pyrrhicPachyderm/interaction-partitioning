@@ -30,25 +30,26 @@ HERE_tcl_r_guess := 10 #From Terry et al. 2021.
 HERE_cxr_r_guess := 1000 #The response is per capita seed production. Some of the species involved could produce thousands of seeds, so 1000 is a reasonable guess.
 HERE_goldberg_r_guess := 100 #The response is final mass in milligrams. The largest of the species could grow to about 130 mg, so 100 is a reasonable guess.
 
-#process_data_template takes the dataset abbreviation, the dataset type (e.g. indv, time), the raw data file(s), additional output files for the processing script, and the options.
+#process_data_template takes the dataset abbreviation, the output directory to place files in, the dataset type (e.g. indv, time), the raw data file(s), additional output files for the processing script, and the options.
 define HERE_process_data_template =
-$$(call HERE_processed_$(2)_data_files,$(1)) $(4) &: HERE/scripts/process-$(1) $(3)
-	./$$< $(3) $(2) $$(call HERE_processed_$(2)_data_files,$(1)) $(4) $(5)
+$$(call HERE_processed_$(3)_data_files,$(2)) $(5) &: HERE/scripts/process-$(1) $(4)
+	mkdir -p HERE/output/$(2)
+	./$$< $(4) $(3) $$(call HERE_processed_$(3)_data_files,$(2)) $(5) $(6)
 endef
 
-$(eval $(call HERE_process_data_template,tcl,indv,$(HERE_tcl_raw_data),,))
-$(eval $(call HERE_process_data_template,tcl,pop,$(HERE_tcl_raw_data),,))
-$(eval $(call HERE_process_data_template,cxr,indv,,$(HERE_cxr_additional_output),-m 4))
-$(eval $(call HERE_process_data_template,goldberg,indv,$(HERE_goldberg_raw_data),,))
-$(eval $(call HERE_process_data_template,carrara,time,$(HERE_carrara_raw_data),,))
-$(eval $(call HERE_process_data_template,test,indv,,))
+$(eval $(call HERE_process_data_template,tcl,tcl,indv,$(HERE_tcl_raw_data),,))
+$(eval $(call HERE_process_data_template,tcl,tcl,pop,$(HERE_tcl_raw_data),,))
+$(eval $(call HERE_process_data_template,cxr,cxr,indv,,$(HERE_cxr_additional_output),-m 4))
+$(eval $(call HERE_process_data_template,goldberg,goldberg,indv,$(HERE_goldberg_raw_data),,))
+$(eval $(call HERE_process_data_template,carrara,carrara,time,$(HERE_carrara_raw_data),,))
+$(eval $(call HERE_process_data_template,test,test,indv,,))
 
-#process_tcl_test_template takes the row difference and the column difference.
+#process_tcl_test_template takes the row difference, the column difference, and the seed.
 define HERE_process_tcl_test_template =
-$$(eval $$(call HERE_process_data_template,tcl-test,pop,,,-r $(1) -c $(2)))
+$$(eval $$(call HERE_process_data_template,tcl-test,tcl-test/r$(1)-c$(2)/s$(3),pop,,,-r $(1) -c $(2) -s $(3)))
 endef
 
-$(eval $(call HERE_process_tcl_test_template,0,0))
+$(eval $(call HERE_process_tcl_test_template,0,0,0))
 
 #priors_template takes the dataset abbreviation, the dataset type (e.g. indv, time), the error distribution, and options to the prior guessing script.
 define HERE_priors_template =
@@ -61,7 +62,7 @@ $(eval $(call HERE_priors_template,cxr,indv,negativebinomial,-r $(HERE_cxr_r_gue
 $(eval $(call HERE_priors_template,goldberg,indv,gamma,-r $(HERE_goldberg_r_guess)))
 $(eval $(call HERE_priors_template,carrara,time,normal,))
 
-#output_template takes the dataset abbreviation, the dataset type (e.g. indv, time), output file name, the program file name, the model, the error distribution, and the flags.
+#output_template takes the output folder (usually the dataset abbreviation), the dataset type (e.g. indv, time), output file name, the program file name, the model, the error distribution, and the flags.
 define HERE_output_template =
 HERE/output/$(1)/$(3).data HERE/output/$(1)/$(3)-runtime.data &: HERE/src/$(4).out $$(call HERE_processed_$(2)_data_files,$(1)) $$(if $$(findstring rjmcmc,$(4)),$$(call HERE_priors_file,$(1)))
 	$(TIME) -f $(HERE_time_format) -o HERE/output/$(1)/$(3)-runtime.data ./$$< HERE/output/$(1)/$(3).data $(5) $(6) $(2) $$(filter-out $$<,$$^) $(7)
@@ -75,7 +76,29 @@ $(eval $(call HERE_output_template,cxr,indv,rjmcmc,rjmcmc,bevertonholt,negativeb
 $(eval $(call HERE_output_template,goldberg,indv,rjmcmc,rjmcmc,bevertonholt,gamma,-g -s10000000 -t100))
 $(eval $(call HERE_output_template,carrara,time,rjmcmc,rjmcmc,lotkavolterra,normal,-g -d15))
 
-$(eval $(call HERE_output_template,tcl-test,pop,brute,brute,bevertonholt,negativebinomial,))
+#output_tcl_test_template takes the row difference, the column difference, and the seed.
+define HERE_output_tcl_test_template =
+$(eval $(call HERE_output_template,tcl-test/r$(1)-c$(2)/s$(3),pop,brute,brute,bevertonholt,negativebinomial,))
+endef
+
+tcl_test_diffs := $(shell seq 0 0.1 2)
+tcl_test_seeds := $(shell seq 1 10)
+$(foreach ri,$(tcl_test_diffs),\
+	$(foreach ci,$(tcl_test_diffs),\
+		$(foreach si,$(tcl_test_seeds),\
+			$(eval $(call HERE_process_tcl_test_template,$(ri),$(ci),$(si))) \
+			$(eval $(call HERE_output_tcl_test_template,$(ri),$(ci),$(si))) \
+		)\
+	)\
+)
+HERE/output/article-data-1.rda:\
+	$(foreach ri,$(tcl_test_diffs),\
+		$(foreach ci,$(tcl_test_diffs),\
+			$(foreach si,$(tcl_test_seeds),\
+				HERE/output/tcl-test/r$(ri)-c$(ci)/s$(si)/brute.data \
+			)\
+		)\
+	)
 
 define HERE_article_analysis_template =
 HERE/output/article-data-$(1).rda: HERE/article-analysis-$(1) $(shell grep -oE '"/[^"]*\.((R)|(csv)|(data))"' HERE/article-analysis-$(1) | sed 's@"\(.*\)"@HERE\1@' | tr '\n' ' ')
