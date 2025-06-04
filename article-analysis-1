@@ -66,11 +66,17 @@ best_model_index <- which.max(brute_data$statistics[[ic_weight]])
 #Group resolution test analysis.
 ################################
 
+coclassification_matrix_names <- function(mat, label) {
+	return(outer(seq(nrow(mat)), seq(ncol(mat)), function(i,j) {paste(label, i, j, sep = "_")}))
+}
+
 group_resolution_data <- as.data.frame(do.call(rbind, lapply(list.files(paste0(this_dir, "/output/tcl-test/"), pattern = "brute.data", recursive = TRUE, full.name = TRUE), function(filename) {
 	test_data <- BruteData$new(filename, weight_column = ic_weight)
-	col_coclassification <- test_data$weighted_col_coclassification_matrix[1, 2]
-	row_coclassification <- test_data$weighted_row_coclassification_matrix[1, 2]
-	return(c(filename = filename, col_coclassification = col_coclassification, row_coclassification = row_coclassification))
+	col_co_mat <- test_data$weighted_col_coclassification_matrix
+	row_co_mat <- test_data$weighted_row_coclassification_matrix
+	col_co_vec <- setNames(col_co_mat[upper.tri(col_co_mat)], coclassification_matrix_names(col_co_mat, "col")[upper.tri(col_co_mat)])
+	row_co_vec <- setNames(row_co_mat[upper.tri(row_co_mat)], coclassification_matrix_names(row_co_mat, "row")[upper.tri(row_co_mat)])
+	return(c(filename = filename, col_co_vec, row_co_vec))
 }))) |>
 	tidyr::separate_wider_regex(filename, patterns = c(".*/r", row_diff = ".*", "-c", col_diff = ".*", "/s", seed = ".*", "/.*")) |>
 	dplyr::mutate_all(as.numeric)
