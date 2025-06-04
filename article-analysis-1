@@ -43,8 +43,8 @@ ic <- "aicc" #The information criterion to use, e.g. "aic" or "aicc"
 ic_weight <- sprintf("%s_weight", ic)
 ic_name <- list(aic="AIC", aicc="AICc")[[ic]]
 
-brute_data <- BruteData$new(paste0(this_dir, "/output/tcl/brute.data"), species_dat$name, ic_weight)
-brute_null_data <- BruteData$new(paste0(this_dir, "/output/tcl/brute-null.data"), species_dat$name, ic_weight)
+brute_data <- BruteData$new(paste0(this_dir, "/output/tcl/brute.data"), species_dat$name, weight_column = ic_weight)
+brute_null_data <- BruteData$new(paste0(this_dir, "/output/tcl/brute-null.data"), species_dat$name, weight_column = ic_weight)
 
 #Precalculate average alpha values for rows and columns.
 #TODO: Would this be better done by taking, e.g. the row-separated column-grouped model, rather than column-averaged fully separated model?
@@ -67,7 +67,7 @@ best_model_index <- which.max(brute_data$statistics[[ic_weight]])
 ################################
 
 group_resolution_data <- as.data.frame(do.call(rbind, lapply(list.files(paste0(this_dir, "/output/tcl-test/"), pattern = "brute.data", recursive = TRUE, full.name = TRUE), function(filename) {
-	test_data <- BruteData$new(filename, 1:2, ic_weight)
+	test_data <- BruteData$new(filename, 1:2, weight_column = ic_weight)
 	col_coclassification <- test_data$weighted_col_coclassification_matrix[1, 2]
 	row_coclassification <- test_data$weighted_row_coclassification_matrix[1, 2]
 	return(c(filename = filename, col_coclassification = col_coclassification, row_coclassification = row_coclassification))
