@@ -54,20 +54,21 @@ growth_rate <- 6.102122 #The mean growth rate for all species in all models in t
 mean_alpha <- 0.0290139 #The alpha for the fully grouped model in tcl/brute.data
 dispersion <- 0.2669737 #The mean dispersion parameter in tcl/rjmcmc.data
 
-num_species <- 2
+species_per_group <- 1
+num_species <- species_per_group * 2 #There are always two groups.
 
 growth_rates <- rep(growth_rate, num_species)
 
 competition_coefficients <- mean_alpha * matrix(c(
-	1 - row_diff / 2 - col_diff / 2, 1 - row_diff / 2 + col_diff / 2,
-	1 + row_diff / 2 - col_diff / 2, 1 + row_diff / 2 + col_diff / 2
+	rep(c(1 - row_diff / 2 - col_diff / 2, 1 - row_diff / 2 + col_diff / 2), each = species_per_group, times = species_per_group),
+	rep(c(1 + row_diff / 2 - col_diff / 2, 1 + row_diff / 2 + col_diff / 2), each = species_per_group, times = species_per_group)
 ), nrow = num_species, ncol = num_species, byrow = TRUE)
 
 #############################################
 #Generate the design matrix and focal vector.
 #############################################
 
-design_matrix <- matrix(c(
+base_design_matrix <- matrix(c(
 	6, 6,
 	6, 12,
 	6, 18,
@@ -76,11 +77,23 @@ design_matrix <- matrix(c(
 	18, 6,
 	24, 6
 ), ncol = 2, byrow = TRUE)
+
+combinations <- gtools::combinations(num_species, ncol(base_design_matrix))
+
+design_matrix <- do.call(rbind, lapply(1:nrow(combinations), function(i) {
+	mat <- matrix(0, nrow = nrow(base_design_matrix), ncol = num_species)
+	for(j in seq_along(combinations[i,])) {
+		mat[,combinations[i,j]] <- base_design_matrix[,j]
+	}
+	return(mat)
+}))
+focal_vector <- as.vector(t(combinations))
+
+design_matrix <- design_matrix[rep(1:nrow(design_matrix), each = ncol(base_design_matrix)),] #Duplicate each row in the design matrix, once for each focal.
+focal_vector <- rep(focal_vector, each = nrow(base_design_matrix)) #Repeat the focal vector, for each combination in the design matrix.
+
 design_matrix <- design_matrix[rep(1:nrow(design_matrix), each = n),] #Replicate the rows of the design matrix.
-
-focal_vector <- rep(1:2, times = nrow(design_matrix))
-
-design_matrix <- design_matrix[rep(1:nrow(design_matrix), each = 2),] #Duplicate each row in the design matrix, once for each focal.
+focal_vector <- rep(focal_vector, each = n) #Replicate the focal vector correspondingly.
 
 ##############################
 #Generate the response vector.
