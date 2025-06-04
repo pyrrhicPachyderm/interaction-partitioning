@@ -37,7 +37,7 @@ RJMCMCData <- R6::R6Class("RJMCMCData",
 	public = list(
 		chain_lengths = NULL, #The length of each MCMC chain.
 		
-		initialize = function(data_file_name, species_names) {
+		initialize = function(data_file_name, species_names = NULL) {
 			super$initialize(data_file_name, species_names)
 			
 			if(!is.null(self$chain_id)) self$chain_lengths <- get_chain_lengths(self$chain_id)

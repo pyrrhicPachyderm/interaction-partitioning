@@ -67,7 +67,7 @@ best_model_index <- which.max(brute_data$statistics[[ic_weight]])
 ################################
 
 group_resolution_data <- as.data.frame(do.call(rbind, lapply(list.files(paste0(this_dir, "/output/tcl-test/"), pattern = "brute.data", recursive = TRUE, full.name = TRUE), function(filename) {
-	test_data <- BruteData$new(filename, 1:2, weight_column = ic_weight)
+	test_data <- BruteData$new(filename, weight_column = ic_weight)
 	col_coclassification <- test_data$weighted_col_coclassification_matrix[1, 2]
 	row_coclassification <- test_data$weighted_row_coclassification_matrix[1, 2]
 	return(c(filename = filename, col_coclassification = col_coclassification, row_coclassification = row_coclassification))

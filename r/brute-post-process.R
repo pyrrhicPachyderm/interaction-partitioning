@@ -25,7 +25,7 @@ BruteData <- R6::R6Class("BruteData",
 	public = list(
 		weight_column = NULL, #The name of the column to use for weights.
 		
-		initialize = function(data_file_name, species_names, weight_column = c("aic_weight", "aicc_weight")) {
+		initialize = function(data_file_name, species_names = NULL, weight_column = c("aic_weight", "aicc_weight")) {
 			super$initialize(data_file_name, species_names)
 			self$weight_column <- match.arg(weight_column)
 		}

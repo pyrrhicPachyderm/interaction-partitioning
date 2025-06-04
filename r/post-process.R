@@ -36,10 +36,8 @@ Data <- R6::R6Class("Data",
 		statistics = NULL, #A data frame of all output values besides the above.
 		chain_id = NULL, #The ID of each MCMC chain.
 		
-		initialize = function(data_file_name, species_names) {
+		initialize = function(data_file_name, species_names = NULL) {
 			data_table <- as.data.frame(data.table::fread(data_file_name)) #fread is much faster than read.table.
-			
-			self$species_names <- species_names
 			
 			#Extract the groupings and other data.
 			#Add one to the groupings to make them 1-indexed, as R prefers.
@@ -48,6 +46,11 @@ Data <- R6::R6Class("Data",
 			self$col_groupings <- data_table[grep("col_group", names(data_table))] + 1
 			self$num_row_species <- ncol(self$row_groupings)
 			self$num_col_species <- ncol(self$col_groupings)
+			if(!is.null(species_names)) {
+				self$species_names <- species_names
+			} else {
+				self$species_names <- 1:max(self$num_row_species, self$num_col_species)
+			}
 			self$row_species_names <- species_names[1:self$num_row_species]
 			self$col_species_names <- species_names[1:self$num_col_species]
 			if(ncol(self$growth_groupings) > 0) names(self$growth_groupings) <- self$row_species_names
