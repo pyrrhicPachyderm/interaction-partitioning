@@ -78,6 +78,14 @@ template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateSolution(bool i
 	optimiser.set_max_objective(NLoptSolver<ErrDistT>::optimisationFunc, (void*)this);
 	optimiser.set_xtol_rel(NLOPT_RELATIVE_TOLERANCE);
 	
+	//Set the lower bound on all growth rates to be 0.
+	std::vector<double> lowerBounds = optimiser.get_lower_bounds();
+	for(size_t i = 0; i < this->groupings[GROWTH].getNumGroups(); i++) {
+		size_t index = parameters.getAsVectorGrowthRateIndex(i);
+		lowerBounds[index] = 0.0;
+	}
+	optimiser.set_lower_bounds(lowerBounds);
+	
 	if(isNull) {
 		//Force all competition coefficients to be zero.
 		std::vector<double> lowerBounds = optimiser.get_lower_bounds();
