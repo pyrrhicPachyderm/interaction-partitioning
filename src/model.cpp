@@ -9,37 +9,40 @@ Eigen::VectorXd Models::Base::getResponses(const Eigen::VectorXd &densities, con
 }
 
 double Models::LotkaVolterra::getResponse(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
-	return focalDensity * focalGrowthRate * (1.0 - densities.dot(competitionCoefficients));
+	return focalDensity * exp(focalGrowthRate) * (1.0 - densities.dot(competitionCoefficients));
 }
 
 double Models::LotkaVolterra::getGrowthRateJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
-	return focalDensity * (1.0 - densities.dot(competitionCoefficients));
+	//This function is its own derivative.
+	return this->getResponse(focalDensity, focalGrowthRate, densities, competitionCoefficients);
 }
 
 double Models::LotkaVolterra::getCompetitionCoefficientJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients, size_t index) const {
-	return focalDensity * focalGrowthRate * (- densities[index]);
+	return focalDensity * exp(focalGrowthRate) * (- densities[index]);
 }
 
 double Models::BevertonHolt::getResponse(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
-	return focalDensity * focalGrowthRate / (1.0 + densities.dot(competitionCoefficients));
+	return focalDensity * exp(focalGrowthRate) / (1.0 + densities.dot(competitionCoefficients));
 }
 
 double Models::BevertonHolt::getGrowthRateJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
-	return focalDensity / (1.0 + densities.dot(competitionCoefficients));
+	//This function is its own derivative.
+	return this->getResponse(focalDensity, focalGrowthRate, densities, competitionCoefficients);
 }
 
 double Models::BevertonHolt::getCompetitionCoefficientJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients, size_t index) const {
-	return - focalDensity * focalGrowthRate * densities[index] / pow(1.0 + densities.dot(competitionCoefficients), 2);
+	return - focalDensity * exp(focalGrowthRate) * densities[index] / pow(1.0 + densities.dot(competitionCoefficients), 2);
 }
 
 double Models::Ricker::getResponse(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
-	return focalDensity * focalGrowthRate * exp(- densities.dot(competitionCoefficients));
+	return focalDensity * exp(focalGrowthRate) * exp(- densities.dot(competitionCoefficients));
 }
 
 double Models::Ricker::getGrowthRateJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients) const {
-	return focalDensity * exp(- densities.dot(competitionCoefficients));
+	//This function is its own derivative.
+	return this->getResponse(focalDensity, focalGrowthRate, densities, competitionCoefficients);
 }
 
 double Models::Ricker::getCompetitionCoefficientJacobian(double focalDensity, double focalGrowthRate, const Eigen::VectorXd &densities, const Eigen::VectorXd &competitionCoefficients, size_t index) const {
-	return - focalDensity * focalGrowthRate * densities[index] * exp(- densities.dot(competitionCoefficients));
+	return - focalDensity * exp(focalGrowthRate) * densities[index] * exp(- densities.dot(competitionCoefficients));
 }

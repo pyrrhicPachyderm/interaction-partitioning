@@ -85,7 +85,7 @@ Jacobian Datasets::FocalResponse::getPredictionsJacobian(const Model &model, con
 double Datasets::FocalResponse::guessGrowthRate() const {
 	//We might assume that all the species are in one group, and that all competition coefficients are zero.
 	//This gives us the average observed response.
-	return response.mean();
+	return log(response.mean());
 }
 
 double Datasets::FocalResponse::guessGrowthRateMagnitude() const {

@@ -13,7 +13,7 @@
 const char *INPUT_COMMENT_STRING = "#";
 
 const char *OUTPUT_TABLE_SEPARATOR = "\t";
-const char *OUTPUT_GROWTH_RATE_STRING = "r";
+const char *OUTPUT_GROWTH_RATE_STRING = "log_r";
 const char *OUTPUT_COMPETITION_COEFFICIENT_STRING = "alpha";
 const char *OUTPUT_NULL_VALUE_STRING = "NA";
 
