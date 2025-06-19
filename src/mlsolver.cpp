@@ -2,7 +2,7 @@
 #include "nls.hpp"
 #include "mlsolver.hpp"
 
-#define NLOPT_RELATIVE_TOLERANCE 1e-3
+#define NLOPT_RELATIVE_TOLERANCE 5e-5
 
 template<typename SolverT> SolverT::ParametersT MaximumLikelihoodSolver<SolverT>::getSolution(bool isNull) {
 	//Returns Parameters or AugmentedParameters as appropriate.
@@ -76,7 +76,7 @@ template<typename ErrDistT> void NLoptSolver<ErrDistT>::calculateSolution(bool i
 	
 	nlopt::opt optimiser = nlopt::opt(nlopt::LN_SBPLX, parametersVector.size());
 	optimiser.set_max_objective(NLoptSolver<ErrDistT>::optimisationFunc, (void*)this);
-	optimiser.set_xtol_rel(NLOPT_RELATIVE_TOLERANCE);
+	optimiser.set_ftol_rel(NLOPT_RELATIVE_TOLERANCE);
 	
 	if(isNull) {
 		//Force all competition coefficients to be zero.
