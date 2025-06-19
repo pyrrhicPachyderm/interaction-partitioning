@@ -54,7 +54,7 @@ growth_rate <- 6.102122 #The mean growth rate for all species in all models in t
 mean_alpha <- 0.0290139 #The alpha for the fully grouped model in tcl/brute.data
 dispersion <- 0.2669737 #The mean dispersion parameter in tcl/rjmcmc.data
 
-species_per_group <- 1
+species_per_group <- 2
 num_species <- species_per_group * 2 #There are always two groups.
 
 growth_rates <- rep(growth_rate, num_species)
