@@ -11,6 +11,9 @@ Parameters <- R6::R6Class("Parameters",
 			#with the names as the column headings output by the C++ program
 			l <- as.list(l) #In case we're given a one-row data frame.
 			self$growth_rates <- unlist(l[grep("^r_", names(l))])
+			if(length(self$growth_rates) == 0) {
+				self$growth_rates <- exp(unlist(l[grep("^log_r_", names(l))]))
+			}
 			self$alpha_values <- matrix(
 				unlist(l[grep("^alpha_", names(l))]),
 				nrow = length(self$growth_rates),
