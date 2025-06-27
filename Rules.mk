@@ -83,11 +83,16 @@ endef
 
 HERE_tcl_test_diffs := $(shell seq 0 0.4 2)
 HERE_tcl_test_seeds := $(shell seq 1 10)
+HERE_tcl_seed_multiplier := 100 #Should be large enough that any value in tcl_test_diffs, mutliplied by this, is an integer.
+#tcl_seed_template takes the row diff, the column diff, and the seed. It returns a unique seed, to ensure we aren't reusing the same seeds for each set of row and column difference.
+define HERE_tcl_seed_template =
+$(shell awk 'BEGIN{print $(1) * $(HERE_tcl_seed_multiplier) * $(HERE_tcl_seed_multiplier) + $(2) * $(HERE_tcl_seed_multiplier) + $(3)}')
+endef
 $(foreach ri,$(HERE_tcl_test_diffs),\
 	$(foreach ci,$(HERE_tcl_test_diffs),\
 		$(foreach si,$(HERE_tcl_test_seeds),\
-			$(eval $(call HERE_process_tcl_test_template,$(ri),$(ci),$(si))) \
-			$(eval $(call HERE_output_tcl_test_template,$(ri),$(ci),$(si))) \
+			$(eval $(call HERE_process_tcl_test_template,$(ri),$(ci),$(call HERE_tcl_seed_template,$(ri),$(ci),$(si)))) \
+			$(eval $(call HERE_output_tcl_test_template,$(ri),$(ci),$(call HERE_tcl_seed_template,$(ri),$(ci),$(si)))) \
 		)\
 	)\
 )
@@ -95,7 +100,7 @@ HERE/output/article-data-1.rda:\
 	$(foreach ri,$(HERE_tcl_test_diffs),\
 		$(foreach ci,$(HERE_tcl_test_diffs),\
 			$(foreach si,$(HERE_tcl_test_seeds),\
-				HERE/output/tcl-test/r$(ri)-c$(ci)/s$(si)/brute.data \
+				HERE/output/tcl-test/r$(ri)-c$(ci)/s$(call HERE_tcl_seed_template,$(ri),$(ci),$(si))/brute.data \
 			)\
 		)\
 	)
