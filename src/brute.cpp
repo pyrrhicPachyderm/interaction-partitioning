@@ -2,9 +2,11 @@
 #include "mlsolver.hpp"
 
 int main(int argc, char **argv) {
-	Input input(argc, argv, false, {'n'});
+	Input input(argc, argv, false, {'n'}, {}, {}, {'f', 'x'}, {0, 1e-3});
 	
 	bool isNull = input.getBoolOptResult('n');
+	double ftol = input.getDoubleOptResult('f');
+	double xtol = input.getDoubleOptResult('x');
 	std::string errorDistribution = input.getErrorDistribution();
 	std::string additionalParameterName;
 	
@@ -12,9 +14,9 @@ int main(int argc, char **argv) {
 	if(errorDistribution == "normal") {
 		masterSolver = new GaussNewtonSolver(input.getModel(), input.getData());
 	} else if(errorDistribution == "gamma") {
-		masterSolver = new NLoptSolver<Distributions::Gamma2>(input.getModel(), input.getData());
+		masterSolver = new NLoptSolver<Distributions::Gamma2>(input.getModel(), input.getData(), ftol, xtol);
 	} else if(errorDistribution == "negativebinomial") {
-		masterSolver = new NLoptSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>(input.getModel(), input.getData());
+		masterSolver = new NLoptSolver<Distributions::DiscreteWrapper<Distributions::NegativeBinomial2>>(input.getModel(), input.getData(), ftol, xtol);
 	} else {
 		fprintf(stderr, "Unrecognised error distribution.\n");
 		exit(1);

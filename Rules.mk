@@ -78,7 +78,7 @@ $(eval $(call HERE_output_template,carrara,time,rjmcmc,rjmcmc,lotkavolterra,norm
 
 #output_tcl_test_template takes the row difference, the column difference, and the seed.
 define HERE_output_tcl_test_template =
-$(eval $(call HERE_output_template,tcl-test/r$(1)-c$(2)/s$(3),pop,brute,brute,bevertonholt,negativebinomial,))
+$(eval $(call HERE_output_template,tcl-test/r$(1)-c$(2)/s$(3),pop,brute,brute,bevertonholt,negativebinomial,-f5e-5 -x0))
 endef
 
 tcl_test_diffs := $(shell seq 0 0.1 2)

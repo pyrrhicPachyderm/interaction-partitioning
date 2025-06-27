@@ -113,10 +113,16 @@ class GaussNewtonSolver : public MaximumLikelihoodSolver<Solver> {
 };
 
 template<typename ErrDistT> class NLoptSolver : public MaximumLikelihoodSolver<GeneralisedSolver<ErrDistT>> {
+	protected:
+		double ftol = 0;
+		double xtol = 0;
 	public:
-		using MaximumLikelihoodSolver<GeneralisedSolver<ErrDistT>>::MaximumLikelihoodSolver;
+		NLoptSolver(Model model, Data data, double ftol, double xtol): MaximumLikelihoodSolver<GeneralisedSolver<ErrDistT>>(model, data), ftol(ftol), xtol(xtol) {};
+		NLoptSolver(Model model, Data data, GroupingSet groupings, double ftol, double xtol): MaximumLikelihoodSolver<GeneralisedSolver<ErrDistT>>(model, data, groupings), ftol(ftol), xtol(xtol) {};
 		
 		typedef MaximumLikelihoodSolver<GeneralisedSolver<ErrDistT>>::ParametersT ParametersT;
+		
+		void setTolerances(double f, double x) {ftol = f; xtol = x;};
 	protected:
 		
 		//NLopt requires a function pointer, not the std::function produced by std::bind.
