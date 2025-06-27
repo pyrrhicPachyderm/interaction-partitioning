@@ -11,7 +11,7 @@ q3 <- function(x) {quantile(x, 3/4)}
 
 generate_plot <- function(dat, direction, same_group) {
 	direction_diff <- paste0(direction, "_diff")
-	dat <- dplyr::filter(dat, direction == direction, same_group == same_group)
+	dat <- dplyr::filter(dat, direction == !!direction, same_group == !!same_group)
 	dat_summary <- dat |>
 		dplyr::group_by(.data[[direction_diff]]) |>
 		dplyr::summarise(mean = mean(value), q1 = q1(value), q3 = q3(value))
