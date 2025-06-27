@@ -81,20 +81,20 @@ define HERE_output_tcl_test_template =
 $(eval $(call HERE_output_template,tcl-test/r$(1)-c$(2)/s$(3),pop,brute,brute,bevertonholt,negativebinomial,-f5e-5 -x0))
 endef
 
-tcl_test_diffs := $(shell seq 0 0.1 2)
-tcl_test_seeds := $(shell seq 1 10)
-$(foreach ri,$(tcl_test_diffs),\
-	$(foreach ci,$(tcl_test_diffs),\
-		$(foreach si,$(tcl_test_seeds),\
+HERE_tcl_test_diffs := $(shell seq 0 0.1 2)
+HERE_tcl_test_seeds := $(shell seq 1 10)
+$(foreach ri,$(HERE_tcl_test_diffs),\
+	$(foreach ci,$(HERE_tcl_test_diffs),\
+		$(foreach si,$(HERE_tcl_test_seeds),\
 			$(eval $(call HERE_process_tcl_test_template,$(ri),$(ci),$(si))) \
 			$(eval $(call HERE_output_tcl_test_template,$(ri),$(ci),$(si))) \
 		)\
 	)\
 )
 HERE/output/article-data-1.rda:\
-	$(foreach ri,$(tcl_test_diffs),\
-		$(foreach ci,$(tcl_test_diffs),\
-			$(foreach si,$(tcl_test_seeds),\
+	$(foreach ri,$(HERE_tcl_test_diffs),\
+		$(foreach ci,$(HERE_tcl_test_diffs),\
+			$(foreach si,$(HERE_tcl_test_seeds),\
 				HERE/output/tcl-test/r$(ri)-c$(ci)/s$(si)/brute.data \
 			)\
 		)\
