@@ -62,10 +62,12 @@ static Model matchModelString(std::string modelString) {
 	}
 }
 
-Input::Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults):
+Input::Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults, std::vector<char> doubleOpts, std::vector<double> doubleOptDefaults):
 	boolOpts(boolOpts),
 	intOpts(intOpts),
-	intOptResults(intOptDefaults)
+	intOptResults(intOptDefaults),
+	doubleOpts(doubleOpts),
+	doubleOptResults(doubleOptDefaults)
 {
 	assert(intOpts.size() == intOptResults.size());
 	
@@ -147,6 +149,10 @@ std::string Input::getOptsString() {
 		optsString.push_back(opt);
 		optsString.push_back(':');
 	}
+	for(char opt : doubleOpts) {
+		optsString.push_back(opt);
+		optsString.push_back(':');
+	}
 	
 	return optsString;
 }
@@ -173,12 +179,20 @@ size_t Input::getIntOptResult(char opt) const {
 	return intOptResults[index];
 }
 
+double Input::getDoubleOptResult(char opt) const {
+	int index = getOptIndex(doubleOpts, opt);
+	assert(index >= 0);
+	return doubleOptResults[index];
+}
+
 void Input::parseOptInput(char opt, const char *optarg) {
 	int index = -1;
 	index = getOptIndex(boolOpts, opt);
 	if(index >= 0) boolOptResults[index] = true;
 	index = getOptIndex(intOpts, opt);
 	if(index >= 0) intOptResults[index] = strtoull(optarg, NULL, 0); //TODO: Error handling for strtoull.
+	index = getOptIndex(doubleOpts, opt);
+	if(index >= 0) doubleOptResults[index] = strtod(optarg, NULL); //TODO: Error handling for strtod.
 }
 
 template<size_t nAug> AugmentedParametersPrior<nAug> Input::getPriors() const {

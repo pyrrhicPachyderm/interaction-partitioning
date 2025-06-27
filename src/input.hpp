@@ -11,6 +11,8 @@ class Input {
 		std::vector<bool> boolOptResults = std::vector<bool>(boolOpts.size(), false);
 		std::vector<char> intOpts;
 		std::vector<size_t> intOptResults;
+		std::vector<char> doubleOpts;
+		std::vector<double> doubleOptResults;
 		
 		Data data;
 		Model model = Model(NULL); //Is set in the body of the constructor, so it needs a default until then.
@@ -21,7 +23,8 @@ class Input {
 		std::string getOptsString();
 		void parseOptInput(char opt, const char *optarg);
 	public:
-		Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults);
+		Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults, std::vector<char> doubleOpts, std::vector<double> doubleOptDefaults);
+		Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts, std::vector<char> intOpts, std::vector<size_t> intOptDefaults): Input(argc, argv, needsPriors, boolOpts, intOpts, intOptDefaults, {}, {}) {};
 		Input(int argc, char** argv, bool needsPriors, std::vector<char> boolOpts): Input(argc, argv, needsPriors, boolOpts, {}, {}) {};
 		Input(int argc, char** argv, bool needsPriors): Input(argc, argv, needsPriors, {}) {};
 		
@@ -33,6 +36,7 @@ class Input {
 		
 		bool getBoolOptResult(char opt) const;
 		size_t getIntOptResult(char opt) const;
+		double getDoubleOptResult(char opt) const;
 };
 
 #endif
