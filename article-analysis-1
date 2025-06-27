@@ -236,6 +236,29 @@ average_model_fit_plot <- model_fit_plot(average_parameters, species_output_orde
 best_partial_residual_plot <- partial_residual_plot(best_parameters, species_output_order)
 average_partial_residual_plot <- partial_residual_plot(average_parameters, species_output_order)
 
+group_resolution_plot <- function(dat, direction, same_group) {
+	se <- function(x) {sd(x) / sqrt(length(x))}
+	ci <- function(x) {se(x) * qt(0.975, length(x) - 1)}
+	
+	direction_diff <- paste0(direction, "_diff")
+	dat <- dplyr::filter(dat, direction == !!direction, same_group == !!same_group)
+	dat_summary <- dat |>
+		dplyr::group_by(.data[[direction_diff]]) |>
+		dplyr::summarise(mean = mean(value), upper = mean(value) + ci(value), lower = mean(value) - ci(value))
+	
+	plot <- ggplot2::ggplot() +
+		ggplot2::geom_ribbon(data = dat_summary, ggplot2::aes(x = .data[[direction_diff]], ymin = upper, ymax = lower), fill = "grey") +
+		ggplot2::geom_line(data = dat_summary, ggplot2::aes(x = .data[[direction_diff]], y = mean)) +
+		ggplot2::geom_point(data = dat, ggplot2::aes(x = .data[[direction_diff]], y = value))
+	#TODO: Axis labels, etc.
+	return(plot)
+}
+
+group_resolution_row_diff_plot <- group_resolution_plot(group_resolution_data_long, direction = "row", same_group = FALSE)
+group_resolution_col_diff_plot <- group_resolution_plot(group_resolution_data_long, direction = "col", same_group = FALSE)
+group_resolution_row_same_plot <- group_resolution_plot(group_resolution_data_long, direction = "row", same_group = TRUE)
+group_resolution_col_same_plot <- group_resolution_plot(group_resolution_data_long, direction = "col", same_group = TRUE)
+
 #############
 #Save output.
 #############
