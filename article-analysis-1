@@ -81,6 +81,11 @@ group_resolution_data <- as.data.frame(do.call(rbind, lapply(list.files(paste0(t
 	tidyr::separate_wider_regex(filename, patterns = c(".*/r", row_diff = ".*", "-c", col_diff = ".*", "/s", seed = ".*", "/.*")) |>
 	dplyr::mutate_all(as.numeric)
 
+group_resolution_data_long <- group_resolution_data |>
+	tidyr::pivot_longer(-c(row_diff, col_diff, seed), names_to = "element", values_to = "value") |>
+	tidyr::separate_wider_regex(element, patterns = c(direction = "...", "_", row = "[0-9]+", "_", col = "[0-9]+")) |>
+	dplyr::mutate(same_group = !(row %in% 1:2 & col %in% 3:4))
+
 #########
 #Figures.
 #########
