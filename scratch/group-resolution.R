@@ -8,16 +8,18 @@ print(group_resolution_data)
 
 q1 <- function(x) {quantile(x, 1/4)}
 q3 <- function(x) {quantile(x, 3/4)}
+se <- function(x) {sd(x) / sqrt(length(x))}
+ci <- function(x) {se(x) * qt(0.975, length(x) - 1)}
 
 generate_plot <- function(dat, direction, same_group) {
 	direction_diff <- paste0(direction, "_diff")
 	dat <- dplyr::filter(dat, direction == !!direction, same_group == !!same_group)
 	dat_summary <- dat |>
 		dplyr::group_by(.data[[direction_diff]]) |>
-		dplyr::summarise(mean = mean(value), q1 = q1(value), q3 = q3(value))
+		dplyr::summarise(mean = mean(value), upper = mean(value) + ci(value), lower = mean(value) - ci(value))
 	
 	ggplot() +
-		geom_ribbon(data = dat_summary, aes(x = .data[[direction_diff]], ymin = q1, ymax = q3), fill = "grey") +
+		geom_ribbon(data = dat_summary, aes(x = .data[[direction_diff]], ymin = upper, ymax = lower), fill = "grey") +
 		geom_line(data = dat_summary, aes(x = .data[[direction_diff]], y = mean)) +
 		geom_point(data = dat, aes(x = .data[[direction_diff]], y = value))
 }
