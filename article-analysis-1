@@ -250,7 +250,10 @@ group_resolution_plot <- function(dat, direction, same_group) {
 		ggplot2::geom_ribbon(data = dat_summary, ggplot2::aes(x = .data[[direction_diff]], ymin = upper, ymax = lower), fill = "grey") +
 		ggplot2::geom_line(data = dat_summary, ggplot2::aes(x = .data[[direction_diff]], y = mean)) +
 		ggplot2::geom_point(data = dat, ggplot2::aes(x = .data[[direction_diff]], y = value))
-	#TODO: Axis labels, etc.
+		ggplot2::labs(
+			x = bquote("Difference between " * .(direction) * " group alpha values (" * Delta * alpha / bar(alpha) * ")"),
+			y = "Coclassification probability"
+		)
 	return(plot)
 }
 
