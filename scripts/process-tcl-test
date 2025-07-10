@@ -68,7 +68,8 @@ competition_coefficients <- mean_alpha * matrix(c(
 #Generate the design matrix and focal vector.
 #############################################
 
-base_design_matrix <- matrix(c(
+base_design_matrix_single <- c(6, 18, 30)
+base_design_matrix_pairwise <- matrix(c(
 	6, 6,
 	6, 12,
 	6, 18,
@@ -78,22 +79,33 @@ base_design_matrix <- matrix(c(
 	24, 6
 ), ncol = 2, byrow = TRUE)
 
-combinations <- gtools::combinations(num_species, ncol(base_design_matrix))
+design_matrix_single <- do.call(rbind, lapply(1:num_species, function(i) {
+	mat <- matrix(0, nrow = length(base_design_matrix_single), ncol = num_species)
+	mat[,i] <- base_design_matrix_single
+	return(mat)
+}))
+focal_vector_single <- rep(1:num_species, each = length(base_design_matrix_single))
 
-design_matrix <- do.call(rbind, lapply(1:nrow(combinations), function(i) {
-	mat <- matrix(0, nrow = nrow(base_design_matrix), ncol = num_species)
+combinations <- gtools::combinations(num_species, ncol(base_design_matrix_pairwise))
+design_matrix_pairwise <- do.call(rbind, lapply(1:nrow(combinations), function(i) {
+	mat <- matrix(0, nrow = nrow(base_design_matrix_pairwise), ncol = num_species)
 	for(j in seq_along(combinations[i,])) {
-		mat[,combinations[i,j]] <- base_design_matrix[,j]
+		mat[,combinations[i,j]] <- base_design_matrix_pairwise[,j]
 	}
 	return(mat)
 }))
-focal_vector <- as.vector(t(combinations))
+focal_vector_pairwise <- as.vector(t(combinations))
 
-design_matrix <- design_matrix[rep(1:nrow(design_matrix), each = ncol(base_design_matrix)),] #Duplicate each row in the design matrix, once for each focal.
-focal_vector <- rep(focal_vector, each = nrow(base_design_matrix)) #Repeat the focal vector, for each combination in the design matrix.
+design_matrix_pairwise <- design_matrix_pairwise[rep(1:nrow(design_matrix_pairwise), each = ncol(base_design_matrix_pairwise)),] #Duplicate each row in the design matrix, once for each focal.
+focal_vector_pairwise <- rep(focal_vector_pairwise, each = nrow(base_design_matrix_pairwise)) #Repeat the focal vector, for each combination in the design matrix.
 
-design_matrix <- design_matrix[rep(1:nrow(design_matrix), each = n),] #Replicate the rows of the design matrix.
-focal_vector <- rep(focal_vector, each = n) #Replicate the focal vector correspondingly.
+#Join the pairwise and single species design matrices and focal vectors.
+design_matrix <- rbind(design_matrix_single, design_matrix_pairwise)
+focal_vector <- c(focal_vector_single, focal_vector_pairwise)
+
+#Replicate the rows of the design matrix and focal vector.
+design_matrix <- design_matrix[rep(1:nrow(design_matrix), each = n),]
+focal_vector <- rep(focal_vector, each = n)
 
 ##############################
 #Generate the response vector.
