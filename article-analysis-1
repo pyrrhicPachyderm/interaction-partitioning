@@ -247,12 +247,13 @@ group_resolution_plot <- function(dat, direction, same_group) {
 		dplyr::group_by(.data[[direction_diff]]) |>
 		dplyr::summarise(mean = mean(value), upper = mean(value) + ci(value), lower = mean(value) - ci(value))
 	
+	direction_label <- ifelse(direction == "col", "column", direction)
 	plot <- ggplot2::ggplot() +
 		ggplot2::geom_ribbon(data = dat_summary, ggplot2::aes(x = .data[[direction_diff]], ymin = upper, ymax = lower), fill = "grey") +
 		ggplot2::geom_line(data = dat_summary, ggplot2::aes(x = .data[[direction_diff]], y = mean)) +
 		ggplot2::geom_point(data = dat, ggplot2::aes(x = .data[[direction_diff]], y = value), position = ggplot2::position_jitter(w = 0.05, h = 0), size = 0.5) +
 		ggplot2::labs(
-			x = bquote("Difference between " * .(direction) * " group alpha values (" * Delta * alpha / bar(alpha) * ")"),
+			x = bquote("Difference between " * .(direction_label) * " group alpha values (" * Delta * alpha / bar(alpha) * ")"),
 			y = "Coclassification probability"
 		)
 	return(plot)
