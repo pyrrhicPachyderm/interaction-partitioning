@@ -116,8 +116,8 @@ ic_histogram <- function(brute_data, lty = c("dashed", "dotted"), col = c("green
 	abline(v = brute_data$fully_separated_statistics[[ic]], lwd=lwd, lty=lty[1], col=col[1])
 	abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=lwd, lty=lty[2], col=col[2])
 	if(legend) {
-		legend("topleft", inset = c(0.2,0),
-			legend = c("Fully separated", "Fully grouped"),
+		legend("topright", inset = c(0, 0), bg = "white",
+			legend = c("Fully separated model", "Fully grouped model"),
 			lwd = lwd,
 			lty = lty,
 			col = col
