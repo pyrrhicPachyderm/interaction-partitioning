@@ -98,20 +98,22 @@ coclassification_colour_setup <- paste0(
 	"\\colorlet{",coclassification_diagonal_colour,"}{black!20}\n"
 )
 
-ic_histogram <- function(brute_data, lty = c("dashed", "dotted"), col = c("green", "purple"), legend = TRUE) {
+ic_histogram <- function(brute_data, lty = c("dashed", "dotted"), col = c("green", "purple"), legend = TRUE, arrow = TRUE) {
 	lwd <- 2
+	ymax <- 2500
 	get_breaks <- function(x, bin_width) {
 		lower_bound <- min(x) - min(x)%%bin_width
 		upper_bound <- max(x) + (bin_width - max(x)%%bin_width)%%bin_width
 		return(seq(lower_bound, upper_bound, by = bin_width))
 	}
+	breaks <- get_breaks(brute_data$statistics[[ic]], 2)
 	hist(brute_data$statistics[[ic]],
 		main="",
 		xlab=ic_name,
 		xaxs='i',
 		yaxs='i',
-		ylim=c(0,2500),
-		breaks=get_breaks(brute_data$statistics[[ic]], 2)
+		ylim=c(0,ymax),
+		breaks=breaks
 	)
 	abline(v = brute_data$fully_separated_statistics[[ic]], lwd=lwd, lty=lty[1], col=col[1])
 	abline(v = brute_data$fully_grouped_statistics[[ic]], lwd=lwd, lty=lty[2], col=col[2])
@@ -121,6 +123,19 @@ ic_histogram <- function(brute_data, lty = c("dashed", "dotted"), col = c("green
 			lwd = lwd,
 			lty = lty,
 			col = col
+		)
+	}
+	if(arrow) {
+		arrows(
+			x0 = quantile(breaks, 0.77),
+			x1 = quantile(breaks, 0.23),
+			y0 = 0.7 * ymax, y1 = 0.7 * ymax,
+			length = 0.1
+		)
+		text(
+			labels = "Better model performance",
+			x = quantile(breaks, 0.5),
+			y = 0.73 * ymax
 		)
 	}
 }
