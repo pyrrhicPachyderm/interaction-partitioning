@@ -3,12 +3,12 @@
 
 library(magrittr)
 
-prob_perm_test <- function(selected_probs, all_probs, num_iter = 1000) {
+prob_perm_test <- function(selected_probs, all_probs, num_iter = 999) {
 	#Tests whether the sum of selected_probs is more or less (as appropriate) than the sum of a random sample of all_probs of the same length.
 	#Returns the p value.
 	#TODO: Check that this is a valid statistical test.
 	selected_sum <- sum(selected_probs)
-	resamples <- replicate(num_iter-1,
+	resamples <- replicate(num_iter,
 		sum(sample(all_probs, length(selected_probs)))
 	)
 	resamples <- c(selected_sum, resamples)
