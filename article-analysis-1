@@ -98,7 +98,7 @@ coclassification_colour_setup <- paste0(
 	"\\colorlet{",coclassification_diagonal_colour,"}{black!20}\n"
 )
 
-ic_histogram <- function(brute_data, lty = c("dashed", "dotted"), col = c("green", "purple"), legend = FALSE) {
+ic_histogram <- function(brute_data, lty = c("dashed", "dotted"), col = c("green", "purple"), legend = TRUE) {
 	lwd <- 2
 	get_breaks <- function(x, bin_width) {
 		lower_bound <- min(x) - min(x)%%bin_width
