@@ -81,7 +81,7 @@ define HERE_output_tcl_test_template =
 $(eval $(call HERE_output_template,tcl-test/r$(1)-c$(2)/s$(3),pop,brute,brute,bevertonholt,negativebinomial,-f5e-5 -x0))
 endef
 
-HERE_tcl_test_diffs := $(shell seq 0 0.4 2)
+HERE_tcl_test_diffs := $(shell seq 0 0.25 1.5)
 HERE_tcl_test_seeds := $(shell seq 1 10)
 HERE_tcl_seed_multiplier := 100 #Should be large enough that any value in tcl_test_diffs, multiplied by this, is an integer.
 #tcl_seed_template takes the row diff, the column diff, and the seed. It returns a unique seed, to ensure we aren't reusing the same seeds for each set of row and column difference.

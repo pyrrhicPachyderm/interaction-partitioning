@@ -49,10 +49,11 @@ set.seed(seed)
 #Set known parameter values.
 ############################
 
-#TODO: Obtain these programmatically from the TCL results.
-growth_rate <- 6.102122 #The mean growth rate for all species in all models in tcl/brute.data
-mean_alpha <- 0.0290139 #The alpha for the fully grouped model in tcl/brute.data
-dispersion <- 0.2669737 #The mean dispersion parameter in tcl/rjmcmc.data
+#TODO: Obtain these programmatically from tcl/brute.data
+#All taken from the ungrouped model.
+growth_rate <- exp(1.786602) #The mean growth rate for all species
+mean_alpha <- 0.04092845 #The mean alpha for all pairs of species
+dispersion <- 0.223694 #The dispersion parameter
 
 species_per_group <- 2
 num_species <- species_per_group * 2 #There are always two groups.
