@@ -249,8 +249,6 @@ average_parameters <- brute_data$average_parameters
 
 best_model_fit_plot <- model_fit_plot(best_parameters, species_output_order)
 average_model_fit_plot <- model_fit_plot(average_parameters, species_output_order)
-best_partial_residual_plot <- partial_residual_plot(best_parameters, species_output_order)
-average_partial_residual_plot <- partial_residual_plot(average_parameters, species_output_order)
 
 group_resolution_plot <- function(dat, direction, same_group) {
 	se <- function(x) {sd(x) / sqrt(length(x))}
