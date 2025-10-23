@@ -245,10 +245,12 @@ partial_residual_plot <- function(parameters, species_output_order) {
 }
 
 best_parameters <- brute_data$get_parameters(best_model_index)
-average_parameters <- brute_data$average_parameters
+fully_grouped_parameters <- brute_data$get_parameters(brute_data$fully_grouped_index)
+fully_separated_parameters <- brute_data$get_parameters(brute_data$fully_separated_index)
 
 best_model_fit_plot <- model_fit_plot(best_parameters, species_output_order)
-average_model_fit_plot <- model_fit_plot(average_parameters, species_output_order)
+fully_grouped_model_fit_plot <- model_fit_plot(fully_grouped_parameters, species_output_order)
+fully_separated_model_fit_plot <- model_fit_plot(fully_separated_parameters, species_output_order)
 
 group_resolution_plot <- function(dat, direction, same_group) {
 	se <- function(x) {sd(x) / sqrt(length(x))}
