@@ -209,6 +209,8 @@ model_fit_plot <- function(parameters, species_output_order) {
 	
 	plot <- ggplot2::ggplot(plot_df, ggplot2::aes(x = observed, y = fitted)) +
 		ggplot2::geom_point() +
+		ggplot2::xlim(0, max(plot_df$observed)) +
+		ggplot2::ylim(0, max(plot_df$observed)) +
 		ggplot2::geom_abline(slope = 1, intercept = 0) +
 		ggplot2::facet_wrap(.~focal) +
 		ggplot2::labs(x = "Observed offspring generation size", y = "Predicted offsrping generation size")
