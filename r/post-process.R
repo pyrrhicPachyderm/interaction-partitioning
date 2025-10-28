@@ -77,13 +77,16 @@ Data <- R6::R6Class("Data",
 			as.vector(as.matrix(self$col_groupings[index,]))
 		},
 		get_num_growth_groups = function(index) {
-			length(unique(self$get_growth_grouping(index)))
+			grouping <- self$get_growth_grouping(index)
+			return(ifelse(length(grouping) > 0, length(unique(grouping)), self$num_row_species))
 		},
 		get_num_row_groups = function(index) {
-			length(unique(self$get_row_grouping(index)))
+			grouping <- self$get_row_grouping(index)
+			return(ifelse(length(grouping) > 0, length(unique(grouping)), self$num_row_species))
 		},
 		get_num_col_groups = function(index) {
-			length(unique(self$get_col_grouping(index)))
+			grouping <- self$get_col_grouping(index)
+			return(ifelse(length(grouping) > 0, length(unique(grouping)), self$num_col_species))
 		},
 		get_num_parameters = function(index) {
 			self$get_num_growth_groups(index) + self$get_num_row_groups(index) * self$get_num_col_groups(index) + 1 #+1 for the overdispersion parameter.
