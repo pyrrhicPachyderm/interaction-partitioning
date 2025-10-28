@@ -76,6 +76,15 @@ Data <- R6::R6Class("Data",
 		get_col_grouping = function(index) {
 			as.vector(as.matrix(self$col_groupings[index,]))
 		},
+		get_num_growth_groups = function(index) {
+			length(unique(self$get_growth_grouping(index)))
+		},
+		get_num_row_groups = function(index) {
+			length(unique(self$get_row_grouping(index)))
+		},
+		get_num_col_groups = function(index) {
+			length(unique(self$get_col_grouping(index)))
+		},
 		get_parameters = function(index) {
 			Parameters$new(self$parameters[index,])
 		}
